@@ -1,7 +1,7 @@
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 
-const ScoreCardFuelConsumptionDoughnut = ({ data }) => {
+const ScoreCardFuelConsumptionDoughnut = ({ data, dataTitle, dataSubtitle }) => {
   const {
     name,
     size,
@@ -18,7 +18,6 @@ const ScoreCardFuelConsumptionDoughnut = ({ data }) => {
         hours_to_maintenance: {},
       };
 
-  console.log(data)
   const chartLabels = ['Used Diesel', 'Unused Diesel'];
   const chartData = [diesel_usage, 100 - diesel_usage];
 
@@ -32,6 +31,8 @@ const ScoreCardFuelConsumptionDoughnut = ({ data }) => {
       },
     ],
   };
+
+  const dataSubtitleArray = dataSubtitle.split('(b)');
 
   const options = {
     cutoutPercentage: 60,
@@ -52,7 +53,19 @@ const ScoreCardFuelConsumptionDoughnut = ({ data }) => {
         label: function (tooltipItem, data) {
           return data['datasets'][0]['data'][tooltipItem['index']] + '%';
         },
+
+        footer: function () {
+          const dataTitleAndSubtitleArray = [
+            dataTitle + ': ',
+            ...dataSubtitleArray,
+          ];
+          return dataTitleAndSubtitleArray;
+        },
       },
+      xPadding: 30,
+      yPadding: 30,
+      footerFontStyle: 'normal',
+      footerMarginTop: 12,
     },
   };
 

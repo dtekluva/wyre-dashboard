@@ -72,8 +72,8 @@ const ScoreCardDoughnutChart = ({ data, dataTitle, dataSubtitle }) => {
           return dataTitleAndSubtitleArray;
         },
       },
-      xPadding: 20,
-      yPadding: 20,
+      xPadding: 10,
+      yPadding: 10,
       footerFontStyle: 'normal',
       footerMarginTop: 12,
     },

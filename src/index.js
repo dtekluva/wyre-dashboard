@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 // import 'antd/dist/antd.css';
 import './css/custom-antd.css';
 import './css/style.css';
+import './scss/style.scss';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { CompleteDataProvider } from './Context';

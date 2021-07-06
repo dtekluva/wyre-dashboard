@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 
 import CompleteDataContext from '../Context';
 
@@ -10,23 +10,47 @@ import ScoreCardGenEfficiencyDoughnut from '../components/pieCharts/ScoreCardGen
 import ScoreCardFuelConsumptionDoughnut from '../components/pieCharts/ScoreCardFuelConsumptionDoughnut';
 import Loader from '../components/Loader';
 
-
 import UpArrowIcon from '../icons/UpArrowIcon';
+import EcoFriendlyIcon from '../icons/EcoFriendlyIcon';
+import Greenleaf from '../icons/Greenleaf';
 
-import { calculateRatio, calculatePercentage } from '../helpers/genericHelpers';
+import { calculateRatio, calculatePercentage, checkIsGenStatus, daysInMonth, getPeakToAverageMessage } from '../helpers/genericHelpers';
 import { numberFormatter } from "../helpers/numberFormatter";
+import dataHttpServices from "../services/devices";
 
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },
   { url: '#', name: 'Score Card', id: 2 },
 ];
 
+
+
 function ScoreCard({ match }) {
   const {
+    selectedDevices,
+    deviceData,
     refinedRenderedData,
     setCurrentUrl,
+    organization,
     isAuthenticatedDataLoading,
   } = useContext(CompleteDataContext);
+ 
+  //check the is_gen feature of devices
+  const useData = selectedDevices.length > 0 ? selectedDevices : deviceData;
+  const getIsGenStatus = (useData) => {
+    if (selectedDevices.length>0){      
+      return(checkIsGenStatus(useData));
+    }else{
+      const orgDeviceType = Object.entries(useData);
+          const eachOrgType = orgDeviceType.map(eachDevice => eachDevice[1]);
+          const getEachOrgType = eachOrgType.map(device => device.is_gen);
+               
+          return(checkIsGenStatus(getEachOrgType));        
+    }
+  }
+   
+  const isGenStatus = getIsGenStatus(useData);
+
 
   useEffect(() => {
     if (match && match.url) {
@@ -44,16 +68,35 @@ function ScoreCard({ match }) {
     fuel_consumption,
   } = refinedRenderedData;
 
+  const ratio = calculateRatio(peak_to_avg_power_ratio.peak,peak_to_avg_power_ratio.avg);
+    
+  const getPeakResult = getPeakToAverageMessage(ratio);
+  const arrowColor = getPeakResult.color;
+
+  //calculate number of trees for carbon emission
+  const noOfTrees = score_card_carbon_emissions.actual_value * 6;
+  const message = "Equivalent to "+noOfTrees+" Acacia trees";
+  const date = new Date();
 
   const generatorSizeEffficiencyData =
     generator_size_efficiency && generator_size_efficiency.filter(Boolean);
-
+  //console.log(generatorSizeEffficiencyData);
   const generatorSizeEffficiencyDoughnuts =
     generatorSizeEffficiencyData &&
     generatorSizeEffficiencyData.map((eachGenerator) => (
+      
       <ScoreCardGenEfficiencyDoughnut
+        dataTitle='Generator Size Efficiency'
+        dataSubtitle='
+        This info-graph measures(b)
+        and scores the efficiency(b)
+        or inefficiency of the(b)
+        generator’s size in(b)
+        comparison to power(b)
+        demanded by the facility. '
         data={eachGenerator}
         key={eachGenerator.name}
+
       />
     ));
 
@@ -64,6 +107,12 @@ function ScoreCard({ match }) {
     fuelConsumptionData &&
     fuelConsumptionData.map((eachGenerator) => (
       <ScoreCardFuelConsumptionDoughnut
+        dataTitle='Fuel Consumption'
+        dataSubtitle='
+        (95% Accuracy) Estimated fuel(b)
+        consumed on each generator and(b)
+        the number of hours each generator(b)
+        has been operated for. '
         data={eachGenerator}
         key={eachGenerator.name}
       />
@@ -72,7 +121,8 @@ function ScoreCard({ match }) {
    if (isAuthenticatedDataLoading) {
      return <Loader />;
    }
-
+  
+     
   return (
     <>
       <div className='breadcrumb-and-print-buttons'>
@@ -87,9 +137,13 @@ function ScoreCard({ match }) {
             <ScoreCardDoughnutChart
               dataTitle='Baseline Energy'
               dataSubtitle='
-            Describes the desparity between peak and average(b)
-            power demand of a facility. The higher the ratio(b)
-            the better, the lower the ratio the worse it becomes.'
+              This is an algorithm that forecasts(b)
+              energy consumption using weather(b)
+              and number of days to set a baseline(b)
+              usage.(b)
+              Baseline usage is compared to actual(b)
+              consumption to score energy(b)
+              performance.'
               data={baseline_energy}
             />
 
@@ -120,7 +174,7 @@ function ScoreCard({ match }) {
             Saving Inbound of{' '}
             <span className='h-green-text'>
               {baseline_energy &&
-                numberFormatter(baseline_energy.forecast - baseline_energy.used)}
+                numberFormatter(baseline_energy.forecast - ((baseline_energy.used/date.getDate())*daysInMonth()))}
               {baseline_energy && baseline_energy.unit}
             </span>
           </p>
@@ -135,9 +189,12 @@ function ScoreCard({ match }) {
             <ScoreCardDoughnutChart
               dataTitle='Peak to Average Power Ratio'
               dataSubtitle='
-            Describes the desparity between peak and average (b)
-            power demand of a facility. The higher the ratio (b) 
-            the better, the lower the ratio the worse it becomes.'
+              Represents the disparity between(b)
+              peak and average power within a(b)
+              facility. To optimize efficiency,(b)
+              the goal is to close the gap between(b)
+              both metrics. The aim is to score as(b)
+              close to 1 as possible.'
               data={peak_to_avg_power_ratio}
             />
 
@@ -164,8 +221,8 @@ function ScoreCard({ match }) {
           </p>
 
           <div className='score-card-bottom-text score-card-message-with-icon h-mt-24 h-flex'>
-            <p className='h-red-text'>Not so efficient - Higher is better</p>
-            <UpArrowIcon />
+            <p style={{color:arrowColor}}>{getPeakResult.message}</p>
+            <UpArrowIcon className={arrowColor}/>
           </div>
         </article>
 
@@ -178,9 +235,14 @@ function ScoreCard({ match }) {
             <ScoreCardDoughnutChart
               dataTitle='Carbon Emission'
               dataSubtitle='
-            Describes the desparity between peak and average (b)
-            power demand of a facility. The higher the ratio (b) 
-            the better, the lower the ratio the worse it becomes.'
+            Carbon foot print on all energy(b)
+            sources. Diesel: 2.68kg of CO2 per(b)
+            liter Natural Gas: 0.549kg of CO2 per(b)
+            kWh A typical hardwood tree can absorb as(b)
+            much as 48 pounds of carbon dioxide per(b)
+            year. This means it will sequester(b)
+            approximately 1 ton of carbon dioxide(b)
+            by the time it reaches 40 years old.'
               data={score_card_carbon_emissions}
             />
 
@@ -211,16 +273,22 @@ function ScoreCard({ match }) {
             {score_card_carbon_emissions && score_card_carbon_emissions.unit}
           </p>
 
-          {/* <p className='score-card-bottom-text h-mt-24 h-red-text'>
-            <span>Conditional Sub-text Should Go Here</span>{' '}
-            <span className='score-card-bottom-text-small'>
-              (Additional Conditional Sub-text Should Go Here)
-            </span>
-          </p> */}
+          <p className='score-card-bottom-text h-mt-24'>  
+            <div>
+              <span>{message}</span>
+              <EcoFriendlyIcon className="ecoFriendlyIcon"/>
+            </div>         
+
+            {/* <span className='score-card-bottom-text-small'>
+              {noOfTrees}
+            </span>{' '}
+            <span>Acacia trees</span> */}
+          </p>
         </article>
       </div>
 
-      <div className='score-card-row-4' style={{marginBottom:'50px'}}>
+     
+      <div className={isGenStatus > 0 ? 'score-card-row-4' : 'hideCard'} style={{marginBottom:'50px'}}>
         <article className='score-card-row-4__left'>
           <h2 className='score-card-heading'>Generator Size Efficiency</h2>
           {generatorSizeEffficiencyDoughnuts}
@@ -236,9 +304,9 @@ function ScoreCard({ match }) {
             Estimated Fuel Consumption for facility gens
           </p>
         </article>
-    </div>
+      </div>
 
-      <article className='score-card-row-2'>
+      <article className={isGenStatus > 0 ? 'score-card-row-2' : 'hideCard'}>
         <h2 className='changeover-lags-heading score-card-heading'>
           Change Over Lags
         </h2>
@@ -246,7 +314,13 @@ function ScoreCard({ match }) {
       </article>
 
       <article className='score-card-row-3'>
-        <ScoreCardBarChart operatingTimeData={operating_time} />
+        <ScoreCardBarChart operatingTimeData={operating_time} 
+          dataTitle='Operating Time'
+          dataMessage='Reports each event and duration(b)
+         generators are operated outside(b)
+         official hours, the diesel consumed(b)
+         and cost in Naira.'
+        />
       </article>
     </>
   );

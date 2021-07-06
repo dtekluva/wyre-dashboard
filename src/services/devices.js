@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 
 // Base URL prefix
 let baseUrlPrefix = `https://wyreng.xyz/api/v1/dashboard`;
-// let baseUrlPrefix = `http://localhost:8000/api/v1/dashboard`;
 
 // Handle determination of token
 let token = undefined;
@@ -25,7 +24,7 @@ const convertDateRangeToEndpointFormat = (dateObjects) =>
     .map((eachDateObject) => eachDateObject.format('DD-MM-YYYY HH:mm'))
     .join('/');
 
-// Handle determination of date range for url
+    // Handle determination of date range for url
 let endpointDateRange = convertDateRangeToEndpointFormat([
   dayjs().startOf('month'),
   dayjs(),
@@ -52,13 +51,18 @@ const setEndpointDataTimeInterval = (newEndpointDataTimeInterval) => {
 const getAllData = async () => {
   // Add interval to url
   const baseUrl = `${baseUrlPrefix}/${userId}/${endpointDateRange}/${endpointDataTimeInterval}`;
-  
+  //const test =axios.get('https://wyreng.xyz/api/v1/dashboard/6/01-12-2021%2000:00/01-04-2021%2000:00/hourly');
+  //console.log(test)
   const config = {
     headers: { Authorization: token },
   };
 
+  //const resp = await axios.get(test, config);
+  //console.log(resp.data.authenticatedData);
+
   const response = await axios.get(baseUrl, config);
-  return response.data.authenticatedData;
+  //console.log(response.data.authenticatedData.branches[0].devices[0].score_card.is_generator);
+  return response.data.authenticatedData;  
 };
 
 // eslint-disable-next-line
