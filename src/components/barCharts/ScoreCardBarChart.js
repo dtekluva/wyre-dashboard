@@ -6,39 +6,13 @@ import CompleteDataContext from '../../Context';
 import { getLastArrayItems } from '../../helpers/genericHelpers';
 import { numberFormatter } from '../../helpers/numberFormatter';
 
-const VerticalBar = ({ operatingTimeData, dataTitle, dataMessage }) => {
+const VerticalBar = ({ operatingTimeData }) => {
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
-
-  const messageArray = dataMessage.split('(b)');
 
   const options = {
     legend: {
       display: false,
     },
-
-    tooltips: {
-      enabled: true,
-      mode: 'index',
-      callbacks: {
-        title: function (tooltipItem, data) {
-          return data['labels'][tooltipItem[0]['index']];
-        }, 
-        label: function(tooltipItem, data){
-          return data['datasets'][0]['data'][tooltipItem['index']];
-        },
-        
-        footer: function () {
-          const titleAndMessageArray = [
-            dataTitle+ ': ',
-            ...messageArray,
-          ];
-          return titleAndMessageArray;
-        },
-      },
-      footerFontStyle: 'normal',
-      footerMarginTop: 12,
-    },
-    
     maintainAspectRatio: false,
     scales: {
       yAxes: [
@@ -102,11 +76,11 @@ const VerticalBar = ({ operatingTimeData, dataTitle, dataMessage }) => {
       };
 
   const chartValues = chart.values;
-      //console.log(chartValues);
+
   const timeWasted =
     estimated_time_wasted.value.toFixed(2) + ' ' + estimated_time_wasted.unit;
 
-    //console.log(timeWasted)
+    console.log(timeWasted)
 
   const dieselWasted =
     estimated_diesel_wasted.value + ' ' + estimated_diesel_wasted.unit;
@@ -127,7 +101,6 @@ const VerticalBar = ({ operatingTimeData, dataTitle, dataMessage }) => {
         borderWidth: 1,
       },
     ],
-    
   };
 
   return (

@@ -300,8 +300,3 @@ function SidebarDevice({
 }
 
 export default SidebarDevice;
-
-
-
-
-// end of script

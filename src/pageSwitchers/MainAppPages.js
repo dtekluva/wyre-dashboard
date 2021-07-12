@@ -83,7 +83,7 @@ function MainAppPages() {
                   path="/parameters/energy-consumption"
                   component={EnergyConsumption}
                 />
-                <Route path="/report" component={Report} />                
+                <Route path="/report" component={Report} />
                 <Route path="/score-card" component={ScoreCard} />
                 <Route path="/client-profile" component={ClientProfile} />
                 <Route path="/password" component={Password} />

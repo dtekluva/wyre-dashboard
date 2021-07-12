@@ -69,9 +69,3 @@ function ViewOrganisation({ match }) {
 }
 
 export default ViewOrganisation;
-
-
-
-
-
-// end of script

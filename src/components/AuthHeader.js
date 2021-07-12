@@ -61,9 +61,3 @@ function AuthHeader() {
 }
 
 export default AuthHeader;
-
-
-
-
-
-// end of script

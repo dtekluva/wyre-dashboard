@@ -1,7 +1,7 @@
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 
-const ScoreCardGenEfficiencyDoughnut = ({ data, dataTitle, dataSubtitle }) => {
+const ScoreCardGenEfficiencyDoughnut = ({ data }) => {
   const { size, usage, unit, name } = data
     ? data
     : { size: '', usage: '', unit: '', name: '' };
@@ -19,8 +19,6 @@ const ScoreCardGenEfficiencyDoughnut = ({ data, dataTitle, dataSubtitle }) => {
       },
     ],
   };
-
-  const dataSubtitleArray = dataSubtitle.split('(b)');
 
   const options = {
     cutoutPercentage: 60,
@@ -41,23 +39,7 @@ const ScoreCardGenEfficiencyDoughnut = ({ data, dataTitle, dataSubtitle }) => {
         label: function (tooltipItem, data) {
           return data['datasets'][0]['data'][tooltipItem['index']] + unit;
         },
-
-        footer: function () {
-          const dataTitleAndSubtitleArray = [
-            dataTitle + ': ',
-            ...dataSubtitleArray,
-          ];
-          return dataTitleAndSubtitleArray;
-        },
       },
-      //bodyAlign: "left",
-      bodyAlign: 'left',
-      footerAlign: 'left',
-      titleAlign: 'left',
-      xPadding: 30,
-      yPadding: 30,
-      footerFontStyle: 'normal',
-      footerMarginTop: 12,
     },
   };
 
