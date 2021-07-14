@@ -24,33 +24,15 @@ const breadCrumbRoutes = [
 ];
 
 
-
 function ScoreCard({ match }) {
   const {
     selectedDevices,
     deviceData,
     refinedRenderedData,
     setCurrentUrl,
-    organization,
     isAuthenticatedDataLoading,
   } = useContext(CompleteDataContext);
  
-  //check the is_gen feature of devices
-  const useData = selectedDevices.length > 0 ? selectedDevices : deviceData;
-  const getIsGenStatus = (useData) => {
-    if (selectedDevices.length>0){      
-      return(checkIsGenStatus(useData));
-    }else{
-      const orgDeviceType = Object.entries(useData);
-          const eachOrgType = orgDeviceType.map(eachDevice => eachDevice[1]);
-          const getEachOrgType = eachOrgType.map(device => device.is_gen);
-               
-          return(checkIsGenStatus(getEachOrgType));        
-    }
-  }
-   
-  const isGenStatus = getIsGenStatus(useData);
-
 
   useEffect(() => {
     if (match && match.url) {
@@ -68,19 +50,22 @@ function ScoreCard({ match }) {
     fuel_consumption,
   } = refinedRenderedData;
 
+  
   const ratio = calculateRatio(peak_to_avg_power_ratio.peak,peak_to_avg_power_ratio.avg);
     
   const getPeakResult = getPeakToAverageMessage(ratio);
   const arrowColor = getPeakResult.color;
 
   //calculate number of trees for carbon emission
-  const noOfTrees = score_card_carbon_emissions.actual_value * 6;
+  const noOfTrees = (score_card_carbon_emissions.actual_value * 6).toFixed(2);
   const message = "Equivalent to "+noOfTrees+" Acacia trees";
   const date = new Date();
 
-  const generatorSizeEffficiencyData =
+  let generatorSizeEffficiencyData =
     generator_size_efficiency && generator_size_efficiency.filter(Boolean);
-  //console.log(generatorSizeEffficiencyData);
+    generatorSizeEffficiencyData = generatorSizeEffficiencyData.filter(
+      eachDevice => eachDevice.is_gen === true
+    );
   const generatorSizeEffficiencyDoughnuts =
     generatorSizeEffficiencyData &&
     generatorSizeEffficiencyData.map((eachGenerator) => (
@@ -100,8 +85,14 @@ function ScoreCard({ match }) {
       />
     ));
 
-  const fuelConsumptionData =
+  let fuelConsumptionData =
     fuel_consumption && fuel_consumption.filter(Boolean);
+
+  fuelConsumptionData = fuelConsumptionData.filter(
+    eachDevice => eachDevice.is_gen === true
+  );
+
+  let deviceLength = fuelConsumptionData.length;
 
   const fuelConsumptionDoughnuts =
     fuelConsumptionData &&
@@ -130,7 +121,7 @@ function ScoreCard({ match }) {
       </div>
 
       <div className='score-card-row-1'>
-        <article className='score-card-row-1__item baseline-energy-container'>
+        <article className='score-card-row-1__item'>
           <h2 className='score-card-heading'>Baseline Energy</h2>
 
           <div className='score-card-doughnut-container'>
@@ -286,9 +277,8 @@ function ScoreCard({ match }) {
           </p>
         </article>
       </div>
-
-     
-      <div className={isGenStatus > 0 ? 'score-card-row-4' : 'hideCard'} style={{marginBottom:'50px'}}>
+      {/*{isGenStatus > 0 ? 'score-card-row-2' : 'hideCard'}*/}
+      <div className={deviceLength > 0 ? 'score-card-row-4' : 'hideCard'} style={{marginBottom:'50px'}}>
         <article className='score-card-row-4__left'>
           <h2 className='score-card-heading'>Generator Size Efficiency</h2>
           {generatorSizeEffficiencyDoughnuts}
@@ -306,13 +296,14 @@ function ScoreCard({ match }) {
         </article>
       </div>
 
-      <article className={isGenStatus > 0 ? 'score-card-row-2' : 'hideCard'}>
+      <article className={deviceLength > 0 ? 'score-card-row-2' : 'hideCard'}>
         <h2 className='changeover-lags-heading score-card-heading'>
           Change Over Lags
         </h2>
         <ScoreCardTable changeOverLagsData={change_over_lags} />
       </article>
 
+      
       <article className='score-card-row-3'>
         <ScoreCardBarChart operatingTimeData={operating_time} 
           dataTitle='Operating Time'

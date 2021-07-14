@@ -5,7 +5,7 @@ import { useMediaQuery } from 'react-responsive';
 
 import dataHttpServices from './services/devices';
 
-import { getRefinedOrganizationData, getOrganizationDeviceType} from './helpers/organizationDataHelpers';
+import { getRefinedOrganizationData, getOrganizationDeviceType, getRefinedOrganizationDataWithChekBox} from './helpers/organizationDataHelpers';
 import { getRenderedData } from './helpers/renderedDataHelpers';
 
 // create context
@@ -161,10 +161,8 @@ const CompleteDataProvider = (props) => {
       } else {
         const renderedDataArray = Object.values(renderedDataObjects);
         const getDeviceType = renderedDataArray.map(eachDevice => eachDevice.is_generator)
-        
         setRefinedRenderedData(getRenderedData(renderedDataArray));
         setSelectedDevices(getDeviceType);
-        //setDeviceData(getOrganizationDeviceType(renderedDataArray));
       }
     }
   }, [checkedItems, renderedDataObjects]);
