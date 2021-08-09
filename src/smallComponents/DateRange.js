@@ -13,8 +13,6 @@ const DateRange = () => {
       
   const defaultDateRange = dataHttpServices.endpointDateRange;
   const defaultStartDate = defaultDateRange.split(' ');
-  // const reversedDate = defaultStartDate[1].split('').reverse().join('');
-  // const defaultEndDate = reversedDate.toString().split('', 10).reverse().join('');
 
   const startDate = dayjs(defaultStartDate[0]).format('MMMM');
   let endArr = defaultStartDate[1].split("/");
@@ -54,14 +52,6 @@ const DateRange = () => {
               <span>{scoreCardDate}</span>
             </div>
                 
-
-          // <div style={rangeStyles}>
-          //   <span>(</span>
-          //   <span>{startDate}</span>
-          //   <span style={{ marginLeft: '10px', marginRight: '10px' }}> — </span>
-          //   <span>{endDate}</span>
-          //   <span>)</span>
-          // </div>
         ) : (
           <div style={rangeStyles}>
             <span>(</span>

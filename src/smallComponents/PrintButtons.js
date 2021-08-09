@@ -6,18 +6,28 @@ import PrintIcon from '../icons/PrintIcon';
 import CompleteDataContext from '../Context';
 import dataHttpServices from '../services/devices';
 import { notification, Tooltip } from 'antd';
+import dayjs from 'dayjs';
 
 import axios from 'axios';
 
 import { ScheduleEmailModal } from '../components/ScheduleEmailModal';
 
 function PrintButtons() {
-  const { token, userId, allDevices, checkedDevices,userDateRange, } = useContext(
+  const { token, userId, allDevices, checkedDevices,userDateRange,selectedDateRange, organization } = useContext(
     CompleteDataContext
   );
 
   let dateRange = userDateRange === null || userDateRange.length === 0 ? dataHttpServices.endpointDateRange
     : dataHttpServices.convertDateRangeToEndpointFormat(userDateRange);
+
+  const datepicked = dateRange.split(' ');
+  let defaultStartDate = datepicked[0]
+  let endArr = datepicked[1].split("/");
+  const endDateArray = endArr[1];  
+
+  const getBranchesName =  organization.branches && organization.branches.map((data)=>{
+      return data.name
+  })
 
   const openNotification = () => {
     notification.info({
@@ -57,7 +67,7 @@ function PrintButtons() {
         const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `Billing_for_${dateRange}.pdf`);
+        link.setAttribute('download', `${getBranchesName} Billing for ${defaultStartDate}-${endDateArray}.pdf`);
         document.body.appendChild(link);
         link.click();
         return res.data;
