@@ -17,7 +17,6 @@
     "dayjs": "^1.9.7",
     "html2canvas": "^1.0.0-rc.7",
     "html2pdf.js": "^0.9.2",
-    "jspdf": "^2.3.0",
     "jwt-decode": "^3.1.2",
     "node-sass": "^4.14.1",
     "react": "^17.0.1",

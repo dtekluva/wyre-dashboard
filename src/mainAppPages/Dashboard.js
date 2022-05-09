@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useRef, useState } from "react";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
-import { jsPDF } from "jspdf";
+// import { jsPDF } from "jspdf";
 import { connect, useSelector } from 'react-redux';
 import html2pdf from "html2pdf.js"
 import * as html2canvas from "html2canvas";
