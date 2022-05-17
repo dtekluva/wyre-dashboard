@@ -1,0 +1,14 @@
+{
+    "branchDevicesView": {
+        "listOfBranchDevicesViewData": {
+            "device_name": "Bolaji John",
+            "device_identity": "08000000000",
+            "source": "email@example.com",
+            "load": "Ikota",
+            "type": "Admin",
+            "active": "10",
+            "icon_type": "11/12/22022",
+            "action": "Edit"
+        }
+    }
+}

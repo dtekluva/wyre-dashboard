@@ -52,7 +52,9 @@
     "alerts-server": "json-server -p3005 --watch alertsAndAlarmsData.json",
     "time-of-Use-Data": "json-server -p3006 --watch timeOfUseSampleData.json",
     "report-server": "json-server -p3006 --watch reportData2.json",
-    "score-card-sample-data": "json-server -p3007 --watch scoreCards-sampleData.json"
+    "score-card-sample-data": "json-server -p3007 --watch scoreCards-sampleData.json",
+    "branch-users-view-sample-data": "json-server -p3008 --watch BranchUsersView-SampleData.json",
+    "branch-devices-view-sample-data": "json-server -p3009 --watch BranchDevicesView-SampleData.json"
   },
   "eslintConfig": {
     "extends": [

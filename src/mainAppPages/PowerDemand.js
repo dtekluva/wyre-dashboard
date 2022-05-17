@@ -160,9 +160,9 @@ function PowerDemand({ match }) {
         <article className='table-with-header-container'>
           <div className='table-header'>
             <div className='h-hidden-medium-down'>
-              <button type='button' className='table-header__left-button'>
+              {/* <button type='button' className='table-header__left-button'>
                 PDF
-              </button>
+              </button> */}
               <ExportToCsv filename={"power-demand.csv"} csvHeaders={csvHeaders} csvData={formattedTableDataWithIndex}>
                 <button type='button' className='table-header__left-button'>
                   CSV

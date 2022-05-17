@@ -26,13 +26,14 @@
     width: 122px;
   }
 }
+
 .header-logo-latest-image--auth {
   height: 40px;
   width: 100px;
 
   @include media('>=medium') {
     height: 100px;
-    width: 220px;
+    // width: 220px;
   }
 }
 

@@ -20,19 +20,19 @@ function LoadOverviewDataTable({ device, index }) {
         <div>
           <hr />
           <p>
-            Consumption: {device.energy_consumption.usage}Kw
+            Consumption: {device.energy_consumption.usage}kW
           </p>
           <hr />
           <p>
-            Maximum Demand: {device.dashboard.max_demand.value}Kw
+            Maximum Demand: {device.dashboard.max_demand.value}kW
           </p>
           <hr />
           <p>
-            Minimum Demand: {device.dashboard.min_demand.value}Kw
+            Minimum Demand: {device.dashboard.min_demand.value}kW
           </p>
           <hr />
           <p>
-            Average Demand: {device.dashboard.avg_demand.value}Kw
+            Average Demand: {device.dashboard.avg_demand.value}kW
           </p>
           <hr />
           <p>

@@ -41,9 +41,9 @@ function ViewBranches({ match }) {
       <article className='table-with-header-container h-no-mt'>
         <div className='table-header h-border-bottom'>
           <div className='h-hidden-medium-down'>
-            <button type='button' className='table-header__left-button'>
+            {/* <button type='button' className='table-header__left-button'>
               PDF
-            </button>
+            </button> */}
             <button type='button' className='table-header__left-button'>
               CSV
             </button>
@@ -58,6 +58,24 @@ function ViewBranches({ match }) {
             <ExcelIcon />
             <span>Download in Excel</span>
           </button>
+        </div>
+        <div className='branches-total_costs'>
+          <div className='branches-total_costs-card'>
+            <p className='branches-total_costs-title'>Total KWh</p>
+            <p className='branches-total_costs-text'>122,000</p>
+          </div>
+          <div className='branches-total_costs-card'>
+            <p className='branches-total_costs-title'>Total Cost</p>
+            <p className='branches-total_costs-text'>122,000</p>
+          </div>
+          <div className='branches-total_costs-card'>
+            <p className='branches-total_costs-title'>Baseline Average</p>
+            <p className='branches-total_costs-text'>22,000KwH</p>
+          </div>
+          <div className='branches-total_costs-card'>
+            <p className='branches-total_costs-title'>CO2</p>
+            <p className='branches-total_costs-text'>22,000KwH</p>
+          </div>
         </div>
 
         <div className='h-overflow-auto'>

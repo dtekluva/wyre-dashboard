@@ -265,17 +265,17 @@ const getMinDemandObject = (array) => {
   //Obtain min demand of all min demands
   const valuesArrayMin = Math.min.apply(null, valuesArray);
 
-  return { unit: 'kw', value: isFinite(valuesArrayMin) ? valuesArrayMin : 0 };
+  return { unit: 'kW', value: isFinite(valuesArrayMin) ? valuesArrayMin : 0 };
 };
 
 const getNestedMinDemandObject = (array, nestedObject) => {
   const valuesArray = array.filter(
-    (eachItem) => eachItem[nestedObject].min_demand.value> 0
+    (eachItem) => eachItem[nestedObject].min_demand.value > 0
   ).map((eachItem) => eachItem[nestedObject].min_demand.value);
   //Obtain min demand of all min demands
   const valuesArrayMin = Math.min.apply(null, valuesArray);
 
-  return { unit: 'kw', value: valuesArrayMin };
+  return { unit: 'kW', value: valuesArrayMin };
 };
 
 const getMaxDemandObject = (array) => {
@@ -284,7 +284,7 @@ const getMaxDemandObject = (array) => {
   //Obtain max demand of all max demands
   const valuesArrayMax = Math.max.apply(null, valuesArray);
 
-  return { unit: 'kw', value: valuesArrayMax };
+  return { unit: 'kW', value: valuesArrayMax };
 };
 
 const getNestedMaxDemandObject = (array, nestedObject) => {
@@ -295,7 +295,7 @@ const getNestedMaxDemandObject = (array, nestedObject) => {
   //Obtain max demand of all max demands
   const valuesArrayMax = Math.max.apply(null, valuesArray);
 
-  return { unit: 'kw', value: valuesArrayMax };
+  return { unit: 'kW', value: valuesArrayMax };
 };
 
 const getAvgDemandObject = (array) => {
@@ -305,7 +305,7 @@ const getAvgDemandObject = (array) => {
   const valuesArrayAvg =
     valuesArray.reduce((acc, curr) => acc + curr, 0) / valuesArray.length;
 
-  return { unit: 'kw', value: valuesArrayAvg };
+  return { unit: 'kW', value: valuesArrayAvg };
 };
 
 const getNestedAvgDemandObject = (array, nestedObject) => {
@@ -317,7 +317,7 @@ const getNestedAvgDemandObject = (array, nestedObject) => {
   const valuesArrayAvg =
     valuesArray.reduce((acc, curr) => acc + curr, 0) / valuesArray.length;
 
-  return { unit: 'kw', value: valuesArrayAvg };
+  return { unit: 'kW', value: valuesArrayAvg };
 };
 
 const allDeviceGenerators = (checkedItems, organization) => {
@@ -438,7 +438,7 @@ const sumPeakToAveragePowerRatios = (array) => {
   const avgOfAvgValues =
     avgValues.reduce((acc, curr) => acc + curr, 0) / avgValues.length;
 
-  return { unit: 'kw', peak: peakOfPeakValues, avg: avgOfAvgValues };
+  return { unit: 'kW', peak: peakOfPeakValues, avg: avgOfAvgValues };
 };
 
 const sumScoreCardCarbonEmissions = (array) => {

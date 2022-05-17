@@ -103,13 +103,13 @@ function PowerQualityPageSection({ pqData }) {
       <article className='power-quality-table-container'>
         <div className='table-header'>
           <div className='h-hidden-medium-down'>
-            <button type='button' className='table-header__left-button'>
+            {/* <button type='button' className='table-header__left-button'>
               PDF
-            </button>
+            </button> */}
             <ExportToCsv filename={`${pqData && pqData.deviceName} power-quality.csv`} csvHeaders={csvHeaders} csvData={formattedTableData}>
               <button type='button' className='table-header__left-button'>
                 CSV
-            </button>
+              </button>
             </ExportToCsv>
           </div>
 

@@ -8,7 +8,7 @@ import HeaderLink from '../smallComponents/HeaderLink';
 import HeaderIcon from '../smallComponents/HeaderIcon';
 import HeaderSublink from '../smallComponents/HeaderSublink';
 
-import Logo from '../icons/Logo';
+// import Logo from '../icons/Logo';
 import Hamburger from '../icons/Hamburger';
 import VerticalDots from '../icons/VerticalDots';
 import MessageIcon from '../icons/MessageIcon';
@@ -74,7 +74,7 @@ function Header() {
     dispatch(logoutUser());
     window.localStorage.removeItem('loggedWyreUser');
 
-    
+
     // Go home
     history.push('/');
 
@@ -103,8 +103,8 @@ function Header() {
               <Logo className='header-logo__image' />
             </Link> */}
             <Link className='header-logo--auth' to='/'>
-          <LatestLogo className='header-logo-latest-image--auth' />
-        </Link>
+              <LatestLogo className='header-logo-latest-image--auth' />
+            </Link>
           </div>
 
           <button

@@ -95,7 +95,7 @@ function TimeOfUse({ match }) {
     { label: "350KVA GEN", key: "350KVA GEN" },
     { label: "350KVA GEN_hours", key: "350KVA GEN_hours" },
     { label: "350KVA GEN_hou_cummlative", key: "350KVA GEN_hou_cummlative" },
-  ]               
+  ]
 
   if (isAuthenticatedDataLoading) {
     return <Loader />;
@@ -115,26 +115,26 @@ function TimeOfUse({ match }) {
         />
       </article> */}
 
-      {organization.branches && organization.branches.map((eachBranch)=>(
-          <>
-          <TimeOfUseCard data={eachBranch}/>
+      {organization.branches && organization.branches.map((eachBranch) => (
+        <>
+          <TimeOfUseCard data={eachBranch} />
           <article className='table-with-header-container'>
             <div className='table-header'>
               <div className='h-hidden-medium-down'>
-                <button type='button' className='table-header__left-button'>
+                {/* <button type='button' className='table-header__left-button'>
                   PDF
-                </button>
+                </button> */}
                 <ExportToCsv filename={`${eachBranch.name} time-of-use.csv`} csvHeaders={csvHeaders} csvData={eachBranch.time_of_use_table.values}>
                   <button type='button' className='table-header__left-button'>
                     CSV
-                </button>
+                  </button>
                 </ExportToCsv>
               </div>
-    
+
               <h3 className='table-header__heading'>
                 Raw Logs for {eachBranch.name}
               </h3>
-    
+
               <button
                 type='button'
                 className='table-header__right-button h-hidden-medium-down'
@@ -143,14 +143,14 @@ function TimeOfUse({ match }) {
                 <span>Download in Excel</span>
               </button>
             </div>
-    
+
             <div className='time-of-use-table-wrapper'>
-              <TimeOfUseTable timeOfUseData={eachBranch}/>
+              <TimeOfUseTable timeOfUseData={eachBranch} />
             </div>
           </article>
-          </>    
+        </>
       ))
-        }
+      }
     </>
   );
 }

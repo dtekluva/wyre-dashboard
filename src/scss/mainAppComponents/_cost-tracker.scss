@@ -1,7 +1,7 @@
 .cost-tracker-section {
   margin-bottom: 30px;
   border-radius: $medium-border;
-  
+
   &:last-of-type {
     margin-bottom: 0;
   }
@@ -12,6 +12,7 @@
   margin-bottom: 30px;
 
   border-radius: $medium-border;
+
   &:last-of-type {
     margin-bottom: 0;
   }
@@ -87,6 +88,7 @@
 
 .cost-tracker-input-container {
   margin-top: 30px;
+  padding: 0 8px;
 
   @include media('>=1086px') {
     margin-right: 20px;
@@ -96,6 +98,11 @@
       margin-right: 0;
     }
   }
+}
+
+.ant-checkbox-inner {
+  width: 32px;
+  height: 32px;
 }
 
 .cost-tracker-input,
@@ -114,20 +121,22 @@
   border-radius: 4px !important;
 }
 
-.utitily-overview-table{
-  .ant-pagination{
+.utitily-overview-table {
+  .ant-pagination {
     margin-right: 20px;
   }
 }
 
 .flow-meter-upload-file {
   .ant-btn-icon-only {
-      margin-top: 0px !important
+    margin-top: 0px !important
   }
+
   .ant-upload.ant-upload-select {
-      width: 100%;
+    width: 100%;
   }
-  .ant-upload-list-text{
-      max-width: 350px;
+
+  .ant-upload-list-text {
+    max-width: 350px;
   }
 }

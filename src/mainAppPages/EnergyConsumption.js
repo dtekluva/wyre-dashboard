@@ -117,7 +117,7 @@ function EnergyConsumption({ match }) {
           key: `${eachName}`,
         };
       });
-      csvHeaders = energyConsumptionColumns
+    csvHeaders = energyConsumptionColumns
   }
 
 
@@ -141,74 +141,74 @@ function EnergyConsumption({ match }) {
       <div className='breadcrumb-and-print-buttons'>
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
-      {energy_consumption_usage && energy_consumption_values && 
-      <>
-      <article className='parameters-stacked-bar-container'>
-        <EnergyConsumptionBarChart
-          chartConsumptionValues={chartConsumptionValues}
-          chartDeviceNames={allDeviceNames}
-          chartDates={chartDates}
-          energyConsumptionUnit={energyConsumptionUnit}
-        />
-      </article>
+      {energy_consumption_usage && energy_consumption_values &&
+        <>
+          <article className='parameters-stacked-bar-container'>
+            <EnergyConsumptionBarChart
+              chartConsumptionValues={chartConsumptionValues}
+              chartDeviceNames={allDeviceNames}
+              chartDates={chartDates}
+              energyConsumptionUnit={energyConsumptionUnit}
+            />
+          </article>
 
-      <div className='energy-consumption-middle-cards-container'>
-        <p className='energy-consumption-middle-card'>
-          <span className='energy-consumption-middle-card-heading'>
-            Previous
-          </span>
-          <span className='energy-consumption-middle-card-body'>
-            {numberFormatter(energy_consumption_previous)}kWh
-          </span>
-        </p>
-        <p className='energy-consumption-middle-card'>
-          <span className='energy-consumption-middle-card-heading'>
-            Current
-          </span>
-          <span className='energy-consumption-middle-card-body'>
-            {numberFormatter(energy_consumption_current)}kWh
-          </span>
-        </p>
-        <p className='energy-consumption-middle-card'>
-          <span className='energy-consumption-middle-card-heading'>Usage</span>
-          <span className='energy-consumption-middle-card-body'>
-            {numberFormatter(energy_consumption_usage)}kWh
-          </span>
-        </p>
-      </div>
-
-      <article className='table-with-header-container'>
-        <div className='table-header'>
-          <div className='h-hidden-medium-down'>
-            <button type='button' className='table-header__left-button'>
-              PDF
-            </button>
-            <ExportToCsv filename={"energy-consumption-logs.csv"} csvData={formattedTableData} csvHeaders={csvHeaders}>
-              <button type='button' className='table-header__left-button'>
-                CSV
-              </button>
-            </ExportToCsv>
+          <div className='energy-consumption-middle-cards-container'>
+            <p className='energy-consumption-middle-card'>
+              <span className='energy-consumption-middle-card-heading'>
+                Previous
+              </span>
+              <span className='energy-consumption-middle-card-body'>
+                {numberFormatter(energy_consumption_previous)}kWh
+              </span>
+            </p>
+            <p className='energy-consumption-middle-card'>
+              <span className='energy-consumption-middle-card-heading'>
+                Current
+              </span>
+              <span className='energy-consumption-middle-card-body'>
+                {numberFormatter(energy_consumption_current)}kWh
+              </span>
+            </p>
+            <p className='energy-consumption-middle-card'>
+              <span className='energy-consumption-middle-card-heading'>Usage</span>
+              <span className='energy-consumption-middle-card-body'>
+                {numberFormatter(energy_consumption_usage)}kWh
+              </span>
+            </p>
           </div>
 
-          <h3 className='table-header__heading'>Raw Logs</h3>
+          <article className='table-with-header-container'>
+            <div className='table-header'>
+              <div className='h-hidden-medium-down'>
+                {/* <button type='button' className='table-header__left-button'>
+              PDF
+            </button> */}
+                <ExportToCsv filename={"energy-consumption-logs.csv"} csvData={formattedTableData} csvHeaders={csvHeaders}>
+                  <button type='button' className='table-header__left-button'>
+                    CSV
+                  </button>
+                </ExportToCsv>
+              </div>
 
-          <button
-            type='button'
-            className='table-header__right-button h-hidden-medium-down'
-          >
-            <ExcelIcon />
-            <span>Download in Excel</span>
-          </button>
-        </div>
+              <h3 className='table-header__heading'>Raw Logs</h3>
 
-        <div className='energy-consumption-table-wrapper'>
-          <EnergyConsumptionTable
-            energyConsumptionUnit={energyConsumptionUnit}
-            energyConsumptionData={formattedTableData}
-          />
-        </div>
-      </article>
-      </>}
+              <button
+                type='button'
+                className='table-header__right-button h-hidden-medium-down'
+              >
+                <ExcelIcon />
+                <span>Download in Excel</span>
+              </button>
+            </div>
+
+            <div className='energy-consumption-table-wrapper'>
+              <EnergyConsumptionTable
+                energyConsumptionUnit={energyConsumptionUnit}
+                energyConsumptionData={formattedTableData}
+              />
+            </div>
+          </article>
+        </>}
     </>
   );
 }

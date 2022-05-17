@@ -39,9 +39,9 @@ function LastReadingPageSections({ lrData }) {
         <div className="last-reading-table-header-and-date">
           <div className="table-header">
             <div className="h-hidden-medium-down">
-              <button type="button" className="table-header__left-button">
+              {/* <button type="button" className="table-header__left-button">
                 PDF
-              </button>
+              </button> */}
               <ExportToCsv
                 filename={`${lrData && lrData.deviceName} last-reading.csv`}
                 csvHeaders={csvHeaders}

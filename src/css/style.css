@@ -1490,10 +1490,23 @@ thead.ant-table-thead tr th {
   align-items: center;
 }
 
+/* .search_input-wrapper {} */
+
+.search___input {
+  height: 40px;
+  font-family: 'Montserrat';
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  color: #C4C4C4;
+  border: 1px solid #C4C4C4;
+  border-radius: 8px;
+}
+
 @media (min-width: 768px) {
   .top-bar__left {
     display: flex;
-    justify-content: center;
+    justify-content: start;
     min-height: 44px;
     min-width: 291px;
     overflow: auto;
@@ -2786,6 +2799,89 @@ thead.ant-table-thead tr th {
 /*--------------------------------------------------------------
 # Branches
 --------------------------------------------------------------*/
+/* branches stylings */
+.branches-total_costs {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 16px;
+}
+
+.branches-total_costs-card {
+  padding: 1.5rem 2rem;
+  background: #FFFFFF;
+  border-radius: 5px;
+  filter: drop-shadow(0px 0px 6px rgba(0, 0, 0, 0.15));
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.branches-total_costs-title {
+  font-family: 'Montserrat';
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 22px;
+  color: #000000;
+  margin-bottom: 1rem;
+}
+
+.branches-total_costs-text {
+  font-family: 'Montserrat';
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: #000000;
+  margin-bottom: 0;
+}
+
+/* view branch  */
+.view_branch_top {
+  padding: 20px 20px 2rem;
+}
+
+.view_branch-text {
+  font-family: 'Montserrat';
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  color: #000000;
+  margin-bottom: 2rem;
+}
+
+.view_branch-text span {
+  font-weight: 600;
+}
+
+.add_user_form_btn_align {
+  display: flex;
+  justify-content: end;
+  padding-right: 8px;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 767px) {
+  .branches-total_costs-card {
+    padding: 1.5rem;
+  }
+
+  .branches-total_costs-title {
+    font-size: 14px;
+    line-height: 15px;
+  }
+
+  .branches-total_costs-text {
+    font-size: 13px;
+    line-height: 15px;
+  }
+
+  .view_branch_top div {
+    padding-right: 0;
+  }
+
+  .view_branch-text {
+    font-size: 15px;
+  }
+}
+
 /*--------------------------------------------------------------
 # Alerts and Alarms
 --------------------------------------------------------------*/

@@ -41,9 +41,9 @@ function ViewOrganisation({ match }) {
       <article className='table-with-header-container h-no-mt'>
         <div className='table-header h-border-bottom'>
           <div className='h-hidden-medium-down'>
-            <button type='button' className='table-header__left-button'>
+            {/* <button type='button' className='table-header__left-button'>
               PDF
-            </button>
+            </button> */}
             <button type='button' className='table-header__left-button'>
               CSV
             </button>

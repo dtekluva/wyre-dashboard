@@ -1,0 +1,14 @@
+{
+    "branchUsersView": {
+        "listOfBranchUsersViewData": {
+            "name": "Bolaji John",
+            "phone_number": "08000000000",
+            "email_address": "email@example.com",
+            "branch": "Ikota",
+            "role": "Admin",
+            "permission": "10",
+            "date_added": "11/12/22022",
+            "action": "Edit"
+        }
+    }
+}

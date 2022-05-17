@@ -27,7 +27,7 @@
 
   @include media('>=medium') {
     display: flex;
-    justify-content: center;
+    justify-content: start;
     min-height: 44px;
     min-width: 291px;
     overflow: auto;
@@ -48,6 +48,7 @@
 .plotted-unit-selector,
 .time-interval-selector {
   width: 100%;
+
   @include media('>=medium') {
     max-width: 230px;
   }
