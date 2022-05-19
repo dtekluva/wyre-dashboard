@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Select, Checkbox, Row, Col } from 'antd';
+import { Form, Select, Checkbox, Input } from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 import { CaretDownFilled } from '@ant-design/icons';
 
@@ -88,144 +88,135 @@ function AddDeviceForm() {
 
         <section className='cost-tracker-form-section'>
             <Form
+                name="basic"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                initialValues={{ remember: true }}
+                autoComplete="off"
                 className='cost-tracker-form'
-                action='#'
                 onSubmit={handleSubmit(onSubmit)}
             >
-                <div className='' >
-                    <Row>
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='deviceName'
-                                >
-                                    Device Name
-                                </label>
-                                <input
-                                    className='generic-input'
-                                    type='text'
-                                    name='deviceName'
-                                    id='deviceName'
-                                    ref={register}
-                                    required
-                                    autoFocus
-                                />
-                            </div>
-                        </Col>
-
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='deviceIdentity'
-                                >
-                                    Device Identity
-                                </label>
-                                <input
-                                    className='generic-input'
-                                    type='text'
-                                    name='deviceIdentity'
-                                    id='deviceIdentity'
-                                    ref={register}
-                                    required
-                                    autoFocus
-                                />
-                            </div>
-                        </Col>
-
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='active-state'
-                                >
-                                    Device Type
-                                </label>
-
-                                <Controller
-                                    as={deviceTypeSelector}
-                                    name='deviceType'
-                                    control={control}
-                                    defaultValue=''
-                                    rules={{
-                                        required: true,
-                                    }}
-                                    help={errors.deviceType && 'Please select a value'}
-                                />
-                                <p className='input-error-message'>
-                                    {errors.deviceType && 'Please select a value'}
-                                </p>
-                            </div>
-                        </Col>
-
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='active-state'
-                                >
-                                    Active
-                                </label>
-
-                                <Controller
-                                    as={activeStateSelector}
-                                    name='activeState'
-                                    control={control}
-                                    defaultValue=''
-                                    rules={{
-                                        required: true,
-                                    }}
-                                    help={errors.activeState && 'Please select a value'}
-                                />
-                                <p className='input-error-message'>
-                                    {errors.activeState && 'Please select a value'}
-                                </p>
-                            </div>
-                        </Col>
-
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='active-state'
-                                >
-                                    Icon Type
-                                </label>
-
-                                <Controller
-                                    as={iconTypeSelector}
-                                    name='iconType'
-                                    control={control}
-                                    defaultValue=''
-                                    rules={{
-                                        required: true,
-                                    }}
-                                    help={errors.iconType && 'Please select a value'}
-                                />
-                                <p className='input-error-message'>
-                                    {errors.iconType && 'Please select a value'}
-                                </p>
-                            </div>
-                        </Col>
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container h-100' style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%' }}>
-                                <Checkbox onChange={onChange} name='load'
-                                    id='load'
-                                    ref={register}
-                                    required>Load</Checkbox>
-                                <Checkbox onChange={onChange} name='source'
-                                    id='source'
-                                    ref={register}
-                                    required>Source</Checkbox>
-                            </div>
-                        </Col>
-                    </Row>
-                    <div className='add_user_form_btn_align'>
-                        <button className='generic-submit-button cost-tracker-form-submit-button'>
-                            Add
-                        </button>
+                <div className='add-cclient-form-inputs-wrapper'>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Device Name"
+                            name="deviceName"
+                            rules={[{ required: true, message: 'Please input your device name!' }]}
+                        >
+                            <Input size="large" />
+                        </Form.Item>
                     </div>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Device Identity"
+                            name="deviceIdentity"
+                            rules={[{ required: true, message: 'Please input your device identity!' }]}
+                        >
+                            <Input size="large" />
+                        </Form.Item>
+                    </div>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Device Type"
+                            name="deviceType"
+                            rules={[{ required: true, message: 'Please input your device type!' }]}
+                        >
+                            <Controller
+                                as={deviceTypeSelector}
+                                name='deviceType'
+                                control={control}
+                                defaultValue=''
+                                rules={{
+                                    required: true,
+                                }}
+                                help={errors.deviceType && 'Please select a value'}
+                            />
+                        </Form.Item>
+                    </div>
+                </div>
+
+                <div className='add-cclient-form-inputs-wrapper'>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Active"
+                            name="activeState"
+                            rules={[{ required: true, message: 'Please select a value!' }]}
+                        >
+                            <Controller
+                                as={activeStateSelector}
+                                name='activeState'
+                                control={control}
+                                defaultValue=''
+                                rules={{
+                                    required: true,
+                                }}
+                                help={errors.activeState && 'Please select a value'}
+                            />
+                            {/* <p className='input-error-message'>
+                                {errors.activeState && 'Please select a value'}
+                            </p> */}
+                        </Form.Item>
+                    </div>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Icon Type"
+                            name="iconType"
+                            rules={[{ required: true, message: 'Please select a value!' }]}
+                        >
+                            <Controller
+                                as={iconTypeSelector}
+                                name='iconType'
+                                control={control}
+                                defaultValue=''
+                                rules={{
+                                    required: true,
+                                }}
+                                help={errors.iconType && 'Please select a value'}
+                            />
+                            {/* <p className='input-error-message'>
+                                {errors.iconType && 'Please select a value'}
+                            </p> */}
+                        </Form.Item>
+                    </div>
+                    <div className='add-client-input-container' style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%', marginTop: '42px' }}>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            name="load"
+                            rules={[{ required: true, message: 'Please select a value!' }]}
+                        >
+                            <Checkbox onChange={onChange} name='load'
+                                id='load'
+                                ref={register}
+                                required>Load</Checkbox>
+                        </Form.Item>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            name="source"
+                            rules={[{ required: true, message: 'Please select a value!' }]}
+                        >
+                            <Checkbox onChange={onChange} name='source'
+                                id='source'
+                                ref={register}
+                                required>Source</Checkbox>
+                        </Form.Item>
+                    </div>
+                </div>
+                <div className='add_user_form_btn_align'>
+                    <button className='generic-submit-button cost-tracker-form-submit-button'>
+                        Add
+                    </button>
                 </div>
             </Form>
         </section>

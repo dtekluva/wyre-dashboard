@@ -2855,7 +2855,7 @@ thead.ant-table-thead tr th {
 .add_user_form_btn_align {
   display: flex;
   justify-content: end;
-  padding-right: 8px;
+  padding-right: 20px;
 }
 
 @media only screen and (min-width: 280px) and (max-width: 767px) {

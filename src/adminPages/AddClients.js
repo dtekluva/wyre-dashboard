@@ -12,9 +12,9 @@ import BreadCrumb from '../components/BreadCrumb';
 
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },
-  { url: '/view-devices', name: 'Manage', id: 2 },
-  { url: '/view-devices', name: 'View Devices', id: 3 },
-  { url: '#', name: 'Add Device', id: 4 },
+  { url: '/view-clients', name: 'Manage', id: 2 },
+  { url: '/view-clients', name: 'View Clients', id: 3 },
+  { url: '#', name: 'Add Clients', id: 4 },
 ];
 
 const { Option } = Select;
@@ -67,7 +67,7 @@ const AddClients = ({ match }) => {
       </div>
 
       <div className='cost-tracker-forms-content-wrapper'>
-        <h1 className='center-main-heading'>Devices</h1>
+        <h1 className='center-main-heading'>Clients</h1>
 
         <section className='cost-tracker-form-section'>
           {/* <form

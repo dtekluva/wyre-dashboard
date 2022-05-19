@@ -15,7 +15,7 @@ const breadCrumbRoutes = [
     { url: '#', name: 'View Organisation', id: 3 },
 ];
 
-function Branch01({ match }) {
+function ViewBranch({ match }) {
     const { setCurrentUrl } = useContext(CompleteDataContext);
     const [adminBranchUsersViewData, setAdminBranchUsersViewData] = useState([]);
     const [adminBranchDevicesViewData, setAdminBranchDevicesViewData] = useState([]);
@@ -97,4 +97,4 @@ function Branch01({ match }) {
     );
 }
 
-export default Branch01
+export default ViewBranch

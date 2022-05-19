@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Select, Row, Col, DatePicker } from 'antd';
+import { Form, Select, Input, DatePicker } from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 import { CaretDownFilled } from '@ant-design/icons';
 function AddUserForm() {
@@ -85,178 +85,153 @@ function AddUserForm() {
 
         <section className='cost-tracker-form-section'>
             <Form
+                name="basic"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                initialValues={{ remember: true }}
+                autoComplete="off"
                 className='cost-tracker-form'
-                action='#'
                 onSubmit={handleSubmit(onSubmit)}
             >
-                <div className='' >
-                    <Row>
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='userName'
-                                >
-                                    Name
-                                </label>
-                                <input
-                                    className='generic-input'
-                                    type='text'
-                                    name='userName'
-                                    id='userName'
-                                    ref={register}
-                                    required
-                                    autoFocus
-                                />
-                            </div>
-                        </Col>
-
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='phoneNumber'
-                                >
-                                    Phone Number
-                                </label>
-                                <input
-                                    className='generic-input'
-                                    type='text'
-                                    name='phoneNumber'
-                                    id='phoneNumber'
-                                    ref={register}
-                                    required
-                                    autoFocus
-                                />
-                            </div>
-                        </Col>
-
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='emailAddress'
-                                >
-                                    Email Address
-                                </label>
-                                <input
-                                    className='generic-input'
-                                    type='email'
-                                    name='emailAddress'
-                                    id='emailAddress'
-                                    ref={register}
-                                    required
-                                    autoFocus
-                                />
-                            </div>
-                        </Col>
-
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='branch-state'
-                                >
-                                    Branch
-                                </label>
-
-                                <Controller
-                                    as={branchSelector}
-                                    name='branch'
-                                    control={control}
-                                    defaultValue=''
-                                    rules={{
-                                        required: true,
-                                    }}
-                                    help={errors.branch && 'Please select a value'}
-                                />
-                                <p className='input-error-message'>
-                                    {errors.branch && 'Please select a value'}
-                                </p>
-                            </div>
-                        </Col>
-
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='role-state'
-                                >
-                                    Roles
-                                </label>
-
-                                <Controller
-                                    as={roleSelector}
-                                    name='role'
-                                    control={control}
-                                    defaultValue=''
-                                    rules={{
-                                        required: true,
-                                    }}
-                                    help={errors.role && 'Please select a value'}
-                                />
-                                <p className='input-error-message'>
-                                    {errors.role && 'Please select a value'}
-                                </p>
-                            </div>
-                        </Col>
-
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='permission-state'
-                                >
-                                    Permissions
-                                </label>
-
-                                <Controller
-                                    as={permissionSelector}
-                                    name='permission'
-                                    control={control}
-                                    defaultValue=''
-                                    rules={{
-                                        required: true,
-                                    }}
-                                    help={errors.permission && 'Please select a value'}
-                                />
-                                <p className='input-error-message'>
-                                    {errors.permission && 'Please select a value'}
-                                </p>
-                            </div>
-                        </Col>
-                        <Col md={8}>
-                            <div className='cost-tracker-input-container'>
-                                <label
-                                    className='generic-input-label cost-tracker-input-label'
-                                    htmlFor='equipment-purchase-date'
-                                >
-                                    Date
-                                </label>
-                                <Controller
-                                    as={dateAddedPicker}
-                                    name='dateAdded'
-                                    control={control}
-                                    defaultValue=''
-                                    rules={{
-                                        required: true,
-                                    }}
-                                    validateStatus={
-                                        errors.dateAdded && 'Please enter a date' ? 'error' : ''
-                                    }
-                                    help={errors.dateAdded && 'Please enter a date'}
-                                />
-                                <p className='input-error-message'>
-                                    {errors.dateAdded && 'Please enter a date'}
-                                </p>
-                            </div>
-                        </Col>
-                    </Row>
-                    <div className='add_user_form_btn_align'>
-                        <button className='generic-submit-button cost-tracker-form-submit-button'>
-                            Add
-                        </button>
+                <div className='add-cclient-form-inputs-wrapper'>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Name"
+                            name="userName"
+                            rules={[{ required: true, message: 'Please input your name!' }]}
+                        >
+                            <Input size="large" />
+                        </Form.Item>
                     </div>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Phone Number"
+                            name="phoneNumber"
+                            rules={[{ required: true, message: 'Please input your phone number!' }]}
+                        >
+                            <Input size="large" />
+                        </Form.Item>
+                    </div>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Email Address"
+                            name="emailAddress"
+                            rules={[{ required: true, message: 'Please input your email address!' }]}
+                        >
+                            <Input size="large" />
+                        </Form.Item>
+                    </div>
+                </div>
+
+                <div className='add-cclient-form-inputs-wrapper'>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Branch"
+                            name="branch"
+                            rules={[{ required: true, message: 'Please select a value!' }]}
+                        >
+                            <Controller
+                                as={branchSelector}
+                                name='branch'
+                                control={control}
+                                defaultValue=''
+                                rules={{
+                                    required: true,
+                                }}
+                                help={errors.branch && 'Please select a value'}
+                            />
+                            {/* <p className='input-error-message'>
+                            {errors.branch && 'Please select a value'}
+                        </p> */}
+                        </Form.Item>
+                    </div>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Roles"
+                            name="role"
+                            rules={[{ required: true, message: 'Please select a value!' }]}
+                        >
+                            <Controller
+                                as={roleSelector}
+                                name='role'
+                                control={control}
+                                defaultValue=''
+                                rules={{
+                                    required: true,
+                                }}
+                                help={errors.role && 'Please select a value'}
+                            />
+                            {/* <p className='input-error-message'>
+                            {errors.role && 'Please select a value'}
+                        </p> */}
+                        </Form.Item>
+                    </div>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Permission"
+                            name="permission"
+                            rules={[{ required: true, message: 'Please select a value!' }]}
+                        >
+                            <Controller
+                                as={permissionSelector}
+                                name='permission'
+                                control={control}
+                                defaultValue=''
+                                rules={{
+                                    required: true,
+                                }}
+                                help={errors.permission && 'Please select a value'}
+                            />
+                            {/* <p className='input-error-message'>
+                            {errors.permission && 'Please select a value'}
+                        </p> */}
+                        </Form.Item>
+                    </div>
+                </div>
+                <div className='add-cclient-form-inputs-wrapper'>
+                    <div className='add-client-input-container'>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            wrapperCol={{ span: 24 }}
+                            label="Date"
+                            name="dateAdded"
+                            rules={[{ required: true, message: 'Please enter a date!' }]}
+                        >
+                            <Controller
+                                as={dateAddedPicker}
+                                name='dateAdded'
+                                control={control}
+                                defaultValue=''
+                                rules={{
+                                    required: true,
+                                }}
+                                validateStatus={
+                                    errors.dateAdded && 'Please enter a date' ? 'error' : ''
+                                }
+                                help={errors.dateAdded && 'Please enter a date'}
+                            />
+                            {/* <p className='input-error-message'>
+                            {errors.dateAdded && 'Please enter a date'}
+                        </p> */}
+                        </Form.Item>
+                    </div>
+                </div>
+                <div className='add_user_form_btn_align'>
+                    <button className='generic-submit-button cost-tracker-form-submit-button'>
+                        Add
+                    </button>
                 </div>
             </Form>
         </section>

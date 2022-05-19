@@ -14,7 +14,7 @@ import ScrollToTop from '../helpers/ScrollToTop';
 import AdminHeader from '../components/AdminHeader';
 import TopBar from '../components/AdminTopBar';
 import AddClients from '../adminPages/AddClients';
-import Branch01 from '../adminPages/branches/Branch01';
+import ViewBranch from '../adminPages/branches/ViewBranch';
 
 function AdminPages() {
   return (
@@ -34,7 +34,7 @@ function AdminPages() {
               <Route path='/view-devices' component={ViewDevices} />
               <Route path='/view-client' component={ViewOrganisation} />
               <Route path='/messages' component={Messages} />
-              <Route path='/branch01' component={Branch01} />
+              <Route path='/view-branch' component={ViewBranch} />
 
               <Route component={Error} />
             </Switch>

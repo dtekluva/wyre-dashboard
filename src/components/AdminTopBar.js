@@ -21,7 +21,7 @@ function TopBar() {
   const isTopBarAdminDeviceRightDisplayed = currentUrl.includes('view-devices');
   const isTopBarAdminDeviceRightDisplayed2 = currentUrl.includes('view-branches');
   const isTopBarAdminDeviceLeftDisplayed = currentUrl.includes('view-branches');
-  const isTopBarAdminDeviceRightDisplayed3 = currentUrl.includes('branch01');
+  const isTopBarAdminDeviceRightDisplayed3 = currentUrl.includes('view-branch');
 
 
   const isTopBarDisplayed = !currentUrl.includes('hide-top-bar');
@@ -45,7 +45,7 @@ function TopBar() {
               : 'top-bar__right h-hide'
           }
         >
-          <Link className='top-bar-right__button h-extra-padding' to='/add-devices' >
+          <Link className='top-bar-right__button h-extra-padding' to='/add-clients' >
             Add Client
           </Link>
 
