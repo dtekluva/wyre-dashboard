@@ -15,6 +15,7 @@ import AdminHeader from '../components/AdminHeader';
 import TopBar from '../components/AdminTopBar';
 import AddClients from '../adminPages/AddClients';
 import ViewBranch from '../adminPages/branches/ViewBranch';
+import Reports from '../adminPages/Reports';
 
 function AdminPages() {
   return (
@@ -35,6 +36,7 @@ function AdminPages() {
               <Route path='/view-client' component={ViewOrganisation} />
               <Route path='/messages' component={Messages} />
               <Route path='/view-branch' component={ViewBranch} />
+              <Route path='/reports' component={Reports} />
 
               <Route component={Error} />
             </Switch>

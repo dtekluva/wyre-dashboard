@@ -156,6 +156,11 @@ function Header() {
                   url='/view-devices'
                   linkText='View Devices'
                 />
+                <HeaderSublink
+                  onClick={toggleNavAndDropdown}
+                  url='/reports'
+                  linkText='Report'
+                />
               </ul>
             </HeaderLinkWithDropdown>
 

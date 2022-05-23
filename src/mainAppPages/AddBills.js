@@ -100,6 +100,11 @@ function AddBills({ match }) {
       name: 'balance',
       placeholder: 'Enter meter reading'
     },
+    balance2: {
+      label: 'Return Flow meter reading',
+      name: 'balance',
+      placeholder: 'Enter meter reading'
+    },
   }
 
   useEffect(() => {
@@ -156,14 +161,16 @@ function AddBills({ match }) {
       })
   };
 
-  const onUsedTrackerSubmit = ({ date, balance, flowMeterUpload }) => {
+  const onUsedTrackerSubmit = ({ date, balance, balance2, flowMeterUpload, flowMeterUpload2 }) => {
     if (defaultBranch != null) {
       setEOMFlowReadingLoading(true);
       let formData = new FormData()
       formData.append('branch', defaultBranch)
       formData.append('quantity', balance)
+      formData.append('quantity', balance2)
       formData.append('date', date.format('YYYY-MM-DD'))
       formData.append('image', flowMeterUpload[0])
+      formData.append('image', flowMeterUpload2[1])
 
       axios.post(`${EnvData.REACT_APP_API_URL}add_month_end_cost/${userId}/`, formData, {
         headers: {
@@ -276,9 +283,9 @@ function AddBills({ match }) {
 
       <div className="cost-tracker-forms-content-wrapper">
 
-          <h1 className="center-main-heading">Add Bills</h1>
+        <h1 className="center-main-heading">Add Bills</h1>
 
-          <section className="cost-tracker-form-section add-bills-section">
+        <section className="cost-tracker-form-section add-bills-section">
           <Spin spinning={purchaseLoading}>
             <h2 className="form-section-heading add-bills-section__heading">
               Diesel Purchase Tracker
@@ -318,10 +325,10 @@ function AddBills({ match }) {
               </div>
               <SubmitButton />
             </Form>
-            </Spin>
-          </section>
+          </Spin>
+        </section>
 
-          <section className="cost-tracker-form-section">
+        <section className="cost-tracker-form-section">
           <Spin spinning={prePaidLoading}>
             <h2 className="form-section-heading">
               Utility Payment Tracker (Pre-paid)
@@ -373,10 +380,10 @@ function AddBills({ match }) {
 
               <SubmitButton />
             </Form>
-            </Spin>
-          </section>
+          </Spin>
+        </section>
 
-          <section className="cost-tracker-form-section">
+        <section className="cost-tracker-form-section">
           <Spin spinning={postPaidLoading}>
             <h2 className="form-section-heading">
               Utility Payment Tracker (Post-paid)
@@ -435,10 +442,10 @@ function AddBills({ match }) {
                 Submit
               </button>
             </Form>
-            </Spin>
-          </section>
+          </Spin>
+        </section>
 
-          <section className="cost-tracker-form-section add-bills-section">
+        <section className="cost-tracker-form-section add-bills-section">
           <Spin spinning={EOMFlowReadingLoading}>
             <h2 className="form-section-heading add-bills-section__heading">
               End of Month Diesel flow meter reading
@@ -457,6 +464,9 @@ function AddBills({ match }) {
                 </div>
                 <div className="cost-tracker-input-container">
                   <InputField data={data.balance} />
+                </div>
+                <div className="cost-tracker-input-container">
+                  <InputField data={data.balance2} />
                 </div>
 
                 <div className="cost-tracker-input-container" >
@@ -488,13 +498,21 @@ function AddBills({ match }) {
                     inputSize='large'
                   />
                 </div>
+                <div className="cost-tracker-input-container" >
+                  <FlowMeterUpload
+                    label="Return Flow Meter Snapshot"
+                    badFileHeader={badFileHeader}
+                    setBadFileHeader={setBadFileHeader}
+                    inputSize='large'
+                  />
+                </div>
               </div>
               <button className="generic-submit-button cost-tracker-form-submit-button">
                 Submit
               </button>
             </Form>
-            </Spin>
-          </section>
+          </Spin>
+        </section>
 
       </div>
     </>

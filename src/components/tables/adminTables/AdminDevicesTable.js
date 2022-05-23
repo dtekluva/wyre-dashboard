@@ -57,9 +57,9 @@ class AdminDevicesTable extends React.Component {
     onFilter: (value, record) =>
       record[dataIndex]
         ? record[dataIndex]
-            .toString()
-            .toLowerCase()
-            .includes(value.toLowerCase())
+          .toString()
+          .toLowerCase()
+          .includes(value.toLowerCase())
         : '',
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
@@ -97,7 +97,7 @@ class AdminDevicesTable extends React.Component {
 
     const columns = [
       {
-        title: 'Devices Name',
+        title: 'Device Name',
         dataIndex: 'name',
         key: 'name',
         ...this.getColumnSearchProps('name'),
@@ -105,35 +105,51 @@ class AdminDevicesTable extends React.Component {
         sortDirections: ['descend', 'ascend'],
       },
       {
-        title: 'Branch',
-        dataIndex: 'branch',
-        key: 'branch',
-        ...this.getColumnSearchProps('branch'),
-        sorter: (a, b) => a.branch.localeCompare(b.branch),
+        title: 'Device Identity',
+        dataIndex: 'deviceIdentity',
+        key: 'deviceIdentity',
+        ...this.getColumnSearchProps('deviceIdentity'),
+        sorter: (a, b) => a.deviceIdentity.localeCompare(b.deviceIdentity),
         sortDirections: ['descend', 'ascend'],
       },
       {
-        title: 'Code',
-        dataIndex: 'code',
-        key: 'code',
-        ...this.getColumnSearchProps('code'),
-        sorter: (a, b) => a.code.localeCompare(b.code),
+        title: 'Source',
+        dataIndex: 'source',
+        key: 'source',
+        ...this.getColumnSearchProps('source'),
+        sorter: (a, b) => a.source.localeCompare(b.source),
         sortDirections: ['descend', 'ascend'],
       },
       {
-        title: 'Added',
-        dataIndex: 'added',
-        key: 'added',
-        ...this.getColumnSearchProps('added'),
-        sorter: (a, b) => a.added.localeCompare(b.added),
+        title: 'Load',
+        dataIndex: 'load',
+        key: 'load',
+        ...this.getColumnSearchProps('load'),
+        sorter: (a, b) => a.load.localeCompare(b.load),
         sortDirections: ['descend', 'ascend'],
       },
       {
-        title: 'Consumption',
-        dataIndex: 'consumption',
-        key: 'consumption',
-        ...this.getColumnSearchProps('consumption'),
-        sorter: (a, b) => a.consumption - b.consumption,
+        title: 'Type',
+        dataIndex: 'type',
+        key: 'type',
+        ...this.getColumnSearchProps('type'),
+        sorter: (a, b) => a.type - b.type,
+        sortDirections: ['descend', 'ascend'],
+      },
+      {
+        title: 'Active',
+        dataIndex: 'active',
+        key: 'active',
+        ...this.getColumnSearchProps('active'),
+        sorter: (a, b) => a.active - b.active,
+        sortDirections: ['descend', 'ascend'],
+      },
+      {
+        title: 'Icon Type',
+        dataIndex: 'iconType',
+        key: 'iconType',
+        ...this.getColumnSearchProps('iconType'),
+        sorter: (a, b) => a.iconType - b.iconType,
         sortDirections: ['descend', 'ascend'],
       },
       {

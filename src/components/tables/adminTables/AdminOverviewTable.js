@@ -57,9 +57,9 @@ class AdminOverviewTable extends React.Component {
     onFilter: (value, record) =>
       record[dataIndex]
         ? record[dataIndex]
-            .toString()
-            .toLowerCase()
-            .includes(value.toLowerCase())
+          .toString()
+          .toLowerCase()
+          .includes(value.toLowerCase())
         : '',
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
@@ -113,35 +113,35 @@ class AdminOverviewTable extends React.Component {
         sortDirections: ['descend', 'ascend'],
       },
       {
-        title: 'Maximum Demand (kW)',
-        dataIndex: 'max_demand',
-        key: 'max_demand',
-        ...this.getColumnSearchProps('max_demand'),
-        sorter: (a, b) => a.max_demand - b.max_demand,
+        title: 'Utility',
+        dataIndex: 'utility',
+        key: 'utility',
+        ...this.getColumnSearchProps('utility'),
+        sorter: (a, b) => a.utility - b.utility,
         sortDirections: ['descend', 'ascend'],
       },
       {
-        title: 'Minimum Demand (kW)',
-        dataIndex: 'min_demand',
-        key: 'min_demand',
-        ...this.getColumnSearchProps('min_demand'),
-        sorter: (a, b) => a.min_demand - b.min_demand,
+        title: 'Diesel',
+        dataIndex: 'diesel',
+        key: 'diesel',
+        ...this.getColumnSearchProps('diesel'),
+        sorter: (a, b) => a.diesel - b.diesel,
         sortDirections: ['descend', 'ascend'],
       },
       {
-        title: 'Average Demand (kW)',
-        dataIndex: 'avg_demand',
-        key: 'avg_demand',
-        ...this.getColumnSearchProps('avg_demand'),
-        sorter: (a, b) => a.avg_demand - b.avg_demand,
+        title: 'Bench Mark',
+        dataIndex: 'benchmark',
+        key: 'benchmark',
+        ...this.getColumnSearchProps('benchmark'),
+        sorter: (a, b) => a.benchmark - b.benchmark,
         sortDirections: ['descend', 'ascend'],
       },
       {
-        title: 'Score (%)',
-        dataIndex: 'score',
-        key: 'score',
+        title: 'Subscription Expiry',
+        dataIndex: 'subscription_expiry',
+        key: 'subscription_expiry',
         ...this.getColumnSearchProps('score'),
-        sorter: (a, b) => a.score - b.score,
+        sorter: (a, b) => a.subscription_expiry - b.subscription_expiry,
         sortDirections: ['descend', 'ascend'],
       },
       {

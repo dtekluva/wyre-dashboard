@@ -4,6 +4,7 @@
   padding-bottom: 40px;
   padding-top: 10px;
   width: 100%;
+  border-top: 1px solid #C4C4C4;
   @extend %gutters;
 
   @include media('>=medium') {

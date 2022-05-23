@@ -13,7 +13,7 @@ import ExcelIcon from '../icons/ExcelIcon';
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },
   { url: '#', name: 'Manage', id: 2 },
-  { url: '#', name: 'View Branches', id: 3 },
+  { url: '#', name: 'View Organization', id: 3 },
 ];
 
 function ViewDevices({ match }) {

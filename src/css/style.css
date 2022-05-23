@@ -2858,6 +2858,27 @@ thead.ant-table-thead tr th {
   padding-right: 20px;
 }
 
+.reports-input-container {
+  margin-top: 0;
+  width: 22.10%;
+  margin-right: 20px;
+}
+
+.reports_page .generic-submit-button {
+  width: 178px;
+}
+
+.reports_label {
+  margin: 7px 25px 0 0;
+  display: flex;
+  align-items: center;
+}
+
+.reports_label label {
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 14px;
+}
+
 @media only screen and (min-width: 280px) and (max-width: 767px) {
   .branches-total_costs-card {
     padding: 1.5rem;
@@ -2879,6 +2900,26 @@ thead.ant-table-thead tr th {
 
   .view_branch-text {
     font-size: 15px;
+  }
+
+  .reports-input-container {
+    margin-top: 0;
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .reports_label {
+    margin: 7px 25px 20px 0;
+  }
+
+  .ant-col-offset-4 {
+    margin-left: 0 !important;
+  }
+}
+
+@media only screen and (min-width: 1024px) and (max-width: 1200px) {
+  .reports-input-container {
+    width: 23.40%;
   }
 }
 
