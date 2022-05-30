@@ -1506,7 +1506,7 @@ thead.ant-table-thead tr th {
 @media (min-width: 768px) {
   .top-bar__left {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     min-height: 44px;
     min-width: 291px;
     overflow: auto;
@@ -2854,7 +2854,7 @@ thead.ant-table-thead tr th {
 
 .add_user_form_btn_align {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   padding-right: 20px;
 }
 
@@ -3976,6 +3976,79 @@ thead.ant-table-thead tr th {
   .header-short-button--auth {
     padding: 13px 26px;
   }
+}
+
+/*--------------------------------------------------------------
+# Message section
+--------------------------------------------------------------*/
+.message-forms-content-wrapper {
+  background: #F6F6F6;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.message_sender {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 541px;
+  margin-left: auto;
+}
+
+.message_receiver {
+  display: flex;
+  justify-content: flex-start;
+  max-width: 541px;
+}
+
+.message_sender_,
+.message_receiver_ {
+  display: flex;
+  margin-top: 20px;
+  align-items: flex-start;
+}
+
+.message_sender_ img,
+.message_receiver_ img {
+  margin-right: 5px;
+}
+
+.message_sender_card {
+  background: #FFFBEC;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  padding: 17px;
+}
+
+.message_receiver_card {
+  background: #FFFFFF;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  padding: 17px;
+}
+
+.message_date_time {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.send_message {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #FFFFFF;
+  border: 1px solid #C4C4C4;
+  border-radius: 8px;
+  padding: 8px;
+  margin-top: 3rem;
+}
+
+.send_message textarea {
+  width: 100%;
+  border: none;
+  margin-right: 15px;
+  resize: none;
+  height: 60px !important;
 }
 
 /*--------------------------------------------------------------

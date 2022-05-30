@@ -164,11 +164,11 @@ function Header() {
               </ul>
             </HeaderLinkWithDropdown>
 
-            {/* <HeaderLink
+            <HeaderLink
               onClick={toggleNav}
               url='/messages'
               linkText='Messages'
-            /> */}
+            />
 
             <li className='header-nav-list__item h-hidden-1296-up'>
               <HeaderIcon

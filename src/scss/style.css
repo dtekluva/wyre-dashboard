@@ -2627,8 +2627,8 @@ thead.ant-table-thead tr th {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-align: start;
-    -ms-flex-align: start;
+    -webkit-box-align: flex-start;
+    -ms-flex-align: flex-start;
     align-items: flex-start;
   }
 }
@@ -2754,8 +2754,8 @@ thead.ant-table-thead tr th {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-align: start;
-    -ms-flex-align: start;
+    -webkit-box-align: flex-start;
+    -ms-flex-align: flex-start;
     align-items: flex-start;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
@@ -2891,8 +2891,8 @@ thead.ant-table-thead tr th {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-align: start;
-    -ms-flex-align: start;
+    -webkit-box-align: flex-start;
+    -ms-flex-align: flex-start;
     align-items: flex-start;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
@@ -3851,8 +3851,8 @@ thead.ant-table-thead tr th {
 
 @media (min-width: 769px) {
   .footer-top {
-    -webkit-box-align: start;
-    -ms-flex-align: start;
+    -webkit-box-align: flex-start;
+    -ms-flex-align: flex-start;
     align-items: flex-start;
     display: -webkit-box;
     display: -ms-flexbox;
