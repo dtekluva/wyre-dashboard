@@ -4002,34 +4002,47 @@ thead.ant-table-thead tr th {
 
 .message_sender_,
 .message_receiver_ {
-  display: flex;
   margin-top: 20px;
   align-items: flex-start;
 }
 
+.user_icon_with_name {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.user_icon_with_name p span {
+  font-weight: 700;
+}
+
+.user_icon_with_name p {
+  margin-left: 15px;
+}
+
 .message_sender_ img,
 .message_receiver_ img {
-  margin-right: 5px;
+  width: 50px;
 }
 
 .message_sender_card {
-  background: #FFFBEC;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
-  padding: 17px;
+  background: #FFFCF1;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.25);
+  border-radius: 35px;
+  padding: 30px;
+  font-size: 14px;
 }
 
 .message_receiver_card {
-  background: #FFFFFF;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
-  padding: 17px;
+  background: #F9F5FF;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.25);
+  border-radius: 35px;
+  padding: 30px;
+  font-size: 14px;
 }
 
-.message_date_time {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+.send_message .ant-form-item {
+  margin-bottom: 0 !important;
 }
 
 .send_message {
@@ -4043,12 +4056,39 @@ thead.ant-table-thead tr th {
   margin-top: 3rem;
 }
 
+.send_message input {
+  width: 100%;
+  border: none;
+}
+
 .send_message textarea {
   width: 100%;
   border: none;
-  margin-right: 15px;
   resize: none;
-  height: 60px !important;
+  height: 40px !important;
+  min-width: 910px;
+}
+
+.send_message .ant-upload-list {
+  position: absolute;
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1200px) {
+  .send_message textarea {
+    min-width: 670px;
+  }
+}
+
+@media only screen and (min-width: 997px) and (max-width: 1024px) {
+  .send_message textarea {
+    min-width: 640px;
+  }
+}
+
+@media only screen and (min-width: 280px) and (max-width: 767px) {
+  .send_message textarea {
+    min-width: 100%;
+  }
 }
 
 /*--------------------------------------------------------------

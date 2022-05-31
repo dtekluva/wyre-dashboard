@@ -77,7 +77,7 @@ function MainAppPages() {
                   path="/cost-tracker/add-equipment"
                   component={AddEquipment}
                 />
-                {/* <Route path="/messages" component={Messages} /> */}
+                <Route path="/messages" component={Messages} />
                 <Route
                   path="/parameters/last-reading"
                   component={LastReading}

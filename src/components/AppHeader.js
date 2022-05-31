@@ -131,7 +131,7 @@ function Header() {
           }
           {
             BESPOKE_ADD_LIST.BILLING.includes(userData.decodedUser.client) &&
-              <HeaderLink onClick={toggleNav} url="/alerts-and-alarms" linkText="Alerts and Alarms" />
+            <HeaderLink onClick={toggleNav} url="/alerts-and-alarms" linkText="Alerts and Alarms" />
           }
         </>
       default:
@@ -256,6 +256,7 @@ function Header() {
             /> */}
             {renderComp()}
             <HeaderLink onClick={toggleNav} url="/alerts-and-alarms" linkText="Alerts and Alarms" />
+            {/* <HeaderLink onClick={toggleNav} url="/messages" linkText="Messages" /> */}
             {/* {!doesUserHaveAccess && ( */}
             {/* {organization && !SCORE_CARD_EXCLUDE_CLIENTS.includes(organization.name)
               &&
@@ -270,14 +271,14 @@ function Header() {
 
             {/* <HeaderLink onClick={toggleNav} url="/billing" linkText="Billing" /> */}
 
-            {/* {!doesUserHaveAccess && (
-            <HeaderLink
-              onClick={toggleNav}
-              url="/dashboard"
-              // url='/messages'
-              linkText="Messages"
-            />
-            )} */}
+            {!doesUserHaveAccess && (
+              <HeaderLink
+                onClick={toggleNav}
+                // url="/dashboard"
+                url='/messages'
+                linkText="Messages"
+              />
+            )}
             <li className="header-nav-list__item h-hidden-1296-up">
               <HeaderIcon
                 onClick={toggleNav}

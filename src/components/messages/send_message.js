@@ -6,7 +6,7 @@ import TextArea from 'antd/lib/input/TextArea';
 
 const props = {
     name: 'file',
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+    action: '',
     headers: {
         authorization: 'authorization-text',
     },
@@ -37,14 +37,14 @@ function SendMessage() {
                 autoComplete="off"
                 onSubmit={handleSubmit()}
             >
-                <div className='' style={{ display: 'flex', width: '100%' }}>
+                <div className='' style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                     <Form.Item
-                        name="message"
-                        rules={[{ required: true, message: 'Please input your message!' }]}
+                    // name="message"
+                    // rules={[{ required: true, message: 'Please input your message!' }]}
                     >
                         <TextArea size="large" placeholder='Message' />
                     </Form.Item>
-                    <button className='generic-submit-button cost-tracker-form-submit-button' style={{ margin: '0', width: '89px' }}>
+                    <button className='generic-submit-button cost-tracker-form-submit-button' style={{ margin: '0', width: '89px', marginLeft: '15px' }}>
                         Send
                     </button>
                 </div>
