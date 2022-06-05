@@ -3982,7 +3982,7 @@ thead.ant-table-thead tr th {
 # Message section
 --------------------------------------------------------------*/
 .message-forms-content-wrapper {
-  background: #F6F6F6;
+  background: #ffffff;
   border-radius: 10px;
   padding: 20px;
 }
@@ -4066,7 +4066,7 @@ thead.ant-table-thead tr th {
   border: none;
   resize: none;
   height: 40px !important;
-  min-width: 910px;
+  min-width: 950px;
 }
 
 .send_message .ant-upload-list {
@@ -4075,13 +4075,13 @@ thead.ant-table-thead tr th {
 
 @media only screen and (min-width: 1025px) and (max-width: 1200px) {
   .send_message textarea {
-    min-width: 670px;
+    min-width: 710px;
   }
 }
 
 @media only screen and (min-width: 997px) and (max-width: 1024px) {
   .send_message textarea {
-    min-width: 640px;
+    min-width: 710px;
   }
 }
 
@@ -4089,6 +4089,95 @@ thead.ant-table-thead tr th {
   .send_message textarea {
     min-width: 100%;
   }
+}
+
+/* message sidebar */
+.messaging-page .page-content {
+  padding-left: 0;
+}
+
+.message_sidebar {
+  background-color: #e0e8f3 !important;
+}
+
+#components-layout-demo-custom-trigger .trigger {
+  padding: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+#components-layout-demo-custom-trigger .trigger:hover {
+  color: #1890ff;
+}
+
+/* #components-layout-demo-custom-trigger .logo {} */
+
+.site-layout .site-layout-background {
+  background: #fff;
+}
+
+.message-item1 {
+  height: 127px;
+  width: 100%;
+  border: 0.25px solid #C4C4C4;
+  padding: 1rem 0.5rem 1rem 0.5rem;
+  cursor: pointer;
+  background: #ffffff;
+}
+
+.message-item1 .active {
+  background: #F2F2F8 !important;
+}
+
+.message-item1-name {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #000000;
+}
+
+.message-item1-message {
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 15px;
+  color: #000000;
+  margin-top: 5px;
+}
+
+.message-item1-status-date {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.message-item1-status-pending {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  color: #5C12A7;
+  background: rgba(92, 18, 167, 0.1);
+  border-radius: 3px;
+  padding: 5px 15px;
+}
+
+.message-item1-status-solved {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  color: #1B934E;
+  background: rgba(27, 147, 78, 0.1);
+  border-radius: 3px;
+  padding: 5px 15px;
+}
+
+.message-item1-date {
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 15px;
+  color: #000000;
 }
 
 /*--------------------------------------------------------------

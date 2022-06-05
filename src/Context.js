@@ -247,10 +247,12 @@ const CompleteDataProvider = (props) => {
 
       const userInfo = jwt(user.data.token);
       setUserData({ ...user, decodedUser: userInfo });
-      setIsUserAdmin(userInfo.role_text === 'SUPERADMIN')
-      // setIsUserAdmin(userInfo.role_text==='MANAGER')
+      setIsUserAdmin(userInfo.role_text === null);
+      // setIsUserAdmin(userInfo.role_text === 'SUPERADMIN');
+      // setIsUserAdmin(userInfo.role_text === 'MANAGER')
       setToken(user.data.token);
       setUserId(user.data.id);
+      console.log('================================>>>>>>>>>>>', userInfo)
     }
   }, []);
   // State for Schedule Email Modal
