@@ -456,7 +456,7 @@ function Header() {
             <li className="header-sublinks-list__item avatar-sublink-item">
               <Link
                 className="header-sublink avatar-sublink"
-                to="/dashboard"
+                to="/password"
               // to='/password'
               >
                 <PadlockIcon /> <span>Password</span>
