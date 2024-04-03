@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import { notification } from 'antd';
+import { Form, Input, notification } from 'antd';
 import CompleteDataContext from '../Context';
 
 import BreadCrumb from '../components/BreadCrumb';
@@ -51,17 +51,17 @@ function Password({ match }) {
       <div className="password-page-container">
         <h1 className="center-main-heading">Password</h1>
 
-        <form
+        <Form
           action="#"
           className="password-form"
-          onSubmit={handleSubmit(onSubmit)}
+          onFinish={handleSubmit(onSubmit)}
         >
           <div className="password-input-container old-password-container">
             <label className="generic-input-label" htmlFor="old-password">
               Old Password
             </label>
-            <input
-              className="generic-input old-password-input"
+            <Input.Password
+              // className="generic-input old-password-input"
               type="password"
               name="oldPassword"
               id="old-password"
@@ -76,11 +76,11 @@ function Password({ match }) {
               <label className="generic-input-label" htmlFor="new-password-1">
                 New Password
               </label>
-              <input
-                className="generic-input"
+              <Input.Password
+                // className="generic-input"
                 type="password"
                 name="newPassword1"
-                id="new-password-1"
+                // id="new-password-1"
                 ref={register({
                   required: true,
                   pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
@@ -92,11 +92,11 @@ function Password({ match }) {
               <label className="generic-input-label" htmlFor="new-password-2">
                 Re-enter New Password
               </label>
-              <input
-                className="generic-input"
+              <Input.Password
+                // className="generic-input"
                 type="password"
                 name="newPassword2"
-                id="new-password-2"
+                // id="new-password-2"
                 ref={register({
                   required: true,
                   pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
@@ -130,7 +130,7 @@ function Password({ match }) {
           <button className="generic-submit-button change-password-button">
             Change Password
           </button>
-        </form>
+        </Form>
       </div>
     </>
   );

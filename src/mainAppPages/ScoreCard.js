@@ -57,13 +57,12 @@ function ScoreCard({ match, fetchScoreCardData: fetchScoreCard }) {
 
 
   useEffect(() => {
-    console.log('1111111 ================111111111111 ', checkedDevices)
-    console.log('1111111 ================22222222 ', checkedBranches)
+
     if (scoreCardInfo.scoreCardData) {
       const copyData = JSON.parse(JSON.stringify(scoreCardInfo.scoreCardData));
 
       if (Object.keys(checkedBranches).length > 0 || Object.keys(checkedDevices).length > 0) {
-        console.log('1111111 ================33333333 ')
+ 
         const { branchAndDevice, allDeviceData } = getRefinedOrganizationDataWithChekBox({
           checkedBranches,
           checkedDevices,
@@ -72,8 +71,6 @@ function ScoreCard({ match, fetchScoreCardData: fetchScoreCard }) {
           isDashBoard: false,
           powerFactorData: null
         });
-
-        console.log('branch and devices =================>>>>>', branchAndDevice)
         
         const renderedData = getRenderedData(Object.values(branchAndDevice), true, true);
         console.log('branch and devices ++++++_++++++_+ ', renderedData)
@@ -145,8 +142,8 @@ function ScoreCard({ match, fetchScoreCardData: fetchScoreCard }) {
     if (peak_to_avg_power_ratio) {
       const pekToAvgData = {
         unit: 'kVA',
-        peak: (peak_to_avg_power_ratio.peak) / 0.78,
-        avg: (peak_to_avg_power_ratio.avg) / 0.78,
+        peak: (peak_to_avg_power_ratio.peak),
+        avg: (peak_to_avg_power_ratio.avg),
       }
       setPeakToAverageKVA(pekToAvgData)
     }
@@ -285,7 +282,7 @@ function ScoreCard({ match, fetchScoreCardData: fetchScoreCard }) {
           <article className='score-card-row-1__item'>
             <div className='doughnut-card-heading'>
               <h2 className='score-card-heading'>
-                Peak to Average Power Ratio <span style={{ fontSize: '13px' }}>(6months)</span>
+                Peak to Average Power Ratio 
               </h2>
               <div>
                 <Tooltip placement='top' style={{ textAlign: 'justify' }}
