@@ -15,7 +15,7 @@ export const getNewRefreshToken = async () => {
         refresh: user.refresh,
       });
       const newUser = { access: response.data.accces, ...user, }
-      localStorage.setItem('loggedWyreUser',JSON.stringify(newUser));
+      localStorage.setItem('loggedWyreUser', JSON.stringify(newUser));
     }
   } catch (error) {
     localStorage.clear();
@@ -23,16 +23,13 @@ export const getNewRefreshToken = async () => {
   }
 
 };
-export const changePassword = async () => {
+export const changePassword = async (data) => {
   try {
-    const requestUrl = EnvData.REACT_APP_API_BASE_URL + 'token/password/';
+    const requestUrl = EnvData.REACT_APP_API_BASE_URL + 'reset';
     if (localStorage.loggedWyreUser) {
       const user = JSON.parse(localStorage.loggedWyreUser);
-      const response = await axios.post(requestUrl, {
-        refresh: user.refresh,
-      });
-      const newUser = { access: response.data.accces, ...user, }
-      localStorage.setItem('loggedWyreUser',JSON.stringify(newUser));
+      const response = await axios.post(requestUrl, data);
+      // log user out here
     }
   } catch (error) {
     localStorage.clear();
