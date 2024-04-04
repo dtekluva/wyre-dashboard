@@ -70,7 +70,7 @@ function MainAppPages() {
                   <Redirect to="/dashboard" />
                 </Route>
                 <Route path="/dashboard" component={Dashboard} />
-                <Route path="/breakers" component={Breakers} />
+                {/* <Route path="/breakers" component={Breakers} /> */}
                 <Route exact path="/log-in">
                   <Redirect to="/" />
                 </Route>
@@ -104,7 +104,8 @@ function MainAppPages() {
                 {/* <Route path="/breakers" component={Breakers} /> */}
                 <Route path="/score-card" component={ScoreCard} />
                 <Route path="/client-profile" component={ClientProfile} />
-                <Route path="/password" component={Password} />
+                <Route path="/password" component={Dashboard} />
+                {/* <Route path="/password" component={Password} /> */}
                 <Route path="/load-overview" component={LoadOverview} />
                 <Route path="/alerts-and-alarms" component={AlertsAndAlarms} />
                 <Route
