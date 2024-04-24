@@ -540,7 +540,7 @@ function AddBills({ match }) {
             </Spin>
           </section>
 
-          <section className="cost-tracker-form-section add-bills-section">
+          {/* <section className="cost-tracker-form-section add-bills-section">
           <Spin spinning={EOMFlowReadingLoading}>
             <h2 className="form-section-heading add-bills-section__heading">
               End of Month Diesel flow meter reading
@@ -562,28 +562,6 @@ function AddBills({ match }) {
                 </div>
 
                 <div className="cost-tracker-input-container" >
-                  {/* <label
-                  className="generic-input-label cost-tracker-input-label"
-                  htmlFor="flow-meter-snapshot"
-                >
-                  Flow Meter Snapshot
-                </label>
-                <input
-                  style={{ backgroundColor: '#C4C4C48A' }}
-                  className="generic-input"
-                  type="file"
-                  accept="image/png, image/jpeg"
-                  name="flowMeterSnapshot"
-                  onChange={(e) => {
-                    setImages(e.target.files[0])
-                  }}
-                  id="flow-meter-snapshot"
-                  ref={registerUsedTracker({
-                    required: true,
-                  })}
-                  required
-                  autoFocus
-                /> */}
                   <FlowMeterUpload
                     badFileHeader={badFileHeader}
                     setBadFileHeader={setBadFileHeader}
@@ -596,7 +574,7 @@ function AddBills({ match }) {
               </button>
             </Form>
             </Spin>
-          </section>
+          </section> */}
 
       </div>
     </>
