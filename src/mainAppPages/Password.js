@@ -141,7 +141,7 @@ function Password({ match, auth }) {
               />
               <span
               >
-                Passwords must include a number, a lowercase and uppercase letter.
+                Passwords must include a number, a special character, a lowercase and uppercase letter.
                 They should also be a minimum of 8 characters.
               </span>
             </p>
