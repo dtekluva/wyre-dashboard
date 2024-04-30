@@ -29,7 +29,7 @@ export const changePassword = async (data) => {
     if (localStorage.loggedWyreUser) {
       const user = JSON.parse(localStorage.loggedWyreUser);
       const response = await axios.post(requestUrl, data);
-      console.log('thsijodkjsokjdoksdmodkmdsoklmdlkmdslkdmlskmdm============>>>>', response)
+
       return { fulfilled: true, message: response.data.message }
       // log user out here
     }
