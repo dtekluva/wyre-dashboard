@@ -120,13 +120,13 @@ function Header() {
             />
           }
           {
-            // BESPOKE_ADD_LIST.COST_TRACKER.includes(userData.client) &&
-            // <HeaderLink onClick={toggleNav} url="/cost-tracker" linkText="Cost Tracker" />
+            BESPOKE_ADD_LIST.COST_TRACKER.includes(userData.client) &&
+            <HeaderLink onClick={toggleNav} url="/cost-tracker" linkText="Cost Tracker" />
           }
           {/* {
-            // BESPOKE_ADD_LIST.COST_TRACKER.includes(userData.client) &&
+            BESPOKE_ADD_LIST.COST_TRACKER.includes(userData.client) &&
             <HeaderLink onClick={toggleNav} url="/breakers" linkText="Breakers" />
-          } */}
+          }  */}
           {
             BESPOKE_ADD_LIST.REPORT.includes(userData.client) &&
             <HeaderLink onClick={toggleNav} url="/report" linkText="Report" />
