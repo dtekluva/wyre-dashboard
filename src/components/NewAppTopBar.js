@@ -245,8 +245,7 @@ function NewAppTopBar() {
     setComponentText(false);
     setSelectedDate([moment(selectedDate[0]).set({
       hour: time.get('hour'),
-      minute: time.get('minute'),
-      second: time.get('second')
+      minute: '20',
     }), selectedDate[1]]);
   }
 
@@ -255,7 +254,7 @@ function NewAppTopBar() {
     setComponentText(false);
     setSelectedDate([selectedDate[0], moment(selectedDate[1]).set({
       hour: time.get('hour'),
-      minute: time.get('minute'),
+      minute: '20',
       second: time.get('second')
     })]);
   }
