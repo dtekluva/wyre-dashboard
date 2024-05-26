@@ -10,8 +10,10 @@ const ScoreCardGenEfficiencyDoughnut = ({ data, uiSettings, peakData }) => {
 
   const colorAndMessage = getGeneratorSizeMessage(usage);
 
-  const percentageUsage = (peakData?.peak / gen_size) * 100;
-  const roundedUsage = percentageUsage.toFixed(2);
+  // const percentageUsage = (peakData?.peak / gen_size) * 100;
+  const percentageUsage = usage;
+  // const roundedUsage = percentageUsage.toFixed(2);
+  const roundedUsage = percentageUsage
   const chartLabels = ['Used', 'Unused'];
   const chartData = [roundedUsage, 100 - roundedUsage];
 
