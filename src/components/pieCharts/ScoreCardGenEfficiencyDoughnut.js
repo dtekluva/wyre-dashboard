@@ -9,11 +9,8 @@ const ScoreCardGenEfficiencyDoughnut = ({ data, uiSettings, peakData }) => {
     : { size: '', usage: '', unit: '', name: '', gen_size: 0 };
 
   const colorAndMessage = getGeneratorSizeMessage(usage);
-
-  const percentageUsage = (peakData?.peak / gen_size) * 100;
-  const roundedUsage = percentageUsage.toFixed(2);
   const chartLabels = ['Used', 'Unused'];
-  const chartData = [roundedUsage, 100 - roundedUsage];
+  const chartData = [usage, 100 - usage];
 
   const plottedData = {
     labels: chartLabels,
@@ -78,7 +75,7 @@ const ScoreCardGenEfficiencyDoughnut = ({ data, uiSettings, peakData }) => {
 
         <p className='gen-efficiency-doughnut-centre-text'>
           <span>
-            {roundedUsage}
+            {usage}
             {unit}
           </span>{' '}
           Used
@@ -88,10 +85,10 @@ const ScoreCardGenEfficiencyDoughnut = ({ data, uiSettings, peakData }) => {
       <div className='gen-efficiency-text-container'>
         <p className='gen-efficiency-device-name'>{`${name} (${size})`}</p>
         <p className='gen-efficiency-middle-text'>
-          {roundedUsage}
+          {usage}
           {unit} Load
         </p>
-        <p style={{ color: getGeneratorSizeMessage(roundedUsage).color }} >{getGeneratorSizeMessage(roundedUsage).message}</p>
+        <p style={{ color: getGeneratorSizeMessage(usage).color }} >{getGeneratorSizeMessage(usage).message}</p>
       </div>
     </div>
   );
