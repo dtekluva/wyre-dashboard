@@ -9,6 +9,8 @@ import UpdateDieselEntry from '../../mainAppPages/UpdateDieselEntry';
 import { numberFormatter } from '../../helpers/numberFormatter';
 import { deleteFuelConsumptionData } from '../../redux/actions/constTracker/costTracker.action';
 import { connect } from 'react-redux';
+import ColumnGroup from 'antd/lib/table/ColumnGroup';
+import Column from 'antd/lib/table/Column';
 const { Text } = Typography;
 
 
@@ -50,6 +52,7 @@ const DieselOverviewCostTrackerTable = (
       })
       setModalData(newDattta);
     }
+    console.log("Fuel-data ----------> ", fuelData);
     setFuelDataLoading(false);
   }
 
@@ -287,48 +290,70 @@ const DieselOverviewCostTrackerTable = (
 
   return (
     <div>
-      <Table columns={columns}
+      <Table
+        columns={columns}
         loading={isLoading}
         dataSource={dieselOverviewData && dieselOverviewData}
         onChange={onChange}
         scroll={{ x: 1000 }}
-        className='table-striped-rows utitily-overview-table'
+        className="table-striped-rows utitily-overview-table"
         rowKey={(record) => record.id}
         pagination={{
           pageSize: 6,
         }}
-        summary={pageData => {
-
+        summary={(pageData) => {
           return (
             <>
               <Table.Summary.Row>
                 <Table.Summary.Cell>Total</Table.Summary.Cell>
                 <Table.Summary.Cell>
-                  <Text>{numberFormatter(parseFloat(inputtedUsageSum).toFixed(2))}</Text>
+                  <Text>
+                    {numberFormatter(parseFloat(inputtedUsageSum).toFixed(2))}
+                  </Text>
                 </Table.Summary.Cell>
                 <Table.Summary.Cell>
-                  <Text>{numberFormatter(parseFloat(forecastedUsageSum).toFixed(2))}</Text>
+                  <Text>
+                    {numberFormatter(parseFloat(forecastedUsageSum).toFixed(2))}
+                  </Text>
                 </Table.Summary.Cell>
                 <Table.Summary.Cell>
-                  <Text>{numberFormatter(parseFloat(inputtedCostSum).toFixed(2))}</Text>
+                  <Text>
+                    {numberFormatter(parseFloat(inputtedCostSum).toFixed(2))}
+                  </Text>
                 </Table.Summary.Cell>
                 <Table.Summary.Cell>
-                  <Text>{numberFormatter(parseFloat(forecastedCostSum).toFixed(2))}</Text>
+                  <Text>
+                    {numberFormatter(parseFloat(forecastedCostSum).toFixed(2))}
+                  </Text>
                 </Table.Summary.Cell>
                 <Table.Summary.Cell>
-                  <Text>{numberFormatter(parseFloat(dieselDifferenceSum).toFixed(2))}</Text>
+                  <Text>
+                    {numberFormatter(
+                      parseFloat(dieselDifferenceSum).toFixed(2)
+                    )}
+                  </Text>
                 </Table.Summary.Cell>
                 <Table.Summary.Cell>
-                  <Text>{numberFormatter(parseFloat(costDifferenceSum).toFixed(2))}</Text>
+                  <Text>
+                    {numberFormatter(parseFloat(costDifferenceSum).toFixed(2))}
+                  </Text>
                 </Table.Summary.Cell>
                 <Table.Summary.Cell>
-                  <Text>{percentageUsageSum && parseFloat(percentageUsageSum / dieselOverviewData.length).toFixed(2)}</Text>
+                  <Text>
+                    {percentageUsageSum &&
+                      parseFloat(
+                        percentageUsageSum / dieselOverviewData.length
+                      ).toFixed(2)}
+                  </Text>
                 </Table.Summary.Cell>
               </Table.Summary.Row>
             </>
           );
         }}
-        footer={() => `${dieselOverviewData && dieselOverviewData.length} entries in total`} />
+        footer={() =>
+          `${dieselOverviewData && dieselOverviewData.length} entries in total`
+        }
+      />
       <Modal
         visible={editDieselEntryModal}
         onOk={() => setEditDieselEntryModal(false)}
@@ -346,21 +371,133 @@ const DieselOverviewCostTrackerTable = (
         visible={modalOpener}
         onCancel={() => setModalOpener(false)}
         footer={null}
-        width={800}
-
+        width={1000}
       >
         <Table
           dataSource={modalData}
           loading={fuelDataLoading}
           rowKey="start_date"
-          columns={fuelconsumptionColum}
+          // columns={fuelconsumptionColum}
           pagination={{
             pageSize: 6,
           }}
-        />
+        >
+          <Column title="Date" dataIndex="date" key="date" />
+          <Column title="Quantity(L)" dataIndex="quantity" key="quantity" />
+          <Column title="Hours" dataIndex="hours_of_use" key="hours_of_use" />
+          <ColumnGroup title="Energy(kWh)">
+            <Column
+              title="Gen1"
+              dataIndex= "GEN_1_500kVA_energy_consumed"
+              key="GEN_1_500kVA_energy_consumed"
+            />
+            <Column
+              title="Gen2"
+              dataIndex="GEN_2_500kVA_energy_consumed"
+              key="GEN_2_500kVA_energy_consumed"
+            />
+            <Column
+              title="Gen3"
+              dataIndex="GEN_3_275kVA_energy_consumed"
+              key="GEN_3_275kVA_energy_consumed"
+            />
+          </ColumnGroup>
+          <ColumnGroup title="Liters/H">
+            <Column
+              title="Gen1"
+              dataIndex="GEN_1_500kVA_litres_per_hour"
+              key="GEN_1_500kVA_litres_per_hour"
+            />
+            <Column
+              title="Gen2"
+              dataIndex="GEN_2_500kVA_litres_per_hour"
+              key="GEN_2_500kVA_litres_per_hour"
+            />
+            <Column
+              title="Gen3"
+              dataIndex="GEN_3_275kVA_litres_per_hour"
+              key="GEN_3_275kVA_litres_per_hour"
+            />
+          </ColumnGroup>
+          <ColumnGroup title="kWh/L">
+            <Column
+              title="Gen1"
+              dataIndex="GEN_1_500kVA_energy_per_litre"
+              key="GEN_1_500kVA_energy_per_litre"
+            />
+            <Column
+              title="Gen2"
+              dataIndex="GEN_2_500kVA_energy_per_litre"
+              key="GEN_2_500kVA_energy_per_litre"
+            />
+            <Column
+              title="Gen3"
+              dataIndex="GEN_3_275kVA_energy_per_litre"
+              key="GEN_3_275kVA_energy_per_litre"
+            />
+          </ColumnGroup>
+          <Column
+            title="More"
+            key="more"
+            render= {
+              (_, record) => {
+              const items = itemData(record);
+              return (
+                <Dropdown
+                  trigger={["click"]}
+                  getPopupContainer={(trigger) => trigger.parentElement}
+                  placement="topLeft"
+                  overlay={
+                    <Menu>
+                      <Menu.Item onClick={() => {}}>
+                        <Space size={4}>
+                          <EditOutlined />{" "}
+                          <a
+                            target="_blank"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setEditDieselEntryModal(true);
+                              setDieselEntryData(record);
+                            }}
+                            rel="noopener noreferrer"
+                          >Edit Diesel Entry</a>
+                        </Space>
+                      </Menu.Item>
+                      <Menu.Item onClick={() => {}} type="link">
+                        <Space size={4}>
+                          <Icon icon="ant-design:delete-outlined" />
+                          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+                          <a
+                            onClick={(e) => {
+                              e.preventDefault()
+                              setDieselEntryData(record)
+                            }}
+                          >Delete Diesel Entry</a>
+                          </Popconfirm>
+                        </Space>
+                      </Menu.Item>
+                    </Menu>
+                  }
+                >
+                  <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                    More <DownOutlined />
+                  </a>
+                </Dropdown>
+              );
+        
+            }
+            // render={(_, record) => (
+            //   <Space size="middle">
+            //     <a>Invite {record.lastName}</a>
+            //     <a>Delete</a>
+            //   </Space>
+            // )}
+            }
+          />
+        </Table>
       </Modal>
     </div>
-  )
+  );
 }
 
 const mapDispatchToProps = {
