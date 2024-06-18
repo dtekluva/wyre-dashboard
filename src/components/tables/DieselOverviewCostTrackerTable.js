@@ -22,6 +22,7 @@ const DieselOverviewCostTrackerTable = (
 
   const [modalOpener, setModalOpener] = useState(false);
   const [modalData, setModalData] = useState(false);
+  const [flattenedModalData, setFlattenedModalData] = useState(false);
   const [fuelDataLoading, setFuelDataLoading] = useState(false);
   const [editDieselEntryModal, setEditDieselEntryModal] = useState(false)
   const [dieselEntryData, setDieselEntryData] = useState({})
@@ -50,13 +51,25 @@ const DieselOverviewCostTrackerTable = (
       const newDattta = fuelData.data.map((elementData) => {
         return { ...elementData.data }
       })
-      setModalData(newDattta);
+      // const flatten=(newDattta)=>Object.values(newDattta).flat()
+      const  flattenObj = (newDattta, parent, res = {}) => {
+        for(let key in newDattta){
+            let propName = parent ? parent + '_' + key : key;
+            if(typeof newDattta[key] == 'object'){
+                flattenObj(newDattta[key], propName, res);
+            } else {
+                res[propName] = newDattta[key];
+            }
+        }
+        return res;
+      }
+      console.log("flatened-data ----------> ", flattenObj(newDattta));
+      setModalData(flattenObj(newDattta)); 
     }
-    console.log("Fuel-data ----------> ", fuelData);
     setFuelDataLoading(false);
   }
 
-
+ 
   dieselOverviewData && dieselOverviewData.forEach(obj => {
     for (const propertyName in obj) {
       if (typeof obj[propertyName] === 'number') {
@@ -257,7 +270,6 @@ const DieselOverviewCostTrackerTable = (
     },
     optionsColumn()
   ];
-
 
   function onChange(pagination, filters, sorter, extra) {
     // console.log('params', pagination, filters, sorter, extra);
