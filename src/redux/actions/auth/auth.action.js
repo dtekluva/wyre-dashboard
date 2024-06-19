@@ -25,15 +25,16 @@ export const getNewRefreshToken = async () => {
 };
 export const changePassword = async (data) => {
   try {
-    const requestUrl = EnvData.REACT_APP_API_BASE_URL + 'reset';
+    const requestUrl = EnvData.REACT_APP_API_URL + 'reset_password/';
     if (localStorage.loggedWyreUser) {
       const user = JSON.parse(localStorage.loggedWyreUser);
       const response = await axios.post(requestUrl, data);
+
+      return { fulfilled: true, message: response.data.message }
       // log user out here
     }
   } catch (error) {
-    localStorage.clear();
-    window.href = '/'
+    return { fulfilled: false, message: error.response.data.message }
   }
 
 };

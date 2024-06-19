@@ -1,6 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-// import { useForm } from 'react-hook-form';
-import { Button, Form, Input, notification } from 'antd';
+import { Button, Form, Input, notification, Spin } from 'antd';
 import CompleteDataContext from '../Context';
 import { changePassword } from '../redux/actions/auth/auth.action';
 
@@ -16,15 +15,16 @@ const breadCrumbRoutes = [
   { url: '/password', name: 'Password', id: 2 },
 ];
 
-const openNotificationWithIcon = (type) => {
+const openNotificationWithIcon = (type, title = 'Password Updated', message = 'Your password has been successfully updated') => {
   notification[type]({
-    message: 'Password Updated',
-    description: `Your password has been successfully updated`,
+    message: title,
+    description: message,
   });
 };
 
-function Password({ match, changePassword: changeUserPassword, auth }) {
+function Password({ match, auth }) {
   const { setCurrentUrl } = useContext(CompleteDataContext);
+  const [loading, setLoading] = React.useState(false);
   const [form] = Form.useForm();
   useEffect(() => {
     if (match && match.url) {
@@ -32,28 +32,24 @@ function Password({ match, changePassword: changeUserPassword, auth }) {
     }
   }, [match, setCurrentUrl]);
 
-  // const { form, register, handleSubmit, reset, errors } = useForm();
-
   const onSubmit = async ({ oldPassword, newPassword1, newPassword2 }) => {
     console.log(oldPassword, newPassword1, newPassword2);
-
-
-
+    setLoading(true)
     if (localStorage.loggedWyreUser) {
       const user = JSON.parse(localStorage.loggedWyreUser);
       const userData = jwtDecode(user.access);
       const requestData = { username: userData.username, password: oldPassword, new_password: newPassword1 }
-      console.log('thsi si the auth informa tion snd', jwtDecode(user.access))
-      const change = await changeUserPassword(requestData)
-      console.log('this is the change that was given ')
-      // log user out here
+      const change = await changePassword(requestData)
+      if (change.fulfilled) {
+        openNotificationWithIcon('success');
+        form.resetFields();
+      } else {
+        openNotificationWithIcon('error', 'Password change failed', change.message);
+      }
     }
-    openNotificationWithIcon('success');
+    setLoading(false)
 
-    // reset();
   };
-
-  // const isDefaultErrorMessageRed = errors.newPassword2 || errors.newPassword2;
 
   return (
     <>
@@ -61,109 +57,108 @@ function Password({ match, changePassword: changeUserPassword, auth }) {
         <BreadCrumb routesArray={breadCrumbRoutes} />
 
       </div>
+      <Spin spinning={loading}>
+        <div className="password-page-container">
+          <h1 className="center-main-heading">Password</h1>
 
-      <div className="password-page-container">
-        <h1 className="center-main-heading">Password</h1>
-
-        <Form
-          form={form}
-          className="password-form"
-          onFinish={onSubmit}
-        >
-          <Form.Item
-          
-          name="oldPassword"
+          <Form
+            form={form}
+            className="password-form"
+            onFinish={onSubmit}
           >
-            <div className="password-input-container old-password-container">
-              <label className="generic-input-label" htmlFor="old-password">
-                Old Password
-              </label>
-              <Input.Password
-                // className="generic-input old-password-input"
-                type="password"
-                // name="oldPassword"
-                id="old-password"
-                // ref={register}
-                required
-                autoFocus
-              />
+            <div className="">
+              <Form.Item
+                style={{ width: '100%' }}
+                name="oldPassword"
+                rules={[
+                  {
+                    required: true,
+                    message: 'old password is required',
+                  }
+                ]}
+              >
+                <div className="password-input-container new-password-container">
+                  <label className="generic-input-label" htmlFor="old-password">
+                    Old Password
+                  </label>
+                  <Input.Password
+                    type="password"
+                    autoFocus
+                  />
+                </div>
+              </Form.Item>
+              <Form.Item style={{ width: '100%' }}
+                name="newPassword1"
+                rules={[
+                  {
+                    required: true,
+                    message: 'new password is required',
+                  }, {
+                    pattern: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+                    message: 'Please enter a valid password',
+                  }
+                ]}
+              >
+                <div className="password-input-container new-password-container h-first">
+                  <label className="generic-input-label" htmlFor="new-password-1">
+                    New Password
+                  </label>
+                  <Input.Password
+                    type="password"
+                  />
+                </div>
+              </Form.Item>
+              <Form.Item style={{ width: '100%' }}
+                name="newPassword2"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please confirm your password!',
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('newPassword1') === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error('The new password that you entered do not match!'));
+                    },
+                  }),
+                ]}
+              >
+                <div className="password-input-container new-password-container">
+                  <label className="generic-input-label" htmlFor="new-password-2">
+                    Re-enter New Password
+                  </label>
+                  <Input.Password
+                    type="password"
+                  />
+                </div>
+              </Form.Item>
             </div>
-          </Form.Item>
 
-          <div className="new-passwords-container">
-            <Form.Item style={{ width: '100%' }}
-            name="newPassword1"
-            >
-              <div className="password-input-container new-password-container h-first">
-                <label className="generic-input-label" htmlFor="new-password-1">
-                  New Password
-                </label>
-                <Input.Password
-                  // className="generic-input"
-                  type="password"
-                  // id="new-password-1"
-                  // ref={register({
-                  //   required: true,
-                  //   pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
-                  // })}
-                  required
-                />
-              </div>
+            <p className="password-error-message">
+              <ErrorIcon
+              />
+              <span
+              >
+                Passwords must include a number, a special character, a lowercase and uppercase letter.
+                They should also be a minimum of 8 characters.
+              </span>
+            </p>
+            <Form.Item>
+              <Button htmlType="submit" className="generic-submit-button change-password-button">
+                Change Password
+              </Button>
             </Form.Item>
-            <Form.Item style={{ width: '100%' }}
-              name="newPassword2"
-            >
-              <div className="password-input-container new-password-container">
-                <label className="generic-input-label" htmlFor="new-password-2">
-                  Re-enter New Password
-                </label>
-                <Input.Password
-                  // className="generic-input"
-                  type="password"
-                  // id="new-password-2"
-                  // ref={register({
-                  //   required: true,
-                  //   pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
-                  // })}
-                  required
-                />
-              </div>
-            </Form.Item>
-          </div>
-
-          <p className="password-error-message">
-            <ErrorIcon
-            // className={
-            //   isDefaultErrorMessageRed
-            //     ? 'password-error-icon h-red-icon'
-            //     : 'password-error-icon'
-            // }
-            />
-
-            <span
-            // className={
-            //   isDefaultErrorMessageRed
-            //     ? 'password-error-text h-red-text'
-            //     : 'password-error-text'
-            // }
-            >
-              Passwords must include a number, a lowercase and uppercase letter.
-              They should also be a minimum of 8 characters.
-            </span>
-          </p>
-          <Form.Item>
-            <Button htmlType="submit" className="generic-submit-button change-password-button">
-              Change Password
-            </Button>
-          </Form.Item>
-        </Form >
-      </div >
+          </Form >
+        </div >
+      </Spin>
     </>
   );
 }
 
 const mapDispatchToProps = {
-  changePassword
+
 }
 
 const mapStateToProps = (state) => ({

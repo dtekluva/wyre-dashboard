@@ -255,7 +255,7 @@ const getOrganizationScoreCardCarbonEmissions = (data) => {
 const getOrgGeneratorSizeEfficiencyArray = (data) => {
   const allOrganizationDevices = getAllOrganizationDevices(data);
 
-  console.log('this is the organ infor ', allOrganizationDevices)
+
   return allOrganizationDevices.map((eachDevice) =>
     eachDevice.score_card.generator_size_efficiency
       ? {

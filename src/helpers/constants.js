@@ -2,10 +2,10 @@ export const SCORE_CARD_EXCLUDE_CLIENTS = ['Sapio Utilities'];
 
 
 export const BESPOKE_ADD_LIST = {
-  SCORE_CARD: ['Lennox Mall', 'Sky View Beach'],
-  REPORT: ['Lennox Mall'],
-  LOAD_OVERVIEW: ['Lennox Mall'],
-  COST_TRACKER: ['Lennox Mall'],
+  SCORE_CARD: ['Lennox Mall', 'Sky View Beach', 'Chicken Republic'],
+  REPORT: ['Lennox Mall', 'Chicken Republic'],
+  LOAD_OVERVIEW: ['Lennox Mall', 'Chicken Republic'],
+  COST_TRACKER: ['Lennox Mall', 'Chicken Republic'],
   BILLING: [''],
 }
 
