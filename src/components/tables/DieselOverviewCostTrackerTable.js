@@ -17,7 +17,7 @@ const { Text } = Typography;
 const DieselOverviewCostTrackerTable = (
   { dieselOverviewData, isLoading,
     userId,
-    fetchFuelConsumptionInfo, deleteFuelConsumptionData:deleteDieselEntry }
+    fetchFuelConsumptionInfo, deleteFuelConsumptionData: deleteDieselEntry }
 ) => {
 
   const [modalOpener, setModalOpener] = useState(false);
@@ -49,27 +49,27 @@ const DieselOverviewCostTrackerTable = (
     const fuelData = await fetchFuelConsumptionInfo(queryString);
     if (fuelData && fuelData.fullfilled) {
       const newDattta = fuelData.data.map((elementData) => {
-        return { ...elementData.data }
-      })
-      // const flatten=(newDattta)=>Object.values(newDattta).flat()
-      const  flattenObj = (newDattta, parent, res = {}) => {
-        for(let key in newDattta){
-            let propName = parent ? parent + '_' + key : key;
-            if(typeof newDattta[key] == 'object'){
-                flattenObj(newDattta[key], propName, res);
-            } else {
-                res[propName] = newDattta[key];
-            }
+        return {
+
+          date: elementData.data.date,
+          quantity: elementData.data.quantity,
+          hours_of_use: elementData.data.hours_of_use,
+          ...(elementData.data.energy_consumed['Gen 1'] ? { energy_consumed_gen_1: elementData.data.energy_consumed['Gen 1'] } : { energy_consumed_gen_1: 0 }),
+          ...(elementData.data.energy_consumed['Gen 2'] ? { energy_consumed_gen_2: elementData.data.energy_consumed['Gen 2'] } : { energy_consumed_gen_2: 0 }),
+          ...(elementData.data.energy_consumed['Gen 3'] ? { energy_consumed_gen_3: elementData.data.energy_consumed['Gen 3'] } : { energy_consumed_gen_3: 0 }),
+          ...(elementData.data.energy_per_litre['Gen 1'] ? { energy_per_litre_gen_1: elementData.data.energy_per_litre['Gen 1'] } : { energy_per_litre_gen_1: 0 }),
+          ...(elementData.data.energy_per_litre['Gen 1'] ? { energy_per_litre_gen_2: elementData.data.energy_per_litre['Gen 2'] } : { energy_per_litre_gen_2: 0 }),
+          ...(elementData.data.energy_per_litre['Gen 3'] ? { energy_per_litre_gen_3: elementData.data.energy_per_litre['Gen 3'] } : { energy_per_litre_gen_3: 0 }),
         }
-        return res;
-      }
-      console.log("flatened-data ----------> ", flattenObj(newDattta));
-      setModalData(flattenObj(newDattta)); 
+      })
+
+      console.log("flatened-data ----------> ", newDattta);
+      setModalData(newDattta);
     }
     setFuelDataLoading(false);
   }
 
- 
+
   dieselOverviewData && dieselOverviewData.forEach(obj => {
     for (const propertyName in obj) {
       if (typeof obj[propertyName] === 'number') {
@@ -194,7 +194,7 @@ const DieselOverviewCostTrackerTable = (
           placement="topLeft"
           overlay={
             <Menu>
-              <Menu.Item onClick={() => {}}>
+              <Menu.Item onClick={() => { }}>
                 <Space size={4}>
                   <EditOutlined />{" "}
                   <a
@@ -208,16 +208,16 @@ const DieselOverviewCostTrackerTable = (
                   >Edit Diesel Entry</a>
                 </Space>
               </Menu.Item>
-              <Menu.Item onClick={() => {}} type="link">
+              <Menu.Item onClick={() => { }} type="link">
                 <Space size={4}>
                   <Icon icon="ant-design:delete-outlined" />
                   <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-                  <a
-                    onClick={(e) => {
-                      e.preventDefault()
-                      setDieselEntryData(record)
-                    }}
-                  >Delete Diesel Entry</a>
+                    <a
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setDieselEntryData(record)
+                      }}
+                    >Delete Diesel Entry</a>
                   </Popconfirm>
                 </Space>
               </Menu.Item>
@@ -400,7 +400,7 @@ const DieselOverviewCostTrackerTable = (
           <ColumnGroup title="Energy(kWh)">
             <Column
               title="Gen1"
-              dataIndex= "GEN_1_500kVA_energy_consumed"
+              dataIndex="GEN_1_500kVA_energy_consumed"
               key="GEN_1_500kVA_energy_consumed"
             />
             <Column
@@ -451,59 +451,59 @@ const DieselOverviewCostTrackerTable = (
           <Column
             title="More"
             key="more"
-            render= {
+            render={
               (_, record) => {
-              const items = itemData(record);
-              return (
-                <Dropdown
-                  trigger={["click"]}
-                  getPopupContainer={(trigger) => trigger.parentElement}
-                  placement="topLeft"
-                  overlay={
-                    <Menu>
-                      <Menu.Item onClick={() => {}}>
-                        <Space size={4}>
-                          <EditOutlined />{" "}
-                          <a
-                            target="_blank"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setEditDieselEntryModal(true);
-                              setDieselEntryData(record);
-                            }}
-                            rel="noopener noreferrer"
-                          >Edit Diesel Entry</a>
-                        </Space>
-                      </Menu.Item>
-                      <Menu.Item onClick={() => {}} type="link">
-                        <Space size={4}>
-                          <Icon icon="ant-design:delete-outlined" />
-                          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-                          <a
-                            onClick={(e) => {
-                              e.preventDefault()
-                              setDieselEntryData(record)
-                            }}
-                          >Delete Diesel Entry</a>
-                          </Popconfirm>
-                        </Space>
-                      </Menu.Item>
-                    </Menu>
-                  }
-                >
-                  <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                    More <DownOutlined />
-                  </a>
-                </Dropdown>
-              );
-        
-            }
-            // render={(_, record) => (
-            //   <Space size="middle">
-            //     <a>Invite {record.lastName}</a>
-            //     <a>Delete</a>
-            //   </Space>
-            // )}
+                const items = itemData(record);
+                return (
+                  <Dropdown
+                    trigger={["click"]}
+                    getPopupContainer={(trigger) => trigger.parentElement}
+                    placement="topLeft"
+                    overlay={
+                      <Menu>
+                        <Menu.Item onClick={() => { }}>
+                          <Space size={4}>
+                            <EditOutlined />{" "}
+                            <a
+                              target="_blank"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setEditDieselEntryModal(true);
+                                setDieselEntryData(record);
+                              }}
+                              rel="noopener noreferrer"
+                            >Edit Diesel Entry</a>
+                          </Space>
+                        </Menu.Item>
+                        <Menu.Item onClick={() => { }} type="link">
+                          <Space size={4}>
+                            <Icon icon="ant-design:delete-outlined" />
+                            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+                              <a
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  setDieselEntryData(record)
+                                }}
+                              >Delete Diesel Entry</a>
+                            </Popconfirm>
+                          </Space>
+                        </Menu.Item>
+                      </Menu>
+                    }
+                  >
+                    <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                      More <DownOutlined />
+                    </a>
+                  </Dropdown>
+                );
+
+              }
+              // render={(_, record) => (
+              //   <Space size="middle">
+              //     <a>Invite {record.lastName}</a>
+              //     <a>Delete</a>
+              //   </Space>
+              // )}
             }
           />
         </Table>
