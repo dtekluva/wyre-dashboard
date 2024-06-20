@@ -54,12 +54,15 @@ const DieselOverviewCostTrackerTable = (
           date: elementData.data.date,
           quantity: elementData.data.quantity,
           hours_of_use: elementData.data.hours_of_use,
-          ...(elementData.data.energy_consumed['Gen 1'] ? { energy_consumed_gen_1: elementData.data.energy_consumed['Gen 1'] } : { energy_consumed_gen_1: 0 }),
-          ...(elementData.data.energy_consumed['Gen 2'] ? { energy_consumed_gen_2: elementData.data.energy_consumed['Gen 2'] } : { energy_consumed_gen_2: 0 }),
-          ...(elementData.data.energy_consumed['Gen 3'] ? { energy_consumed_gen_3: elementData.data.energy_consumed['Gen 3'] } : { energy_consumed_gen_3: 0 }),
-          ...(elementData.data.energy_per_litre['Gen 1'] ? { energy_per_litre_gen_1: elementData.data.energy_per_litre['Gen 1'] } : { energy_per_litre_gen_1: 0 }),
-          ...(elementData.data.energy_per_litre['Gen 1'] ? { energy_per_litre_gen_2: elementData.data.energy_per_litre['Gen 2'] } : { energy_per_litre_gen_2: 0 }),
-          ...(elementData.data.energy_per_litre['Gen 3'] ? { energy_per_litre_gen_3: elementData.data.energy_per_litre['Gen 3'] } : { energy_per_litre_gen_3: 0 }),
+          ...(!isNaN(elementData.data.energy_consumed['Gen 1']) ? { energy_consumed_gen_1: elementData.data.energy_consumed['Gen 1'] } : { }),
+          ...(!isNaN(elementData.data.energy_consumed['Gen 2']) ? { energy_consumed_gen_2: elementData.data.energy_consumed['Gen 2'] } : { }),
+          ...(!isNaN(elementData.data.energy_consumed['Gen 3']) ? { energy_consumed_gen_3: elementData.data.energy_consumed['Gen 3'] } : { }),
+          ...(!isNaN(elementData.data.energy_per_litre['Gen 1']) ? { energy_per_litre_gen_1: elementData.data.energy_per_litre['Gen 1'] } : { }),
+          ...(!isNaN(elementData.data.energy_per_litre['Gen 2']) ? { energy_per_litre_gen_2: elementData.data.energy_per_litre['Gen 2'] } : { }),
+          ...(!isNaN(elementData.data.energy_per_litre['Gen 3']) ? { energy_per_litre_gen_3: elementData.data.energy_per_litre['Gen 3'] } : { }),
+          ...(!isNaN(elementData.data.litres_per_hour['Gen 1']) ? { litres_per_hour_gen_1: elementData.data.litres_per_hour['Gen 1'] } : { }),
+          ...(!isNaN(elementData.data.litres_per_hour['Gen 2']) ? { litres_per_hour_gen_2: elementData.data.litres_per_hour['Gen 2'] } : { }),
+          ...(!isNaN(elementData.data.litres_per_hour['Gen 3']) ? { litres_per_hour_gen_3: elementData.data.litres_per_hour['Gen 3'] } : { }),
         }
       })
 
@@ -400,52 +403,52 @@ const DieselOverviewCostTrackerTable = (
           <ColumnGroup title="Energy(kWh)">
             <Column
               title="Gen1"
-              dataIndex="GEN_1_500kVA_energy_consumed"
-              key="GEN_1_500kVA_energy_consumed"
+              dataIndex="energy_consumed_gen_1"
+              key="energy_consumed_gen_1"
             />
             <Column
               title="Gen2"
-              dataIndex="GEN_2_500kVA_energy_consumed"
-              key="GEN_2_500kVA_energy_consumed"
+              dataIndex="energy_consumed_gen_2"
+              key="energy_consumed_gen_2"
             />
             <Column
               title="Gen3"
-              dataIndex="GEN_3_275kVA_energy_consumed"
-              key="GEN_3_275kVA_energy_consumed"
+              dataIndex="energy_consumed_gen_3"
+              key="energy_consumed_gen_3"
             />
           </ColumnGroup>
           <ColumnGroup title="Liters/H">
             <Column
               title="Gen1"
-              dataIndex="GEN_1_500kVA_litres_per_hour"
-              key="GEN_1_500kVA_litres_per_hour"
+              dataIndex="litres_per_hour_gen_1"
+              key="litres_per_hour_gen_1"
             />
             <Column
               title="Gen2"
-              dataIndex="GEN_2_500kVA_litres_per_hour"
-              key="GEN_2_500kVA_litres_per_hour"
+              dataIndex="litres_per_hour_gen_2"
+              key="litres_per_hour_gen_2"
             />
             <Column
               title="Gen3"
-              dataIndex="GEN_3_275kVA_litres_per_hour"
-              key="GEN_3_275kVA_litres_per_hour"
+              dataIndex="litres_per_hour_gen_3"
+              key="litres_per_hour_gen_3"
             />
           </ColumnGroup>
           <ColumnGroup title="kWh/L">
             <Column
               title="Gen1"
-              dataIndex="GEN_1_500kVA_energy_per_litre"
-              key="GEN_1_500kVA_energy_per_litre"
+              dataIndex="energy_per_litre_gen_1"
+              key="energy_per_litre_gen_1"
             />
             <Column
               title="Gen2"
-              dataIndex="GEN_2_500kVA_energy_per_litre"
-              key="GEN_2_500kVA_energy_per_litre"
+              dataIndex="energy_per_litre_gen_2"
+              key="energy_per_litre_gen_2"
             />
             <Column
               title="Gen3"
-              dataIndex="GEN_3_275kVA_energy_per_litre"
-              key="GEN_3_275kVA_energy_per_litre"
+              dataIndex="energy_per_litre_gen_3"
+              key="energy_per_litre_gen_3"
             />
           </ColumnGroup>
           <Column
