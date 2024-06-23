@@ -65,8 +65,6 @@ const DieselOverviewCostTrackerTable = (
           ...(!isNaN(elementData.data.litres_per_hour['Gen 3']) ? { litres_per_hour_gen_3: elementData.data.litres_per_hour['Gen 3'] } : { }),
         }
       })
-
-      console.log("flatened-data ----------> ", newDattta);
       setModalData(newDattta);
     }
     setFuelDataLoading(false);
@@ -401,55 +399,64 @@ const DieselOverviewCostTrackerTable = (
           <Column title="Quantity(L)" dataIndex="quantity" key="quantity" />
           <Column title="Hours" dataIndex="hours_of_use" key="hours_of_use" />
           <ColumnGroup title="Energy(kWh)">
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_consumed_gen_1) && (
             <Column
-              title="Gen1"
-              dataIndex="energy_consumed_gen_1"
-              key="energy_consumed_gen_1"
-            />
+            title="Gen1"
+            dataIndex="energy_consumed_gen_1"
+            key="energy_consumed_gen_1"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_consumed_gen_2) && (
             <Column
-              title="Gen2"
-              dataIndex="energy_consumed_gen_2"
-              key="energy_consumed_gen_2"
-            />
+            title="Gen2"
+            dataIndex="energy_consumed_gen_2"
+            key="energy_consumed_gen_2"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_consumed_gen_3) && (
             <Column
-              title="Gen3"
-              dataIndex="energy_consumed_gen_3"
-              key="energy_consumed_gen_3"
-            />
+            title="Gen3"
+            dataIndex="energy_consumed_gen_3"
+            key="energy_consumed_gen_3"
+          /> )}
           </ColumnGroup>
           <ColumnGroup title="Liters/H">
+          {modalData && modalData[0] && !isNaN(modalData[0].litres_per_hour_gen_1) && (
             <Column
-              title="Gen1"
-              dataIndex="litres_per_hour_gen_1"
-              key="litres_per_hour_gen_1"
-            />
+            title="Gen1"
+            dataIndex="litres_per_hour_gen_1"
+            key="litres_per_hour_gen_1"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].litres_per_hour_gen_2) && (
             <Column
-              title="Gen2"
-              dataIndex="litres_per_hour_gen_2"
-              key="litres_per_hour_gen_2"
-            />
+            title="Gen2"
+            dataIndex="litres_per_hour_gen_2"
+            key="litres_per_hour_gen_2"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].litres_per_hour_gen_3) && (
             <Column
-              title="Gen3"
-              dataIndex="litres_per_hour_gen_3"
-              key="litres_per_hour_gen_3"
-            />
+            title="Gen3"
+            dataIndex="litres_per_hour_gen_3"
+            key="litres_per_hour_gen_3"
+          /> )}
           </ColumnGroup>
           <ColumnGroup title="kWh/L">
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_per_litre_gen_1) && (
             <Column
-              title="Gen1"
-              dataIndex="energy_per_litre_gen_1"
-              key="energy_per_litre_gen_1"
-            />
+            title="Gen1"
+            dataIndex="energy_per_litre_gen_1"
+            key="energy_per_litre_gen_1"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_per_litre_gen_2) && (
             <Column
-              title="Gen2"
-              dataIndex="energy_per_litre_gen_2"
-              key="energy_per_litre_gen_2"
-            />
+            title="Gen2"
+            dataIndex="energy_per_litre_gen_2"
+            key="energy_per_litre_gen_2"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_per_litre_gen_3) && (
             <Column
-              title="Gen3"
-              dataIndex="energy_per_litre_gen_3"
-              key="energy_per_litre_gen_3"
-            />
+            title="Gen3"
+            dataIndex="energy_per_litre_gen_3"
+            key="energy_per_litre_gen_3"
+          /> )}
           </ColumnGroup>
           <Column
             title="More"
@@ -501,12 +508,6 @@ const DieselOverviewCostTrackerTable = (
                 );
 
               }
-              // render={(_, record) => (
-              //   <Space size="middle">
-              //     <a>Invite {record.lastName}</a>
-              //     <a>Delete</a>
-              //   </Space>
-              // )}
             }
           />
         </Table>
