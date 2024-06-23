@@ -17,11 +17,12 @@ const { Text } = Typography;
 const DieselOverviewCostTrackerTable = (
   { dieselOverviewData, isLoading,
     userId,
-    fetchFuelConsumptionInfo, deleteFuelConsumptionData:deleteDieselEntry }
+    fetchFuelConsumptionInfo, deleteFuelConsumptionData: deleteDieselEntry }
 ) => {
 
   const [modalOpener, setModalOpener] = useState(false);
   const [modalData, setModalData] = useState(false);
+  const [flattenedModalData, setFlattenedModalData] = useState(false);
   const [fuelDataLoading, setFuelDataLoading] = useState(false);
   const [editDieselEntryModal, setEditDieselEntryModal] = useState(false)
   const [dieselEntryData, setDieselEntryData] = useState({})
@@ -48,11 +49,24 @@ const DieselOverviewCostTrackerTable = (
     const fuelData = await fetchFuelConsumptionInfo(queryString);
     if (fuelData && fuelData.fullfilled) {
       const newDattta = fuelData.data.map((elementData) => {
-        return { ...elementData.data }
+        return {
+
+          date: elementData.data.date,
+          quantity: elementData.data.quantity,
+          hours_of_use: elementData.data.hours_of_use,
+          ...(!isNaN(elementData.data.energy_consumed['Gen 1']) ? { energy_consumed_gen_1: elementData.data.energy_consumed['Gen 1'] } : { }),
+          ...(!isNaN(elementData.data.energy_consumed['Gen 2']) ? { energy_consumed_gen_2: elementData.data.energy_consumed['Gen 2'] } : { }),
+          ...(!isNaN(elementData.data.energy_consumed['Gen 3']) ? { energy_consumed_gen_3: elementData.data.energy_consumed['Gen 3'] } : { }),
+          ...(!isNaN(elementData.data.energy_per_litre['Gen 1']) ? { energy_per_litre_gen_1: elementData.data.energy_per_litre['Gen 1'] } : { }),
+          ...(!isNaN(elementData.data.energy_per_litre['Gen 2']) ? { energy_per_litre_gen_2: elementData.data.energy_per_litre['Gen 2'] } : { }),
+          ...(!isNaN(elementData.data.energy_per_litre['Gen 3']) ? { energy_per_litre_gen_3: elementData.data.energy_per_litre['Gen 3'] } : { }),
+          ...(!isNaN(elementData.data.litres_per_hour['Gen 1']) ? { litres_per_hour_gen_1: elementData.data.litres_per_hour['Gen 1'] } : { }),
+          ...(!isNaN(elementData.data.litres_per_hour['Gen 2']) ? { litres_per_hour_gen_2: elementData.data.litres_per_hour['Gen 2'] } : { }),
+          ...(!isNaN(elementData.data.litres_per_hour['Gen 3']) ? { litres_per_hour_gen_3: elementData.data.litres_per_hour['Gen 3'] } : { }),
+        }
       })
       setModalData(newDattta);
     }
-    console.log("Fuel-data ----------> ", fuelData);
     setFuelDataLoading(false);
   }
 
@@ -181,7 +195,7 @@ const DieselOverviewCostTrackerTable = (
           placement="topLeft"
           overlay={
             <Menu>
-              <Menu.Item onClick={() => {}}>
+              <Menu.Item onClick={() => { }}>
                 <Space size={4}>
                   <EditOutlined />{" "}
                   <a
@@ -195,16 +209,16 @@ const DieselOverviewCostTrackerTable = (
                   >Edit Diesel Entry</a>
                 </Space>
               </Menu.Item>
-              <Menu.Item onClick={() => {}} type="link">
+              <Menu.Item onClick={() => { }} type="link">
                 <Space size={4}>
                   <Icon icon="ant-design:delete-outlined" />
                   <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-                  <a
-                    onClick={(e) => {
-                      e.preventDefault()
-                      setDieselEntryData(record)
-                    }}
-                  >Delete Diesel Entry</a>
+                    <a
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setDieselEntryData(record)
+                      }}
+                    >Delete Diesel Entry</a>
                   </Popconfirm>
                 </Space>
               </Menu.Item>
@@ -257,7 +271,6 @@ const DieselOverviewCostTrackerTable = (
     },
     optionsColumn()
   ];
-
 
   function onChange(pagination, filters, sorter, extra) {
     // console.log('params', pagination, filters, sorter, extra);
@@ -386,112 +399,115 @@ const DieselOverviewCostTrackerTable = (
           <Column title="Quantity(L)" dataIndex="quantity" key="quantity" />
           <Column title="Hours" dataIndex="hours_of_use" key="hours_of_use" />
           <ColumnGroup title="Energy(kWh)">
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_consumed_gen_1) && (
             <Column
-              title="Gen1"
-              dataIndex= "GEN_1_500kVA_energy_consumed"
-              key="GEN_1_500kVA_energy_consumed"
-            />
+            title="Gen1"
+            dataIndex="energy_consumed_gen_1"
+            key="energy_consumed_gen_1"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_consumed_gen_2) && (
             <Column
-              title="Gen2"
-              dataIndex="GEN_2_500kVA_energy_consumed"
-              key="GEN_2_500kVA_energy_consumed"
-            />
+            title="Gen2"
+            dataIndex="energy_consumed_gen_2"
+            key="energy_consumed_gen_2"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_consumed_gen_3) && (
             <Column
-              title="Gen3"
-              dataIndex="GEN_3_275kVA_energy_consumed"
-              key="GEN_3_275kVA_energy_consumed"
-            />
+            title="Gen3"
+            dataIndex="energy_consumed_gen_3"
+            key="energy_consumed_gen_3"
+          /> )}
           </ColumnGroup>
           <ColumnGroup title="Liters/H">
+          {modalData && modalData[0] && !isNaN(modalData[0].litres_per_hour_gen_1) && (
             <Column
-              title="Gen1"
-              dataIndex="GEN_1_500kVA_litres_per_hour"
-              key="GEN_1_500kVA_litres_per_hour"
-            />
+            title="Gen1"
+            dataIndex="litres_per_hour_gen_1"
+            key="litres_per_hour_gen_1"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].litres_per_hour_gen_2) && (
             <Column
-              title="Gen2"
-              dataIndex="GEN_2_500kVA_litres_per_hour"
-              key="GEN_2_500kVA_litres_per_hour"
-            />
+            title="Gen2"
+            dataIndex="litres_per_hour_gen_2"
+            key="litres_per_hour_gen_2"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].litres_per_hour_gen_3) && (
             <Column
-              title="Gen3"
-              dataIndex="GEN_3_275kVA_litres_per_hour"
-              key="GEN_3_275kVA_litres_per_hour"
-            />
+            title="Gen3"
+            dataIndex="litres_per_hour_gen_3"
+            key="litres_per_hour_gen_3"
+          /> )}
           </ColumnGroup>
           <ColumnGroup title="kWh/L">
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_per_litre_gen_1) && (
             <Column
-              title="Gen1"
-              dataIndex="GEN_1_500kVA_energy_per_litre"
-              key="GEN_1_500kVA_energy_per_litre"
-            />
+            title="Gen1"
+            dataIndex="energy_per_litre_gen_1"
+            key="energy_per_litre_gen_1"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_per_litre_gen_2) && (
             <Column
-              title="Gen2"
-              dataIndex="GEN_2_500kVA_energy_per_litre"
-              key="GEN_2_500kVA_energy_per_litre"
-            />
+            title="Gen2"
+            dataIndex="energy_per_litre_gen_2"
+            key="energy_per_litre_gen_2"
+          /> )}
+          {modalData && modalData[0] && !isNaN(modalData[0].energy_per_litre_gen_3) && (
             <Column
-              title="Gen3"
-              dataIndex="GEN_3_275kVA_energy_per_litre"
-              key="GEN_3_275kVA_energy_per_litre"
-            />
+            title="Gen3"
+            dataIndex="energy_per_litre_gen_3"
+            key="energy_per_litre_gen_3"
+          /> )}
           </ColumnGroup>
           <Column
             title="More"
             key="more"
-            render= {
+            render={
               (_, record) => {
-              const items = itemData(record);
-              return (
-                <Dropdown
-                  trigger={["click"]}
-                  getPopupContainer={(trigger) => trigger.parentElement}
-                  placement="topLeft"
-                  overlay={
-                    <Menu>
-                      <Menu.Item onClick={() => {}}>
-                        <Space size={4}>
-                          <EditOutlined />{" "}
-                          <a
-                            target="_blank"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setEditDieselEntryModal(true);
-                              setDieselEntryData(record);
-                            }}
-                            rel="noopener noreferrer"
-                          >Edit Diesel Entry</a>
-                        </Space>
-                      </Menu.Item>
-                      <Menu.Item onClick={() => {}} type="link">
-                        <Space size={4}>
-                          <Icon icon="ant-design:delete-outlined" />
-                          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-                          <a
-                            onClick={(e) => {
-                              e.preventDefault()
-                              setDieselEntryData(record)
-                            }}
-                          >Delete Diesel Entry</a>
-                          </Popconfirm>
-                        </Space>
-                      </Menu.Item>
-                    </Menu>
-                  }
-                >
-                  <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                    More <DownOutlined />
-                  </a>
-                </Dropdown>
-              );
-        
-            }
-            // render={(_, record) => (
-            //   <Space size="middle">
-            //     <a>Invite {record.lastName}</a>
-            //     <a>Delete</a>
-            //   </Space>
-            // )}
+                const items = itemData(record);
+                return (
+                  <Dropdown
+                    trigger={["click"]}
+                    getPopupContainer={(trigger) => trigger.parentElement}
+                    placement="topLeft"
+                    overlay={
+                      <Menu>
+                        <Menu.Item onClick={() => { }}>
+                          <Space size={4}>
+                            <EditOutlined />{" "}
+                            <a
+                              target="_blank"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setEditDieselEntryModal(true);
+                                setDieselEntryData(record);
+                              }}
+                              rel="noopener noreferrer"
+                            >Edit Diesel Entry</a>
+                          </Space>
+                        </Menu.Item>
+                        <Menu.Item onClick={() => { }} type="link">
+                          <Space size={4}>
+                            <Icon icon="ant-design:delete-outlined" />
+                            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+                              <a
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  setDieselEntryData(record)
+                                }}
+                              >Delete Diesel Entry</a>
+                            </Popconfirm>
+                          </Space>
+                        </Menu.Item>
+                      </Menu>
+                    }
+                  >
+                    <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                      More <DownOutlined />
+                    </a>
+                  </Dropdown>
+                );
+
+              }
             }
           />
         </Table>
