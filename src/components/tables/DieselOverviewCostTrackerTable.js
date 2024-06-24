@@ -51,18 +51,18 @@ const DieselOverviewCostTrackerTable = (
       const newDattta = fuelData.data.map((elementData) => {
         return {
 
-          date: elementData.data.date,
-          quantity: elementData.data.quantity,
-          hours_of_use: elementData.data.hours_of_use,
-          ...(!isNaN(elementData.data.energy_consumed['Gen 1']) ? { energy_consumed_gen_1: elementData.data.energy_consumed['Gen 1'] } : { }),
-          ...(!isNaN(elementData.data.energy_consumed['Gen 2']) ? { energy_consumed_gen_2: elementData.data.energy_consumed['Gen 2'] } : { }),
-          ...(!isNaN(elementData.data.energy_consumed['Gen 3']) ? { energy_consumed_gen_3: elementData.data.energy_consumed['Gen 3'] } : { }),
-          ...(!isNaN(elementData.data.energy_per_litre['Gen 1']) ? { energy_per_litre_gen_1: elementData.data.energy_per_litre['Gen 1'] } : { }),
-          ...(!isNaN(elementData.data.energy_per_litre['Gen 2']) ? { energy_per_litre_gen_2: elementData.data.energy_per_litre['Gen 2'] } : { }),
-          ...(!isNaN(elementData.data.energy_per_litre['Gen 3']) ? { energy_per_litre_gen_3: elementData.data.energy_per_litre['Gen 3'] } : { }),
-          ...(!isNaN(elementData.data.litres_per_hour['Gen 1']) ? { litres_per_hour_gen_1: elementData.data.litres_per_hour['Gen 1'] } : { }),
-          ...(!isNaN(elementData.data.litres_per_hour['Gen 2']) ? { litres_per_hour_gen_2: elementData.data.litres_per_hour['Gen 2'] } : { }),
-          ...(!isNaN(elementData.data.litres_per_hour['Gen 3']) ? { litres_per_hour_gen_3: elementData.data.litres_per_hour['Gen 3'] } : { }),
+          date: elementData.date,
+          quantity: elementData.quantity,
+          hours_of_use: elementData.hours_of_use,
+          ...(!isNaN(elementData.energy_consumed['Gen 1']) ? { energy_consumed_gen_1: elementData.energy_consumed['Gen 1'] } : { }),
+          ...(!isNaN(elementData.energy_consumed['Gen 2']) ? { energy_consumed_gen_2: elementData.energy_consumed['Gen 2'] } : { }),
+          ...(!isNaN(elementData.energy_consumed['Gen 3']) ? { energy_consumed_gen_3: elementData.energy_consumed['Gen 3'] } : { }),
+          ...(!isNaN(elementData.energy_per_litre['Gen 1']) ? { energy_per_litre_gen_1: elementData.energy_per_litre['Gen 1'] } : { }),
+          ...(!isNaN(elementData.energy_per_litre['Gen 2']) ? { energy_per_litre_gen_2: elementData.energy_per_litre['Gen 2'] } : { }),
+          ...(!isNaN(elementData.energy_per_litre['Gen 3']) ? { energy_per_litre_gen_3: elementData.energy_per_litre['Gen 3'] } : { }),
+          ...(!isNaN(elementData.litres_per_hour['Gen 1']) ? { litres_per_hour_gen_1: elementData.litres_per_hour['Gen 1'] } : { }),
+          ...(!isNaN(elementData.litres_per_hour['Gen 2']) ? { litres_per_hour_gen_2: elementData.litres_per_hour['Gen 2'] } : { }),
+          ...(!isNaN(elementData.litres_per_hour['Gen 3']) ? { litres_per_hour_gen_3: elementData.litres_per_hour['Gen 3'] } : { }),
         }
       })
       setModalData(newDattta);
