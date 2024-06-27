@@ -50,7 +50,7 @@ const DieselOverviewCostTrackerTable = (
     if (fuelData && fuelData.fullfilled) {
       const newDattta = fuelData.data.map((elementData) => {
         return {
-
+          fuel_consumption_id: elementData.fuel_consumption_id,
           date: elementData.date,
           quantity: elementData.quantity,
           hours_of_use: elementData.hours_of_use,
@@ -136,7 +136,7 @@ const DieselOverviewCostTrackerTable = (
     },
   ];
 
-  const entryId = dieselEntryData.id
+  const entryId = dieselEntryData.fuel_consumption_id
 
   const handleDelete = async () => {
     const parameter = {
