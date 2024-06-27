@@ -29,7 +29,7 @@ function UpdateDieselEntry({ match, dieselEntryData, updateFuelConsumptionData:e
     CompleteDataContext
     );
 
-  const entryId = dieselEntryData.id
+  const entryId = dieselEntryData.fuel_consumption_id
 
 
   const data = {
@@ -78,7 +78,8 @@ function UpdateDieselEntry({ match, dieselEntryData, updateFuelConsumptionData:e
         end_date: date.format('YYYY-MM-DD'),
         start_date: date.format('YYYY-MM-DD'),
         fuel_type: fuelType,
-        quantity: quantity
+        quantity: quantity,
+        entryId
       };
       const request = await editFuelConsumption(entryId, parameters);
 
