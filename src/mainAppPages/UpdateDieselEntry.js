@@ -10,7 +10,14 @@ import { DateField, NumberField, SelectField } from '../components/FormFields/Ge
 const openNotificationWithIcon = (type, formName) => {
   notification[type]({
     message: 'Bill Updated',
-    description: `Your addition to the ${formName} has been successfully submitted`,
+    description: `Your update to the ${formName} has been successfully submitted`,
+  });
+};
+
+const errorNotificationWithIcon = (type, formName) => {
+  notification[type]({
+    message: 'Something went wrong',
+    description: `Your update to the ${formName} can not be completed at the moment, please try again`,
   });
 };
 
@@ -79,7 +86,6 @@ function UpdateDieselEntry({ match, dieselEntryData, updateFuelConsumptionData:e
         start_date: date.format('YYYY-MM-DD'),
         fuel_type: fuelType,
         quantity: quantity,
-        entryId
       };
       const request = await editFuelConsumption(entryId, parameters);
 
@@ -88,7 +94,7 @@ function UpdateDieselEntry({ match, dieselEntryData, updateFuelConsumptionData:e
         return EOMBalanceForm.resetFields();
       }
 
-      openNotificationWithIcon('error', request.message|| 'An error occured,Please try again!!!')
+      errorNotificationWithIcon('error', 'diesel entry')
       return EOMBalanceForm.resetFields();
     }
     else {
