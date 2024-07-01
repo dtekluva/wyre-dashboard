@@ -21,8 +21,15 @@ const breadCrumbRoutes = [
 
 const openNotificationWithIcon = (type, formName) => {
   notification[type]({
-    message: 'Bill Updated',
-    description: `Your addition to the ${formName} has been successfully submitted`,
+    message: 'Bill Created',
+    description: `New entry has been added to the ${formName} successfully`,
+  });
+};
+
+const errorNotificationWithIcon = (type, errorMsg) => {
+  notification[type]({
+    message: 'Failed',
+    description: errorMsg
   });
 };
 
@@ -87,13 +94,16 @@ function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, add
       };
       const request = await addFuelConsumption(branch, parameters);
 
-      if (request.fullfilled) {
-        openNotificationWithIcon('success', 'diesel entry');
+      if (request.message.status === 201) {
+        openNotificationWithIcon("success", "daily diesel entry");
+        return dailyForm.resetFields();
+      }else if (request.message.response.status === 400) {
+        errorNotificationWithIcon('error', request.message.response.data.error)
+        return dailyForm.resetFields();
+      } else {
+        errorNotificationWithIcon('error', 'Something went wrong, please try again')
         return dailyForm.resetFields();
       }
-
-      openNotificationWithIcon('error', request.message|| 'An error occured,Please try again!!!')
-      return dailyForm.resetFields();
     }
     else {
       NotAllowedNotification();
@@ -118,7 +128,7 @@ function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, add
         return monthlyForm.resetFields();
       }
 
-      openNotificationWithIcon('error', request.message|| 'An error occured,Please try again!!!')
+      errorNotificationWithIcon('error', 'monthly diesel entry')
       return monthlyForm.resetFields();
     }
     else {
