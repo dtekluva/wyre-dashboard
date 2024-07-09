@@ -35,6 +35,13 @@ const DieselOverviewCostTrackerTable = (
     });
   };
 
+  const errorNotificationWithIcon = (type, formName) => {
+    notification[type]({
+      message: 'Failed',
+      description: `Your attempt to delete the ${formName} can not be completed at the moment, please try again`,
+    });
+  };
+
   const fetchFuelData = async (date) => {
     setModalData(false)
     const year = moment(date).format('YYYY');
@@ -54,6 +61,7 @@ const DieselOverviewCostTrackerTable = (
           date: elementData.date,
           quantity: elementData.quantity,
           hours_of_use: elementData.hours_of_use,
+          // ...(elementData.data.energy_consumed['Gen 1'] ? { energy_consumed_gen_1: elementData.data.energy_consumed['Gen 1'] } : { energy_consumed_gen_1: 0 }),
           ...(!isNaN(elementData.energy_consumed['Gen 1']) ? { energy_consumed_gen_1: elementData.energy_consumed['Gen 1'] } : { }),
           ...(!isNaN(elementData.energy_consumed['Gen 2']) ? { energy_consumed_gen_2: elementData.energy_consumed['Gen 2'] } : { }),
           ...(!isNaN(elementData.energy_consumed['Gen 3']) ? { energy_consumed_gen_3: elementData.energy_consumed['Gen 3'] } : { }),
@@ -141,11 +149,12 @@ const DieselOverviewCostTrackerTable = (
   const handleDelete = async () => {
     const parameter = {
       id: entryId
-    }
+    };
     const request = await deleteDieselEntry(entryId, parameter);
     if (request.fullfilled) {
-      openNotificationWithIcon('success', 'diesel entry')
+      openNotificationWithIcon("success", "daily diesel entry");
     }
+    errorNotificationWithIcon("Failed", "daily diesel entry");
   };
 
   const itemData = (record) => {

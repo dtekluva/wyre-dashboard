@@ -5,6 +5,7 @@ import {
 } from "./actionCreators";
 import { APIService } from "../../../config/api/apiConfig";
 import jwtDecode from "jwt-decode";
+import { message } from "antd";
 
 
 export const fetchCostTrackerData = () => async (dispatch) => {
@@ -67,10 +68,10 @@ export const addFuelConsumptionData = (branchId, parameters) => async (dispatch)
     const response = await APIService.post(requestUrl, parameters);
     dispatch(addFuelDataSuccess(response.data.data));
     dispatch(addFuelDataLoading(false))
-    return { fullfilled: true, message: response.data.detail }
+    return { fullfilled: true, message: response }
   } catch (error) {
     dispatch(addFuelDataLoading(false));
-    return { fullfilled: false, message: error.response.detail }
+    return { fullfilled: false, message: error }
   }
 };
 
