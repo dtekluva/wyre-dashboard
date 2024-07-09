@@ -61,6 +61,7 @@ const DieselOverviewCostTrackerTable = (
           date: elementData.date,
           quantity: elementData.quantity,
           hours_of_use: elementData.hours_of_use,
+          // ...(elementData.data.energy_consumed['Gen 1'] ? { energy_consumed_gen_1: elementData.data.energy_consumed['Gen 1'] } : { energy_consumed_gen_1: 0 }),
           ...(!isNaN(elementData.energy_consumed['Gen 1']) ? { energy_consumed_gen_1: elementData.energy_consumed['Gen 1'] } : { }),
           ...(!isNaN(elementData.energy_consumed['Gen 2']) ? { energy_consumed_gen_2: elementData.energy_consumed['Gen 2'] } : { }),
           ...(!isNaN(elementData.energy_consumed['Gen 3']) ? { energy_consumed_gen_3: elementData.energy_consumed['Gen 3'] } : { }),
