@@ -60,7 +60,7 @@ export const fetchDashBoardDataCard_1 = (userDateRange) => async (dispatch) => {
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/card_1/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
+      `${EnvData.REACT_APP_API_URL}dashboard/total_energy/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -89,7 +89,7 @@ export const fetchDashBoardDataCard_2 = (userDateRange) => async (dispatch) => {
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/card_2/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
+      `${EnvData.REACT_APP_API_URL}dashboard/device_usage/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -118,7 +118,7 @@ export const fetchDashBoardDataCard_3 = (userDateRange) => async (dispatch) => {
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/card_3/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
+      `${EnvData.REACT_APP_API_URL}dashboard/daily_consumption/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,

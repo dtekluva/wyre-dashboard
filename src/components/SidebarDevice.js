@@ -16,7 +16,8 @@ import { setSelectedSideBar } from '../redux/actions/sidebar/actionCreators';
 function SidebarDevice({
   modifiedDeviceName,
   originalDeviceName,
-  // deviceData,
+  deviceData,
+  branchId
   // deviceDailyKwh,
   // deviceMonthlyUsage,
   // deviceTimeOfUseTableData,
@@ -32,10 +33,10 @@ function SidebarDevice({
   // check if page is not score card
 
   useEffect(() => {
-    const hasNotDisplayUrl =  window.location.pathname.includes('report');
+    const hasNotDisplayUrl = window.location.pathname.includes('report');
     setIsDisplayNone(hasNotDisplayUrl);
   }, [window.location.pathname])
-  
+
 
   const {
     // renderedDataObjects,
@@ -45,6 +46,9 @@ function SidebarDevice({
     checkedDevices,
     setCheckedDevices,
     checkedBranches,
+    setCheckedDevicesId,
+    checkedDevicesId,
+    setCheckedBranchId,
   } = useContext(CompleteDataContext);
 
   // Check if checkedBranches is empty
@@ -210,28 +214,28 @@ function SidebarDevice({
     //   yesterday,
     //   daily_kwh: deviceDailyKwh,
     //   usage_hours: deviceMonthlyUsage,
-      // Score card data
-      // is_generator,
-      // baseline_energy,
-      // peak_to_avg_power_ratio,
-      // score_card_carbon_emissions,
-      // generator_size_efficiency: [generator_size_efficiency],
-      // change_over_lags,
-      // operating_time,
-      // fuel_consumption: [fuel_consumption],
-      // // Power Quality Data
-      // power_quality: [powerQualityData],
-      // // Last Reading Data
-      // last_reading: [lastReadingData],
-      // // Power Demand Data
-      // power_demand: [{ dates: power_demand_dates, ...power_demand_values }],
-      // // Time of Use Data
-      // time_of_use_chart: [timeOfUseChartData],
-      // time_of_use_table: [deviceTimeOfUseTableData],
-      // // Energy Consumption Data
-      // energy_consumption_values: [
-      //   { dates: energy_consumption_dates, ...energy_consumption_values },
-      // ],
+    // Score card data
+    // is_generator,
+    // baseline_energy,
+    // peak_to_avg_power_ratio,
+    // score_card_carbon_emissions,
+    // generator_size_efficiency: [generator_size_efficiency],
+    // change_over_lags,
+    // operating_time,
+    // fuel_consumption: [fuel_consumption],
+    // // Power Quality Data
+    // power_quality: [powerQualityData],
+    // // Last Reading Data
+    // last_reading: [lastReadingData],
+    // // Power Demand Data
+    // power_demand: [{ dates: power_demand_dates, ...power_demand_values }],
+    // // Time of Use Data
+    // time_of_use_chart: [timeOfUseChartData],
+    // time_of_use_table: [deviceTimeOfUseTableData],
+    // // Energy Consumption Data
+    // energy_consumption_values: [
+    //   { dates: energy_consumption_dates, ...energy_consumption_values },
+    // ],
     //   energy_consumption_previous: energy_consumption_previous,
     //   energy_consumption_current: energy_consumption_current,
     //   energy_consumption_usage: energy_consumption_usage,
@@ -262,10 +266,10 @@ function SidebarDevice({
     */
     if (!isChecked) {
       // setRenderedDataObjects({
-        // ...renderedDataObjects,
-        // ...refinedDeviceData,
+      // ...renderedDataObjects,
+      // ...refinedDeviceData,
       // });
-      
+
 
       const newCheckedItems = {
         ...checkedItems,
@@ -279,7 +283,13 @@ function SidebarDevice({
         ...checkedDevices,
         [modifiedDeviceName]: true,
       });
-      
+
+      if(!checkedDevicesId.includes(deviceData.device_id)){
+        checkedDevicesId.push(deviceData.device_id);
+      }
+      setCheckedDevicesId(checkedDevicesId)
+      setCheckedBranchId(branchId)
+
     } else {
       // const modifiedRenderedDataObjects = cloneObject(renderedDataObjects);
       // delete modifiedRenderedDataObjects[modifiedDeviceName];
@@ -293,7 +303,7 @@ function SidebarDevice({
       setCheckedItems({
         ...modifiedCheckedItems,
       });
-      
+
       const modifiedCheckedDevices = cloneObject(checkedDevices);
       delete modifiedCheckedDevices[modifiedDeviceName];
       setCheckedDevices({

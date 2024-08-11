@@ -31,7 +31,9 @@ const CompleteDataProvider = (props) => {
   const [refinedRenderedData, setRefinedRenderedData] = useState({});
   const [checkedItems, setCheckedItems] = useState({});
   const [checkedBranches, setCheckedBranches] = useState({});
+  const [checkedBranchId, setCheckedBranchId] = useState(null);
   const [checkedDevices, setCheckedDevices] = useState({});
+  const [checkedDevicesId, setCheckedDevicesId] = useState([]);
   const [selectedDevices, setSelectedDevices] = useState([]);
   const [allCheckedOrSelectedDevice, setAllCheckedOrSelectedDevice] = useState([]);
   const [isAuthenticatedDataLoading, setIsAuthenticatedDataLoading] = useState(
@@ -286,10 +288,14 @@ const CompleteDataProvider = (props) => {
         checkedItems: checkedItems,
         setCheckedItems: setCheckedItems,
         checkedBranches: checkedBranches,
+        checkedBranchId: checkedBranchId,
         selectedDevices: selectedDevices,
         setCheckedBranches: setCheckedBranches,
+        setCheckedBranchId: setCheckedBranchId,
         checkedDevices: checkedDevices,
+        checkedDevicesId: checkedDevicesId,
         setCheckedDevices: setCheckedDevices,
+        setCheckedDevicesId: setCheckedDevicesId,
         numberOfCheckedItems: Object.keys(checkedItems).length,
         numberOfCheckedBranches: Object.keys(checkedBranches).length,
         isAuthenticatedDataLoading: isAuthenticatedDataLoading,

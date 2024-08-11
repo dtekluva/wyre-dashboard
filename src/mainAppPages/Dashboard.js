@@ -36,6 +36,9 @@ import { Spin, Tooltip } from 'antd';
 import InformationIcon from '../icons/InformationIcon';
 import DASHBOARD_TOOLTIP_MESSAGES from '../components/toolTips/Dashboard_Tooltip_Messages';
 import { fetchPowerFactor } from "../redux/actions/powerFactor/powerFactor.action";
+import { devicesArray } from "../helpers/v2/organizationDataHelpers";
+import TotalEnergyCard from "../components/cards/TotalEnergy";
+import CarbonEmmission from "../components/cards/CarbonEmmission";
 
 const breadCrumbRoutes = [
   { url: "/", name: "Home", id: 1 },
@@ -53,7 +56,7 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
   dashboard
 }) {
   let {
-    checkedItems, checkedBranches, checkedDevices, userDateRange, uiSettings } = useContext(
+    checkedItems, checkedBranchId, checkedDevicesId, checkedBranches, checkedDevices, userDateRange, uiSettings } = useContext(
       CompleteDataContext,
     );
 
@@ -62,6 +65,8 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
 
   const { setCurrentUrl, userData } = useContext(CompleteDataContext);
   const [allDeviceInfo, setAllDeviceInfo] = useState(false);
+  const [totalEnergyBranchData, setTotalEnergyBranchData] = useState(null);
+  const [totalDeviceUsageBranchData, setDeviceUsageBranchData] = useState(null);
   const [refinedDashboardData, setRefinedDashboardData] = useState({});
   const [pageLoaded, setPageLoaded] = useState(false);
 
@@ -147,7 +152,7 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
 
     const branchId = sideDetails?.sideBarData?.branches && sideDetails?.sideBarData?.branches[0]?.branch_id
 
-    if (sideDetails.sideBarData) {
+    if (sideDetails.sideBarData && sideDetails.sideBarData.branches) {
       fetchBlendedost(branchId, userDateRange)
     }
     
@@ -168,6 +173,46 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
     setPageLoaded(true);
   }, [userDateRange]);
 
+
+  useEffect(() => {
+    if (pageLoaded && dashboard.dashBoardCard_1_Data) {
+      const devicesArrayData = devicesArray(dashboard.dashBoardCard_1_Data.branches, checkedBranchId, checkedDevicesId);
+      setTotalEnergyBranchData(devicesArrayData)
+    }
+
+
+    setPageLoaded(true);
+  }, [dashboard.dashBoardCard_1_Data, checkedBranchId, checkedDevicesId]);
+
+
+  useEffect(() => {
+
+    if (pageLoaded && dashboard.dashBoardCard_2_Data) {
+      console.log('this is the devices array and here we are', dashboard.dashBoardCard_2_Data);
+      const devicesArrayData = devicesArray(dashboard.dashBoardCard_2_Data.branches, checkedBranchId, checkedDevicesId);
+      setDeviceUsageBranchData(devicesArrayData)
+      console.log('this is the devices array and here we are', devicesArrayData);
+    }
+
+    setPageLoaded(true);
+  }, [dashboard.dashBoardCard_2_Data, checkedBranchId, checkedDevicesId]);
+
+  // useEffect(() => {
+
+  //   if (pageLoaded && dashboard.dashBoardCard_3_Data) {
+  //     console.log('this is the devices array and here we are', dashboard.dashBoardCard_2_Data);
+  //     const devicesArrayData = devicesArray(dashboard.dashBoardCard_3_Data.branches, checkedBranchId, checkedDevicesId);
+  //     setDeviceUsageBranchData(devicesArrayData)
+  //     console.log('this is the devices array and here we are', devicesArrayData);
+  //   }
+
+  //   setPageLoaded(true);
+  // }, [dashboard.dashBoardCard_3_Data, checkedBranchId, checkedDevicesId]);
+
+  console.log(dashboard.dashBoardCard_1_Data)
+  console.log('=====',checkedBranchId)
+  console.log('============>>>', checkedDevicesId)
+
   const pageRef = useRef();
 
   const todaysValue = today && today.value;
@@ -186,27 +231,7 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
 
       <section id="page" ref={pageRef}>
         <div className="dashboard-row-1">
-          <article className="dashboard__total-energy dashboard__banner--small">
-            <div style={{ textAlign: "right", paddingRight: 20, paddingTop: 20, marginLeft: "auto" }}>
-              <Tooltip placement="top" style={{ textAlign: "right" }}
-                overlayStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.TOTAL_ENERGY} >
-                <p>
-                  <InformationIcon className="info-icon" style={{ color: "white" }} />
-                </p>
-              </Tooltip>
-            </div>
-            <h2 className="total-energy__heading">Total Energy</h2>
-            <p className="total-energy_value">
-              <span>{total_kwh && numberFormatter(total_kwh.value)}</span>
-              <span>{total_kwh && total_kwh.unit}</span>
-            </p>
-            {userData.client_type !== 'RESELLER' &&
-              <p className="total-energy_value solar-energy_value">
-                <span>Solar Hours: {solar_hours && numberFormatter(solar_hours?.value)} </span>
-                <span>{solar_hours && 'kWh'}{'('}{((solar_hours?.value/total_kwh?.value) * 100)?.toFixed(2)}{'%)'}</span>
-              </p>
-            }
-          </article>
+          <TotalEnergyCard totalEnergyBranchData={totalEnergyBranchData} userData={userData} />
 
           <article className="dashboard__demand-banner dashboard__banner--small">
             <Spin spinning={!max_demand_with_power_factor}>
@@ -241,30 +266,10 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
             </Spin>
           </article>
 
-          <article className="dashboard__cost-emissions-banner dashboard__banner--small">
-            <DashboardSmallBannerSection
-              name="Carbon Emissions"
-              value={
-                dashboard_carbon_emissions &&
-                dashboard_carbon_emissions.value.toFixed(2)
-              }
-              unit={
-                dashboard_carbon_emissions && dashboard_carbon_emissions.unit
-              }
-            />
-            <DashboardSmallBannerSection
-              name="Blended Cost of Energy"
-              value={
-                dashboard.blendedCostEnergyData && 
-                dashboard.blendedCostEnergyData
-              }
-              // unit={cost_of_energy && cost_of_energy.unit}
-              unit="Naira/kWh"
-            />
-          </article>
+          <CarbonEmmission totalEnergyBranchData={totalEnergyBranchData} userData={userData} />
         </div>
         <div className="dashboard-row-1b">
-          {
+          {/* {
             allDeviceInfo
             && Object.values(allDeviceInfo).filter(device => device.is_source).map((eachDevice, index) => {
               return index < 6 && eachDevice.is_source && <article key={index}
@@ -272,6 +277,21 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
                 <DashBoardAmountUsed key={index} name={eachDevice?.name}
                   deviceType={eachDevice.device_type}
                   totalKWH={eachDevice?.total_kwh?.value}
+                  amount={eachDevice.billing?.totals?.present_total?.value_naira
+                  }
+                  timeInUse={eachDevice?.usage_hours?.hours[0]}
+                />
+              </article>
+            })
+          } */}
+          {
+            totalDeviceUsageBranchData
+            && totalDeviceUsageBranchData.devices.filter(device => device.is_source).map((eachDevice, index) => {
+              return index < 6 && eachDevice.is_source && <article key={index}
+                className="dashboard__total-energy-amount dashboard__banner--smallb">
+                <DashBoardAmountUsed key={index} name={eachDevice?.name}
+                  deviceType={eachDevice.device_type}
+                  totalKWH={eachDevice?.energy_consumption?.usage}
                   amount={eachDevice.billing?.totals?.present_total?.value_naira
                   }
                   timeInUse={eachDevice?.usage_hours?.hours[0]}

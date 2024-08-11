@@ -31,8 +31,12 @@ function SidebarBranch({ branchData }) {
     checkedItems,
     setCheckedItems,
     checkedBranches,
+    checkedBranchId,
     setCheckedBranches,
+    setCheckedBranchId,
     checkedDevices,
+    setCheckedDevicesId,
+    checkedDevicesId
   } = useContext(CompleteDataContext);
 
   const handleToggle = () => {
@@ -121,6 +125,9 @@ function SidebarBranch({ branchData }) {
             originalDeviceName={originalDeviceName}
             modifiedDeviceName={modifiedDeviceName}
             deviceData={eachDevice}
+            setCheckedDevicesId={setCheckedDevicesId}
+            checkedDevicesId={checkedDevicesId}
+            branchId={branchData.branch_id}
             // deviceDailyKwh={deviceDailyKwh}
             // deviceMonthlyUsage={deviceMonthlyUsage}
             // deviceTimeOfUseTableData={modifiedBranchTimeOfUseTableData}
@@ -183,6 +190,8 @@ function SidebarBranch({ branchData }) {
         ...checkedBranches,
         [branchData.name]: true,
       });
+      setCheckedBranchId(
+        branchData.branch_id);
     } else {
       // Delete this branch to list of rendered objects (and checked items) when unchecked
       // const modifiedRenderedDataObjects = cloneObject(renderedDataObjects);
