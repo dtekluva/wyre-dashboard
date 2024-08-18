@@ -12,13 +12,11 @@ import {
 const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
 
-  console.log('side details here',data, sideBarData)
   const newData = {}
 
   if (data && sideBarData) {
     const { dates: dateStrings } = data ? data : { dates: [] };
     newData.dates = dateStrings;
-    console.log('this is the new datadatadatadatadatadata ', data)
     data && data.devices.forEach((deviceData, index) => {
       console.log(deviceData)
       const findName = sideBarData.branches[0].devices.find((side) => deviceData.name.endsWith(side.name) && side.is_source);
@@ -28,7 +26,6 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
     })
   }
 
-  console.log('this is the new data ', newData)
   const options = {
     tooltips: {
       enabled: true,

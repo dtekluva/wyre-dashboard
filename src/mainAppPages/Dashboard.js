@@ -284,20 +284,22 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
           <PowerUsageCard totalDeviceUsageBranchData={totalDeviceUsageBranchData} uiSettings={uiSettings} sideDetails={sideDetails} />
           <YesterDayAndTodayCard totalEnergyBranchData={totalEnergyBranchData} />
         </div>
-        {(userData.client_type === 'BESPOKE') && (dashBoardInfo.dashBoardData || allDeviceInfo) && (
-          (dashBoardInfo.dashBoardData.branches.length > 1 &&
+
+
+        {(userData.client_type === 'BESPOKE') && (dashboard.dashBoardCard_1_Data) && (
+          (dashboard.dashBoardCard_1_Data.branches.length > 1 &&
             (!checkedItems
               || Object.keys(checkedItems).length === 0)) ||
-          (dashBoardInfo.dashBoardData.branches.length === 1
-            && generateLoadOverviewChartData(Object.values(allDeviceInfo)).label.length > 0)) && (
+          (dashboard.dashBoardCard_1_Data.branches.length === 1
+            && generateLoadOverviewChartData(dashboard.dashBoardCard_1_Data.branches[0].devices).label.length > 0)) && (
             <div className="dashboard-bar-container">
               <article className='score-card-row-3'>
                 <LoadOverviewPercentBarChart
                   uiSettings={uiSettings}
-                  runningPercentageData={dashBoardInfo.dashBoardData.branches.length > 1 && (!checkedItems
+                  runningPercentageData={dashboard.dashBoardCard_1_Data.branches.length > 1 && (!checkedItems
                     || Object.keys(checkedItems).length === 0) ?
-                    generateMultipleBranchLoadOverviewChartData(dashBoardInfo.dashBoardData.branches)
-                    : generateLoadOverviewChartData(Object.values(allDeviceInfo))}
+                    generateMultipleBranchLoadOverviewChartData(dashboard.dashBoardCard_1_Data.branches)
+                    : generateLoadOverviewChartData(dashboard.dashBoardCard_1_Data.branches[0].devices)}
                   dataTitle='Operating Time'
                 />
               </article>

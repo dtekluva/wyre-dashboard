@@ -73,7 +73,6 @@ function ScoreCard({ match, fetchScoreCardData: fetchScoreCard }) {
         });
         
         const renderedData = getRenderedData(Object.values(branchAndDevice), true, true);
-        console.log('branch and devices ++++++_++++++_+ ', renderedData)
         setRefinedScorCardData(renderedData);
         setAllDeviceInfo(allDeviceData);
       } else {
@@ -169,7 +168,6 @@ function ScoreCard({ match, fetchScoreCardData: fetchScoreCard }) {
     message = "Equivalent to " + noOfTrees + " Acacia trees";
 
 
-    console.log('this is the gen size efficiency', generator_size_efficiency);
     generatorSizeEffficiencyData =
       generator_size_efficiency && generator_size_efficiency.filter(Boolean);
     generatorSizeEffficiencyData = generatorSizeEffficiencyData?.filter(

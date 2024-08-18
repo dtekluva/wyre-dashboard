@@ -28,7 +28,6 @@ const SwitchablePicker = ()=> {
 
   const onDateSelect = (value) => {
     dispatch(changeSearchDate(value.format('DD-MM-YYYY')))
-    console.log('this is the report value ', value.format('DD-MM-YYYY'))
   }
 
   return (
