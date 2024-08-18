@@ -8,7 +8,7 @@ const CarbonEmmission = ({ totalEnergyBranchData, userData }) => {
     
     useEffect(() => {
         const carbonEmisionData = { dashboard_carbon_emissions: {}, cost_of_energy: {} }
-        totalEnergyBranchData.devices && totalEnergyBranchData.devices.forEach(data => {
+        totalEnergyBranchData && totalEnergyBranchData.devices && totalEnergyBranchData.devices.forEach(data => {
             const dashboard = data.dashboard;
             carbonEmisionData.dashboard_carbon_emissions.value = dashboard.dashboard_carbon_emissions.value + (carbonEmisionData.dashboard_carbon_emissions.value || 0);
             carbonEmisionData.dashboard_carbon_emissions.unit = dashboard.dashboard_carbon_emissions.unit;
@@ -26,7 +26,7 @@ const CarbonEmmission = ({ totalEnergyBranchData, userData }) => {
                 name="Carbon Emissions"
                 value={
                     carbonEmissionEnergyData.dashboard_carbon_emissions &&
-                    carbonEmissionEnergyData.dashboard_carbon_emissions.value.toFixed(2)
+                    carbonEmissionEnergyData.dashboard_carbon_emissions.value?.toFixed(2)
                 }
                 unit={
                     carbonEmissionEnergyData.dashboard_carbon_emissions && carbonEmissionEnergyData.dashboard_carbon_emissions.unit

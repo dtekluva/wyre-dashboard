@@ -17,7 +17,7 @@ import {
 } from "../helpers/genericHelpers";
 
 import LoadOverviewPercentBarChart from "../components/barCharts/LoadOverviewPercentBarChart";
-import { fetchBlendedCostData, fetchDashBoardData, fetchDashBoardDataCard_1, fetchDashBoardDataCard_2, fetchDashBoardDataCard_3, fetchPAPR } from "../redux/actions/dashboard/dashboard.action";
+import { fetchBlendedCostData, fetchDashBoardDataCard_1, fetchDashBoardDataCard_2, fetchDashBoardDataCard_3, fetchPAPR } from "../redux/actions/dashboard/dashboard.action";
 import { isEmpty } from "../helpers/authHelper";
 
 // Tooltips
@@ -37,7 +37,7 @@ const breadCrumbRoutes = [
   { url: "/", name: "Dashboard", id: 2 },
 ];
 
-function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlendedCostData:fetchBlendedost, 
+function Dashboard({ match, fetchBlendedCostData:fetchBlendedost, 
   fetchDashBoardDataCard_1, 
   fetchDashBoardDataCard_2, 
   fetchDashBoardDataCard_3,
@@ -69,14 +69,12 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
 
   useEffect(() => {
     if (!pageLoaded && isEmpty(dashBoardInfo.dashBoardData || {})) {
-      dashBoardDataFetch(userDateRange);
       fetchPAPRData(userDateRange)
       // fetchBlendedost(userDateRange)
       // fetch the power factors here
     }
 
     if (!isEmpty(dashBoardInfo.dashBoardData) > 0 && pageLoaded) {
-      dashBoardDataFetch(userDateRange);
       fetchPAPRData(userDateRange)
       // fetchBlendedost(userDateRange)
       // fetch the power factors here
@@ -254,7 +252,6 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
 }
 
 const mapDispatchToProps = {
-  fetchDashBoardData,
   fetchDashBoardDataCard_1,
   fetchDashBoardDataCard_2,
   fetchDashBoardDataCard_3,

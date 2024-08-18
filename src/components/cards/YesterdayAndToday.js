@@ -16,7 +16,7 @@ const YesterDayAndTodayCard = ({ totalEnergyBranchData, userData }) => {
 
     useEffect(() => {
         const todayAndYesterday = { todayValue: 0, yesterdayValue: 0, isTodaysValueLessThanYesterdays: false,  }
-        totalEnergyBranchData.devices && totalEnergyBranchData.devices.forEach(data => {
+        totalEnergyBranchData && totalEnergyBranchData.devices && totalEnergyBranchData.devices.forEach(data => {
             const dashboard = data.dashboard;
             todayAndYesterday.todayValue = dashboard.today.value + (todayAndYesterday.todayValue || 0);
             todayAndYesterday.yesterdayValue = dashboard.yesterday.value + (todayAndYesterday.yesterdayValue || 0);
