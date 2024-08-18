@@ -18,12 +18,6 @@ import {
 
 import LoadOverviewPercentBarChart from "../components/barCharts/LoadOverviewPercentBarChart";
 import { fetchBlendedCostData, fetchDashBoardData, fetchDashBoardDataCard_1, fetchDashBoardDataCard_2, fetchDashBoardDataCard_3, fetchPAPR } from "../redux/actions/dashboard/dashboard.action";
-import {
-  getDashBoardRefinedData,
-  getRefinedOrganizationDataWithChekBox,
-  getInitialAllDeviceRefinedOrganizationData
-} from "../helpers/organizationDataHelpers";
-import { getRenderedData } from "../helpers/renderedDataHelpers";
 import { isEmpty } from "../helpers/authHelper";
 
 // Tooltips
@@ -59,47 +53,12 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
     );
 
   const dashBoardInfo = useSelector((state) => state.dashboard);
-  const powerFactor = useSelector((state) => state.powerFactor);
 
   const { setCurrentUrl, userData } = useContext(CompleteDataContext);
-  const [allDeviceInfo, setAllDeviceInfo] = useState(false);
   const [totalEnergyBranchData, setTotalEnergyBranchData] = useState(null);
   const [totalDeviceUsageBranchData, setTotalDeviceUsageBranchData] = useState(null);
   const [totalDailyConsumptionBranchData, setDailyConsumptionBranchData] = useState(null);
-  const [refinedDashboardData, setRefinedDashboardData] = useState({});
   const [pageLoaded, setPageLoaded] = useState(false);
-
-
-  const {
-    max_demand_with_power_factor, 
-  } = refinedDashboardData;
-
-  useEffect(() => {
-
-    const copyDashBoardData = JSON.parse(JSON.stringify(dashBoardInfo.dashBoardData));
-
-    if (powerFactor.allPowerFactor && powerFactor.allPowerFactor.length> 0 && dashBoardInfo.dashBoardData) {
-      if (Object.keys(checkedBranches).length > 0 || Object.keys(checkedDevices).length > 0) {
-
-        const { branchAndDevice, allDeviceData } = getRefinedOrganizationDataWithChekBox({
-          checkedBranches,
-          checkedDevices,
-          organization: copyDashBoardData,
-          setRenderedDataObjects: null,
-          isDashBoard: true,
-          powerFactorData: powerFactor.allPowerFactor
-        });
-
-        const renderedData = getRenderedData(Object.values(branchAndDevice), true);
-        setRefinedDashboardData(renderedData);
-        setAllDeviceInfo(allDeviceData);
-      } else {
-        setRefinedDashboardData(getDashBoardRefinedData(copyDashBoardData, powerFactor.allPowerFactor));
-        setAllDeviceInfo(getInitialAllDeviceRefinedOrganizationData({ organization: copyDashBoardData }));
-      }
-    }
-
-  }, [checkedBranches, checkedDevices, dashBoardInfo.dashBoardData, powerFactor.allPowerFactor]);
 
   useEffect(() => {
     if (match && match.url) {
@@ -210,7 +169,7 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
           <TotalEnergyCard totalEnergyBranchData={totalEnergyBranchData} userData={userData} />
 
           <article className="dashboard__demand-banner dashboard__banner--small">
-            <Spin spinning={!max_demand_with_power_factor}>
+
               <div style={{ textAlign: "right", paddingTop: 20, paddingRight: 20, marginLeft: "auto" }}>
                 <Tooltip placement="top" style={{ textAlign: "right" }}
                   overlayStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.MAX_MIN_AVERAGE} >
@@ -239,27 +198,11 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
                   unit="kVA"
                 />
               </div>
-            </Spin>
           </article>
 
           <CarbonEmmission totalEnergyBranchData={totalEnergyBranchData} userData={userData} />
         </div>
         <div className="dashboard-row-1b">
-          {/* {
-            allDeviceInfo
-            && Object.values(allDeviceInfo).filter(device => device.is_source).map((eachDevice, index) => {
-              return index < 6 && eachDevice.is_source && <article key={index}
-                className="dashboard__total-energy-amount dashboard__banner--smallb">
-                <DashBoardAmountUsed key={index} name={eachDevice?.name}
-                  deviceType={eachDevice.device_type}
-                  totalKWH={eachDevice?.total_kwh?.value}
-                  amount={eachDevice.billing?.totals?.present_total?.value_naira
-                  }
-                  timeInUse={eachDevice?.usage_hours?.hours[0]}
-                />
-              </article>
-            })
-          } */}
           {
             totalDeviceUsageBranchData
             && totalDeviceUsageBranchData.devices.filter(device => device.is_source).map((eachDevice, index) => {
