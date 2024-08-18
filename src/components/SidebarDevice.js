@@ -303,7 +303,8 @@ function SidebarDevice({
       setCheckedItems({
         ...modifiedCheckedItems,
       });
-
+      checkedDevicesId.filter(dId => dId !== deviceData.device_id);
+      setCheckedDevicesId(checkedDevicesId.filter(dId => dId !== deviceData.device_id))
       const modifiedCheckedDevices = cloneObject(checkedDevices);
       delete modifiedCheckedDevices[modifiedDeviceName];
       setCheckedDevices({

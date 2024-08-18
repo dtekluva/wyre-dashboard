@@ -1,11 +1,5 @@
 import React, { useEffect, useState, } from "react";
-import { numberFormatter } from "../../helpers/numberFormatter";
 import DashboardSmallBannerSection from "../../smallComponents/DashboardSmallBannerSection";
-
-// // Tooltips
-// import { Tooltip } from 'antd';
-// import InformationIcon from '../../icons/InformationIcon';
-// import DASHBOARD_TOOLTIP_MESSAGES from '../../components/toolTips/Dashboard_Tooltip_Messages';
 
 
 

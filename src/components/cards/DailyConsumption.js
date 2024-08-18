@@ -1,11 +1,9 @@
-import React, {useEffect, useState,} from "react";
-import { numberFormatter } from "../../helpers/numberFormatter";
+import React from "react";
 
 // Tooltips
 import { Tooltip } from 'antd';
 import InformationIcon from '../../icons/InformationIcon';
 import DASHBOARD_TOOLTIP_MESSAGES from '../../components/toolTips/Dashboard_Tooltip_Messages';
-import DashboardDoughnutChart from "../pieCharts/DashboardDoughnutChart";
 import DashboardStackedBarChart from "../barCharts/DashboardStackedBarChart";
 
 

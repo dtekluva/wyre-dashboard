@@ -64,7 +64,7 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
   const { setCurrentUrl, userData } = useContext(CompleteDataContext);
   const [allDeviceInfo, setAllDeviceInfo] = useState(false);
   const [totalEnergyBranchData, setTotalEnergyBranchData] = useState(null);
-  const [totalDeviceUsageBranchData, setDeviceUsageBranchData] = useState(null);
+  const [totalDeviceUsageBranchData, setTotalDeviceUsageBranchData] = useState(null);
   const [totalDailyConsumptionBranchData, setDailyConsumptionBranchData] = useState(null);
   const [refinedDashboardData, setRefinedDashboardData] = useState({});
   const [pageLoaded, setPageLoaded] = useState(false);
@@ -170,18 +170,18 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
       setTotalEnergyBranchData(devicesArrayData)
     }
     setPageLoaded(true);
-  }, [dashboard.dashBoardCard_1_Data, checkedBranchId, checkedDevicesId]);
+  }, [dashboard.dashBoardCard_1_Data, checkedBranchId, checkedDevicesId.length]);
 
 
   useEffect(() => {
 
     if (pageLoaded && dashboard.dashBoardCard_2_Data) {
       const devicesArrayData = devicesArray(dashboard.dashBoardCard_2_Data.branches, checkedBranchId, checkedDevicesId);
-      setDeviceUsageBranchData(devicesArrayData)
+      setTotalDeviceUsageBranchData(devicesArrayData)
     }
 
     setPageLoaded(true);
-  }, [dashboard.dashBoardCard_2_Data, checkedBranchId, checkedDevicesId]);
+  }, [dashboard.dashBoardCard_2_Data, checkedBranchId, checkedDevicesId.length]);
 
 
   useEffect(() => {
@@ -191,7 +191,7 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
     }
 
     setPageLoaded(true);
-  }, [dashboard.dashBoardCard_3_Data, checkedBranchId, checkedDevicesId]);
+  }, [dashboard.dashBoardCard_3_Data, checkedBranchId, checkedDevicesId.length]);
 
   const pageRef = useRef();
 

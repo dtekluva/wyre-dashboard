@@ -18,7 +18,6 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
     const { dates: dateStrings } = data ? data : { dates: [] };
     newData.dates = dateStrings;
     data && data.devices.forEach((deviceData, index) => {
-      console.log(deviceData)
       const findName = sideBarData.branches[0].devices.find((side) => deviceData.name.endsWith(side.name) && side.is_source);
       if (findName) {
         newData[deviceData.name] = deviceData.daily_kwh;
