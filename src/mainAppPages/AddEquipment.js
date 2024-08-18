@@ -67,13 +67,11 @@ function AddEquipment({ match }) {
   if(organization.branches.length === 1){
     organization.branches && organization.branches.map((branch)=>{
       branchSelectorValue = branch.branch_id
-      console.log('Default branch is:',branchSelectorValue)
       return branch.branch_id
     })
   }
   else{
     branchSelectorValue = null
-    console.log('branches are more than one', branchSelectorValue)
   }
   const branchSelector = (
         <Select style={branchSelectorStyle} 
@@ -125,7 +123,6 @@ function AddEquipment({ match }) {
       let submitData = equipmentHttpServices.add(newEquipmentData,branchSelectorValue,userId,token)
       submitData.then((returnedEquipment) => {
             // setAllEquipment(allEquipment.concat(returnedEquipment));
-            console.log(returnedEquipment)
             // console.log(Object.assign({},returnedEquipment))
             openNotificationWithIcon('success');
           })

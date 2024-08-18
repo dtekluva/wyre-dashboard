@@ -118,7 +118,7 @@ const getSelectionScoreCardCarbonEmissions = (data) => {
 
 // Generator Size Efficiency
 const getSelectionGeneratorSizeEfficiencyArray = (data) => {
-  console.log('getSelectionGeneratorSizeEfficiencyArray', data);
+
   const nestedSelectedEfficiencies = data.map((eachSelection) =>
     eachSelection.generator_size_efficiency
       ? {
@@ -127,7 +127,7 @@ const getSelectionGeneratorSizeEfficiencyArray = (data) => {
       }
       : false
   );
-  console.log('nestedSelectedEfficiencies', nestedSelectedEfficiencies);
+
   const flattenedSelectedEfficiencies = nestedSelectedEfficiencies
     .map((eachSelection) => {
       // Remove falsy values, selection names
@@ -139,11 +139,11 @@ const getSelectionGeneratorSizeEfficiencyArray = (data) => {
     .flat();
 
   const selectedEfficienciesSet = new Set();
-  console.log('this is the wya forward', flattenedSelectedEfficiencies.filter((item) => {
+  flattenedSelectedEfficiencies.filter((item) => {
     const duplicate = selectedEfficienciesSet.has(item.name);
     selectedEfficienciesSet.add(item.name);
     return !duplicate;
-  }));
+  });
 
   // Remove duplicates with ES6 Sets
 

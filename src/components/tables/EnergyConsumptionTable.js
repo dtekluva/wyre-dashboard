@@ -96,7 +96,6 @@ class EnergyConsumptionTable extends React.Component {
   render() {
     const data = sortByDateTime(this.props.energyConsumptionData);
     const unit = this.props.energyConsumptionUnit;
-    console.log('here is the data dddd ', data);
 
 
     const dataForEnergyConsumptionColumns =
