@@ -1,8 +1,9 @@
 
 
 export const devicesArray = (branches, checkedBranchId, checkedDevicesId) =>{
-  let activeBranch = checkedBranchId? branches.find((branch) => branch.branch_id = checkedBranchId) : branches[0];
-  console.log('activeBranch is the checked branch id',activeBranch)
+  console.log('htissjdihsijdisjkd=============', branches, checkedBranchId, checkedDevicesId);
+  let activeBranch = checkedBranchId? branches.find((branch) => branch.branch_id = checkedBranchId) : branches? branches[0] : {};
+
   if(checkedDevicesId.length > 0){
     let activeDevices = activeBranch.devices.filter(function(item){
       return checkedDevicesId.includes(item.device_id);
@@ -10,7 +11,6 @@ export const devicesArray = (branches, checkedBranchId, checkedDevicesId) =>{
     activeBranch.devices = activeDevices;
   }
 
-  console.log('this is the activeBranchactiveBranchactiveBranch', activeBranch)
   return activeBranch;
 }
 

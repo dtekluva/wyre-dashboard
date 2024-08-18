@@ -4,15 +4,10 @@ import { connect, useSelector } from 'react-redux';
 import CompleteDataContext from "../Context";
 
 import BreadCrumb from "../components/BreadCrumb";
-import DashboardStackedBarChart from "../components/barCharts/DashboardStackedBarChart";
-import DashboardDoughnutChart from "../components/pieCharts/DashboardDoughnutChart";
 import Loader from "../components/Loader";
 
 import DashboardSmallBannerSection from "../smallComponents/DashboardSmallBannerSection";
 
-import DashboardUpArrow from "../icons/DashboardUpArrow";
-import DashboardDownArrow from "../icons/DashboardDownArrow";
-import { numberFormatter } from "../helpers/numberFormatter";
 
 // import styles from "../pdfStyles/styles";
 import DashBoardAmountUsed from "../smallComponents/DashBoardAmountUsed";
@@ -39,6 +34,9 @@ import { fetchPowerFactor } from "../redux/actions/powerFactor/powerFactor.actio
 import { devicesArray } from "../helpers/v2/organizationDataHelpers";
 import TotalEnergyCard from "../components/cards/TotalEnergy";
 import CarbonEmmission from "../components/cards/CarbonEmmission";
+import YesterDayAndTodayCard from "../components/cards/YesterdayAndToday";
+import PowerUsageCard from "../components/cards/PowerUsageCard";
+import DailyConsumption from "../components/cards/DailyConsumption";
 
 const breadCrumbRoutes = [
   { url: "/", name: "Home", id: 1 },
@@ -67,20 +65,12 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
   const [allDeviceInfo, setAllDeviceInfo] = useState(false);
   const [totalEnergyBranchData, setTotalEnergyBranchData] = useState(null);
   const [totalDeviceUsageBranchData, setDeviceUsageBranchData] = useState(null);
+  const [totalDailyConsumptionBranchData, setDailyConsumptionBranchData] = useState(null);
   const [refinedDashboardData, setRefinedDashboardData] = useState({});
   const [pageLoaded, setPageLoaded] = useState(false);
 
 
   const {
-    name,
-    total_kwh,
-    usage_hours,
-    dashboard_carbon_emissions,
-    cost_of_energy,
-    today,
-    yesterday,
-    daily_kwh,
-    solar_hours,
     max_demand_with_power_factor, 
   } = refinedDashboardData;
 
@@ -179,8 +169,6 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
       const devicesArrayData = devicesArray(dashboard.dashBoardCard_1_Data.branches, checkedBranchId, checkedDevicesId);
       setTotalEnergyBranchData(devicesArrayData)
     }
-
-
     setPageLoaded(true);
   }, [dashboard.dashBoardCard_1_Data, checkedBranchId, checkedDevicesId]);
 
@@ -188,36 +176,24 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
   useEffect(() => {
 
     if (pageLoaded && dashboard.dashBoardCard_2_Data) {
-      console.log('this is the devices array and here we are', dashboard.dashBoardCard_2_Data);
       const devicesArrayData = devicesArray(dashboard.dashBoardCard_2_Data.branches, checkedBranchId, checkedDevicesId);
       setDeviceUsageBranchData(devicesArrayData)
-      console.log('this is the devices array and here we are', devicesArrayData);
     }
 
     setPageLoaded(true);
   }, [dashboard.dashBoardCard_2_Data, checkedBranchId, checkedDevicesId]);
 
-  // useEffect(() => {
 
-  //   if (pageLoaded && dashboard.dashBoardCard_3_Data) {
-  //     console.log('this is the devices array and here we are', dashboard.dashBoardCard_2_Data);
-  //     const devicesArrayData = devicesArray(dashboard.dashBoardCard_3_Data.branches, checkedBranchId, checkedDevicesId);
-  //     setDeviceUsageBranchData(devicesArrayData)
-  //     console.log('this is the devices array and here we are', devicesArrayData);
-  //   }
+  useEffect(() => {
+    if (pageLoaded && dashboard.dashBoardCard_3_Data) {
+      const devicesArrayData = devicesArray(dashboard.dashBoardCard_3_Data.branches, checkedBranchId, checkedDevicesId);
+      setDailyConsumptionBranchData(devicesArrayData)
+    }
 
-  //   setPageLoaded(true);
-  // }, [dashboard.dashBoardCard_3_Data, checkedBranchId, checkedDevicesId]);
-
-  console.log(dashboard.dashBoardCard_1_Data)
-  console.log('=====',checkedBranchId)
-  console.log('============>>>', checkedDevicesId)
+    setPageLoaded(true);
+  }, [dashboard.dashBoardCard_3_Data, checkedBranchId, checkedDevicesId]);
 
   const pageRef = useRef();
-
-  const todaysValue = today && today.value;
-  const yesterdaysValue = yesterday && yesterday.value;
-  const isTodaysValueLessThanYesterdays = todaysValue < yesterdaysValue;
 
   if (dashBoardInfo.fetchDashBoardLoading || !pageLoaded) {
     return <Loader />;
@@ -292,9 +268,9 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
                 <DashBoardAmountUsed key={index} name={eachDevice?.name}
                   deviceType={eachDevice.device_type}
                   totalKWH={eachDevice?.energy_consumption?.usage}
-                  amount={eachDevice.billing?.totals?.present_total?.value_naira
+                  amount={eachDevice.billing_totals?.present_total?.value_naira
                   }
-                  timeInUse={eachDevice?.usage_hours?.hours[0]}
+                  timeInUse={eachDevice?.usage_hours}
                 />
               </article>
             })
@@ -302,75 +278,11 @@ function Dashboard({ match, fetchDashBoardData: dashBoardDataFetch, fetchBlended
         </div>
 
 
-        <article className="dashboard-row-2 dashboard-bar-container">
-          <div style={{ textAlign: "right", paddingTop: 20, paddingRight: 20, marginLeft: "auto" }}>
-            <Tooltip placement="top" style={{ textAlign: "right" }}
-              overlayStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.DAILY_ENERGY} >
-              <p>
-                <InformationIcon className="info-icon" />
-              </p>
-            </Tooltip>
-          </div>
-          <DashboardStackedBarChart
-            uiSettings={uiSettings}
-            className=""
-            data={daily_kwh}
-            organization={name}
-            sideBarData={sideDetails.sideBarData}
-          />
-        </article>
+        <DailyConsumption totalDailyConsumptionBranchData={totalDailyConsumptionBranchData} uiSettings={uiSettings} sideDetails={sideDetails}/>
 
         <div className="dashboard-row-3">
-          <article className="dashboard-pie-container">
-            <div style={{ textAlign: "right", paddingTop: 20, paddingRight: 20, float: "right" }}>
-              <Tooltip placement="top" style={{ textAlign: "right" }}
-                overlayStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.POWER_USAGE} >
-                <p>
-                  <InformationIcon className="info-icon" />
-                </p>
-              </Tooltip>
-            </div>
-            <DashboardDoughnutChart data={usage_hours} uiSettings={uiSettings} sideBarData={sideDetails.sideBarData} />
-          </article>
-
-          <article className="dashboard-today-and-yesterday">
-            <div className="today-usage">
-              <div style={{ textAlign: "right", paddingRight: 20, position: "relative" }}>
-                <Tooltip placement="top" style={{ textAlign: "right" }}
-                  overlayStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.TODAY_VS_YESTERDAY} >
-                  <p>
-                    <InformationIcon className="info-icon" />
-                  </p>
-                </Tooltip>
-              </div>
-              <h3 className="today-usage__heading">Today's Usage (kWh)</h3>
-              <div className="usage-value-and-arrow">
-                <p className="today-usage__value">
-                  {numberFormatter(todaysValue) || '0000'}
-                </p>
-                {isTodaysValueLessThanYesterdays ? (
-                  <DashboardDownArrow />
-                ) : (
-                  <DashboardUpArrow />
-                )}
-              </div>
-            </div>
-            <div className="yesterday-usage">
-              <h3 className="yesterday-usage__heading">
-                Yesterday's Usage (kWh)
-              </h3>
-              <div className="usage-value-and-arrow">
-                <p className="yesterday-usage__value">
-                  {numberFormatter(yesterdaysValue) || '0000'}
-                </p>
-                {isTodaysValueLessThanYesterdays ? (
-                  <DashboardUpArrow />
-                ) : (
-                  <DashboardDownArrow />
-                )}
-              </div>
-            </div>
-          </article>
+          <PowerUsageCard totalDeviceUsageBranchData={totalDeviceUsageBranchData} uiSettings={uiSettings} sideDetails={sideDetails} />
+          <YesterDayAndTodayCard totalEnergyBranchData={totalEnergyBranchData} />
         </div>
         {(userData.client_type === 'BESPOKE') && (dashBoardInfo.dashBoardData || allDeviceInfo) && (
           (dashBoardInfo.dashBoardData.branches.length > 1 &&

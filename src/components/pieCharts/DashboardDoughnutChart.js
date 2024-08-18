@@ -6,7 +6,6 @@ import { convertDecimalTimeToNormal } from '../../helpers/genericHelpers';
 
 const DashboardDoughnutChart = ({ data, uiSettings, sideBarData }) => {
   const { isMediumScreen, useMediaQuery } = useContext(CompleteDataContext);
-
   const newData = {
     devices: [],
     hours: []
@@ -14,11 +13,11 @@ const DashboardDoughnutChart = ({ data, uiSettings, sideBarData }) => {
 
   const isLessThan481 = useMediaQuery({ query: '(max-width: 481px)' });
   if (data && sideBarData){
-     data.devices.forEach((deviceName, index) => {
-      const findName = sideBarData.branches[0].devices.find((side) => deviceName.endsWith(side.name) && side.is_source);
+     data.devices.forEach((deviceData, index) => {
+      const findName = sideBarData.branches[0].devices.find((side) => deviceData.name.endsWith(side.name) && side.is_source);
       if(findName){
-        newData.devices.push(deviceName)
-        newData.hours.push(data.hours[index])
+        newData.devices.push(deviceData.name)
+        newData.hours.push(deviceData.usage_hours)
       }
      })
   }
