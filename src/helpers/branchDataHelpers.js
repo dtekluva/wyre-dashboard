@@ -139,7 +139,6 @@ const getBranchScoreCardCarbonEmissions = (data) => {
 
 // Generator Size Efficiency
 const getBranchGeneratorSizeEfficiencyArray = (data) => {
-  console.log('here you are with the console.log ahndsjkdokjd =========>>>>>>>', data);
   return data.devices.map((eachDevice) => {
     const modifiedDeviceName = !eachDevice.name.includes(data.name)
       ? data.name + ' ' + eachDevice.name
@@ -395,11 +394,9 @@ const getBranchEnergyConsumptionValues = (data) =>
   });
 
 const sumBranchEnergyConsumptionValues = (data, valueName) => {
-  console.log('this is the data ============>>>', data.devices, valueName)
   const allDevicesValues =   data.devices?.map(
     (eachDevice) => eachDevice?.energy_consumption && eachDevice?.energy_consumption[valueName]
   );
-  console.log('this is the data ============ allDevicesValues>>>', allDevicesValues)
   return allDevicesValues.reduce((a, b) => a + b, 0);
 };
 /* -------------------------------------------------------------------

@@ -104,7 +104,6 @@ const getBranchEnergyDataArray = (data, powerFactor = null) => {
       );
 
       let branchEnergyData = {};
-      // console.log('this is teach branch ', energySumValueNames);
       energySumValueNames.forEach((eachName) => {
         return (branchEnergyData[eachName] = sumNestedObjectValuesUp(
           eachBranch.devices,

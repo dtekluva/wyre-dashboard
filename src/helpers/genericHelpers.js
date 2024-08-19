@@ -712,7 +712,6 @@ const generateLoadCosumptionChartData = (isLoadData) => {
 
 const generateLoadOverviewChartData = (isLoadData) => {
 
-
   let label = [];
   let initailData = []
   let data = []
@@ -723,14 +722,14 @@ const generateLoadOverviewChartData = (isLoadData) => {
     isLoadData?.map((device) => {
       if (device.is_load) {
 
-        initailData.push(device.total_kwh.value);
+        initailData.push(device.dashboard.total_kwh.value);
       }
 
     });
     const sumData = sumOfArrayElements(initailData);
     isLoadData?.map((device) => {
       if (device.is_load) {
-        const devicePercentage = calculatePercentageTwoDecimal(device.total_kwh.value, sumData);
+        const devicePercentage = calculatePercentageTwoDecimal(device.dashboard.total_kwh.value, sumData);
         label.push(device.name);
         data.push(devicePercentage);
       }
