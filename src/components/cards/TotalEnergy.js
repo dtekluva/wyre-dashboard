@@ -15,10 +15,15 @@ const TotalEnergyCard = ({ totalEnergyBranchData, userData }) => {
         const totalData = {total_kwh: {}, solar_hours: {}}
         totalEnergyBranchData && totalEnergyBranchData.devices && totalEnergyBranchData.devices.forEach(data => {
             const dashboard = data.dashboard;
-            totalData.total_kwh.value = dashboard.total_kwh.value  + (totalData.total_kwh.value || 0);
-            totalData.total_kwh.unit = dashboard.total_kwh.unit;
-            totalData.solar_hours.value = dashboard.solar_hours.value  + (totalData.solar_hours.value || 0);
-            totalData.solar_hours.unit = dashboard.solar_hours.unit;
+            if (data.is_source) {
+              totalData.total_kwh.value =
+                dashboard.total_kwh.value + (totalData.total_kwh.value || 0);
+              totalData.total_kwh.unit = dashboard.total_kwh.unit;
+              totalData.solar_hours.value =
+                dashboard.solar_hours.value +
+                (totalData.solar_hours.value || 0);
+              totalData.solar_hours.unit = dashboard.solar_hours.unit;
+            }
         });
         setTotalEnergyData(totalData)
 
