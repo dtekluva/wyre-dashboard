@@ -59,7 +59,7 @@ function ScoreCard({ match, fetchScoreCardData: fetchScoreCard }) {
   useEffect(() => {
 
     if (scoreCardInfo.scoreCardData) {
-      const copyData = JSON.parse(JSON.stringify(scoreCardInfo.scoreCardData));
+      const copyData = JSON.parse(JSON.stringify(scoreCardInfo.scoreCardData));      
 
       if (Object.keys(checkedBranches).length > 0 || Object.keys(checkedDevices).length > 0) {
  
@@ -70,7 +70,7 @@ function ScoreCard({ match, fetchScoreCardData: fetchScoreCard }) {
           setRenderedDataObjects: null,
           isDashBoard: false,
           powerFactorData: null
-        });
+        });        
         
         const renderedData = getRenderedData(Object.values(branchAndDevice), true, true);
         setRefinedScorCardData(renderedData);
@@ -438,7 +438,7 @@ function ScoreCard({ match, fetchScoreCardData: fetchScoreCard }) {
         </article> */}
 
 
-        <article className='score-card-row-3'>
+        <article className= {deviceLength > 0 ? 'score-card-row-3' : 'hideCard'}>
           <ScoreCardBarChart operatingTimeData={operating_time}
             uiSettings={uiSettings}
             dataTitle='Operating Time'
