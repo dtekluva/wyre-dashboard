@@ -581,7 +581,7 @@ const sumOperatingTimeValues = (parentArray, nestedValueName) => {
 
 // round decimple to the legth specifile
 const roundToDecimalPLace = (number, length) => (!Number.isInteger(number)
-  ? number.toFixed(length) : number);
+  ? number : number);
 
 const sumOfArrayElements = (array) => array.reduce((acc, curr) => acc + Number(curr), 0)
 

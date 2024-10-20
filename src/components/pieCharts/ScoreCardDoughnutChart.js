@@ -4,6 +4,7 @@ import { roundToDecimalPLace,
   sumOfArrayElements } from '../../helpers/genericHelpers';
 
 const ScoreCardDoughnutChart = ({ data, uiSettings }) => {
+  // console.log('Doughnut-data ==> ', data);
   const { unit, ...extractedDataObject } = data
     ? data
     : { unit: ['Empty'], others: ['Empty'] };
