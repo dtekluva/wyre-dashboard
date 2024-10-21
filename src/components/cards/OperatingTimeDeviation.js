@@ -1,4 +1,4 @@
-import React, {useEffect, useState,} from "react";
+import React, { useEffect, useState, } from "react";
 import { numberFormatter } from "../../helpers/numberFormatter";
 
 // Tooltips
@@ -13,41 +13,19 @@ import ScoreCardBarChart from "../barCharts/ScoreCardBarChart";
 
 
 
-const OperatingTimeDeviation = ({ generatorFuelEfficiencyData, operaringTimeDeviationData, uiSettings }) => {
-    const [baselineEnergyData, setBaselineEnergyData] = useState({});
-    // console.log('Charts Values  ==> ', operaringTimeDeviationData);
-    // console.log('Charts Values  ==> ', operaringTimeDeviationData.chart.values);
+const OperatingTimeDeviation = ({ operaringTimeDeviationData, uiSettings, deviceLength }) => {
 
-    let deviceLength, fuelConsumptionDoughnuts, fuelConsumptionData;
-
-    fuelConsumptionData =
-      generatorFuelEfficiencyData && generatorFuelEfficiencyData.filter(Boolean);
-
-    fuelConsumptionData = fuelConsumptionData?.filter(
-      eachDevice => eachDevice.is_gen === true
-    );
-
-    deviceLength = fuelConsumptionData?.length;
-
-    fuelConsumptionDoughnuts =
-      fuelConsumptionData &&
-      fuelConsumptionData.map((eachGenerator) => (
-        <ScoreCardFuelConsumptionDoughnut
-          data={eachGenerator}
-          key={eachGenerator.name}
-          uiSettings={uiSettings}
-        />
-      ));
-
-    return (
-        <article className= {deviceLength > 0 ? 'score-card-row-3' : 'hideCard'}>
-          <ScoreCardBarChart operatingTimeData={operaringTimeDeviationData}
-            uiSettings={uiSettings}
-            dataTitle='Operating Time'
-            dataMessage={SCORE_CARD_TOOLTIP_MESSAGES.OPERATING_TIME}
-          />
-        </article>
-    );
+  // console.log('Charts Values  ==> ', operaringTimeDeviationData);
+  // console.log('Charts Values  ==> ', operaringTimeDeviationData.chart.values)
+  return (
+    <article className={deviceLength > 0 ? 'score-card-row-3' : 'hideCard'}>
+      <ScoreCardBarChart operatingTimeData={operaringTimeDeviationData}
+        uiSettings={uiSettings}
+        dataTitle='Operating Time'
+        dataMessage={SCORE_CARD_TOOLTIP_MESSAGES.OPERATING_TIME}
+      />
+    </article>
+  );
 }
 
 export default OperatingTimeDeviation;
