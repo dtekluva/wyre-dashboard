@@ -150,7 +150,7 @@ function ScoreCard({ match, fetchBaselineEnergyData, fetchPAPRData, fetchScoreca
         setTestingOperatingData(getOrganizationOperatingTime())
       }
     }
-  }, [operatingTimeDeviationBranchData])
+  }, [operatingTimeDeviationBranchData, checkedBranchId, checkedDevicesId.length])
 
   // Just testing this out, just so i can use it to handle summing-up the Operating-Time-Deviation data
 
@@ -264,15 +264,6 @@ function ScoreCard({ match, fetchBaselineEnergyData, fetchPAPRData, fetchScoreca
   //   }
   // }, [peak_to_avg_power_ratio]);
 
-  useEffect(() => {
-    const baselineData = { baseline_energy: {} }
-    generatorEfficiencyBranchData && generatorEfficiencyBranchData.devices.map(data => {
-      const score_card = data.score_card.generator_size_efficiency;
-      if (data.is_source) {
-        // setGeneratorSizeEfficiencyData(score_card)
-      }
-    });
-  }, [generatorEfficiencyBranchData]);
 
   // let date, ratio, savingdInbound, savingdInboundCarbonEmmission, arrowColor, getPeakResult;
   // let noOfTrees, message, generatorSizeEffficiencyData, generatorSizeEffficiencyDoughnuts, fuelConsumptionData;
