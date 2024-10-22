@@ -508,7 +508,7 @@ function ScoreCard({ match, fetchBaselineEnergyData, fetchPAPRData, fetchScoreca
           <ScorecardCarbonEmmission scorecardCarbonEmissionBranchData={scorecardCarbonEmissionBranchData} uiSettings={uiSettings} />
         </div>
         {/*{isGenStatus > 0 ? 'score-card-row-2' : 'hideCard'}*/}
-        {generatorSizeEfficiencyData && generatorFuelEfficiencyData && 
+        {generatorSizeEfficiencyData && generatorFuelEfficiencyData &&  testingOperatingData &&
           <div className={deviceLength > 0 ? 'score-card-row-4' : 'hideCard'} style={{ marginBottom: '50px' }}>
             <article className='score-card-row-4__left'>
               {/* <article className='score-card-row-4__left'>
