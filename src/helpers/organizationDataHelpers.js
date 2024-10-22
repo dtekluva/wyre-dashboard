@@ -1052,6 +1052,7 @@ export {
   getOrganizationDeviceType, getRefinedOrganizationDataWithChekBox,
   getDashBoardRefinedData, getInitialAllDeviceRefinedOrganizationData,
   getBillingRefinedOrganizationData, getBillingRefinedOrganizationDataWithChekBox,
-  getScoreCardRefinedData
+  getScoreCardRefinedData, getOrganizationPeakToAveragePowerRatio, 
+  getOrganizationScoreCardCarbonEmissions
 };
 

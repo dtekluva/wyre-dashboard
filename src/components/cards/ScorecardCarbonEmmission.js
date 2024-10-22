@@ -9,6 +9,7 @@ import ScoreCardDoughnutChart from "../pieCharts/ScoreCardDoughnutChart";
 import { calculatePercentage, calculateRatio, daysInMonth, getBaselineEnergyColor, getPeakToAverageMessage } from "../../helpers/genericHelpers";
 import UpArrowIcon from "../../icons/UpArrowIcon";
 import EcoFriendlyIcon from "../../icons/EcoFriendlyIcon";
+import { getOrganizationScoreCardCarbonEmissions } from "../../helpers/organizationDataHelpers";
 
 const ScorecardCarbonEmmission = ({ scorecardCarbonEmissionBranchData, uiSettings }) => {
     const [scorecardCarbonEmissionData, setScorecardCarbonEmissionData] = useState({});
@@ -21,6 +22,11 @@ const ScorecardCarbonEmmission = ({ scorecardCarbonEmissionBranchData, uiSetting
             setScorecardCarbonEmissionData(score_card)
             }
         });
+    }, [scorecardCarbonEmissionBranchData]);
+
+    useEffect(() => {
+      const score_card_carbon_emissions = getOrganizationScoreCardCarbonEmissions({ branches: [scorecardCarbonEmissionBranchData] });
+      setScorecardCarbonEmissionData(score_card_carbon_emissions);
     }, [scorecardCarbonEmissionBranchData]);
 
     let noOfTrees, message, savingdInboundCarbonEmmission;

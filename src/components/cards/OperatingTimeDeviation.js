@@ -15,8 +15,6 @@ import ScoreCardBarChart from "../barCharts/ScoreCardBarChart";
 
 const OperatingTimeDeviation = ({ operaringTimeDeviationData, uiSettings, deviceLength }) => {
 
-  // console.log('Charts Values  ==> ', operaringTimeDeviationData);
-  // console.log('Charts Values  ==> ', operaringTimeDeviationData.chart.values)
   return (
     <article className={deviceLength > 0 ? 'score-card-row-3' : 'hideCard'}>
       <ScoreCardBarChart operatingTimeData={operaringTimeDeviationData}
