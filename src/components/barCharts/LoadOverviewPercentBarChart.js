@@ -7,12 +7,8 @@ import { useHistory } from 'react-router';
 import { getLastArrayItems } from '../../helpers/genericHelpers';
 
 const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings }) => {
-    const history = useHistory();
-
-
+    const history = useHistory(); 
     const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
-
-
     const options = {
         legend: {
             display: false,
