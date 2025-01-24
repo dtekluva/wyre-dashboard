@@ -61,7 +61,6 @@ function LoadOverview({ match }) {
     return <Loader />;
   }
 
-
   return (
     <>
       <div className='breadcrumb-and-print-buttons'>
