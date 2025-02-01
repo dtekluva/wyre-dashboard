@@ -15,6 +15,7 @@ import ScrollToTop from '../helpers/ScrollToTop';
 
 import AuthHeader from '../components/AuthHeader';
 import Footer from '../components/Footer';
+import ReportsAndMails from '../authPages/ReportsAndMails';
 
 function AuthPages() {
   return (
@@ -27,6 +28,7 @@ function AuthPages() {
             <Route exact path='/' component={Login} />
             <Route path='/about' component={About} />
             <Route path='/contact' component={Contact} />
+            <Route path='/get-reports' component={ReportsAndMails} />
             <Route path='/features' component={Features} />
             <Route path='/log-in' component={Login} />
             <Route path='/sign-up' component={SignUp} />

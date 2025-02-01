@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 // import 'antd/dist/antd.css';
 import './css/custom-antd.css';
 import './css/style.css';
+import './css/report.css';
 import './scss/style.scss';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
