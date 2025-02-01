@@ -671,6 +671,7 @@ function ReportsAndMails() {
                   </Card>
                   <Card>
                     <p>Average Power Demand</p>
+                    
                     <p>45 kWh</p>
                   </Card>
                   <Card>
