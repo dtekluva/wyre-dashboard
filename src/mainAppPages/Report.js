@@ -34,7 +34,7 @@ import { loadReportPage } from '../redux/actions/setting/actionCreators';
 import { isEmpty } from '../helpers/authHelper';
 import ReportTimeOfUse from '../components/tables/reportTables/ReportTimeOfUse';
 import { ConstImplicationSummary } from '../components/tables/reportTables/TablesSummaries';
-import { calculateRatio } from '../helpers/genericHelpers';
+import { calculateDemandMinMaxAvgValues } from '../helpers/genericHelpers';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Button } from 'antd';
@@ -52,6 +52,7 @@ function Report({ match, fetchReportData: fetchReport, fetchBaseLineData: fetchR
   const [timeOfUseData, setTimeOfUseData] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
   const report = useSelector((state) => state.report);
+    const [demandData, setDemandData] = useState({});
   const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   const {
     setCurrentUrl,
@@ -90,6 +91,13 @@ function Report({ match, fetchReportData: fetchReport, fetchBaseLineData: fetchR
       });
   };
 
+  useEffect(() => {
+    if(dashboard.demandData && Object.keys(dashboard.demandData).length > 0){
+      const demandDataInfo = calculateDemandMinMaxAvgValues(dashboard.demandData.devices_demands);
+      setDemandData(demandDataInfo)
+    }
+
+  }, [dashboard.demandData]);
 
 
   useEffect(() => {
@@ -215,7 +223,7 @@ function Report({ match, fetchReportData: fetchReport, fetchBaseLineData: fetchR
               <MiniDoubleCard
                 paprRatio={dashboard?.demandData.papr}
                 // paprRatio={calculateRatio(papr.metrics.peak_to_avg_power_ratio.avg, papr.metrics.peak_to_avg_power_ratio.peak)}
-                metrics={dashboard?.demandData} type='paprScore'
+                metrics={demandData} type='paprScore'
                 header='PAPR' icon={Plug} />
             }
           </div>

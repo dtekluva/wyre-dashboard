@@ -69,7 +69,7 @@ const daysInMonth = () => {
  * @param  {Array}   arrayOfArrays  an array which contains other arrays of numbers
  */
 const sumArrayOfArrays = (arrayOfArrays) => {
-  
+
   return arrayOfArrays && arrayOfArrays?.reduce((acc, curr) => {
     curr && curr.forEach((innerArrayItem, index) => {
       acc[index] = (acc[index] || 0) + innerArrayItem;
@@ -82,7 +82,7 @@ const sumArrayOfArrays = (arrayOfArrays) => {
  * @param  {Array}   arrayOfArrays  an array which contains other arrays of numbers
  */
 const combineArrayData = (arrayOfArrays) => {
-  
+
   let newArrayData = [];
   arrayOfArrays && arrayOfArrays?.forEach((newArray) => {
     newArrayData = newArrayData.concat(newArray);
@@ -263,7 +263,7 @@ const sumNestedObjectValuesUp = (array, nestedObject, valueName) => {
 
   // get is source
   const only_isSource = array.filter(
-    (eachItem) => 
+    (eachItem) =>
       eachItem.is_source
   );
 
@@ -407,8 +407,8 @@ const getNestedAvgDemandObjectKva = (allDeviceData, nestedObject, powerFactorDat
   const valuesArray = Object.values(allDeviceData).map(
     (eachItem) => {
       const powerFactor = powerFactorData && powerFactorData.find((factor) => factor.data.device_id === eachItem.device_id);
-      return powerFactor && powerFactor.data && powerFactor.data.data.avg_pf ? ((eachItem[nestedObject] ? eachItem[nestedObject].avg_demand.value: 1) / powerFactor.data.data.avg_pf)
-        : (eachItem[nestedObject]? (eachItem[nestedObject].avg_demand.value) : 1 / 0.8);
+      return powerFactor && powerFactor.data && powerFactor.data.data.avg_pf ? ((eachItem[nestedObject] ? eachItem[nestedObject].avg_demand.value : 1) / powerFactor.data.data.avg_pf)
+        : (eachItem[nestedObject] ? (eachItem[nestedObject].avg_demand.value) : 1 / 0.8);
 
       // return eachItem[nestedObject].avg_demand.value;
     }
@@ -574,7 +574,7 @@ const sumOperatingTimeValues = (parentArray, nestedValueName) => {
 
     ).map((eachFilterDevice) =>
       eachFilterDevice.score_card.operating_time[nestedValueName] && (
-      eachFilterDevice.score_card.operating_time[nestedValueName].value || eachFilterDevice.score_card.operating_time[nestedValueName].total) )
+        eachFilterDevice.score_card.operating_time[nestedValueName].value || eachFilterDevice.score_card.operating_time[nestedValueName].total))
     .filter(Boolean)
     .reduce((acc, curr) => acc + curr, 0);
 };
@@ -908,6 +908,31 @@ const convertDecimalTimeToNormal = (d) => {
 }
 
 
+const calculateDemandMinMaxAvgValues = (data) => {
+  let max_demand = 0;
+  let avg_demand = 0;
+  let totalMin = 0;
+  let countMin = 0;
+
+  data.forEach(device => {
+    max_demand = Math.max(max_demand, device.max);
+    avg_demand = Math.max(avg_demand, device.avg);
+    if (Number(device.min) !== 0) {
+      totalMin += device.min;
+    }
+    countMin++;
+  });
+
+  const min_demand = countMin > 0 ? totalMin / countMin : 0;
+
+  return {
+    max_demand,
+    avg_demand,
+    min_demand
+  };
+}
+
+
 export {
   daysInMonth,
   getPeakToAverageMessage,
@@ -974,5 +999,6 @@ export {
   getNestedMinDemandObjectKVA,
   getNestedMaxDemandObjectKva,
   getNestedAvgDemandObjectKva,
-  convertDecimalTimeToNormal
+  convertDecimalTimeToNormal,
+  calculateDemandMinMaxAvgValues
 };
