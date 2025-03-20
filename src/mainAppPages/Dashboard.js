@@ -47,6 +47,7 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
   fetchPAPR: fetchPAPRData,
   dashboard
 }) {
+  
   let {
     checkedItems, checkedBranchId, checkedDevicesId, checkedBranches, checkedDevices, userDateRange, uiSettings } = useContext(
       CompleteDataContext,
@@ -59,6 +60,8 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
   const [totalDeviceUsageBranchData, setTotalDeviceUsageBranchData] = useState(null);
   const [totalDailyConsumptionBranchData, setDailyConsumptionBranchData] = useState(null);
   const [pageLoaded, setPageLoaded] = useState(false);
+
+  const pDemand = dashboard?.demandData
 
   useEffect(() => {
     if (match && match.url) {
@@ -119,7 +122,6 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
     }
     setPageLoaded(true);
   }, [userDateRange]);
-
 
   useEffect(() => {
     if (pageLoaded && dashboard.dashBoardCard_1_Data) {
@@ -237,6 +239,7 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
               <article className='score-card-row-3'>
                 <LoadOverviewPercentBarChart
                   uiSettings={uiSettings}
+                  pDemand={pDemand}
                   runningPercentageData={dashboard.dashBoardCard_1_Data.branches.length > 1 && (!checkedItems
                     || Object.keys(checkedItems).length === 0) ?
                     generateMultipleBranchLoadOverviewChartData(dashboard.dashBoardCard_1_Data.branches)

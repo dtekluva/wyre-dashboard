@@ -6,7 +6,7 @@ import { useHistory } from 'react-router';
 
 import { getLastArrayItems } from '../../helpers/genericHelpers';
 
-const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings }) => {
+const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings, pDemand }) => {
     const history = useHistory(); 
     const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
     const options = {
@@ -114,7 +114,12 @@ const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings }) => {
                     className='load-overview-details__button'
                     style={{ backgroundColor: uiSettings.appPrimaryColor }}
                     type='primary'
-                    onClick={() => history.push('/load-overview')}
+                    pDemand={pDemand}
+                    onClick={() =>{
+                        return pDemand={pDemand}, 
+                        history.push('/load-overview')
+                    }
+                    }
                     size='small'
                 >
                     View Details

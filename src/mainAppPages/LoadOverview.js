@@ -17,6 +17,8 @@ import {
   calculatePercentageTwoDecimal
 } from '../helpers/genericHelpers';
 import { numberFormatter } from '../helpers/numberFormatter';
+import { fetchLoadOverviewData, fetchPAPR } from '../redux/actions/dashboard/dashboard.action';
+import { connect, useSelector } from 'react-redux';
 
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },
@@ -24,13 +26,15 @@ const breadCrumbRoutes = [
 ];
 
 
-function LoadOverview({ match }) {
+function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchPAPR, pDemand }) {
   const {
     setCurrentUrl,
-    isAuthenticatedDataLoading,
-    allCheckedOrSelectedDevice
+    userDateRange,
   } = useContext(CompleteDataContext);
-
+  const [allCheckedOrSelectedDevice, setAllCheckedOrSelectedDevice] = useState({})
+  const [sideDetails, setSideDetails] = useState([])
+  const [pDemandDetails, setPDemandDetails] = useState({})
+  const [demandInTable, setDemandInTable] = useState({})
   const [allIsLoadDeviceData, setAllisLoadDeviceData] = useState(false);
   useEffect(() => {
     if (match && match.url) {
@@ -39,13 +43,46 @@ function LoadOverview({ match }) {
   }, [match, setCurrentUrl]);
 
   useEffect(() => {
-    if (allCheckedOrSelectedDevice) {
-      const data = refineLoadOverviewData(allCheckedOrSelectedDevice);
-      setAllisLoadDeviceData(Object.values(data));
+    fetchLoadOverviewData(userDateRange)
+    fetchPAPR(userDateRange)
+  }, [userDateRange]);
+
+  useEffect(() => {
+    if (sideBar.sideBarData.branches) {
+      const sideBarData = sideBar?.sideBarData?.branches[0]?.devices
+      const filterdSideBarData = sideBarData.filter(device => device.is_load)
+
+      setSideDetails(filterdSideBarData)
     }
+  }, [sideBar.sideBarData]);
 
-  }, [allCheckedOrSelectedDevice]);
+  useEffect(() => {
+    if (dashboard.demandData.devices_demands) {
+      const useDemand = dashboard.demandData.devices_demands.map(demand => demand)
+      setPDemandDetails(useDemand)
+    }
+  }, [dashboard.demandData]);
 
+  useEffect(() => {
+    if (dashboard.loadOverviewData) {
+      const useLoad = dashboard.loadOverviewData.branches[0].devices
+      setAllCheckedOrSelectedDevice(useLoad)
+      const data = refineLoadOverviewData(useLoad);
+      setAllisLoadDeviceData(Object.values(data));
+    }   
+  }, [dashboard.loadOverviewData]);
+
+  useEffect( () => {
+    if (sideDetails && pDemandDetails) {
+      // const dataMap = new Map(array2.map(item => [item.id, item]));
+      // const lookUpData = new Map(pDemandDetails.map(demand => [demand.device_name, demand]))
+      // const result = array1.map(id => dataMap.get(id) || { id, name: "Not Found" });
+      // const renderTableData = sideDetails.map(data => lookUpData.get(data) || {data, name: 'Not found' })
+      const renderTableData = sideDetails.map(data => pDemandDetails.find(demand => demand.device_name === data.name))
+      console.log('renderTableData == ', renderTableData.map(data => data.max));
+      setDemandInTable(renderTableData)
+    }
+  }, [sideDetails && pDemandDetails])
 
   const TotalCard = ({ title, data }) => (
     <div className='load-overview-total-card'>
@@ -55,9 +92,10 @@ function LoadOverview({ match }) {
       </div>
     </div>
   );
+  console.log('state of power demand == ', demandInTable);
 
 
-  if (isAuthenticatedDataLoading) {
+  if (!dashboard.loadOverviewData) {
     return <Loader />;
   }
 
@@ -99,7 +137,7 @@ function LoadOverview({ match }) {
             </article>
             {branch
               .map((eachDeviceData, index) => {
-                return <LoadOverviewDataTable device={eachDeviceData} key={index} index={index} />
+                return <LoadOverviewDataTable device={eachDeviceData} key={index} index={index} pDemand={demandInTable.find(eachDevice => eachDeviceData.name === eachDevice.device_name)} />
               })}
           </div>
         </ div>)) :
@@ -113,4 +151,14 @@ function LoadOverview({ match }) {
   );
 }
 
-export default LoadOverview;
+const mapDispatchToProps = {
+  fetchLoadOverviewData,
+  fetchPAPR
+};
+
+const mapStateToProps = (state) => ({
+  dashboard: state.dashboard,
+  sideBar: state.sideBar,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoadOverview);

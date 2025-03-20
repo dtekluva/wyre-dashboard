@@ -10,6 +10,8 @@ const INITIAL_STATE = {
    dashBoardCard_2_Data: false,
    fetchDashBoardCard_3_Loading: false,
    dashBoardCard_3_Data: false,
+   fetchLoadOverviewLoading: false,
+   loadOverviewData: false,
    fetchDemandLoading: false,
    demandData: false,
    fetchBlendedCostEnergyLoading: false,
@@ -64,6 +66,17 @@ const reducer = (state = INITIAL_STATE, action) => {
          return {
             ...state,
             dashBoardCard_3_Data: action.payload,
+         };
+         
+      case dashBoardType.FETCH_LOAD_OVERVIEW_LOADING:
+         return {
+            ...state,
+            fetchLoadOverviewLoading: action.payload,
+         };
+      case dashBoardType.FETCH_LOAD_OVERVIEW_SUCCESS:
+         return {
+            ...state,
+            loadOverviewData: action.payload,
          };
 
       case dashBoardType.FETCH_DEMAND_SUCCESS:
