@@ -109,11 +109,11 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
           <article className='score-card-row-3'>
             <div className='load-overview-total-cards-container' >
               <TotalCard title='Building Energy'
-                data={`${numberFormatter(generateSumOfIsSource(allCheckedOrSelectedDevice, branch[0].branchName)) || 0} kWh`} />
+                data={`${numberFormatter(generateSumOfIsSource(allCheckedOrSelectedDevice)) || 0} kWh`} />
               <TotalCard title='Load Consumption' data={`${numberFormatter(generateSumLoadConsumption(branch))|| 0} kWh`} />
               <TotalCard title='Percentage Load'
                 data={`${calculatePercentageTwoDecimal(generateSumLoadConsumption(branch),
-                  generateSumOfIsSource(allCheckedOrSelectedDevice, branch[0].branchName))} %`} />
+                  generateSumOfIsSource(allCheckedOrSelectedDevice))} %`} />
             </div>
             <hr className='load-overview__hr' />
             <RunningTime runningTimeData={generateRunningTimeChartData(branch)}

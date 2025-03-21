@@ -801,11 +801,10 @@ const refineLoadOverviewData = (allDeviceData) => {
   return branchData;
 }
 
-const generateSumOfIsSource = (allDeviceData, branchName) => {
+const generateSumOfIsSource = (allDeviceData) => {
   let sum = 0;
   allDeviceData.map((eachData) => {
-    if (eachData.name === branchName
-      && eachData.is_source) {
+    if (eachData.is_source) {
       sum += eachData.consumption;
     }
   })
