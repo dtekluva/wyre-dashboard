@@ -18,7 +18,7 @@ import {
 } from '../helpers/genericHelpers';
 import { numberFormatter } from '../helpers/numberFormatter';
 import { fetchLoadOverviewData, fetchPAPR } from '../redux/actions/dashboard/dashboard.action';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },
@@ -72,14 +72,10 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
     }   
   }, [dashboard.loadOverviewData]);
 
+
   useEffect( () => {
-    if (sideDetails && pDemandDetails) {
-      // const dataMap = new Map(array2.map(item => [item.id, item]));
-      // const lookUpData = new Map(pDemandDetails.map(demand => [demand.device_name, demand]))
-      // const result = array1.map(id => dataMap.get(id) || { id, name: "Not Found" });
-      // const renderTableData = sideDetails.map(data => lookUpData.get(data) || {data, name: 'Not found' })
+    if (sideDetails && Object.keys(pDemandDetails).length > 0) {
       const renderTableData = sideDetails.map(data => pDemandDetails.find(demand => demand.device_name === data.name))
-      console.log('renderTableData == ', renderTableData.map(data => data.max));
       setDemandInTable(renderTableData)
     }
   }, [sideDetails && pDemandDetails])
@@ -92,10 +88,9 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
       </div>
     </div>
   );
-  console.log('state of power demand == ', demandInTable);
 
 
-  if (!dashboard.loadOverviewData) {
+  if (!dashboard.loadOverviewData || Object.keys(demandInTable).length === 0) {
     return <Loader />;
   }
 
@@ -105,20 +100,20 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
       {
-        allIsLoadDeviceData && allIsLoadDeviceData.length > 0 ? allIsLoadDeviceData.map((branch) =>
+        Object.keys(demandInTable).length > 0 && allIsLoadDeviceData && allIsLoadDeviceData.length > 0 ? allIsLoadDeviceData.map((branch) =>
         (<div key={branch[0].branchName}>
           <article className='score-card-row-3'>
-            <h2> {branch[0].branchName} </h2>
+            <h2> {branch[0].name} </h2>
             <hr />
           </article>
           <article className='score-card-row-3'>
             <div className='load-overview-total-cards-container' >
               <TotalCard title='Building Energy'
-                data={`${numberFormatter(generateSumOfIsSource(allCheckedOrSelectedDevice, branch[0].branchName)) || 0} kWh`} />
+                data={`${numberFormatter(generateSumOfIsSource(allCheckedOrSelectedDevice)) || 0} kWh`} />
               <TotalCard title='Load Consumption' data={`${numberFormatter(generateSumLoadConsumption(branch))|| 0} kWh`} />
               <TotalCard title='Percentage Load'
                 data={`${calculatePercentageTwoDecimal(generateSumLoadConsumption(branch),
-                  generateSumOfIsSource(allCheckedOrSelectedDevice, branch[0].branchName))} %`} />
+                  generateSumOfIsSource(allCheckedOrSelectedDevice))} %`} />
             </div>
             <hr className='load-overview__hr' />
             <RunningTime runningTimeData={generateRunningTimeChartData(branch)}

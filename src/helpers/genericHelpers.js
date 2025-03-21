@@ -703,7 +703,7 @@ const generateLoadCosumptionChartData = (isLoadData) => {
   let label = [];
   let data = []
   isLoadData.map((device) => {
-    label.push(device.deviceName);
+    label.push(device.name);
     data.push(device.consumption);
   });
 
@@ -801,11 +801,10 @@ const refineLoadOverviewData = (allDeviceData) => {
   return branchData;
 }
 
-const generateSumOfIsSource = (allDeviceData, branchName) => {
+const generateSumOfIsSource = (allDeviceData) => {
   let sum = 0;
   allDeviceData.map((eachData) => {
-    if (eachData.branchName === branchName
-      && eachData.is_source) {
+    if (eachData.is_source) {
       sum += eachData.consumption;
     }
   })
