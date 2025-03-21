@@ -6,8 +6,6 @@ import { convertDecimalTimeToNormal } from '../../helpers/genericHelpers';
 
 
 function LoadOverviewDataTable({ device, index, pDemand }) {
-console.log('Power demand Data == ', pDemand);
-// console.log('max demand == ', pDemand.map(data => data.max));
 
   return (
     <>
@@ -27,15 +25,15 @@ console.log('Power demand Data == ', pDemand);
           </p>
           <hr />
           <p>
-            Maximum Demand: {pDemand.map(data => data.max)}kW
+            Maximum Demand: {pDemand.min}kW
           </p>
           <hr />
           <p>
-            Minimum Demand: {pDemand.map(data => data.min)}kW
+            Minimum Demand: {pDemand.max}kW
           </p>
           <hr />
           <p>
-            Average Demand: {pDemand.map(data => data.avg)}kW
+            Average Demand: {pDemand.avg}kW
           </p>
           <hr />
           <p>
