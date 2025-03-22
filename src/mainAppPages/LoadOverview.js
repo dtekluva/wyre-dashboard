@@ -103,7 +103,7 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
         Object.keys(demandInTable).length > 0 && allIsLoadDeviceData && allIsLoadDeviceData.length > 0 ? allIsLoadDeviceData.map((branch) =>
         (<div key={branch[0].branchName}>
           <article className='score-card-row-3'>
-            <h2> {branch[0].name} </h2>
+            <h2> {sideBar?.sideBarData?.branches[0]?.name} </h2>
             <hr />
           </article>
           <article className='score-card-row-3'>
