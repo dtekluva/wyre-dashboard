@@ -5,7 +5,7 @@ import { convertDecimalTimeToNormal } from '../../helpers/genericHelpers';
 
 
 
-function LoadOverviewDataTable({ device, index }) {
+function LoadOverviewDataTable({ device, index, pDemand }) {
 
   return (
     <>
@@ -15,29 +15,29 @@ function LoadOverviewDataTable({ device, index }) {
             className='load-overview-tag-header-color-box red'>
           </div>
           <p>
-            {device.deviceName}
+            {device.name}
           </p>
         </div>
         <div>
           <hr />
           <p>
-            Consumption: {device.energy_consumption.usage}kWh
+            Consumption: {device.consumption}kWh
           </p>
           <hr />
           <p>
-            Maximum Demand: {device.dashboard.max_demand.value}kW
+            Maximum Demand: {pDemand.min}kW
           </p>
           <hr />
           <p>
-            Minimum Demand: {device.dashboard.min_demand.value}kW
+            Minimum Demand: {pDemand.max}kW
           </p>
           <hr />
           <p>
-            Average Demand: {device.dashboard.avg_demand.value}kW
+            Average Demand: {pDemand.avg}kW
           </p>
           <hr />
           <p>
-            Running Time: {convertDecimalTimeToNormal(device.usage_hour) || 0}
+            Running Time: {convertDecimalTimeToNormal(device.device_runtime) || 0}
           </p>
         </div>
       </article>

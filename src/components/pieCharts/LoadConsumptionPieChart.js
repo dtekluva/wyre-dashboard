@@ -10,7 +10,6 @@ const LoadConsumptionPieChart = ({ loadCunsumptionData }) => {
   const { isMediumScreen } = useContext(CompleteDataContext);
 
 
-
   const { label, data } = loadCunsumptionData
     ? loadCunsumptionData
     : { chartLabels: ['Empty'], data: ['Empty'] };
