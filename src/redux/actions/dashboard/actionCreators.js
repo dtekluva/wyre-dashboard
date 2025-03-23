@@ -39,6 +39,15 @@ export const fetchDashBoardCard_3_Success = payload => ({
     payload,
   });
 
+export const fetchLoadOverview_Loading = (payload = true) => ({
+    type: dashBoardType.FETCH_LOAD_OVERVIEW_LOADING,
+    payload,
+  });
+export const fetchLoadOverview_Success = payload => ({
+    type: dashBoardType.FETCH_LOAD_OVERVIEW_SUCCESS,
+    payload,
+  });
+
 export const fetchDemandLoading = (payload = true) => ({
     type: dashBoardType.FETCH_DEMAND_LOADING,
     payload,

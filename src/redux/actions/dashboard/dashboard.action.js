@@ -9,7 +9,9 @@ import {
   fetchDashBoardCard_2_Loading,
   fetchDashBoardCard_2_Success,
   fetchDashBoardCard_3_Loading,
-  fetchDashBoardCard_3_Success
+  fetchDashBoardCard_3_Success,
+  fetchLoadOverview_Loading,
+  fetchLoadOverview_Success
 } from "./actionCreators";
 import dataHttpServices from '../../../services/devices';
 import moment from 'moment';
@@ -129,6 +131,35 @@ export const fetchDashBoardDataCard_3 = (userDateRange) => async (dispatch) => {
     dispatch(fetchDashBoardCard_3_Loading(false))
   } catch (error) {
     dispatch(fetchDashBoardCard_3_Loading(error));
+  }
+};
+
+export const fetchLoadOverviewData = (userDateRange) => async (dispatch) => {
+  dispatch(fetchLoadOverview_Loading());
+
+  const loggedUserJSON = localStorage.getItem('loggedWyreUser');
+  let userId;
+  let token;
+  const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
+  if (loggedUserJSON) {
+    const userToken = JSON.parse(loggedUserJSON);
+    const user = jwtDecode(userToken.access)
+    userId = user.id;
+    token = userToken.access;
+  }
+  try {
+    const response = await axios.get(
+      `${EnvData.REACT_APP_API_URL}dashboard/load_overview/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+    );
+    dispatch(fetchLoadOverview_Success(response.data.authenticatedData));
+    dispatch(fetchLoadOverview_Loading(false))
+  } catch (error) {
+    dispatch(fetchLoadOverview_Loading(error));
   }
 };
 

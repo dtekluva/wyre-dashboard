@@ -703,8 +703,8 @@ const generateLoadCosumptionChartData = (isLoadData) => {
   let label = [];
   let data = []
   isLoadData.map((device) => {
-    label.push(device.deviceName);
-    data.push(device.energy_consumption.usage);
+    label.push(device.name);
+    data.push(device.consumption);
   });
 
   return { label, data };
@@ -772,8 +772,8 @@ const generateRunningTimeChartData = (branch) => {
   let label = [];
   let data = []
   branch.map((device) => {
-    label.push(device.deviceName);
-    data.push(device.usage_hour);
+    label.push(device.name);
+    data.push(device.device_runtime);
   });
 
   return { label, data };
@@ -781,7 +781,7 @@ const generateRunningTimeChartData = (branch) => {
 const generateSumLoadConsumption = (branch) => {
   let initailData = [];
   branch.map((device) => {
-    initailData.push(device.energy_consumption.usage);
+    initailData.push(device.consumption);
   });
   return sumOfArrayElements(initailData);
 }
@@ -801,12 +801,11 @@ const refineLoadOverviewData = (allDeviceData) => {
   return branchData;
 }
 
-const generateSumOfIsSource = (allDeviceData, branchName) => {
+const generateSumOfIsSource = (allDeviceData) => {
   let sum = 0;
   allDeviceData.map((eachData) => {
-    if (eachData.branchName === branchName
-      && eachData.is_source) {
-      sum += eachData.energy_consumption.usage;
+    if (eachData.is_source) {
+      sum += eachData.consumption;
     }
   })
   return sum;
