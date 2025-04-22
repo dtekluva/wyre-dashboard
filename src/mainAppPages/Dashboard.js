@@ -12,6 +12,7 @@ import DashboardSmallBannerSection from "../smallComponents/DashboardSmallBanner
 // import styles from "../pdfStyles/styles";
 import DashBoardAmountUsed from "../smallComponents/DashBoardAmountUsed";
 import {
+  calculateDemandMinMaxAvgValues,
   generateLoadOverviewChartData,
   generateMultipleBranchLoadOverviewChartData
 } from "../helpers/genericHelpers";
@@ -47,6 +48,7 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
   fetchPAPR: fetchPAPRData,
   dashboard
 }) {
+  
   let {
     checkedItems, checkedBranchId, checkedDevicesId, checkedBranches, checkedDevices, userDateRange, uiSettings } = useContext(
       CompleteDataContext,
@@ -58,7 +60,10 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
   const [totalEnergyBranchData, setTotalEnergyBranchData] = useState(null);
   const [totalDeviceUsageBranchData, setTotalDeviceUsageBranchData] = useState(null);
   const [totalDailyConsumptionBranchData, setDailyConsumptionBranchData] = useState(null);
+  const [demandData, setDemandData] = useState({});
   const [pageLoaded, setPageLoaded] = useState(false);
+
+  const pDemand = dashboard?.demandData
 
   useEffect(() => {
     if (match && match.url) {
@@ -81,6 +86,14 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
     }
     setPageLoaded(true);
   }, [userDateRange]);
+
+  useEffect(() => {
+    if(dashboard.demandData && Object.keys(dashboard.demandData).length > 0){
+      const demandDataInfo = calculateDemandMinMaxAvgValues(dashboard.demandData.devices_demands);
+      setDemandData(demandDataInfo)
+    }
+
+  }, [dashboard.demandData]);
 
   useEffect(() => {
     if (Object.keys(sideDetails.sideBarData).length > 0) {
@@ -119,7 +132,6 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
     }
     setPageLoaded(true);
   }, [userDateRange]);
-
 
   useEffect(() => {
     if (pageLoaded && dashboard.dashBoardCard_1_Data) {
@@ -179,19 +191,19 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
               <div className="dashboard__demand-banner-- ">
                 <DashboardSmallBannerSection
                   name="Max. Demand"
-                  value={dashboard?.demandData.max_demand}
+                  value={demandData.max_demand}
                   // unit={dashboard?.demandData.unit}
                   unit="kVA"
                 />
                 <DashboardSmallBannerSection
                   name="Min. Demand"
-                  value={dashboard?.demandData.min_demand}
+                  value={demandData.min_demand}
                   // unit={dashboard?.demandData.unit}
                   unit="kVA"
                 />
                 <DashboardSmallBannerSection
                   name="Avg. Demand"
-                  value={dashboard?.demandData.avg_demand}
+                  value={demandData.avg_demand}
                   // unit={dashboard?.demandData.unit}
                   unit="kVA"
                 />
@@ -237,6 +249,7 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
               <article className='score-card-row-3'>
                 <LoadOverviewPercentBarChart
                   uiSettings={uiSettings}
+                  pDemand={pDemand}
                   runningPercentageData={dashboard.dashBoardCard_1_Data.branches.length > 1 && (!checkedItems
                     || Object.keys(checkedItems).length === 0) ?
                     generateMultipleBranchLoadOverviewChartData(dashboard.dashBoardCard_1_Data.branches)

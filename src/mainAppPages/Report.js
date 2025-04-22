@@ -17,6 +17,7 @@ import RecordCard from "../smallComponents/reports/RecordCard";
 import MiniDoubleCard from "../smallComponents/reports/MiniDoubleCard";
 import LargeDoubleCard from "../smallComponents/reports/LargeDoubleCard";
 import SourceConsumptionPieChart from "../smallComponents/reports/SourceConsumptionPieChart";
+import { calculateDemandMinMaxAvgValues } from "../helpers/genericHelpers";
 import {
   CostImplicationColumn,
   DemandAndStatisticsColumn,
@@ -63,6 +64,7 @@ function Report({
   const [timeOfUseData, setTimeOfUseData] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
   const report = useSelector((state) => state.report);
+  const [demandData, setDemandData] = useState({});
   const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   const { setCurrentUrl, uiSettings } = useContext(CompleteDataContext);
 
@@ -97,6 +99,15 @@ function Report({
       pdf.save("report.pdf");
     });
   };
+
+  useEffect(() => {
+    if (dashboard.demandData && Object.keys(dashboard.demandData).length > 0) {
+      const demandDataInfo = calculateDemandMinMaxAvgValues(
+        dashboard.demandData.devices_demands
+      );
+      setDemandData(demandDataInfo);
+    }
+  }, [dashboard.demandData]);
 
   useEffect(() => {
     if (match && match.url) {
