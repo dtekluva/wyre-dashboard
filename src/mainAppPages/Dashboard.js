@@ -93,6 +93,9 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
       setDemandData(demandDataInfo)
     }
 
+    console.log('loader => ', dashboard.fetchDemandLoading);
+    
+
   }, [dashboard.demandData]);
 
   useEffect(() => {
@@ -180,34 +183,38 @@ function Dashboard({ match, fetchBlendedCostData:fetchBlendedost,
 
           <article className="dashboard__demand-banner dashboard__banner--small">
 
-              <div style={{ textAlign: "right", paddingTop: 20, paddingRight: 20, marginLeft: "auto" }}>
-                <Tooltip placement="top" style={{ textAlign: "right" }}
-                  overlayStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.MAX_MIN_AVERAGE} >
-                  <p>
-                    <InformationIcon className="info-icon" />
-                  </p>
-                </Tooltip>
-              </div>
-              <div className="dashboard__demand-banner-- ">
-                <DashboardSmallBannerSection
-                  name="Max. Demand"
-                  value={demandData.max_demand}
-                  // unit={dashboard?.demandData.unit}
-                  unit="kVA"
-                />
-                <DashboardSmallBannerSection
-                  name="Min. Demand"
-                  value={demandData.min_demand}
-                  // unit={dashboard?.demandData.unit}
-                  unit="kVA"
-                />
-                <DashboardSmallBannerSection
-                  name="Avg. Demand"
-                  value={demandData.avg_demand}
-                  // unit={dashboard?.demandData.unit}
-                  unit="kVA"
-                />
-              </div>
+            <div style={{ textAlign: "right", paddingTop: 20, paddingRight: 20, marginLeft: "auto" }}>
+              <Tooltip placement="top" style={{ textAlign: "right" }}
+                overlayStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.MAX_MIN_AVERAGE} >
+                <p>
+                  <InformationIcon className="info-icon" />
+                </p>
+              </Tooltip>
+            </div>
+            <div>
+              <Spin spinning={dashboard.fetchDemandLoading}>
+                <div className="dashboard__demand-banner-- ">
+                  <DashboardSmallBannerSection
+                    name="Max. Demand"
+                    value={demandData.max_demand}
+                    // unit={dashboard?.demandData.unit}
+                    unit="kVA"
+                  />
+                  <DashboardSmallBannerSection
+                    name="Min. Demand"
+                    value={demandData.min_demand}
+                    // unit={dashboard?.demandData.unit}
+                    unit="kVA"
+                  />
+                  <DashboardSmallBannerSection
+                    name="Avg. Demand"
+                    value={demandData.avg_demand}
+                    // unit={dashboard?.demandData.unit}
+                    unit="kVA"
+                  />
+                </div>
+              </Spin>
+            </div>
           </article>
 
           <CarbonEmmission totalEnergyBranchData={totalEnergyBranchData} userData={userData} />
