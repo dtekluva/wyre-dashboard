@@ -1,4 +1,5 @@
 import React, { useEffect, useContext } from 'react';
+import { useSelector } from 'react-redux';
 import { notification, Form, Spin, message } from 'antd';
 
 import CompleteDataContext from '../Context';
@@ -48,10 +49,10 @@ function AddBills({ match }) {
   const [postPaidLoading, setPostPaidLoading] = React.useState(false);
   const [EOMFlowReadingLoading, setEOMFlowReadingLoading] = React.useState(false);
 
-  const { setCurrentUrl, isAuthenticatedDataLoading, token, organization, userId } = useContext(
+  const { setCurrentUrl, token, userId } = useContext(
     CompleteDataContext
   );
-
+const sideBarData = useSelector((state) => state.sideBar.sideBarData);
 
   const data = {
     quantity: {
@@ -116,8 +117,8 @@ function AddBills({ match }) {
 
 
   let defaultBranch;
-  if (organization.branches) {
-    defaultBranch = organization.branches[0].branch_id
+  if (sideBarData?.branches) {
+    defaultBranch = sideBarData.branches[0].branch_id
   }
 
   const onAmountOrValueChange = (event) => {
@@ -311,7 +312,7 @@ function AddBills({ match }) {
   };
 
   // run loader if data is loading
-  if (isAuthenticatedDataLoading) {
+  if (!sideBarData?.branches) {
     return <Loader />;
   }
 
