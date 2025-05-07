@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Select } from 'antd';
+import { useSelector } from 'react-redux';
 
 import CompleteDataContext from '../Context';
 
@@ -19,9 +20,9 @@ function RevisedAppTopBar() {
     currentUrl,
     setPowerQualityUnit,
     setParametersDataTimeInterval,
-    organization
   } = useContext(CompleteDataContext);
 
+  const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   const pagesWithDateTimePickers = [
     'dashboard',
     'score-card',
@@ -156,7 +157,7 @@ function RevisedAppTopBar() {
         </div>
       </div>
 
-      {organization.branches && organization.branches.length === 1 ?
+      {sideBarData.branches && sideBarData.branches.length === 1 ?
         <div
           className={
             isTopBarCostTrackerRightDisplayed
