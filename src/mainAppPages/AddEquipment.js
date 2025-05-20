@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 import { DatePicker, notification, Select } from 'antd';
 import CompleteDataContext from '../Context';
@@ -22,9 +23,9 @@ const openNotificationWithIcon = (type) => {
 };
 
 function AddEquipment({ match }) {
-  const { setCurrentUrl, token, userId, organization } = useContext(CompleteDataContext);
+  const { setCurrentUrl, token, userId } = useContext(CompleteDataContext);
   const [allEquipment, setAllEquipment] = useState([]);
-
+const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   const {
     register,
     handleSubmit,
@@ -51,7 +52,7 @@ function AddEquipment({ match }) {
   }, [match, setCurrentUrl, token, userId]);
 
   const { Option } = Select
-  let branchname = organization && organization.branches
+  let branchname = sideBarData && sideBarData.branches
 
   const branchSelectorStyle = {
       width:'100%',
@@ -64,8 +65,8 @@ function AddEquipment({ match }) {
 
   let branchSelectorValue;
 
-  if(organization.branches.length === 1){
-    organization.branches && organization.branches.map((branch)=>{
+  if(sideBarData?.branches?.length === 1){
+    sideBarData.branches && sideBarData.branches.map((branch)=>{
       branchSelectorValue = branch.branch_id
       return branch.branch_id
     })

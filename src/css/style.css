@@ -100,24 +100,24 @@ select {
 }
 
 button,
-[type=button],
-[type=reset],
-[type=submit] {
+[type="button"],
+[type="reset"],
+[type="submit"] {
   -webkit-appearance: button;
 }
 
 button::-moz-focus-inner,
-[type=button]::-moz-focus-inner,
-[type=reset]::-moz-focus-inner,
-[type=submit]::-moz-focus-inner {
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
   border-style: none;
   padding: 0;
 }
 
 button:-moz-focusring,
-[type=button]:-moz-focusring,
-[type=reset]:-moz-focusring,
-[type=submit]:-moz-focusring {
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
   outline: 1px dotted ButtonText;
 }
 
@@ -143,23 +143,23 @@ textarea {
   overflow: auto;
 }
 
-[type=checkbox],
-[type=radio] {
+[type="checkbox"],
+[type="radio"] {
   box-sizing: border-box;
   padding: 0;
 }
 
-[type=number]::-webkit-inner-spin-button,
-[type=number]::-webkit-outer-spin-button {
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
   height: auto;
 }
 
-[type=search] {
+[type="search"] {
   -webkit-appearance: textfield;
   outline-offset: -2px;
 }
 
-[type=search]::-webkit-search-decoration {
+[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
 }
 
@@ -266,7 +266,7 @@ details summary {
   cursor: pointer;
 }
 
-details:not([open])> :not(summary) {
+details:not([open]) > :not(summary) {
   display: none !important;
 }
 
@@ -298,11 +298,11 @@ button:focus-visible {
 }
 
 /* Remove IOS input style */
-input[type=email],
-input[type=text],
-input[type=tel],
-input[type=password],
-input[type=number],
+input[type="email"],
+input[type="text"],
+input[type="tel"],
+input[type="password"],
+input[type="number"],
 textarea {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -329,7 +329,6 @@ header,
 }
 
 @media (min-width: 769px) {
-
   .page-content,
   .top-bar,
   .sidebar,
@@ -341,7 +340,6 @@ header,
 }
 
 @media (min-width: 1013px) {
-
   .dashboard-row-3-content,
   .top-bar,
   .sidebar,
@@ -361,7 +359,8 @@ html {
 
 body {
   color: #000000;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   font-size: 16px;
   font-size: 1.6rem;
   -webkit-font-smoothing: antialiased;
@@ -652,7 +651,6 @@ p {
 # Checkbox
 --------------------------------------------------------------*/
 @media (min-width: 768px) {
-
   .sidebar-checkbox .ant-checkbox,
   .sidebar-checkbox .ant-checkbox-checked .ant-checkbox-inner,
   .sidebar-checkbox .ant-checkbox-input .ant-checkbox-checked,
@@ -660,7 +658,7 @@ p {
   .sidebar-checkbox .ant-checkbox-inner,
   .sidebar-checkbox .ant-checkbox-input,
   .sidebar-checkbox .ant-checkbox-input:hover,
-  .sidebar-checkbox .ant-checkbox-input:focus+.ant-checkbox-inner {
+  .sidebar-checkbox .ant-checkbox-input:focus + .ant-checkbox-inner {
     background-color: #6c00fa !important;
     border-color: #ffffff !important;
   }
@@ -671,7 +669,7 @@ p {
 .alerts-and-alarms-checkbox .ant-checkbox-inner:after,
 .alerts-and-alarms-checkbox .ant-checkbox-wrapper:hover .ant-checkbox-inner,
 .alerts-and-alarms-checkbox .ant-checkbox:hover .ant-checkbox-inner,
-.alerts-and-alarms-checkbox .ant-checkbox-input:focus+.ant-checkbox-inner {
+.alerts-and-alarms-checkbox .ant-checkbox-input:focus + .ant-checkbox-inner {
   background-color: #ffffff !important;
   border-color: #6c00fa !important;
 }
@@ -685,7 +683,7 @@ p {
   border-color: #ffffff !important;
 }
 
-.ant-checkbox-input:focus+.ant-checkbox-inner {
+.ant-checkbox-input:focus + .ant-checkbox-inner {
   box-shadow: 0 0 0 2px #e1cbff !important;
   transition: border 0.3s, box-shadow 0.3s !important;
 }
@@ -966,7 +964,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 768px) {
-
   /* .header {
     align-items: center;
     background-image: linear-gradient(to right, #6c00fa, #6c00fa 300.45px, #ffffff 15%, #ffffff 100%);
@@ -1017,9 +1014,9 @@ thead.ant-table-thead tr th {
   }
 }
 
-
 .header-logo {
   line-height: 1;
+  display: none;
 }
 
 @media (min-width: 768px) {
@@ -1094,7 +1091,6 @@ thead.ant-table-thead tr th {
     padding-left: 0;
   }
 }
-
 
 .header-nav-list__item {
   border-top: #f0f0f0 1px solid;
@@ -1396,7 +1392,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 768px) {
-
   .sidebar-org__button,
   .sidebar-branch__button {
     padding: 8px 4px 8px 4px;
@@ -1435,7 +1430,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 768px) {
-
   .sidebar-branch__checkbox,
   .sidebar-device__checkbox {
     color: #ffffff;
@@ -1494,12 +1488,12 @@ thead.ant-table-thead tr th {
 
 .search___input {
   height: 40px;
-  font-family: 'Montserrat';
+  font-family: "Montserrat";
   font-weight: 500;
   font-size: 12px;
   line-height: 15px;
-  color: #C4C4C4;
-  border: 1px solid #C4C4C4;
+  color: #c4c4c4;
+  border: 1px solid #c4c4c4;
   border-radius: 8px;
 }
 
@@ -1519,7 +1513,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 768px) {
-
   .plotted-unit-selector-container,
   .time-interval-selector-container {
     margin-left: 30px;
@@ -1533,7 +1526,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 768px) {
-
   .plotted-unit-selector,
   .time-interval-selector {
     max-width: 230px;
@@ -1858,7 +1850,6 @@ thead.ant-table-thead tr th {
   margin-left: 10px;
 }
 
-
 .total-energy__heading {
   color: #143861;
   font-size: 3rem;
@@ -1882,7 +1873,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1200px) {
-
   .dashboard__demand-banner,
   .dashboard__cost-emissions-banner {
     margin-top: 0;
@@ -1938,7 +1928,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1200px) {
-
   .dashboard-row-3,
   .dashboard-row-2 {
     /* display: flex; */
@@ -1948,7 +1937,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1200px) {
-
   .dashboard-pie-container,
   .dashboard-today-and-yesterday {
     min-height: 386px;
@@ -2006,7 +1994,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1200px) {
-
   .today-usage__value,
   .yesterday-usage__value {
     font-size: 5.4rem;
@@ -2185,7 +2172,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1531px) {
-
   .score-card-row-4__left,
   .score-card-row-4__right {
     flex-grow: 1;
@@ -2212,7 +2198,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (max-width: 417px) {
-
   .gen-efficiency-doughnut-and-text,
   .fuel-consumption-doughnut-and-text {
     flex-direction: column;
@@ -2241,7 +2226,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (max-width: 417px) {
-
   .gen-efficiency-doughnut-container,
   .fuel-consumption-doughnut-container {
     margin-right: 0;
@@ -2809,7 +2793,7 @@ thead.ant-table-thead tr th {
 
 .branches-total_costs-card {
   padding: 1.5rem 2rem;
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 5px;
   filter: drop-shadow(0px 0px 6px rgba(0, 0, 0, 0.15));
   text-align: center;
@@ -2817,7 +2801,7 @@ thead.ant-table-thead tr th {
 }
 
 .branches-total_costs-title {
-  font-family: 'Montserrat';
+  font-family: "Montserrat";
   font-weight: 500;
   font-size: 18px;
   line-height: 22px;
@@ -2826,7 +2810,7 @@ thead.ant-table-thead tr th {
 }
 
 .branches-total_costs-text {
-  font-family: 'Montserrat';
+  font-family: "Montserrat";
   font-weight: 400;
   font-size: 16px;
   line-height: 20px;
@@ -2840,7 +2824,7 @@ thead.ant-table-thead tr th {
 }
 
 .view_branch-text {
-  font-family: 'Montserrat';
+  font-family: "Montserrat";
   font-weight: 400;
   font-size: 18px;
   line-height: 22px;
@@ -2910,7 +2894,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1100px) {
-
   .alerts-and-alarms-form-section-heading,
   .alerts-and-alarms-list,
   .alert-and-alarms-button-container {
@@ -2919,7 +2902,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1500px) {
-
   .alerts-and-alarms-form-section-heading,
   .alerts-and-alarms-list,
   .alert-and-alarms-button-container {
@@ -3409,12 +3391,10 @@ thead.ant-table-thead tr th {
   }
 }
 
-
 .report-card-1 {
   text-align: center;
   padding: 16px 16px 40px;
 }
-
 
 .report-card-1-rating {
   margin-top: 16px;
@@ -3669,7 +3649,8 @@ thead.ant-table-thead tr th {
   max-width: 350px;
   padding: 0 24px;
   width: 100%;
-  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 }
 
 @media (min-width: 769px) {
@@ -3779,7 +3760,8 @@ thead.ant-table-thead tr th {
 
 .forgot-password {
   color: #6a8ba3;
-  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   font-size: 1.4rem;
   font-weight: 700;
   text-decoration: underline;
@@ -4025,7 +4007,8 @@ thead.ant-table-thead tr th {
 .footer-heading {
   color: #6c00fa;
   font-weight: 400;
-  font-family: "Roboto", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Roboto", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica,
+    Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   margin: 20px 0;
 }
 
@@ -4045,11 +4028,11 @@ thead.ant-table-thead tr th {
   color: #6a8ba3;
   font-style: normal;
   line-height: 144%;
-  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 }
 
 @media (min-width: 769px) {
-
   .footer-links-list-item,
   .footer-link {
     font-size: 1.8rem;
@@ -4065,7 +4048,8 @@ thead.ant-table-thead tr th {
 }
 
 .footest {
-  font-family: "Roboto", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Roboto", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica,
+    Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   margin-top: 70px;
   padding: 22px 16px;
   background-color: rgba(106, 139, 163, 0.04);

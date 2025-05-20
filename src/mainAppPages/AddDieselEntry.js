@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { notification, Form, Spin, DatePicker } from 'antd';
 import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import CompleteDataContext from '../Context';
 
 import moment from 'moment';
@@ -45,10 +46,11 @@ function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, add
   const [dailyForm] = Form.useForm();
   const [monthlyForm] = Form.useForm();
 
-  const { setCurrentUrl, isAuthenticatedDataLoading, organization, userId } = useContext(
+  const { setCurrentUrl, userId } = useContext(
     CompleteDataContext
   );
 
+  const sideBarData = useSelector((state) => state.sideBar.sideBarData);
 
   const data = {
     quantity: {
@@ -76,15 +78,15 @@ function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, add
 
 
   let defaultBranch;
-  if (organization.branches) {
-    defaultBranch = organization.branches[0].branch_id
+  if (sideBarData.branches) {
+    defaultBranch = sideBarData.branches[0].branch_id
   }
 
 
   const onDailyDieselEntrySubmit = async ({ date, quantity, fuelType }) => {
     if (defaultBranch != null) {
 
-      const branch = organization.branches[0].branch_id
+      const branch = sideBarData.branches[0].branch_id
       const parameters = {
         branch,
         end_date: date.format('YYYY-MM-DD'),
@@ -112,7 +114,7 @@ function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, add
 
   const onMonthDiesEntrySubmit = async ({ date, quantity, fuelType }) => {
     if (defaultBranch != null) {
-      const branch = organization.branches[0].branch_id
+      const branch = sideBarData.branches[0].branch_id
       const parameters = {
         branch,
         start_date: moment(date[0]).format("YYYY-MM-DD"),
@@ -138,7 +140,7 @@ function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, add
 
 
   // run loader if data is loading
-  if (isAuthenticatedDataLoading) {
+  if (!sideBarData.branches) {
     return <Loader />;
   }
 
