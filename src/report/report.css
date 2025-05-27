@@ -1,0 +1,839 @@
+.main-layer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.layer-1 {
+  /* height: 100vh; */
+  /* margin: 30px; */
+  max-width: 100%;
+  padding-bottom: 50px;
+  margin: 0 auto;
+  background-color: #f4f4f4;
+  font-family: "Inter", sans-serif;
+}
+
+@media (min-width: 1024px) {
+  .layer-1 {
+    max-width: 1000px;
+  }
+}
+
+.init-space {
+  margin: 30px;
+  /* border-radius: 40px; */
+}
+
+.wyre-logo {
+  justify-self: center;
+}
+
+.heading {
+  text-align: center;
+  font-family: "Inter", sans-serif;
+  font-size: 22px;
+  margin-bottom: 70px;
+}
+
+.heading h1 {
+  font-size: 35px;
+  font-weight: 550;
+  margin-top: -20px;
+}
+
+.layer-1 .init-space .heading p {
+  font-style: italic;
+  color: black;
+  font-weight: 500;
+}
+
+.heading p {
+  font-style: italic !important;
+  color: black;
+  font-weight: 550;
+}
+
+.tilde {
+  margin-right: 10px;
+}
+
+.metric-container {
+  background-color: white;
+  margin-bottom: 30px;
+}
+
+.icon-and-title {
+  display: flex;
+  align-items: center;
+  /* margin-left: 30px; */
+  /* margin-top: 20px; */
+}
+
+.icon-and-title .image {
+  width: 40px;
+  margin-top: 10px;
+}
+
+.icon-title {
+  text-align: center;
+  justify-content: center;
+}
+
+.icon-title h1 {
+  font-size: 22px;
+  font-weight: light;
+  margin-left: 20px;
+}
+
+.heading {
+  /* margin-bottom: 30px; */
+}
+
+.head-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  width: 50%;
+  height: 132px;
+  border-radius: 22px 0 0 22px;
+  justify-content: center;
+}
+
+.head-card h1 {
+  font-size: 30px;
+}
+
+@media (max-width: 7800px) {
+  .head-card h1 {
+    font-size: 27px;
+  }
+}
+
+.value {
+  width: 50%;
+  height: 132px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  border-radius: 0 22px 22px 0;
+}
+
+.top-doughnut {
+  width: 555px;
+  /* height: 253px; */
+  align-items: center;
+  justify-content: center;
+}
+
+.first-barchart {
+  width: 555px;
+  /* height: 253px; */
+}
+
+.operational-performance {
+  /* height: 357px; */
+}
+
+.generator-efficiency {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.generator-efficiency .current,
+.generator-efficiency .best-ever {
+  flex: 1;
+  padding: 14px;
+  border-radius: 16px;
+}
+
+.generator-efficiency .current {
+  height: 210px;
+  padding: 0;
+  background: #9640ff;
+  color: white;
+}
+
+.generator-efficiency .best-ever {
+  height: 210px;
+  padding: 0;
+  background: #4b8aff;
+  color: white;
+}
+
+.generator-efficiency h2 {
+  font-size: 24px;
+  font-weight: normal;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.efficiency-value {
+  font-size: 55px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.change-indicator {
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.change-indicator.positive {
+  background: rgb(224, 255, 224);
+  color: #2da44e;
+}
+
+.change-indicator.negative {
+  background: #ffdfdf;
+  color: #cf3e41;
+}
+
+.achieved-date {
+  font-size: 16px;
+  font-weight: normal;
+  margin-top: 8px;
+}
+
+.comparison-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 24px;
+  margin-bottom: 24px;
+  padding: 0 24px;
+}
+
+.accuracy-badge {
+  font-size: 18px;
+  font-weight: 550;
+  padding: 4px 12px;
+  background: rgba(150, 64, 255, 0.1);
+  color: #9640ff;
+  border-radius: 8px;
+}
+
+/* Update table styles */
+.metric-container .ant-table {
+  font-family: "DM Sans", sans-serif;
+  background: transparent;
+}
+
+.metric-container .ant-table-thead > tr > th {
+  background: transparent;
+  font-weight: normal;
+  /* font-size: 16px; */
+  /* padding: 16px 24px; */
+  text-align: center;
+  border-right: 1px solid #f0f0f0;
+}
+
+.metric-container .ant-table-tbody > tr > td {
+  /* font-size: 16px; */
+  /* padding: 16px 24px; */
+  text-align: center;
+  border-right: 1px solid #f0f0f0;
+}
+
+/* Remove border from last column */
+.metric-container .ant-table-thead > tr > th:last-child,
+.metric-container .ant-table-tbody > tr > td:last-child {
+  border-right: none;
+}
+
+.metric-container .ant-table-cell {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.metric-container .ant-table-container {
+  border-left: 1px solid #f0f0f0;
+  border-right: 1px solid #f0f0f0;
+}
+
+.metric-container .ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.current {
+  width: 49%;
+  height: 250px;
+  border-radius: 22px;
+  background-color: rgba(150, 64, 255, 1);
+  color: white;
+  font-size: x-large;
+}
+
+.best-ever {
+  width: 49%;
+  height: 250px;
+  border-radius: 22px;
+  background-color: rgba(75, 138, 255, 1);
+  color: white;
+  font-size: x-large;
+}
+
+.current-heading {
+  margin-left: 10px;
+  font-size: xx-large;
+  font-weight: light;
+  /* padding: 30px 10px 15px 30px; */
+}
+
+.current-p {
+  margin-left: 10px;
+  /* margin-bottom: 50px; */
+  font-size: 70px;
+  margin-top: -30px;
+  font-weight: bolder;
+}
+
+.current-span {
+  background-color: #f2f2f8;
+  color: red;
+  margin-left: 20px;
+  /* padding: 5px 15px 5px 25px; */
+  padding: 10px;
+  border-radius: 14px;
+  font-weight: lighter;
+  font-size: x-large;
+}
+
+.best-heading {
+  margin-left: 10px;
+  font-size: xx-large;
+  font-weight: light;
+  /* padding: 30px 10px 15px 30px; */
+}
+
+.best-p {
+  margin-left: 10px;
+  margin-top: -30px;
+  font-size: 70px;
+  font-weight: bolder;
+}
+
+.fuel-efficiency {
+  font-size: xx-large;
+  padding: 30px 10px 15px 30px;
+}
+
+.fuel-efficiency-span {
+  background-color: #f2f2f8;
+  color: rgba(150, 64, 255, 1);
+  margin-left: 20px;
+  /* padding: 5px 15px 5px 25px; */
+  padding: 10px;
+  border-radius: 14px;
+}
+
+.bottom-doughnut {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+  width: 100%;
+}
+
+.bottom-doughnut .band-category,
+.bottom-doughnut .data-entry {
+  flex: 1;
+  border-radius: 16px;
+  background: white;
+}
+
+.bottom-doughnut h2 {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 32px;
+  margin-top: 0px;
+  color: #000;
+}
+
+.doughnut-container {
+  height: 280px;
+  position: relative;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.data-entry .doughnut-container {
+  height: 200px;
+  position: relative;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.data-entry .doughnut-container {
+  position: relative;
+}
+
+.data-entry-subtitle {
+  text-align: center;
+  font-size: 16px;
+  color: #515151;
+  margin-top: 32px;
+  font-weight: 400;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Legend styles */
+.band-category .chartjs-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.band-category .chartjs-legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #515151;
+}
+
+.band-category .chartjs-legend-item::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.band-category canvas,
+.data-entry canvas {
+  cursor: pointer;
+}
+
+.energy-source-card {
+  background: white;
+  border-radius: 15px;
+  margin-bottom: 30px;
+}
+
+.energy-source-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.energy-source-header .icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 16px;
+}
+
+.energy-source-header h1 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+}
+
+.energy-source-chart {
+  height: 300px;
+  position: relative;
+  max-width: 850px;
+  display: flex;
+  /* padding-left: 40px; */
+  margin-left: -40px;
+  justify-content: start;
+  align-items: start;
+}
+
+/* Style for hover tooltips */
+.energy-source-chart .chartjs-tooltip {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Style for the percentage labels inside doughnut */
+.doughnut-label {
+  position: absolute;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+}
+
+.top-contributors-card {
+  background: white;
+  border-radius: 15px;
+  margin-bottom: 30px;
+}
+
+.contributors-header {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.contributors-header .icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 16px;
+}
+
+.header-content h1 {
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.total-energy {
+  font-size: 42px;
+  font-weight: 600;
+  color: #000;
+  line-height: 1;
+}
+
+.total-energy span {
+  font-size: 24px;
+  margin-left: 8px;
+  font-weight: 400;
+}
+
+.chart-container {
+  height: 300px;
+  margin-top: 20px;
+  color: black;
+}
+
+/* Override chart styles */
+.chart-container canvas {
+  margin-top: 20px;
+  color: black;
+}
+
+.chart-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-label {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: #000;
+}
+
+.consumption-metrics {
+  margin-bottom: 30px;
+}
+
+.consumption-metrics > h1 {
+  font-size: 30px;
+  font-weight: 550;
+  color: #000;
+  margin-bottom: 24px;
+}
+
+.metric-container {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.metric-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 4px;
+  padding-top: 0px;
+}
+
+.metric-header .icon {
+  width: 40px;
+  height: 40px;
+}
+
+.metric-header h2 {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: #000;
+}
+
+/* Table styles */
+.ant-table {
+  font-family: "DM Sans", sans-serif;
+}
+
+.ant-table-thead > tr > th {
+  font-family: "DM Sans", sans-serif;
+  background: white !important;
+  font-weight: 500;
+  font-size: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ant-table-tbody > tr > td {
+  font-family: "DM Sans", sans-serif;
+  padding: 16px 24px;
+  font-size: 16px;
+}
+
+.solar-consumption .ant-table-thead > tr > th:last-child,
+.solar-consumption .ant-table-tbody > tr > td:last-child {
+  text-align: right;
+  font-weight: 500;
+}
+
+.solar-consumption .ant-table-tbody > tr:last-child {
+  border-top: 1px solid #f0f0f0;
+}
+
+.ant-table-thead > tr > th {
+  background: transparent !important;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ant-table-tbody > tr:last-child > td {
+  border-bottom: none;
+}
+
+.solar-consumption {
+  .ant-table-thead > tr > th {
+    border-right: 1px solid #f0f0f0;
+    font-weight: normal;
+    color: #000;
+  }
+
+  .ant-table-tbody > tr > td {
+    /* border-right: 1px solid #f0f0f0; */
+    /* padding: 16px 24px; */
+    text-align: center;
+    color: #000;
+  }
+
+  .ant-table-tbody > tr:last-child {
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .ant-table-thead > tr > th:last-child,
+  .ant-table-tbody > tr > td:last-child {
+    border-right: none;
+    text-align: right;
+  }
+
+  .ant-table {
+    border-radius: 0;
+  }
+
+  .ant-table-container {
+    border-left: none;
+    border-right: none;
+  }
+
+  .ant-table-thead > tr > th {
+    background: white !important;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .ant-table-tbody > tr > td {
+    padding: 20px 24px;
+  }
+}
+
+.metric-container {
+  .ant-table {
+    font-family: "Montserrat", sans-serif;
+  }
+
+  .ant-table-thead > tr > th {
+    font-size: 16px;
+    font-weight: 500;
+    padding-inline: 0px;
+    padding: 16px 8px;
+    text-align: center;
+  }
+
+  .ant-table-tbody > tr > td {
+    font-family: "DM Sans", sans-serif;
+    padding: 16px 24px;
+    font-size: 18px;
+    font-weight: 550;
+  }
+}
+
+.power-demand-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  padding: 20px;
+}
+
+.power-demand-card .chart-container {
+  height: 400px;
+  width: 100%;
+  position: relative;
+  color: black;
+  padding: 0 20px;
+  margin: 0;
+}
+
+.power-demand-card .chart-container canvas {
+  height: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.power-demand-card .chart-container > div {
+  margin: 0;
+  padding: 0;
+}
+
+.power-demand-legend {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px 40px;
+  margin-left: 70px;
+  gap: 40px;
+}
+
+.legend-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-family: "Inter", sans-serif;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-label {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  color: #000;
+}
+
+.band-categorization {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.band-categorization .metric-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.band-categorization .metric-header h2 {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.band-categorization .icon {
+  width: 32px;
+  height: 32px;
+}
+
+/* Table styles */
+.band-table .ant-table-thead > tr > th {
+  background: transparent;
+  font-weight: 500;
+  font-size: 16px;
+  padding: 16px 24px;
+  border-right: 1px solid #f0f0f0;
+  color: #515151;
+}
+
+.band-table .ant-table-tbody > tr > td {
+  font-size: 14px;
+  padding: 16px 16px;
+  font-weight: 500;
+  border-right: 1px solid #f0f0f0;
+  color: #000;
+}
+
+.band-table .ant-table-thead > tr > th:last-child,
+.band-table .ant-table-tbody > tr > td:last-child {
+  border-right: none;
+}
+
+.band-table .ant-table-cell {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.band-table .ant-table-container {
+  border-left: 1px solid #f0f0f0;
+  border-right: 1px solid #f0f0f0;
+}
+
+.band-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.aligh-start-table .ant-table-thead > tr > th {
+  background: transparent;
+  font-weight: 500;
+  font-size: 16px;
+  text-align: start;
+  padding: 16px 24px;
+  border-right: 1px solid #f0f0f0;
+  color: #515151;
+}
+
+.aligh-start-table .ant-table-tbody > tr > td {
+  text-align: start;
+}
+
+.antCard .ant-card {
+  border: #d4d4fcbd 1px solid;
+}
