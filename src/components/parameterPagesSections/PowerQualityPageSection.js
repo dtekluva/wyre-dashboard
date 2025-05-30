@@ -7,6 +7,7 @@ import {
   formatParametersDates,
   formatParametersTimes,
   formatParameterTableData,
+  convertDateStringsToObjects,
 } from '../../helpers/genericHelpers';
 
 import PowerQualityLineChart from '../lineCharts/PowerQualityLineChart';
@@ -25,7 +26,8 @@ function PowerQualityPageSection({ pqData }) {
 
   // Pick out data based on selection in UI
   const plottedData = pqData && pqData[formattedPowerQualityName];
-  const plottedDates = pqData && formatParametersDatetimes(pqData.dates);
+  const dateObjects = pqData && convertDateStringsToObjects(pqData.dates);
+  const plottedDates = dateObjects && formatParametersDatetimes(dateObjects);
 
   // Clone plotted data for usage in table
   const tableData = Object.assign({}, plottedData);
@@ -34,8 +36,8 @@ function PowerQualityPageSection({ pqData }) {
     delete tableData.deviceName;
   }
 
-  const tableDates = pqData && formatParametersDates(pqData.dates);
-  const tableTimes = pqData && formatParametersTimes(pqData.dates);
+  const tableDates = dateObjects && formatParametersDates(dateObjects);
+  const tableTimes = dateObjects && formatParametersTimes(dateObjects);
 
   const { frequency } = pqData || { frequency: ['Empty'] };
   if (frequency) {

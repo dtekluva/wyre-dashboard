@@ -1,11 +1,15 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 
 import CompleteDataContext from '../Context';
 
 import BreadCrumb from '../components/BreadCrumb';
 import LastReadingPageSection from '../components/parameterPagesSections/LastReadingPageSection';
 import Loader from '../components/Loader';
-
+import { fetchLastReadingData } from '../redux/actions/parameters/parameter.action';
+import { devicesArray } from '../helpers/v2/organizationDataHelpers';
+import { connect, useSelector } from 'react-redux';
+import { isEmpty } from '../helpers/authHelper';
+import moment from "moment";
 
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },
@@ -13,12 +17,21 @@ const breadCrumbRoutes = [
   { url: '#', name: 'Last Reading', id: 3 },
 ];
 
-function LastReading({ match }) {
+function LastReading({ match, fetchLastReadingData }) {
+  const [lastReadingData, setLastReadingData] = useState([]);
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const parametersData = useSelector((state) => state.parametersReducer);
+
   const {
+    // userDateRange,
+    checkedBranchId,
+    checkedDevicesId,
     refinedRenderedData,
     setCurrentUrl,
     isAuthenticatedDataLoading,
   } = useContext(CompleteDataContext);
+
+  const userDateRange = moment().format("DD-MM-YYYY HH:mm");
 
   useEffect(() => {
     if (match && match.url) {
@@ -26,7 +39,38 @@ function LastReading({ match }) {
     }
   }, [match, setCurrentUrl]);
 
-  const { last_reading } = refinedRenderedData;
+  useEffect(() => {
+    fetchLastReadingData(userDateRange)
+  }, []);
+  
+  useEffect(() => {
+    if (!pageLoaded && isEmpty(parametersData || {})) {
+      fetchLastReadingData(userDateRange);
+    }
+
+    if (!isEmpty(parametersData) > 0 && pageLoaded) {
+      fetchLastReadingData(userDateRange);
+    }
+    setPageLoaded(true);
+  }, [userDateRange]);
+
+  useEffect(() => {
+    if (pageLoaded && parametersData.fetchedLastReading) {
+      let openDevicesArrayData
+      const devicesArrayData = devicesArray(parametersData.fetchedLastReading.branches, checkedBranchId, checkedDevicesId);
+      openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
+      setLastReadingData(openDevicesArrayData)
+    }
+      setPageLoaded(true);
+  }, [parametersData.fetchedLastReading, checkedBranchId, checkedDevicesId.length]);
+
+  // const { last_reading } = refinedRenderedData;
+
+  const last_reading = lastReadingData.map(eachDevice => {
+    const {name, last_reading} = eachDevice
+    const {data, date} = last_reading
+    return {name, data, date}
+  })
 
   const lastReadingSections =
     last_reading &&
@@ -34,7 +78,7 @@ function LastReading({ match }) {
       <LastReadingPageSection key={eachDevice.deviceName} lrData={eachDevice} />
     ));
   
-   if (isAuthenticatedDataLoading) {
+   if (!lastReadingData.length > 0) {
      return <Loader />;
    }
 
@@ -49,4 +93,15 @@ function LastReading({ match }) {
   );
 }
 
-export default LastReading;
+const mapDispatchToProps = {
+  fetchLastReadingData
+};
+const mapStateToProps = (state) => ({
+  parameters: state.parametersReducer,
+  sideBar: state.sideBar,
+  powerFactor: state.powerFactor,
+  dashboard: state.dashboard,
+}
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(LastReading);
