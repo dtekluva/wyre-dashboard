@@ -1053,6 +1053,6 @@ export {
   getDashBoardRefinedData, getInitialAllDeviceRefinedOrganizationData,
   getBillingRefinedOrganizationData, getBillingRefinedOrganizationDataWithChekBox,
   getScoreCardRefinedData, getOrganizationPeakToAveragePowerRatio, 
-  getOrganizationScoreCardCarbonEmissions
+  getOrganizationScoreCardCarbonEmissions, sumOrganizationEnergyConsumptionValues
 };
 

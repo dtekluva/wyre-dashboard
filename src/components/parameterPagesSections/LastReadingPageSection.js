@@ -9,10 +9,12 @@ import TotalDemandTable from '../tables/lastReadingsTables/TotalDemandTable';
 
 import ExcelIcon from '../../icons/ExcelIcon';
 import ExportToCsv from '../ExportToCsv';
+import { convertDateStringsToObjects } from '../../helpers/genericHelpers';
 
 function LastReadingPageSections({ lrData }) {
+  const dateObjects = lrData.length > 0 && convertDateStringsToObjects(lrData.date);
   const formattedDate =
-    lrData && lrData.date.format('dddd, MMMM D, YYYY, hh:mm:a');
+    dateObjects && dateObjects.format('dddd, MMMM D, YYYY, hh:mm:a');
 
   const phaseMeasuresData = lrData && lrData.data.phase_measures;
   const totalData = lrData && lrData.data.totals;
