@@ -1,0 +1,159 @@
+{
+  "branch_name": "polaris",
+  "month": "march",
+  "year": "2024",
+    "total_energy": {
+        "value": "4964",
+        "unit": "kWh"
+    },
+    "solar_hour": {
+        "value": "10000",
+        "unit": "kWh"
+    },
+    "power_demand": {
+        "operational": {
+            "peak": "60000",
+            "average": "30000",
+            "minimum": "20000",
+            "total_energy": "100000",
+            "unit": "kWh"
+        },
+        "non_operational": {
+            "peak": "30000",
+            "average": "60000",
+            "minimum": "40000",
+            "total_energy": "100000",
+            "unit": "kWh"
+        },
+        "weekends": {
+            "peak": "60000",
+            "average": "50000",
+            "minimum": "70000",
+            "total_energy": "100000",
+            "unit": "kWh"
+        }
+
+    },
+    "energy_consumed": {
+        "devices": [
+            {
+                "name": "inverter",
+                "value": "1000",
+                "type": "Utility",
+                "time_of_use": "20",
+                "expected_bill": "20",
+                "last_bill_accuracy": "20"
+            },
+            {
+                "name": "gen1",
+                "value": "800",
+                "type": "Generator",
+                "time_of_use": "20",
+                "expected_bill": "20",
+                "last_bill_accuracy": "20"
+            },
+            {
+                "name": "PHCN",
+                "value": "1300",
+                "type": "Utility",
+                "time_of_use": "20",
+                "expected_bill": "20",
+                "last_bill_accuracy": "20"
+            }
+        ]
+    },
+    "energy_deviation": [
+        {
+            "name": "Energy(KWH)",
+            "value": "10000",
+            "deviation": "10000",
+            "unit": "kWh",
+            "deviationUnit": "kWh"
+        },
+        {
+            "name": "Operational Period",
+            "value": "10000",
+            "deviation": "10000",
+            "unit": "kWh",
+            "deviationUnit": "hours"
+        },
+        {
+            "name": "Non-Operational Period",
+            "value": "10000",
+            "deviation": "10000",
+            "unit": "kWh",
+            "deviationUnit": "hours"
+        },
+        {
+            "name": "Weekend Period",
+            "value": "10000",
+            "deviation": "10000",
+            "unit": "kWh",
+            "deviationUnit": "hours"
+        },
+        {
+            "name": "Liters(diesel-usage)",
+            "value": "10000",
+            "deviation": "10000",
+            "unit": "liters",
+            "deviationUnit": "hours"
+        }
+    ],
+    "generator_size_efficiency": {
+        "current_month": {
+          "date": "04/3024",
+            "value": "80",
+            "unit": "%"
+        },
+        "previous_month": {
+          "date": "03/3024",
+            "value": "90",
+            "unit": "%"
+        },
+        "best_month": {
+            "date": "04/3024",
+            "value": "92",
+            "unit": "%"
+        }
+    },
+    "fuel_efficiency_accuracy_comparison": {
+        "accuracy": {
+            "value": "91.5",
+            "unit": "%"
+        },
+        "recommended": {
+            "value": "3.4",
+            "unit": "kWh/liter"
+        },
+        "achieved": {
+            "value": "3.6",
+            "unit": "kWh/liter"
+        }
+    },
+    "utility_band_categorization": [
+        {
+            "band": "A",
+            "total_hours": "720",
+            "expected_hours": "620"
+        },
+        {
+            "band": "B",
+            "total_hours": "720",
+            "expected_hours": "620"
+        },
+        {
+            "band": "C",
+            "total_hours": "720",
+            "expected_hours": "620"
+        },
+        {
+            "band": "D",
+            "total_hours": "720",
+            "expected_hours": "620"
+        }
+    ],
+    "data_entry": {
+        "value": "67",
+        "unit": "%"
+    }
+}
