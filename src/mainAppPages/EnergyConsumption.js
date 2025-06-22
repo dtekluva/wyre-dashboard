@@ -237,8 +237,6 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
     csvHeaders = energyConsumptionColumns
   }
 
-  // console.log(energyConsumptionColumns)
-
   // const csvHeaders = [
   //   { label: "Index", key: "index" },
   //   { label: "Date", key: "date" },

@@ -81,7 +81,7 @@ function PowerDemand({ match, fetchPowerDemandData }) {
 
   const power_demand = powerDemandData.map((deviceDetails) => {
     const { name, power_demand } = deviceDetails
-    const { dates:{dates}, power_demand_values:{min, avg, max, demand, units} } = power_demand
+    const { dates: { dates }, power_demand_values: { min, avg, max, demand, units } } = power_demand
     return {
       name,
       dates,
@@ -105,7 +105,7 @@ function PowerDemand({ match, fetchPowerDemandData }) {
       power_demand && power_demand.map((eachDevice) => eachDevice.demand);
 
     chartDeviceNames =
-      power_demand && power_demand.map((eachDevice) => eachDevice.source);
+      power_demand && power_demand.map((eachDevice) => eachDevice.name);
 
     chartTooltipValues =
       power_demand &&
@@ -140,23 +140,33 @@ function PowerDemand({ match, fetchPowerDemandData }) {
     tableHeadings = Object.keys({
       date: '',
       time: '',
-      ...(powerDemandTableDataClone ? powerDemandTableDataClone[0] : []),
+      ...(powerDemandTableDataClone ? {
+        min: powerDemandTableDataClone[0]?.min,
+        max: powerDemandTableDataClone[0]?.max,
+        avg: powerDemandTableDataClone[0]?.avg,
+        demand: powerDemandTableDataClone[0]?.demand,
+        name: powerDemandTableDataClone[0]?.name,
+      } : []),
     });
+
+    // delete tableHeadings.dates;
 
     arrayOfTableValues =
       powerDemandTableDataClone &&
       powerDemandTableDataClone.map((eachDevice) => {
-        const convertEachDate =  eachDevice.dates.map(date => dayjs(date))        
+        const { name, source, dates, ...others } = eachDevice
+        const convertEachDate = dates.map(date => dayjs(date))
         return Object.values({
           date: formatParametersDates(convertEachDate),
           time: formatParametersTimes(convertEachDate),
-          ...eachDevice,
+          ...others,
         });
       });
+
     arrayOfFormattedTableData =
       arrayOfTableValues &&
       arrayOfTableValues.map((eachDeviceTableValues) => {
-        formatParameterTableData(tableHeadings, eachDeviceTableValues)
+        return formatParameterTableData(tableHeadings, eachDeviceTableValues)
       }
       );
 
@@ -167,10 +177,10 @@ function PowerDemand({ match, fetchPowerDemandData }) {
     formattedTableDataWithIndex =
       formattedTableData &&
       formattedTableData.map(function (currentValue, index) {
+
         const { date, time, source, ...others } = currentValue;
         return { index: (index + 1), date, time, source, ...others };
       });
-
     csvHeaders = [
       { label: "Index", key: "index" },
       { label: "Date", key: "date" },
@@ -188,9 +198,9 @@ function PowerDemand({ match, fetchPowerDemandData }) {
     ]
   }
 
-  if (isAuthenticatedDataLoading) {
-    return <Loader />;
-  }
+  if (!power_demand || power_demand.length  === 0) {
+     return <Loader />;
+   }
 
   return (
     <>
