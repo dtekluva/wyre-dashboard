@@ -1,3 +1,4 @@
+
 import { getRefinedBranchData, getBillingRefinedBranchData } from './branchDataHelpers';
 import { getDeviceData, getDeviceDataBilling } from './deviceDataHelper';
 
@@ -1053,6 +1054,5 @@ export {
   getDashBoardRefinedData, getInitialAllDeviceRefinedOrganizationData,
   getBillingRefinedOrganizationData, getBillingRefinedOrganizationDataWithChekBox,
   getScoreCardRefinedData, getOrganizationPeakToAveragePowerRatio, 
-  getOrganizationScoreCardCarbonEmissions
+  getOrganizationScoreCardCarbonEmissions, sumOrganizationEnergyConsumptionValues
 };
-

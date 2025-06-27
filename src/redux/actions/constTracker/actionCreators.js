@@ -22,6 +22,15 @@ export const fetchFuelDataSuccess = payload => ({
   payload,
 });
 
+export const fetchGeneratorListsLoading = (payload = true) => ({
+  type: costTrackerType.FETCH_GENERATOR_LISTS_LOADING,
+  payload,
+});
+export const fetchGeneratorListsSuccess = payload => ({
+  type: costTrackerType.FETCH_GENERATOR_LISTS_SUCCESS,
+  payload,
+});
+
 export const addFuelDataLoading = (payload = true) => ({
   type: costTrackerType.ADD_FUEL_CONSUMPTION_DATA_LOADING,
   payload,

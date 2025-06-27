@@ -94,21 +94,22 @@ class PowerDemandTable extends React.Component {
     clearFilters();
     this.setState({ searchText: '' });
   };
-
+  
   render() {
     const sortedData = sortByDateTime(this.props.powerDemandData);
     const data = sortedData.map((dataItem) => {
-      const { min, max, avg } = dataItem
+      const { min, max, avg, name } = dataItem
 
       return {
         ...dataItem,
+        name,
         min: numberFormatter(min.toFixed(2)),
         max: numberFormatter(max.toFixed(2)),
         avg: numberFormatter(avg.toFixed(2))
       }
     });
     const unit = this.props.powerDemandUnit;
-
+    
     const columns = [
       {
         title: 'Index',
@@ -133,10 +134,10 @@ class PowerDemandTable extends React.Component {
       },
       {
         title: `Source`,
-        dataIndex: 'source',
-        key: 'source',
-        ...this.getColumnSearchProps('source'),
-        sorter: (a, b) => a.source.localeCompare(b.source),
+        dataIndex: 'name',
+        key: 'name',
+        ...this.getColumnSearchProps('name'),
+        sorter: (a, b) => a.name.localeCompare(b.name),
         sortDirections: ['descend', 'ascend'],
       },
       {

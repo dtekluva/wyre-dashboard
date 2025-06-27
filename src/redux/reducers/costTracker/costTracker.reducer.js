@@ -7,6 +7,9 @@ const INITIAL_STATE = {
   
   fuelConsumptionData: false,
   fuelConsumptionDataLoading: false,
+  
+  fetchedListOfGenerators: false,
+  listOfGeneratorsLoading: false,
 
   addFuelConsumptiondata: false,
   addFuelConsumptionDataLoadin: false,
@@ -67,6 +70,17 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         fuelConsumptionDataLoading: action.payload,
+      };
+
+    case costTrackerType.FETCH_GENERATOR_LISTS_SUCCESS:
+      return {
+        ...state,
+        fetchedListOfGenerators: action.payload,
+      };
+    case costTrackerType.FETCH_GENERATOR_LISTS_LOADING:
+      return {
+        ...state,
+        listOfGeneratorsLoading: action.payload,
       };
 
     case costTrackerType.ADD_FUEL_CONSUMPTION_DATA_LOADING:

@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { notification, Form, Spin, DatePicker } from 'antd';
 import { connect } from 'react-redux';
 import { useSelector } from 'react-redux';
@@ -8,8 +8,8 @@ import moment from 'moment';
 
 import BreadCrumb from '../components/BreadCrumb';
 import Loader from '../components/Loader';
-import { addFuelConsumptionData, addMonthlyFuelConsumptionData } from '../redux/actions/constTracker/costTracker.action';
-import { DateField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
+import { addFuelConsumptionData, addMonthlyFuelConsumptionData, getBranchGeneratorsData } from '../redux/actions/constTracker/costTracker.action';
+import { DateField, NumberField, SelectField, SelectGenerator } from '../components/FormFields/GeneralFormFields';
 
 
 const { RangePicker } = DatePicker
@@ -42,15 +42,31 @@ const NotAllowedNotification = () => {
   })
 }
 
-function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, addMonthlyFuelConsumptionData: addMonthlyConsumption }) {
+function AddDieselEntry({ match, costTracker, addFuelConsumptionData: addFuelConsumption, addMonthlyFuelConsumptionData: addMonthlyConsumption, getBranchGeneratorsData }) {
   const [dailyForm] = Form.useForm();
   const [monthlyForm] = Form.useForm();
+  const [holdBranchGenerators, setHoldBranchGenerators] = useState([]);
 
   const { setCurrentUrl, userId } = useContext(
     CompleteDataContext
   );
 
   const sideBarData = useSelector((state) => state.sideBar.sideBarData);
+  let defaultBranch;
+  if (sideBarData.branches) {
+    defaultBranch = sideBarData.branches[0].branch_id
+  }
+
+  const options = [];
+  if (holdBranchGenerators) {
+    holdBranchGenerators.map((gen) => {
+      options.push({
+        label: gen.name,
+        value: gen.device_id,
+        key: gen.device_id,
+      });
+    })
+  }
 
   const data = {
     quantity: {
@@ -67,6 +83,13 @@ function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, add
       label: 'Fuel Type',
       optionData: ['diesel'],
       placeholder: 'Select Fuel Type'
+    },
+    genType: {
+      name: 'genType',
+      label: 'Select Generator',
+      optionData: [holdBranchGenerators],
+      // options:{options},
+      placeholder: 'Select Generator Type'
     }
   }
 
@@ -76,12 +99,15 @@ function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, add
     }
   }, [match, userId]);
 
+  useEffect(() => {
+    getBranchGeneratorsData(defaultBranch)
+  }, []);
 
-  let defaultBranch;
-  if (sideBarData.branches) {
-    defaultBranch = sideBarData.branches[0].branch_id
-  }
-
+  useEffect(() => {
+    if (costTracker) {
+      setHoldBranchGenerators(costTracker.fetchedListOfGenerators.generators)
+    }
+  },[costTracker])
 
   const onDailyDieselEntrySubmit = async ({ date, quantity, fuelType }) => {
     if (defaultBranch != null) {
@@ -192,6 +218,13 @@ function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, add
                     />
                   </Form.Item>
                 </div>
+                {/* <div className="cost-tracker-input-container">
+                  <Form.Item>
+                    <SelectGenerator
+                      data={data.genType}
+                    />
+                  </Form.Item>
+                </div> */}
 
               </div>
               <button className="generic-submit-button cost-tracker-form-submit-button">
@@ -263,6 +296,13 @@ function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, add
                     />
                   </Form.Item>
                 </div>
+                {/* <div className="cost-tracker-input-container">
+                  <Form.Item>
+                    <SelectGenerator
+                      data={data.genType}
+                    />
+                  </Form.Item>
+                </div> */}
 
               </div>
               <button className="generic-submit-button cost-tracker-form-submit-button">
@@ -276,13 +316,14 @@ function AddDieselEntry({ match, addFuelConsumptionData: addFuelConsumption, add
   );
 }
 
-// export default AddDieselEntry;
-
+const mapStateToProps = (state) => ({
+  costTracker: state.costTracker,
+});
 
 const mapDispatchToProps = {
   addFuelConsumptionData,
+  getBranchGeneratorsData,
   addMonthlyFuelConsumptionData
 };
 
-
-export default connect(null, mapDispatchToProps)(AddDieselEntry);
+export default connect(mapStateToProps, mapDispatchToProps)(AddDieselEntry);
