@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 
 
 import CompleteDataContext from '../Context';
@@ -8,16 +8,23 @@ import {
   formatParametersDates,
   formatParametersTimes,
   formatParameterTableData,
+  convertDateStringsToObjects,
 } from '../helpers/genericHelpers';
 import { numberFormatter } from "../helpers/numberFormatter"
 
 import BreadCrumb from '../components/BreadCrumb';
+import { sumOrganizationEnergyConsumptionValues } from "../helpers/organizationDataHelpers"
 import EnergyConsumptionBarChart from '../components/barCharts/EnergyConsumptionBarChart';
 import EnergyConsumptionTable from '../components/tables/EnergyConsumptionTable';
 import Loader from '../components/Loader';
 
 import ExcelIcon from '../icons/ExcelIcon';
 import ExportToCsv from '../components/ExportToCsv';
+import { fetchEnergyConsumptionData } from '../redux/actions/parameters/parameter.action';
+import { connect, useSelector } from 'react-redux';
+import parametersReducer from '../redux/reducers/parameters/parameters.reducer';
+import { isEmpty } from '../helpers/authHelper';
+import { devicesArray } from '../helpers/v2/organizationDataHelpers';
 
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },
@@ -25,57 +32,167 @@ const breadCrumbRoutes = [
   { url: '#', name: 'Energy Consumption', id: 3 },
 ];
 
-function EnergyConsumption({ match }) {
+function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
+  const [energyConsumptionData, setEnergyConsumptionData] = useState([]);
+  const [pageLoaded, setPageLoaded] = useState(false);
   const {
-    refinedRenderedData,
+    userDateRange,
+    checkedBranchId,
+    checkedDevicesId,
     setCurrentUrl,
-    isAuthenticatedDataLoading,
   } = useContext(CompleteDataContext);
 
+  const parametersData = useSelector((state) => state.parametersReducer);
+  
   useEffect(() => {
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
   }, [match, setCurrentUrl]);
 
-  const {
-    energy_consumption_values,
-    energy_consumption_current,
-    energy_consumption_previous,
-    energy_consumption_usage,
-  } = refinedRenderedData;
+  useEffect(() => {
+    fetchEnergyConsumptionData(userDateRange)
+  }, []);
 
+  useEffect(() => {
+      if (!pageLoaded && isEmpty(parametersData || {})) {
+        fetchEnergyConsumptionData(userDateRange);
+      }
+  
+      if (!isEmpty(parametersData) > 0 && pageLoaded) {
+        fetchEnergyConsumptionData(userDateRange);
+      }
+      setPageLoaded(true);
+  }, [userDateRange]);
+
+  useEffect(() => {
+      if (pageLoaded && parametersData.fetchedEnergyConsumption) {
+        let openDevicesArrayData
+        const devicesArrayData = devicesArray(parametersData.fetchedEnergyConsumption.branches, checkedBranchId, checkedDevicesId);
+        openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
+        setEnergyConsumptionData(openDevicesArrayData)
+      }
+      setPageLoaded(true);
+  }, [parametersData.fetchedEnergyConsumption, checkedBranchId, checkedDevicesId.length]);
+
+  const useEnergyConsumptionData = energyConsumptionData.map((deviceDetails) => {
+    const { name, energy_consumption } = deviceDetails
+    const { dates:{dates}, energy_consumption_values:{value, units}, previous, current, usage } = energy_consumption
+    return {
+      name,
+      dates,
+      value,
+      units,
+      previous,
+      current,
+      usage
+    }
+  }
+  );
   let chartConsumptionValues, allDeviceNames, chartDates, energyConsumptionUnit;
   let allDates, tableHeadings, formattedTableData, dataForEnergyConsumptionColumns;
   let deviceNames, energyConsumptionColumns, energyConsumptionValuesTableDataClone;
   let tableEnergyConsumptionValues, tableValues, csvHeaders;
 
-  if (energy_consumption_usage && energy_consumption_values) {
+  const energy_consumption_previous = useEnergyConsumptionData.reduce((sum, item) => sum + item.previous, 0);
+  const energy_consumption_current = useEnergyConsumptionData.reduce((sum, item) => sum + item.current, 0);
+  const energy_consumption_usage = useEnergyConsumptionData.reduce((sum, item) => sum + item.usage, 0);
+
+  // if (energy_consumption_usage && energy_consumption_values) {
+  //   chartConsumptionValues =
+  //     energy_consumption_values &&
+  //     energy_consumption_values.map((eachDevice) => eachDevice.value);
+
+  //   allDeviceNames =
+  //     energy_consumption_values &&
+  //     energy_consumption_values.map((eachDevice) => eachDevice.deviceName);
+
+  //   chartDates =
+  //     energy_consumption_values &&
+  //     formatParametersDatetimes(energy_consumption_values[0].dates);
+
+  //   energyConsumptionUnit =
+  //     energy_consumption_values && energy_consumption_values[0].units;
+
+  //   energyConsumptionValuesTableDataClone =
+  //     energy_consumption_values &&
+  //     energy_consumption_values.map((eachDevice) => {
+  //       return {
+  //         [eachDevice.deviceName]: eachDevice.value,
+  //       };
+  //     });
+
+  //   allDates =
+  //     energy_consumption_values && energy_consumption_values[0].dates;
+
+  //   tableEnergyConsumptionValues =
+  //     energyConsumptionValuesTableDataClone &&
+  //     Object.assign(...energyConsumptionValuesTableDataClone);
+
+  //   tableHeadings = Object.keys({
+  //     date: '',
+  //     time: '',
+  //     ...tableEnergyConsumptionValues,
+  //   });
+
+  //   tableValues = Object.values({
+  //     date: allDates && formatParametersDates(allDates),
+  //     time: allDates && formatParametersTimes(allDates),
+  //     ...tableEnergyConsumptionValues,
+  //   });
+
+  //   formattedTableData = formatParameterTableData(
+  //     tableHeadings,
+  //     tableValues
+  //   );
+
+  //   dataForEnergyConsumptionColumns =
+  //     formattedTableData &&
+  //     formattedTableData.map((eachRow) => {
+
+  //       return eachRow;
+  //     });
+
+  //   deviceNames =
+  //     dataForEnergyConsumptionColumns.length &&
+  //     Object.keys(dataForEnergyConsumptionColumns[0]);
+
+  //   energyConsumptionColumns =
+  //     deviceNames &&
+  //     deviceNames.map((eachName) => {
+  //       return {
+  //         label: `${eachName}`,
+  //         key: `${eachName}`,
+  //       };
+  //     });
+  //   csvHeaders = energyConsumptionColumns
+  // }
+  
+  if (useEnergyConsumptionData.length > 0) {
     chartConsumptionValues =
-      energy_consumption_values &&
-      energy_consumption_values.map((eachDevice) => eachDevice.value);
+      useEnergyConsumptionData.map((eachDevice) => eachDevice.value);
 
     allDeviceNames =
-      energy_consumption_values &&
-      energy_consumption_values.map((eachDevice) => eachDevice.deviceName);
-
-    chartDates =
-      energy_consumption_values &&
-      formatParametersDatetimes(energy_consumption_values[0].dates);
+      useEnergyConsumptionData &&
+      useEnergyConsumptionData.map((eachDevice) => eachDevice.name);
+      const dateObjects = useEnergyConsumptionData && 
+      convertDateStringsToObjects(useEnergyConsumptionData.find(device => device.name === "UTILITY").dates || useEnergyConsumptionData[0].dates);
+      
+    chartDates = dateObjects && formatParametersDatetimes(dateObjects);
 
     energyConsumptionUnit =
-      energy_consumption_values && energy_consumption_values[0].units;
+      useEnergyConsumptionData && useEnergyConsumptionData[0].units
 
     energyConsumptionValuesTableDataClone =
-      energy_consumption_values &&
-      energy_consumption_values.map((eachDevice) => {
+      useEnergyConsumptionData &&
+      useEnergyConsumptionData.map((eachDevice) => {
         return {
-          [eachDevice.deviceName]: eachDevice.value,
+          [eachDevice.name]: eachDevice.value,
         };
       });
 
     allDates =
-      energy_consumption_values && energy_consumption_values[0].dates;
+      useEnergyConsumptionData && useEnergyConsumptionData[0].dates;
 
     tableEnergyConsumptionValues =
       energyConsumptionValuesTableDataClone &&
@@ -88,8 +205,8 @@ function EnergyConsumption({ match }) {
     });
 
     tableValues = Object.values({
-      date: allDates && formatParametersDates(allDates),
-      time: allDates && formatParametersTimes(allDates),
+      date: chartDates,
+      time: chartDates,
       ...tableEnergyConsumptionValues,
     });
 
@@ -106,7 +223,7 @@ function EnergyConsumption({ match }) {
       });
 
     deviceNames =
-      dataForEnergyConsumptionColumns.length &&
+      dataForEnergyConsumptionColumns &&
       Object.keys(dataForEnergyConsumptionColumns[0]);
 
     energyConsumptionColumns =
@@ -120,10 +237,6 @@ function EnergyConsumption({ match }) {
     csvHeaders = energyConsumptionColumns
   }
 
-
-
-  // console.log(energyConsumptionColumns)
-
   // const csvHeaders = [
   //   { label: "Index", key: "index" },
   //   { label: "Date", key: "date" },
@@ -132,7 +245,7 @@ function EnergyConsumption({ match }) {
   //   { label: "Meadow hall Schools MEADOW HALL IPP", key: "Meadow hall Schools MEADOW HALL IPP" }
   // ]
 
-  if (isAuthenticatedDataLoading) {
+  if (!useEnergyConsumptionData || useEnergyConsumptionData.length  === 0) {
     return <Loader />;
   }
 
@@ -141,7 +254,7 @@ function EnergyConsumption({ match }) {
       <div className='breadcrumb-and-print-buttons'>
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
-      {energy_consumption_usage && energy_consumption_values &&
+      { chartDates &&
         <>
           <article className='parameters-stacked-bar-container'>
             <EnergyConsumptionBarChart
@@ -213,4 +326,15 @@ function EnergyConsumption({ match }) {
   );
 }
 
-export default EnergyConsumption;
+const mapDispatchToProps = {
+  fetchEnergyConsumptionData
+};
+const mapStateToProps = (state) => ({
+  parameters: state.parametersReducer,
+  sideBar: state.sideBar,
+  powerFactor: state.powerFactor,
+  dashboard: state.dashboard,
+}
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(EnergyConsumption);

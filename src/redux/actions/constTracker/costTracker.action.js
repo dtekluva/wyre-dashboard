@@ -1,7 +1,9 @@
 
 import {
   fetchCostTrackerLoading, fetchCostTrackerSuccess, addFuelDataSuccess,
-  fetchFuelDataLoading, fetchFuelDataSuccess, addFuelDataLoading, editFuelDataLoading, editFuelDataSuccess, deleteFuelDataLoading, deleteFuelDataSuccess, editFuelPUrchaseDataLoading, editFuelPUrchaseDataSuccess, editPreUtilityPurchaseDataLoading, editPreUtilityPurchaseDataSuccess, editPostUtilityPurchaseDataLoading, editPostUtilityPurchaseDataSuccess, deleteFuelPUrchaseDataLoading, deleteFuelPUrchaseDataSuccess, deletePreUtilityPurchaseDataLoading, deletePreUtilityPurchaseDataSuccess, editIppPurchaseDataLoading, editIppPurchaseDataSuccess, deleteIppPurchaseDataLoading, deleteIppPurchaseDataSuccess, addMonthlyFuelDataLoading, addMonthlyFuelDataSuccess
+  fetchFuelDataLoading, fetchFuelDataSuccess, addFuelDataLoading, editFuelDataLoading, editFuelDataSuccess, deleteFuelDataLoading, deleteFuelDataSuccess, editFuelPUrchaseDataLoading, editFuelPUrchaseDataSuccess, editPreUtilityPurchaseDataLoading, editPreUtilityPurchaseDataSuccess, editPostUtilityPurchaseDataLoading, editPostUtilityPurchaseDataSuccess, deleteFuelPUrchaseDataLoading, deleteFuelPUrchaseDataSuccess, deletePreUtilityPurchaseDataLoading, deletePreUtilityPurchaseDataSuccess, editIppPurchaseDataLoading, editIppPurchaseDataSuccess, deleteIppPurchaseDataLoading, deleteIppPurchaseDataSuccess, addMonthlyFuelDataLoading, addMonthlyFuelDataSuccess,
+  fetchGeneratorListsLoading,
+  fetchGeneratorListsSuccess
 } from "./actionCreators";
 import { APIService } from "../../../config/api/apiConfig";
 import jwtDecode from "jwt-decode";
@@ -28,7 +30,6 @@ export const fetchCostTrackerData = () => async (dispatch) => {
   }
 };
 
-
 export const fetchFuelConsumptionDataOLd = (queryString) => async (dispatch) => {
   dispatch(fetchFuelDataLoading());
   const requestUrl = `fuel_entry?${queryString}`;
@@ -42,6 +43,22 @@ export const fetchFuelConsumptionDataOLd = (queryString) => async (dispatch) => 
     }
   } catch (error) {
     dispatch(fetchFuelDataLoading(false));
+  }
+};
+
+export const getBranchGeneratorsData = (branchId) => async (dispatch) => {
+  dispatch(fetchGeneratorListsLoading());
+  const requestUrl = `branch/${branchId}/generators/`;
+  try {
+    const response = await APIService.get(requestUrl);
+    dispatch(fetchGeneratorListsSuccess(response.data));
+    dispatch(fetchGeneratorListsLoading(false))
+    return {
+      fullfilled: true,
+      data: response.data
+    }
+  } catch (error) {
+    dispatch(fetchGeneratorListsLoading(false));
   }
 };
 
