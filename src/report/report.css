@@ -1,4 +1,4 @@
-.main-layer {
+.report-page .main-layer {
   width: 100%;
   height: 100%;
   display: flex;
@@ -7,7 +7,7 @@
   justify-content: center;
 }
 
-.layer-1 {
+.report-page .layer-1 {
   /* height: 100vh; */
   /* margin: 30px; */
   max-width: 100%;
@@ -18,105 +18,105 @@
 }
 
 @media (min-width: 1024px) {
-  .layer-1 {
+  .report-page .layer-1 {
     max-width: 1000px;
   }
 }
 
-.init-space {
+.report-page .init-space {
   margin: 30px;
   /* border-radius: 40px; */
 }
 
-.wyre-logo {
+.report-page .wyre-logo {
   justify-self: center;
 }
 
-.heading {
+.report-page .heading {
   text-align: center;
   font-family: "Inter", sans-serif;
   font-size: 22px;
   margin-bottom: 70px;
 }
 
-.heading h1 {
+.report-page .heading h1 {
   font-size: 35px;
   font-weight: 550;
   margin-top: -20px;
 }
 
-.layer-1 .init-space .heading p {
+.report-page .layer-1 .init-space .heading p {
   font-style: italic;
   color: black;
   font-weight: 500;
 }
 
-.heading p {
+.report-page .heading p {
   font-style: italic !important;
   color: black;
   font-weight: 550;
 }
 
-.tilde {
+.report-page .tilde {
   margin-right: 10px;
 }
 
-.metric-container {
+.report-page .metric-container {
   background-color: white;
   margin-bottom: 30px;
 }
 
-.icon-and-title {
+.report-page .icon-and-title {
   display: flex;
   align-items: center;
   /* margin-left: 30px; */
   /* margin-top: 20px; */
 }
 
-.icon-and-title .image {
+.report-page .icon-and-title .image {
   width: 40px;
   margin-top: 10px;
 }
 
-.icon-title {
+.report-page .icon-title {
   text-align: center;
   justify-content: center;
 }
 
-.icon-title h1 {
+.report-page .icon-title h1 {
   font-size: 22px;
   font-weight: light;
   margin-left: 20px;
 }
 
-.heading {
+.report-page .heading {
   /* margin-bottom: 30px; */
 }
 
-.head-card {
+.report-page .head-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.title {
+.report-page .title {
   width: 50%;
   height: 132px;
   border-radius: 22px 0 0 22px;
   justify-content: center;
 }
 
-.head-card h1 {
+.report-page .head-card h1 {
   font-size: 30px;
 }
 
 @media (max-width: 7800px) {
-  .head-card h1 {
+  .report-page .head-card h1 {
     font-size: 27px;
   }
 }
 
-.value {
+.report-page .value {
   width: 50%;
   height: 132px;
   display: flex;
@@ -125,57 +125,57 @@
   border-radius: 0 22px 22px 0;
 }
 
-.top-doughnut {
+.report-page .top-doughnut {
   width: 555px;
   /* height: 253px; */
   align-items: center;
   justify-content: center;
 }
 
-.first-barchart {
+.report-page .first-barchart {
   width: 555px;
   /* height: 253px; */
 }
 
-.operational-performance {
+.report-page .operational-performance {
   /* height: 357px; */
 }
 
-.generator-efficiency {
+.report-page .generator-efficiency {
   display: flex;
   gap: 24px;
   margin-bottom: 24px;
 }
 
-.generator-efficiency .current,
-.generator-efficiency .best-ever {
+.report-page .generator-efficiency .current,
+.report-page .generator-efficiency .best-ever {
   flex: 1;
   padding: 14px;
   border-radius: 16px;
 }
 
-.generator-efficiency .current {
+.report-page .generator-efficiency .current {
   height: 210px;
   padding: 0;
   background: #9640ff;
   color: white;
 }
 
-.generator-efficiency .best-ever {
+.report-page .generator-efficiency .best-ever {
   height: 210px;
   padding: 0;
   background: #4b8aff;
   color: white;
 }
 
-.generator-efficiency h2 {
+.report-page .generator-efficiency h2 {
   font-size: 24px;
   font-weight: normal;
   margin-bottom: 10px;
   color: white;
 }
 
-.efficiency-value {
+.report-page .efficiency-value {
   font-size: 55px;
   font-weight: bold;
   display: flex;
@@ -183,29 +183,29 @@
   gap: 12px;
 }
 
-.change-indicator {
+.report-page .change-indicator {
   font-size: 16px;
   padding: 4px 8px;
   border-radius: 8px;
 }
 
-.change-indicator.positive {
+.report-page .change-indicator.positive {
   background: rgb(224, 255, 224);
   color: #2da44e;
 }
 
-.change-indicator.negative {
+.report-page .change-indicator.negative {
   background: #ffdfdf;
   color: #cf3e41;
 }
 
-.achieved-date {
+.report-page .achieved-date {
   font-size: 16px;
   font-weight: normal;
   margin-top: 8px;
 }
 
-.comparison-title {
+.report-page .comparison-title {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -214,7 +214,7 @@
   padding: 0 24px;
 }
 
-.accuracy-badge {
+.report-page .accuracy-badge {
   font-size: 18px;
   font-weight: 550;
   padding: 4px 12px;
@@ -224,12 +224,12 @@
 }
 
 /* Update table styles */
-.metric-container .ant-table {
+.report-page .metric-container .ant-table {
   font-family: "DM Sans", sans-serif;
   background: transparent;
 }
 
-.metric-container .ant-table-thead > tr > th {
+.report-page .metric-container .ant-table-thead > tr > th {
   background: transparent;
   font-weight: normal;
   /* font-size: 16px; */
@@ -238,7 +238,7 @@
   border-right: 1px solid #f0f0f0;
 }
 
-.metric-container .ant-table-tbody > tr > td {
+.report-page .metric-container .ant-table-tbody > tr > td {
   /* font-size: 16px; */
   /* padding: 16px 24px; */
   text-align: center;
@@ -246,26 +246,26 @@
 }
 
 /* Remove border from last column */
-.metric-container .ant-table-thead > tr > th:last-child,
-.metric-container .ant-table-tbody > tr > td:last-child {
+.report-page .metric-container .ant-table-thead > tr > th:last-child,
+.report-page .metric-container .ant-table-tbody > tr > td:last-child {
   border-right: none;
 }
 
-.metric-container .ant-table-cell {
+.report-page .metric-container .ant-table-cell {
   border-bottom: 1px solid #f0f0f0;
 }
 
-.metric-container .ant-table-container {
+.report-page .metric-container .ant-table-container {
   border-left: 1px solid #f0f0f0;
   border-right: 1px solid #f0f0f0;
 }
 
-.metric-container .ant-table {
+.report-page .metric-container .ant-table {
   border-radius: 8px;
   overflow: hidden;
 }
 
-.current {
+.report-page .current {
   width: 49%;
   height: 250px;
   border-radius: 22px;
@@ -274,7 +274,7 @@
   font-size: x-large;
 }
 
-.best-ever {
+.report-page .best-ever {
   width: 49%;
   height: 250px;
   border-radius: 22px;
@@ -283,14 +283,14 @@
   font-size: x-large;
 }
 
-.current-heading {
+.report-page .current-heading {
   margin-left: 10px;
   font-size: xx-large;
   font-weight: light;
   /* padding: 30px 10px 15px 30px; */
 }
 
-.current-p {
+.report-page .current-p {
   margin-left: 10px;
   /* margin-bottom: 50px; */
   font-size: 70px;
@@ -298,7 +298,7 @@
   font-weight: bolder;
 }
 
-.current-span {
+.report-page .current-span {
   background-color: #f2f2f8;
   color: red;
   margin-left: 20px;
@@ -309,26 +309,26 @@
   font-size: x-large;
 }
 
-.best-heading {
+.report-page .best-heading {
   margin-left: 10px;
   font-size: xx-large;
   font-weight: light;
   /* padding: 30px 10px 15px 30px; */
 }
 
-.best-p {
+.report-page .best-p {
   margin-left: 10px;
   margin-top: -30px;
   font-size: 70px;
   font-weight: bolder;
 }
 
-.fuel-efficiency {
+.report-page .fuel-efficiency {
   font-size: xx-large;
   padding: 30px 10px 15px 30px;
 }
 
-.fuel-efficiency-span {
+.report-page .fuel-efficiency-span {
   background-color: #f2f2f8;
   color: rgba(150, 64, 255, 1);
   margin-left: 20px;
@@ -337,21 +337,21 @@
   border-radius: 14px;
 }
 
-.bottom-doughnut {
+.report-page .bottom-doughnut {
   display: flex;
   gap: 24px;
   margin-top: 24px;
   width: 100%;
 }
 
-.bottom-doughnut .band-category,
-.bottom-doughnut .data-entry {
+.report-page .bottom-doughnut .band-category,
+.report-page .bottom-doughnut .data-entry {
   flex: 1;
   border-radius: 16px;
   background: white;
 }
 
-.bottom-doughnut h2 {
+.report-page .bottom-doughnut h2 {
   font-size: 24px;
   font-weight: 500;
   margin-bottom: 32px;
@@ -359,7 +359,7 @@
   color: #000;
 }
 
-.doughnut-container {
+.report-page .doughnut-container {
   height: 280px;
   position: relative;
   margin: 0 auto;
@@ -368,7 +368,7 @@
   align-items: center;
 }
 
-.data-entry .doughnut-container {
+.report-page .data-entry .doughnut-container {
   height: 200px;
   position: relative;
   margin: 0 auto;
@@ -377,11 +377,11 @@
   align-items: center;
 }
 
-.data-entry .doughnut-container {
+.report-page .data-entry .doughnut-container {
   position: relative;
 }
 
-.data-entry-subtitle {
+.report-page .data-entry-subtitle {
   text-align: center;
   font-size: 16px;
   color: #515151;
@@ -393,21 +393,21 @@
 }
 
 /* Legend styles */
-.band-category .chartjs-legend {
+.report-page .band-category .chartjs-legend {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-top: 24px;
 }
 
-.band-category .chartjs-legend-item {
+.report-page .band-category .chartjs-legend-item {
   display: flex;
   align-items: center;
   font-size: 14px;
   color: #515151;
 }
 
-.band-category .chartjs-legend-item::before {
+.report-page .band-category .chartjs-legend-item::before {
   content: "";
   display: inline-block;
   width: 8px;
@@ -416,37 +416,37 @@
   margin-right: 8px;
 }
 
-.band-category canvas,
-.data-entry canvas {
+.report-page .band-category canvas,
+.report-page .data-entry canvas {
   cursor: pointer;
 }
 
-.energy-source-card {
+.report-page .energy-source-card {
   background: white;
   border-radius: 15px;
   margin-bottom: 30px;
 }
 
-.energy-source-header {
+.report-page .energy-source-header {
   display: flex;
   align-items: center;
   margin-bottom: 24px;
 }
 
-.energy-source-header .icon {
+.report-page .energy-source-header .icon {
   width: 40px;
   height: 40px;
   margin-right: 16px;
 }
 
-.energy-source-header h1 {
+.report-page .energy-source-header h1 {
   font-size: 26px;
   font-weight: 600;
   color: #000;
   margin: 0;
 }
 
-.energy-source-chart {
+.report-page .energy-source-chart {
   height: 300px;
   position: relative;
   max-width: 850px;
@@ -458,7 +458,7 @@
 }
 
 /* Style for hover tooltips */
-.energy-source-chart .chartjs-tooltip {
+.report-page .energy-source-chart .chartjs-tooltip {
   background: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 8px 12px;
@@ -468,63 +468,63 @@
 }
 
 /* Style for the percentage labels inside doughnut */
-.doughnut-label {
+.report-page .doughnut-label {
   position: absolute;
   font-size: 16px;
   font-weight: 500;
   color: #000;
 }
 
-.top-contributors-card {
+.report-page .top-contributors-card {
   background: white;
   border-radius: 15px;
   margin-bottom: 30px;
 }
 
-.contributors-header {
+.report-page .contributors-header {
   display: flex;
   align-items: flex-start;
   margin-bottom: 30px;
 }
 
-.contributors-header .icon {
+.report-page .contributors-header .icon {
   width: 40px;
   height: 40px;
   margin-right: 16px;
 }
 
-.header-content h1 {
+.report-page .header-content h1 {
   font-size: 26px;
   font-weight: 600;
   margin: 0 0 8px 0;
 }
 
-.total-energy {
+.report-page .total-energy {
   font-size: 42px;
   font-weight: 600;
   color: #000;
   line-height: 1;
 }
 
-.total-energy span {
+.report-page .total-energy span {
   font-size: 24px;
   margin-left: 8px;
   font-weight: 400;
 }
 
-.chart-container {
+.report-page .chart-container {
   height: 300px;
   margin-top: 20px;
   color: black;
 }
 
 /* Override chart styles */
-.chart-container canvas {
+.report-page .chart-container canvas {
   margin-top: 20px;
   color: black;
 }
 
-.chart-legend {
+.report-page .chart-legend {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -534,43 +534,43 @@
   padding: 0 20px;
 }
 
-.legend-item {
+.report-page .legend-item {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.legend-dot {
+.report-page .legend-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
 }
 
-.legend-label {
+.report-page .legend-label {
   font-family: "Inter", sans-serif;
   font-size: 14px;
   color: #000;
 }
 
-.consumption-metrics {
+.report-page .consumption-metrics {
   margin-bottom: 30px;
 }
 
-.consumption-metrics > h1 {
+.report-page .consumption-metrics > h1 {
   font-size: 30px;
   font-weight: 550;
   color: #000;
   margin-bottom: 24px;
 }
 
-.metric-container {
+.report-page .metric-container {
   background: white;
   border-radius: 15px;
   overflow: hidden;
   margin-bottom: 16px;
 }
 
-.metric-header {
+.report-page .metric-header {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -578,12 +578,12 @@
   padding-top: 0px;
 }
 
-.metric-header .icon {
+.report-page .metric-header .icon {
   width: 40px;
   height: 40px;
 }
 
-.metric-header h2 {
+.report-page .metric-header h2 {
   font-size: 24px;
   font-weight: 500;
   margin: 0;
@@ -591,11 +591,11 @@
 }
 
 /* Table styles */
-.ant-table {
+.report-page .ant-table {
   font-family: "DM Sans", sans-serif;
 }
 
-.ant-table-thead > tr > th {
+.report-page .ant-table-thead > tr > th {
   font-family: "DM Sans", sans-serif;
   background: white !important;
   font-weight: 500;
@@ -604,35 +604,35 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
-.ant-table-tbody > tr > td {
+.report-page .ant-table-tbody > tr > td {
   font-family: "DM Sans", sans-serif;
   padding: 16px 24px;
   font-size: 16px;
 }
 
-.solar-consumption .ant-table-thead > tr > th:last-child,
-.solar-consumption .ant-table-tbody > tr > td:last-child {
+.report-page .solar-consumption .ant-table-thead > tr > th:last-child,
+.report-page .solar-consumption .ant-table-tbody > tr > td:last-child {
   text-align: right;
   font-weight: 500;
 }
 
-.solar-consumption .ant-table-tbody > tr:last-child {
+.report-page .solar-consumption .ant-table-tbody > tr:last-child {
   border-top: 1px solid #f0f0f0;
 }
 
-.ant-table-thead > tr > th {
+.report-page .ant-table-thead > tr > th {
   background: transparent !important;
 }
 
-.ant-table-tbody > tr > td {
+.report-page .ant-table-tbody > tr > td {
   border-bottom: 1px solid #f0f0f0;
 }
 
-.ant-table-tbody > tr:last-child > td {
+.report-page .ant-table-tbody > tr:last-child > td {
   border-bottom: none;
 }
 
-.solar-consumption {
+.report-page .solar-consumption {
   .ant-table-thead > tr > th {
     border-right: 1px solid #f0f0f0;
     font-weight: normal;
@@ -675,7 +675,7 @@
   }
 }
 
-.metric-container {
+.report-page .metric-container {
   .ant-table {
     font-family: "Montserrat", sans-serif;
   }
@@ -696,7 +696,7 @@
   }
 }
 
-.power-demand-card {
+.report-page .power-demand-card {
   background: white;
   border-radius: 15px;
   overflow: hidden;
@@ -704,7 +704,7 @@
   padding: 20px;
 }
 
-.power-demand-card .chart-container {
+.report-page .power-demand-card .chart-container {
   height: 400px;
   width: 100%;
   position: relative;
@@ -713,19 +713,19 @@
   margin: 0;
 }
 
-.power-demand-card .chart-container canvas {
+.report-page .power-demand-card .chart-container canvas {
   height: 100% !important;
   width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
 }
 
-.power-demand-card .chart-container > div {
+.report-page .power-demand-card .chart-container > div {
   margin: 0;
   padding: 0;
 }
 
-.power-demand-legend {
+.report-page .power-demand-legend {
   display: flex;
   justify-content: space-around;
   padding: 20px 40px;
@@ -733,58 +733,58 @@
   gap: 40px;
 }
 
-.legend-group {
+.report-page .legend-group {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.legend-item {
+.report-page .legend-item {
   display: flex;
   align-items: center;
   font-family: "Inter", sans-serif;
   gap: 8px;
 }
 
-.legend-dot {
+.report-page .legend-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
 }
 
-.legend-label {
+.report-page .legend-label {
   font-family: "Inter", sans-serif;
   font-size: 16px;
   color: #000;
 }
 
-.band-categorization {
+.report-page .band-categorization {
   background: white;
   border-radius: 16px;
   padding: 24px;
   margin-top: 24px;
 }
 
-.band-categorization .metric-header {
+.report-page .band-categorization .metric-header {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 24px;
 }
 
-.band-categorization .metric-header h2 {
+.report-page .band-categorization .metric-header h2 {
   font-size: 24px;
   font-weight: 500;
   margin: 0;
 }
 
-.band-categorization .icon {
+.report-page .band-categorization .icon {
   width: 32px;
   height: 32px;
 }
 
 /* Table styles */
-.band-table .ant-table-thead > tr > th {
+.report-page .band-table .ant-table-thead > tr > th {
   background: transparent;
   font-weight: 500;
   font-size: 16px;
@@ -793,7 +793,7 @@
   color: #515151;
 }
 
-.band-table .ant-table-tbody > tr > td {
+.report-page .band-table .ant-table-tbody > tr > td {
   font-size: 14px;
   padding: 16px 16px;
   font-weight: 500;
@@ -801,26 +801,26 @@
   color: #000;
 }
 
-.band-table .ant-table-thead > tr > th:last-child,
-.band-table .ant-table-tbody > tr > td:last-child {
+.report-page .band-table .ant-table-thead > tr > th:last-child,
+.report-page .band-table .ant-table-tbody > tr > td:last-child {
   border-right: none;
 }
 
-.band-table .ant-table-cell {
+.report-page .band-table .ant-table-cell {
   border-bottom: 1px solid #f0f0f0;
 }
 
-.band-table .ant-table-container {
+.report-page .band-table .ant-table-container {
   border-left: 1px solid #f0f0f0;
   border-right: 1px solid #f0f0f0;
 }
 
-.band-table {
+.report-page .band-table {
   border-radius: 8px;
   overflow: hidden;
 }
 
-.aligh-start-table .ant-table-thead > tr > th {
+.report-page .aligh-start-table .ant-table-thead > tr > th {
   background: transparent;
   font-weight: 500;
   font-size: 16px;
@@ -830,10 +830,10 @@
   color: #515151;
 }
 
-.aligh-start-table .ant-table-tbody > tr > td {
+.report-page .aligh-start-table .ant-table-tbody > tr > td {
   text-align: start;
 }
 
-.antCard .ant-card {
+.report-page .antCard .ant-card {
   border: #d4d4fcbd 1px solid;
 }
