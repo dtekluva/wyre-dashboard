@@ -1123,7 +1123,7 @@ function Report() {
   };
 
   return (
-    <>
+    <div className="report-page">
       <div
         style={{
           padding: "20px",
@@ -1931,7 +1931,7 @@ function Report() {
           </section>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
