@@ -84,22 +84,17 @@ function Dashboard({
   }, [match, setCurrentUrl]);
 
   useEffect(() => {
-    if (!pageLoaded && isEmpty(dashBoardInfo.dashBoardData || {})) {
+    if (pageLoaded && isEmpty(dashBoardInfo.dashBoardData || {})) {
       fetchPAPRData(userDateRange);
       // fetchBlendedost(userDateRange)
       // fetch the power factors here
     }
 
-    if (!isEmpty(dashBoardInfo.dashBoardData) > 0 && pageLoaded) {
-      fetchPAPRData(userDateRange);
-      // fetchBlendedost(userDateRange)
-      // fetch the power factors here
-    }
     setPageLoaded(true);
   }, [userDateRange]);
 
   useEffect(() => {
-    if (dashboard.demandData && Object.keys(dashboard.demandData).length > 0) {
+    if (Object.keys(dashboard.demandData).length > 0) {
       const demandDataInfo = calculateDemandMinMaxAvgValues(
         dashboard.demandData.devices_demands
       );
