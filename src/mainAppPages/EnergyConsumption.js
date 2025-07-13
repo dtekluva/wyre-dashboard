@@ -176,7 +176,7 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
       useEnergyConsumptionData &&
       useEnergyConsumptionData.map((eachDevice) => eachDevice.name);
       const dateObjects = useEnergyConsumptionData && 
-      convertDateStringsToObjects(useEnergyConsumptionData.find(device => device.name === "UTILITY").dates || useEnergyConsumptionData[0].dates);
+      convertDateStringsToObjects(useEnergyConsumptionData.find(device => device.name === "UTILITY")?.dates || useEnergyConsumptionData[0]?.dates);
       
     chartDates = dateObjects && formatParametersDatetimes(dateObjects);
 
@@ -224,7 +224,7 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
 
     deviceNames =
       dataForEnergyConsumptionColumns &&
-      Object.keys(dataForEnergyConsumptionColumns[0]);
+      Object.keys(dataForEnergyConsumptionColumns[0] || {});
 
     energyConsumptionColumns =
       deviceNames &&
