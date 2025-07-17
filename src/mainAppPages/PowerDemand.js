@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import CompleteDataContext from '../Context';
 import { CSVLink } from "react-csv";
 import { notification } from "antd"
@@ -8,6 +8,7 @@ import {
   formatParametersDates,
   formatParametersTimes,
   formatParameterTableData,
+  convertDateStringsToObjects,
 } from '../helpers/genericHelpers';
 
 import BreadCrumb from '../components/BreadCrumb';
@@ -20,6 +21,11 @@ import ExcelIcon from '../icons/ExcelIcon';
 import ExportToCsv from '../components/ExportToCsv';
 import { exportToExcel } from '../helpers/exportToFile';
 import jsPDF from "jspdf";
+import { connect, useSelector } from 'react-redux';
+import { fetchPowerDemandData } from '../redux/actions/parameters/parameter.action';
+import { devicesArray } from '../helpers/v2/organizationDataHelpers';
+import { isEmpty } from '../helpers/authHelper';
+import dayjs from 'dayjs';
 
 
 const breadCrumbRoutes = [
@@ -28,8 +34,15 @@ const breadCrumbRoutes = [
   { url: '#', name: 'Power Demand', id: 3 },
 ];
 
-function PowerDemand({ match }) {
+function PowerDemand({ match, fetchPowerDemandData }) {
+  const [powerDemandData, setPowerDemandData] = useState([]);
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const parametersData = useSelector((state) => state.parametersReducer);
+
   const {
+    userDateRange,
+    checkedBranchId,
+    checkedDevicesId,
     refinedRenderedData,
     setCurrentUrl,
     isAuthenticatedDataLoading,
@@ -41,9 +54,47 @@ function PowerDemand({ match }) {
     }
   }, [match, setCurrentUrl]);
 
-  const { power_demand } = refinedRenderedData;
+  useEffect(() => {
+    fetchPowerDemandData(userDateRange)
+  }, []);
 
+  useEffect(() => {
+    if (!pageLoaded && isEmpty(parametersData || {})) {
+      fetchPowerDemandData(userDateRange);
+    }
 
+    if (!isEmpty(parametersData) > 0 && pageLoaded) {
+      fetchPowerDemandData(userDateRange);
+    }
+    setPageLoaded(true);
+  }, [userDateRange]);
+
+  useEffect(() => {
+    if (pageLoaded && parametersData.fetchedPowerDemand) {
+      let openDevicesArrayData
+      const devicesArrayData = devicesArray(parametersData.fetchedPowerDemand.branches, checkedBranchId, checkedDevicesId);
+      openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
+      setPowerDemandData(openDevicesArrayData)
+    }
+    setPageLoaded(true);
+  }, [parametersData.fetchedPowerDemand, checkedBranchId, checkedDevicesId.length]);
+
+  const power_demand = powerDemandData.map((deviceDetails) => {
+    const { name, power_demand } = deviceDetails
+    const { dates: { dates }, power_demand_values: { min, avg, max, demand, units } } = power_demand
+    return {
+      name,
+      dates,
+      min,
+      avg,
+      max,
+      demand,
+      units
+    }
+  })
+
+  // const { power_demand } = refinedRenderedData;
+  const dateObjects = power_demand.length > 0 && convertDateStringsToObjects(power_demand[0].dates)
 
   let chartDemandValues, chartDates, chartDeviceNames, chartTooltipValues;
   let powerDemandUnit, powerDemandTableDataClone, arrayOfTableValues, formattedTableDataWithIndex;
@@ -54,7 +105,7 @@ function PowerDemand({ match }) {
       power_demand && power_demand.map((eachDevice) => eachDevice.demand);
 
     chartDeviceNames =
-      power_demand && power_demand.map((eachDevice) => eachDevice.source);
+      power_demand && power_demand.map((eachDevice) => eachDevice.name);
 
     chartTooltipValues =
       power_demand &&
@@ -67,11 +118,10 @@ function PowerDemand({ match }) {
         };
       });
 
-
     chartDates =
-      power_demand && formatParametersDatetimes(power_demand[0].dates);
+      dateObjects && formatParametersDatetimes(dateObjects);
 
-    powerDemandUnit = power_demand && power_demand[0].units;
+    powerDemandUnit = power_demand && power_demand.units;
 
     powerDemandTableDataClone =
       power_demand &&
@@ -90,23 +140,34 @@ function PowerDemand({ match }) {
     tableHeadings = Object.keys({
       date: '',
       time: '',
-      ...(powerDemandTableDataClone ? powerDemandTableDataClone[0] : []),
+      ...(powerDemandTableDataClone ? {
+        min: powerDemandTableDataClone[0]?.min,
+        max: powerDemandTableDataClone[0]?.max,
+        avg: powerDemandTableDataClone[0]?.avg,
+        demand: powerDemandTableDataClone[0]?.demand,
+        name: powerDemandTableDataClone[0]?.name,
+      } : []),
     });
+
+    // delete tableHeadings.dates;
 
     arrayOfTableValues =
       powerDemandTableDataClone &&
       powerDemandTableDataClone.map((eachDevice) => {
+        const { name, source, dates, ...others } = eachDevice
+        const convertEachDate = dates.map(date => dayjs(date))
         return Object.values({
-          date: formatParametersDates(eachDevice.dates),
-          time: formatParametersTimes(eachDevice.dates),
-          ...eachDevice,
+          date: formatParametersDates(convertEachDate),
+          time: formatParametersTimes(convertEachDate),
+          ...others,
         });
       });
 
     arrayOfFormattedTableData =
       arrayOfTableValues &&
-      arrayOfTableValues.map((eachDeviceTableValues) =>
-        formatParameterTableData(tableHeadings, eachDeviceTableValues)
+      arrayOfTableValues.map((eachDeviceTableValues) => {
+        return formatParameterTableData(tableHeadings, eachDeviceTableValues)
+      }
       );
 
     formattedTableData =
@@ -116,10 +177,10 @@ function PowerDemand({ match }) {
     formattedTableDataWithIndex =
       formattedTableData &&
       formattedTableData.map(function (currentValue, index) {
+
         const { date, time, source, ...others } = currentValue;
         return { index: (index + 1), date, time, source, ...others };
       });
-
     csvHeaders = [
       { label: "Index", key: "index" },
       { label: "Date", key: "date" },
@@ -137,9 +198,9 @@ function PowerDemand({ match }) {
     ]
   }
 
-  if (isAuthenticatedDataLoading) {
-    return <Loader />;
-  }
+  if (!power_demand || power_demand.length  === 0) {
+     return <Loader />;
+   }
 
   return (
     <>
@@ -195,4 +256,15 @@ function PowerDemand({ match }) {
   );
 }
 
-export default PowerDemand;
+const mapDispatchToProps = {
+  fetchPowerDemandData
+};
+const mapStateToProps = (state) => ({
+  parameters: state.parametersReducer,
+  sideBar: state.sideBar,
+  powerFactor: state.powerFactor,
+  dashboard: state.dashboard,
+}
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(PowerDemand);
