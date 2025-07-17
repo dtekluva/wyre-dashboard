@@ -99,15 +99,16 @@ class PowerQualityTable extends React.Component {
     const data = sortedData.map((dataItem, key) => {
 
       const { l1, l2, l3, neutral, frequency, power_factor } = dataItem
+      
 
       return {
         ...dataItem,
-        l1: numberFormatter(l1.toFixed(2)),
-        l2: numberFormatter(l2.toFixed(2)),
-        l3: numberFormatter(l3.toFixed(2)),
+        l1: numberFormatter(l1?.toFixed(2)),
+        l2: numberFormatter(l2?.toFixed(2)),
+        l3: numberFormatter(l3?.toFixed(2)),
         // neutral: numberFormatter(neutral.toFixed(2)),
-        frequency: numberFormatter(frequency.toFixed(2)),
-        power_factor: numberFormatter(power_factor.toFixed(2))
+        frequency: numberFormatter(frequency?.toFixed(2)),
+        power_factor: numberFormatter(power_factor?.toFixed(2))
       }
     });
     
