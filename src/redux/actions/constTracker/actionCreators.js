@@ -12,6 +12,50 @@ export const fetchCostTrackerSuccess = payload => ({
   payload,
 });
 
+export const fetchCostTrackerOverviewLoading = (payload = true) => ({
+  type: costTrackerType.FETCH_COSTTRACKER_OVERVIEW_LOADING,
+  payload,
+});
+export const fetchCostTrackerOverviewSuccess = payload => ({
+  type: costTrackerType.FETCH_COSTTRACKER_OVERVIEW_SUCCESS,
+  payload,
+});
+
+export const fetchDieselOverviewLoading = (payload = true) => ({
+  type: costTrackerType.FETCH_DIESEL_OVERVIEW_LOADING,
+  payload,
+});
+export const fetchDieselOverviewSuccess = payload => ({
+  type: costTrackerType.FETCH_DIESEL_OVERVIEW_SUCCESS,
+  payload,
+});
+
+export const fetchUtilityOverviewLoading = (payload = true) => ({
+  type: costTrackerType.FETCH_UTILITY_OVERVIEW_LOADING,
+  payload,
+});
+export const fetchUtilityOverviewSuccess = payload => ({
+  type: costTrackerType.FETCH_UTILITY_OVERVIEW_SUCCESS,
+  payload,
+});
+
+export const fetchIppOverviewLoading = (payload = true) => ({
+  type: costTrackerType.FETCH_IPP_OVERVIEW_LOADING,
+  payload,
+});
+export const fetchIppOverviewSuccess = payload => ({
+  type: costTrackerType.FETCH_IPP_OVERVIEW_SUCCESS,
+  payload,
+});
+
+export const fetchCostTrackerBaselineLoading = (payload = true) => ({
+  type: costTrackerType.FETCH_COSTTRACKER_BASELINE_LOADING,
+  payload,
+});
+export const fetchCostTrackerBaselineSuccess = payload => ({
+  type: costTrackerType.FETCH_COSTTRACKER_BASELINE_SUCCESS,
+  payload,
+});
 
 export const fetchFuelDataLoading = (payload = true) => ({
   type: costTrackerType.FETCH_FUEL_CONSUMPTION_DATA_LOADING,
