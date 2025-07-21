@@ -1,9 +1,25 @@
 
+import { fetchCostTrackerBaselineLoading, fetchCostTrackerOverviewLoading, fetchDieselOverviewLoading, fetchIppOverviewLoading, fetchUtilityOverviewLoading } from '../../actions/constTracker/actionCreators';
 import costTrackerType from './costTracker.types';
 
 const INITIAL_STATE = {
   fetchCostTrackerLoading: false,
   costTrackerData: false,
+
+  fetchCostTrackerOverviewLoading: false,
+  costTrackerOverviewData: false,
+  
+  fetchDieselOverviewLoading: false,
+  dieselOverviewData: false,
+  
+  fetchUtilityOverviewLoading: false,
+  utilityOverviewData: false,
+
+  fetchIppOverviewLoading: false,
+  ippOverviewData: false,
+  
+  fetchCostTrackerBaselineLoading: false,
+  CostTrackerBaselineData: false,
   
   fuelConsumptionData: false,
   fuelConsumptionDataLoading: false,
@@ -53,12 +69,66 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         fetchCostTrackerLoading: action.payload,
-
       };
     case costTrackerType.FETCH_COSTTRACKER_SUCCESS:
       return {
         ...state,
         costTrackerData: action.payload,
+      };
+      
+    case costTrackerType.FETCH_COSTTRACKER_OVERVIEW_LOADING:
+      return {
+        ...state,
+        fetchCostTrackerOverviewLoading: action.payload,
+      };
+    case costTrackerType.FETCH_COSTTRACKER_OVERVIEW_SUCCESS:
+      return {
+        ...state,
+        costTrackerOverviewData: action.payload,
+      };
+      
+    case costTrackerType.FETCH_DIESEL_OVERVIEW_LOADING:
+      return {
+        ...state,
+        fetchDieselOverviewLoading: action.payload,
+      };
+    case costTrackerType.FETCH_DIESEL_OVERVIEW_SUCCESS:
+      return {
+        ...state,
+        dieselOverviewData: action.payload,
+      };
+
+    case costTrackerType.FETCH_UTILITY_OVERVIEW_LOADING:
+      return {
+        ...state,
+        fetchUtilityOverviewLoading: action.payload,
+      };
+    case costTrackerType.FETCH_UTILITY_OVERVIEW_SUCCESS:
+      return {
+        ...state,
+        utilityOverviewData: action.payload,
+      };
+      
+    case costTrackerType.FETCH_IPP_OVERVIEW_LOADING:
+      return {
+        ...state,
+        fetchIppOverviewLoading: action.payload,
+      };
+    case costTrackerType.FETCH_IPP_OVERVIEW_SUCCESS:
+      return {
+        ...state,
+        ippOverviewData: action.payload,
+      };
+
+    case costTrackerType.FETCH_COSTTRACKER_BASELINE_LOADING:
+      return {
+        ...state,
+        fetchCostTrackerBaselineLoading: action.payload,
+      };
+    case costTrackerType.FETCH_COSTTRACKER_BASELINE_SUCCESS:
+      return {
+        ...state,
+        CostTrackerBaselineData: action.payload,
       };
 
     case costTrackerType.FETCH_FUEL_CONSUMPTION_DATA_SUCCESS:

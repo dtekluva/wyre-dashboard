@@ -3,7 +3,17 @@ import {
   fetchCostTrackerLoading, fetchCostTrackerSuccess, addFuelDataSuccess,
   fetchFuelDataLoading, fetchFuelDataSuccess, addFuelDataLoading, editFuelDataLoading, editFuelDataSuccess, deleteFuelDataLoading, deleteFuelDataSuccess, editFuelPUrchaseDataLoading, editFuelPUrchaseDataSuccess, editPreUtilityPurchaseDataLoading, editPreUtilityPurchaseDataSuccess, editPostUtilityPurchaseDataLoading, editPostUtilityPurchaseDataSuccess, deleteFuelPUrchaseDataLoading, deleteFuelPUrchaseDataSuccess, deletePreUtilityPurchaseDataLoading, deletePreUtilityPurchaseDataSuccess, editIppPurchaseDataLoading, editIppPurchaseDataSuccess, deleteIppPurchaseDataLoading, deleteIppPurchaseDataSuccess, addMonthlyFuelDataLoading, addMonthlyFuelDataSuccess,
   fetchGeneratorListsLoading,
-  fetchGeneratorListsSuccess
+  fetchGeneratorListsSuccess,
+  fetchDieselOverviewLoading,
+  fetchDieselOverviewSuccess,
+  fetchCostTrackerOverviewLoading,
+  fetchCostTrackerOverviewSuccess,
+  fetchUtilityOverviewLoading,
+  fetchUtilityOverviewSuccess,
+  fetchCostTrackerBaselineLoading,
+  fetchCostTrackerBaselineSuccess,
+  fetchIppOverviewLoading,
+  fetchIppOverviewSuccess
 } from "./actionCreators";
 import { APIService } from "../../../config/api/apiConfig";
 import jwtDecode from "jwt-decode";
@@ -27,6 +37,66 @@ export const fetchCostTrackerData = () => async (dispatch) => {
     dispatch(fetchCostTrackerLoading(false))
   } catch (error) {
     dispatch(fetchCostTrackerLoading(false));
+  }
+};
+
+export const getCostTrackerOverviewData = (branchId) => async (dispatch) => {
+  dispatch(fetchCostTrackerOverviewLoading());
+  const requestUrl = `cost-tracker/branch-overview/${branchId}`;
+  try {
+    const response = await APIService.get(requestUrl);
+    dispatch(fetchCostTrackerOverviewSuccess(response.data.data));
+    dispatch(fetchCostTrackerOverviewLoading(false))
+  } catch (error) {
+    dispatch(fetchCostTrackerOverviewLoading(false));
+  }
+};
+
+export const getDieselOverviewData = (branchId) => async (dispatch) => {
+  dispatch(fetchDieselOverviewLoading());
+  const requestUrl = `cost-tracker/diesel-overview/${branchId}`;
+  try {
+    const response = await APIService.get(requestUrl);
+    dispatch(fetchDieselOverviewSuccess(response.data.data));
+    dispatch(fetchDieselOverviewLoading(false))
+  } catch (error) {
+    dispatch(fetchDieselOverviewLoading(false));
+  }
+};
+
+export const getUtilityOverviewData = (branchId) => async (dispatch) => {
+  dispatch(fetchUtilityOverviewLoading());
+  const requestUrl = `cost-tracker/utility-overview/${branchId}`;
+  try {
+    const response = await APIService.get(requestUrl);
+    dispatch(fetchUtilityOverviewSuccess(response.data.data));
+    dispatch(fetchUtilityOverviewLoading(false))
+  } catch (error) {
+    dispatch(fetchUtilityOverviewLoading(false));
+  }
+};
+
+export const getIppOverviewData = (branchId) => async (dispatch) => {
+  dispatch(fetchIppOverviewLoading());
+  const requestUrl = `cost-tracker/ipp-overview/${branchId}`;
+  try {
+    const response = await APIService.get(requestUrl);
+    dispatch(fetchIppOverviewSuccess(response.data.data));
+    dispatch(fetchIppOverviewLoading(false))
+  } catch (error) {
+    dispatch(fetchIppOverviewLoading(false));
+  }
+};
+
+export const getCostTrackerBaselineData = (branchId) => async (dispatch) => {
+  dispatch(fetchCostTrackerBaselineLoading());
+  const requestUrl = `cost-tracker/baseline/${branchId}`;
+  try {
+    const response = await APIService.get(requestUrl);
+    dispatch(fetchCostTrackerBaselineSuccess(response.data.data));
+    dispatch(fetchCostTrackerBaselineLoading(false))
+  } catch (error) {
+    dispatch(fetchCostTrackerBaselineLoading(false));
   }
 };
 

@@ -10,8 +10,11 @@ import IppOverviewCostTrackerTable from "../components/tables/IppOverviewCostTra
 import DieselPurchasedTable from "../components/tables/DieselPurchasedTable";
 import UtilityPurchasedTable from "../components/tables/UtilityPurchasedTable";
 import {
-  fetchCostTrackerData,
   fetchFuelConsumptionData,
+  getCostTrackerBaselineData,
+  getCostTrackerOverviewData,
+  getDieselOverviewData,
+  getUtilityOverviewData,
 } from "../redux/actions/constTracker/costTracker.action";
 import { allCostTrackerBranchesBaseline } from "../helpers/genericHelpers";
 import EnergyConsumptionMultipleChart from "../components/barCharts/EnergyConsumptionMultipleChart";
@@ -34,10 +37,17 @@ const breadCrumbRoutes = [
 
 function CostTracker({
   match,
-  fetchCostTrackerData: fetchCostTracker,
+  getCostTrackerOverviewData,
+  getDieselOverviewData,
+  getUtilityOverviewData,
+  getCostTrackerBaselineData,
   fetchFuelConsumptionData: fetchFuelConsumptionInfo,
 }) {
-  const [overviewData, setOverviewData] = useState([]);
+  const [costTrackerOverviewData, setCostTrackerOverviewData] = useState([]);
+  const [dieselOverviewData, setDieselOverviewData] = useState([]);
+  const [utilityOverviewData, setUtilityOverviewData] = useState([]);
+  const [ippOverviewData, setIppOverviewData] = useState([]);
+  const [costTrackerBaselineData, setCostTrackerBaselineData] = useState([]);
   const [branchInfo, setBranchInfo] = useState(false);
   const [baseLineData, setBaseLineData] = useState(false);
   const [dieselEntryData, setDieselEntryData] = useState({});
@@ -61,35 +71,62 @@ function CostTracker({
   const { setCurrentUrl, uiSettings, userData } =
     useContext(CompleteDataContext);
 
+  const branchId =
+    sideBar?.sideBarData?.branches &&
+    sideBar?.sideBarData?.branches[0]?.branch_id;
+
   useEffect(() => {
-    fetchCostTracker();
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
   }, []);
 
   useEffect(() => {
-    setOverviewData(costTracker.costTrackerData);
-  }, [costTracker.costTrackerData]);
+    if (branchId) {     
+      getCostTrackerOverviewData(branchId);
+      getDieselOverviewData(branchId);
+      getUtilityOverviewData(branchId);
+      getCostTrackerBaselineData(branchId);
+    }
+  }, [branchId]);
 
   useEffect(() => {
-    const getBranchData = Object.entries(overviewData)?.filter((data) => {
-      return (
-        data[0] !== "diesel_overview" &&
-        data[0] !== "utility_overview" &&
-        data[0] !== "has_generator" &&
-        data[0] !== "ipp_overview"
-      );
-    });
-    if (getBranchData && getBranchData[0]) {
-      setBranchInfo(getBranchData);
+    setCostTrackerOverviewData(costTracker.costTrackerOverviewData);
+    setDieselOverviewData(costTracker.dieselOverviewData);
+    setUtilityOverviewData(costTracker.utilityOverviewData);
+    setCostTrackerBaselineData(costTracker.CostTrackerBaselineData);
+  }, [costTracker]);
+
+  useEffect(() => {
+    const getBranchOverviewData = [
+      [
+        costTrackerOverviewData.branch_name,
+        {
+          diesel: costTrackerOverviewData.branch_data?.diesel || [],
+          utility: costTrackerOverviewData.branch_data?.utility || [],
+        }
+      ]
+    ];
+    const getBaselineData = [
+      [
+        costTrackerBaselineData.branch_name,
+        {
+          baseline: costTrackerBaselineData?.baseline || [],
+        }
+      ]
+    ];
+    
+    if (getBranchOverviewData && getBranchOverviewData[0]) {
+      setBranchInfo(getBranchOverviewData);
+    }
+    if (getBaselineData &&getBaselineData[0]) {
       setBaseLineData(
-        allCostTrackerBranchesBaseline(sideBar?.selectedSideBar, getBranchData)
+        allCostTrackerBranchesBaseline(sideBar?.selectedSideBar, getBaselineData)
       );
     }
-  }, [overviewData, sideBar.selectedSideBar]);
+  }, [costTrackerOverviewData, costTrackerBaselineData, sideBar.selectedSideBar]);
 
-  const DieselOverViewCharts = overviewData && (
+  const DieselOverViewCharts = dieselOverviewData && (
     <article>
       <h3 className="cost-tracker-branch-name">Cost Overview</h3>
       <div className="doughnut-card-heading">
@@ -108,8 +145,8 @@ function CostTracker({
         </div>
       </div>
       <DieselOverviewCostTrackerTable
-        isLoading={costTracker.fetchCostTrackerLoading}
-        dieselOverviewData={overviewData.diesel_overview}
+        isLoading={costTracker?.fetchDieselOverviewLoading}
+        dieselOverviewData={dieselOverviewData?.diesel_overview}
         setDieselEntryData={setDieselEntryData}
         dieselEntryData={dieselEntryData}
         userId={userData.user_id}
@@ -118,7 +155,7 @@ function CostTracker({
     </article>
   );
 
-  const UtilityOverViewCharts = overviewData && (
+  const UtilityOverViewCharts = utilityOverviewData && (
     <article className="cost-tracker-chart-container">
       <div className="doughnut-card-heading">
         <p style={subHeaderStyle}>Utility Overview</p>
@@ -136,13 +173,13 @@ function CostTracker({
         </div>
       </div>
       <UtilityOverviewCostTrackerTable
-        isLoading={costTracker.fetchCostTrackerLoading}
-        dataSource={overviewData.utility_overview}
+        isLoading={costTracker?.fetchUtilityOverviewLoading}
+        dataSource={utilityOverviewData?.utility_overview}
       />
     </article>
   );
 
-  const IppOverViewCharts = overviewData && (
+  const IppOverViewCharts = ippOverviewData && (
     <article className="cost-tracker-chart-container">
       <div className="doughnut-card-heading">
         <p style={subHeaderStyle}>IPP Overview</p>
@@ -160,8 +197,8 @@ function CostTracker({
         </div>
       </div>
       <IppOverviewCostTrackerTable
-        isLoading={costTracker.fetchCostTrackerLoading}
-        dataSource={overviewData.ipp_overview}
+        isLoading={costTracker?.fetchIppOverviewLoading}
+        dataSource={ippOverviewData?.ipp_overview}
       />
     </article>
   );
@@ -406,7 +443,10 @@ function CostTracker({
 }
 
 const mapDispatchToProps = {
-  fetchCostTrackerData,
+  getCostTrackerOverviewData,
+  getDieselOverviewData,
+  getUtilityOverviewData,
+  getCostTrackerBaselineData,
   fetchFuelConsumptionData,
 };
 
