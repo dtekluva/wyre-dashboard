@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { notification, Form, Spin, DatePicker } from 'antd';
+import { notification, Form, Spin, DatePicker, Select } from 'antd';
 import { connect } from 'react-redux';
 import { useSelector } from 'react-redux';
 import CompleteDataContext from '../Context';
@@ -10,6 +10,7 @@ import BreadCrumb from '../components/BreadCrumb';
 import Loader from '../components/Loader';
 import { addFuelConsumptionData, addMonthlyFuelConsumptionData, getBranchGeneratorsData } from '../redux/actions/constTracker/costTracker.action';
 import { DateField, NumberField, SelectField, SelectGenerator } from '../components/FormFields/GeneralFormFields';
+import { Option } from 'antd/lib/mentions';
 
 
 const { RangePicker } = DatePicker
@@ -57,15 +58,9 @@ function AddDieselEntry({ match, costTracker, addFuelConsumptionData: addFuelCon
     defaultBranch = sideBarData.branches[0].branch_id
   }
 
-  const options = [];
+  let generatorList
   if (holdBranchGenerators) {
-    holdBranchGenerators.map((gen) => {
-      options.push({
-        label: gen.name,
-        value: gen.device_id,
-        key: gen.device_id,
-      });
-    })
+    generatorList = holdBranchGenerators.flat()
   }
 
   const data = {
@@ -84,15 +79,8 @@ function AddDieselEntry({ match, costTracker, addFuelConsumptionData: addFuelCon
       optionData: ['diesel'],
       placeholder: 'Select Fuel Type'
     },
-    genType: {
-      name: 'genType',
-      label: 'Select Generator',
-      optionData: [holdBranchGenerators],
-      // options:{options},
-      placeholder: 'Select Generator Type'
-    }
   }
-
+  
   useEffect(() => {
     if (match && match.url) {
       setCurrentUrl(match.url);
@@ -100,26 +88,29 @@ function AddDieselEntry({ match, costTracker, addFuelConsumptionData: addFuelCon
   }, [match, userId]);
 
   useEffect(() => {
-    getBranchGeneratorsData(defaultBranch)
-  }, []);
+    if (defaultBranch) {   
+      getBranchGeneratorsData(defaultBranch)
+    }
+  }, [defaultBranch]);
 
   useEffect(() => {
-    if (costTracker) {
+    if (costTracker?.fetchedListOfGenerators?.generators) {
       setHoldBranchGenerators(costTracker.fetchedListOfGenerators.generators)
     }
-  },[costTracker])
+  },[costTracker.fetchedListOfGenerators.generators])
 
-  const onDailyDieselEntrySubmit = async ({ date, quantity, fuelType }) => {
+  const onDailyDieselEntrySubmit = async ({ date, quantity, fuelType, generator_ids, genType }) => {
     if (defaultBranch != null) {
 
       const branch = sideBarData.branches[0].branch_id
       const parameters = {
-        branch,
-        end_date: date.format('YYYY-MM-DD'),
         quantity: quantity,
         start_date: date.format('YYYY-MM-DD'),
         fuel_type: fuelType,
+        generator_ids: [generator_ids],
+        consumption_type: "Daily"
       };
+      
       const request = await addFuelConsumption(branch, parameters);
 
       if (request.message.status === 201) {
@@ -196,7 +187,6 @@ function AddDieselEntry({ match, costTracker, addFuelConsumptionData: addFuelCon
               onFinish={onDailyDieselEntrySubmit}
             >
               <div className="cost-tracker-form-inputs-wrapper">
-
                 <div className="cost-tracker-input-container">
                   <Form.Item>
                     <DateField data={data.purchaseDate} />
@@ -218,14 +208,26 @@ function AddDieselEntry({ match, costTracker, addFuelConsumptionData: addFuelCon
                     />
                   </Form.Item>
                 </div>
-                {/* <div className="cost-tracker-input-container">
-                  <Form.Item>
-                    <SelectGenerator
-                      data={data.genType}
-                    />
+                <div className="cost-tracker-input-container">
+                  <Form.Item
+                    name="generator_ids"
+                    label="Generator"
+                    labelCol={{ span: 24 }}
+                    hasFeedback
+                    validateTrigger={['onChange', 'onBlur']}
+                    // rules={[
+                    //   ...(require ? [{ required: true, message: 'Please select generator' }] : []),
+                    // ]}
+                  >
+                    <Select placeholder="Select Generator">
+                      {generatorList.map((gen) => (
+                        <Option key={gen.device_id} value={gen.device_id}>
+                          {gen.name}
+                        </Option>
+                      ))}
+                    </Select>
                   </Form.Item>
-                </div> */}
-
+                </div> 
               </div>
               <button className="generic-submit-button cost-tracker-form-submit-button">
                 Submit
