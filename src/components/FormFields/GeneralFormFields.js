@@ -2,6 +2,7 @@ import * as React from 'react';
 import moment from 'moment';
 import { Button, DatePicker, Form, Input, Select } from "antd";
 import { validate2DecNo } from '../../helpers/genericHelpers';
+import { Option } from 'antd/lib/mentions';
 
 
 const { RangePicker } = DatePicker;
@@ -140,33 +141,6 @@ export const SelectField = ({ data, inputSize = 'large', required = true }) => (
 
     </Form.Item>
 );
-
-export const SelectGenerator = ({ data, inputSize = 'large', required = true }) => (
-    <Form.Item
-        label={data.label}
-        name={data.name}
-        labelCol={{ span: 24 }}
-        hasFeedback
-        validateTrigger={['onChange', 'onBlur']}
-        rules={[
-            ...(required ? [{ required: true, message: 'Please select generator' }] : []),
-        ]}
-    >
-        <Select
-            size={inputSize}
-        >
-            {
-                data.optionData.map((option) =>
-                    <Select.Option key={option} value={option}>
-                        {option}
-                    </Select.Option>
-                )
-            }
-        </Select>
-
-    </Form.Item>
-);
-
 
 export const SubmitButton = (buttonText = "Submit", inputSize,
     isLoading = false) => (
