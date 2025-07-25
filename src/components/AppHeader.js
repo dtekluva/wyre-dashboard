@@ -23,6 +23,9 @@ import PadlockIcon from '../icons/PadlockIcon';
 import SettingsIcon from '../icons/SettingsIcon';
 import LogoutIcon from '../icons/LogoutIcon';
 import { SCORE_CARD_EXCLUDE_CLIENTS, BESPOKE_ADD_LIST } from '../helpers/constants';
+import DropdownButton from 'antd/lib/dropdown/dropdown-button';
+import { Dropdown } from 'antd';
+import BranchSwitcher from './BranchSwitcher';
 
 function Header() {
   const {
@@ -284,6 +287,14 @@ function Header() {
               linkText="Messages"
             />
             )} */}
+            <div className="header-container" style={{ display: 'flex', justifyContent: 'flex-end', padding: 16 }}>
+              <BranchSwitcher
+                onBranchChange={(branchData) => {
+                  // Handle branch switch if needed
+                  console.log('Branch switched:', branchData);
+                }}
+              />
+            </div>
             <li className="header-nav-list__item h-hidden-1296-up">
               <HeaderIcon
                 onClick={toggleNav}
