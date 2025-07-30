@@ -23,17 +23,19 @@ export const fetchDashBoardData = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard_data/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
+      `${EnvData.REACT_APP_API_URL}dashboard_data/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -52,17 +54,19 @@ export const fetchDashBoardDataCard_1 = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/total_energy/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
+      `${EnvData.REACT_APP_API_URL}dashboard/total_energy/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -81,17 +85,19 @@ export const fetchDashBoardDataCard_2 = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/device_usage/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
+      `${EnvData.REACT_APP_API_URL}dashboard/device_usage/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -110,17 +116,19 @@ export const fetchDashBoardDataCard_3 = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/daily_consumption/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
+      `${EnvData.REACT_APP_API_URL}dashboard/daily_consumption/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -139,17 +147,19 @@ export const fetchLoadOverviewData = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/load_overview/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
+      `${EnvData.REACT_APP_API_URL}dashboard/load_overview/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -173,7 +183,7 @@ export const fetchBlendedCostData = (branch_id, userDateRange) => async (dispatc
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
+    // userId = user.id;
     token = userToken.access;
   }
   try {
@@ -197,17 +207,19 @@ export const fetchPAPR = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}branch_demand/${userId}/${dateToUse}`, {
+      `${EnvData.REACT_APP_API_URL}branch_demand/${branchId}/${dateToUse}`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -43,6 +43,8 @@ function ScoreCard({
   fetchGeneratorFuelEfficiencyData,
   scorecard,
 }) {
+  console.log('SCORECARD========= ', scorecard);
+  
   const scoreCardInfo = useSelector((state) => state.scorecard);
   const [baselineEnergyBranchData, setBaselineEnergyBranchData] =
     useState(null);
@@ -75,6 +77,7 @@ function ScoreCard({
     checkedDevicesId,
     userDateRange,
   } = useContext(CompleteDataContext);
+  
 
   // Memoize data processing functions
   const combineArrayDataMemo = useMemo(() => {
@@ -123,14 +126,19 @@ function ScoreCard({
       operatingTimeDeviationBranchData &&
       operatingTimeDeviationBranchData.devices
     ) {
-      const devicesArrayData = devicesArray(
-        [operatingTimeDeviationBranchData],
-        checkedBranchId,
-        checkedDevicesId
-      );
+
+      
+      console.log('devicesArrbefroehd sbefore before before k');
+
+      // const devicesArrayData = devicesArray(
+      //   [operatingTimeDeviationBranchData],
+      //   checkedBranchId,
+      //   checkedDevicesId
+      // );
+      console.log('devicesArrayData--kkfkfkfkk', operatingTimeDeviationBranchData);
       operatingTimeDeviationBranchData &&
-        devicesArrayData &&
-        devicesArrayData.devices.map((data) => {
+        operatingTimeDeviationBranchData &&
+        operatingTimeDeviationBranchData.devices.map((data) => {
           if (data.score_card.is_generator) {
             allGenOpTime.push(data);
           }
@@ -265,23 +273,27 @@ function ScoreCard({
 
   useEffect(() => {
     if (pageLoaded && scorecard.paprData) {
+      console.log('scorecard.paprData----pspr----> ', scorecard.paprData);
       const devicesArrayData = devicesArray(
-        scorecard.paprData.branches,
+        scorecard.paprData.branches[0],
         checkedBranchId,
         checkedDevicesId
       );
+      console.log('devicesArrayData----=====----> ', devicesArrayData);
       setPaprBranchData(devicesArrayData);
     }
     setPageLoaded(true);
   }, [scorecard.paprData, checkedBranchId, checkedDevicesId.length]);
 
+  // THE REDUCER STATE FOR THIS ENDPOINT FAILS SOMETIMES!
   useEffect(() => {
     if (pageLoaded && scorecard.scorecardCarbonEmissionData) {
       const devicesArrayData = devicesArray(
-        scorecard.scorecardCarbonEmissionData.branches,
+        scorecard.scorecardCarbonEmissionData.branches[0],
         checkedBranchId,
         checkedDevicesId
       );
+      console.log('DEVICE-ARRAY-DATA--------> ', devicesArrayData);
       setScorecardCarbonEmissionBranchData(devicesArrayData);
     }
     setPageLoaded(true);
@@ -294,7 +306,7 @@ function ScoreCard({
   useEffect(() => {
     if (pageLoaded && scorecard.generatorSizeEfficiencyData) {
       const devicesArrayData = devicesArray(
-        scorecard.generatorSizeEfficiencyData.branches,
+        scorecard.generatorSizeEfficiencyData.branches[0],
         checkedBranchId,
         checkedDevicesId
       );
@@ -309,11 +321,13 @@ function ScoreCard({
 
   useEffect(() => {
     if (pageLoaded && scorecard.generatorFuelEfficiencyData) {
+      console.log('scorecard.generatorFuelEfficiencyData--------> ', scorecard.generatorFuelEfficiencyData);
       const devicesArrayData = devicesArray(
-        scorecard.generatorFuelEfficiencyData.branches,
+        scorecard.generatorFuelEfficiencyData,
         checkedBranchId,
         checkedDevicesId
       );
+      console.log('devicesArrayData--------> ', devicesArrayData);
       setGeneratorFuelEfficiencyBranchData(devicesArrayData);
     }
     setPageLoaded(true);
@@ -325,8 +339,9 @@ function ScoreCard({
 
   useEffect(() => {
     if (pageLoaded && scorecard.operatingTimeDeviationData) {
+      console.log('scorecard.operatingTimeDeviationData--------> ', scorecard.operatingTimeDeviationData);
       const devicesArrayData = devicesArray(
-        scorecard.operatingTimeDeviationData.branches,
+        scorecard.operatingTimeDeviationData,
         checkedBranchId,
         checkedDevicesId
       );

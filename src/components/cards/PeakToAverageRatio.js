@@ -17,6 +17,7 @@ const PeakToAverageRatio = ({ paprBranchData, uiSettings }) => {
 
   useEffect(() => {
     if (paprBranchData) {
+      console.log('paprBranchData--------> ', paprBranchData);
       const peak_to_avg_power_ratio = getOrganizationPeakToAveragePowerRatio({ branches: [paprBranchData] })
       if (peak_to_avg_power_ratio) {
         const pekToAvgData = {

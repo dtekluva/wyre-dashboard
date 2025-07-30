@@ -1,8 +1,7 @@
 
 
-export const devicesArray = (branches, checkedBranchId, checkedDevicesId) =>{
+export const devicesArray = (activeBranch, checkedBranchId, checkedDevicesId) =>{
 
-  let activeBranch = checkedBranchId? branches.find((branch) => branch.branch_id = checkedBranchId) : branches? branches[0] : {};
   let activeDevices = activeBranch.devices;
 
   if(checkedDevicesId.length > 0){

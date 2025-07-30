@@ -29,17 +29,19 @@ export const fetchScoreCardData = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}scorecard/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
+      `${EnvData.REACT_APP_API_URL}scorecard/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -59,16 +61,18 @@ export const fetchBaselineEnergyData = (userDateRange) => async (dispatch) => {
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
   let token;
+  let branchId;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}scorecard/baseline-energy/${userId}/${dateToUse}/`, {
+      `${EnvData.REACT_APP_API_URL}scorecard/baseline-energy/${branchId}/${dateToUse}/`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -87,17 +91,19 @@ export const fetchPAPRData = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}scorecard/peak-to-avg-power-ratio/${userId}/${dateToUse}/`, {
+      `${EnvData.REACT_APP_API_URL}scorecard/peak-to-avg-power-ratio/${branchId}/${dateToUse}/`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -116,23 +122,26 @@ export const fetchScorecardCarbonEmissionData = (userDateRange) => async (dispat
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}scorecard/carbon-emissions/${userId}/${dateToUse}/`, {
+      `${EnvData.REACT_APP_API_URL}scorecard/carbon-emissions/${branchId}/${dateToUse}/`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     },
     );
+    console.log('Carbon Emission Data:',  response.data.authenticatedData);
     
     dispatch(getScorecardCarbonEmissionSuccess(response.data.authenticatedData));
     dispatch(getScorecardCarbonEmissionLoading(false))
@@ -146,17 +155,19 @@ export const fetchGeneratorSizeEfficiencyData = (userDateRange) => async (dispat
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
-    token = userToken.access;
+    branchId = user.branch_id;
+    token = userToken.access;    
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}scorecard/generator-size-efficiency/${userId}/${dateToUse}/`, {
+      `${EnvData.REACT_APP_API_URL}scorecard/generator-size-efficiency/${branchId}/${dateToUse}/`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -175,17 +186,19 @@ export const fetchGeneratorFuelEfficiencyData = (userDateRange) => async (dispat
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
-    token = userToken.access;
+    branchId = user.branch_id;
+    token = userToken.access;    
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}scorecard/fuel-consumption/${userId}/${dateToUse}/`, {
+      `${EnvData.REACT_APP_API_URL}scorecard/fuel-consumption/${branchId}/${dateToUse}/`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -204,17 +217,19 @@ export const fetchScorecardOperatingTimeData = (userDateRange) => async (dispatc
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;    
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}scorecard/operating-time/${userId}/${dateToUse}/`, {
+      `${EnvData.REACT_APP_API_URL}scorecard/operating-time/${branchId}/${dateToUse}/`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,

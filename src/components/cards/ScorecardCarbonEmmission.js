@@ -23,6 +23,10 @@ const ScorecardCarbonEmmission = ({ scorecardCarbonEmissionBranchData, uiSetting
             }
         });
     }, [scorecardCarbonEmissionBranchData]);
+    console.log('getOrganizationScoreCardCarbonEmissions--> ', getOrganizationScoreCardCarbonEmissions);
+    console.log('scorecardCarbonEmissionBranchData--> ', scorecardCarbonEmissionBranchData);
+    console.log('ACTUAL```````````scorecardCarbonEmissionData--> ', scorecardCarbonEmissionData);
+    
 
     useEffect(() => {
       const score_card_carbon_emissions = getOrganizationScoreCardCarbonEmissions({ branches: [scorecardCarbonEmissionBranchData] });
