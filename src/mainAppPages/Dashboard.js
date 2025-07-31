@@ -195,7 +195,7 @@ function Dashboard({
       </div>
 
       {/* Branch Information Demo */}
-      <BranchInfo />
+      {/* <BranchInfo /> */}
 
       <section id="page" ref={pageRef}>
         <div className="dashboard-row-1">

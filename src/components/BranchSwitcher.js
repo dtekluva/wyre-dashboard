@@ -5,7 +5,7 @@ import { getPermittedBranches, switchBranch } from '../redux/actions/auth/auth.a
 
 const { Option } = Select;
 
-const BranchSwitcher = ({ currentBranchId, onBranchChange }) => {
+const BranchSwitcher = ({ currentBranchId, onBranchChange, style }) => {
   const dispatch = useDispatch();
   const [selectedBranch, setSelectedBranch] = useState(currentBranchId);
 
@@ -63,7 +63,11 @@ const BranchSwitcher = ({ currentBranchId, onBranchChange }) => {
   return (
     <Select
       value={selectedBranch}
-      style={{ width: 200 }}
+      style={{
+        width: 200,
+        ...style,
+      }}
+      className="rounded-select"
       onChange={handleChange}
       dropdownMatchSelectWidth={false}
       placeholder="Select Branch"

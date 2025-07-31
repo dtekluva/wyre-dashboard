@@ -3,6 +3,7 @@ import { Tag, DatePicker, TimePicker, Form, Modal, Space } from 'antd';
 import CompleteDataContext from '../Context';
 import moment from 'moment';
 import dataHttpServices from '../services/devices';
+import BranchSwitcher from './BranchSwitcher';
 
 const { CheckableTag } = Tag;
 const { RangePicker } = DatePicker;
@@ -477,15 +478,14 @@ function NewAppTopBar() {
   );
 
   return (
-    <div >
-      {/* <div> */}
-      {/* <Popover placement="rightBottom" trigger="click" content={content} width={'800px'} style={{ width: '100%' }} >
+    <>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        {/* <Popover placement="rightBottom" trigger="click" content={content} width={'800px'} style={{ width: '100%' }} >
         <Button>RB</Button>
       </Popover> */}
-      <>
         <Space
           className="date-range-picker-containers"
-          direction="vertical"
+          direction="horizontal"
           size={12}
           onClick={() => setOpenModal(!openModal)}
         >
@@ -498,7 +498,15 @@ function NewAppTopBar() {
             inputReadOnly={true}
           />
         </Space>
-      </>
+
+        <BranchSwitcher 
+          onBranchChange={(branchData) => {
+            // Handle branch switch if needed
+            console.log('Branch switched:', branchData);
+          }}
+        />
+      </div>
+
       {
         openModal &&
         <Modal
@@ -511,9 +519,8 @@ function NewAppTopBar() {
           <Content />
         </Modal>
       }
+    </>
 
-      {/* </div> */}
-    </div>
   );
 }
 

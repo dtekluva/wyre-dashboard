@@ -287,14 +287,14 @@ function Header() {
               linkText="Messages"
             />
             )} */}
-            <div className="header-container" style={{ display: 'flex', justifyContent: 'flex-end', padding: 16 }}>
+            {/* <div className="header-container" style={{ display: 'flex', justifyContent: 'flex-end', padding: 16 }}>
               <BranchSwitcher
                 onBranchChange={(branchData) => {
                   // Handle branch switch if needed
                   console.log('Branch switched:', branchData);
                 }}
               />
-            </div>
+            </div> */}
             <li className="header-nav-list__item h-hidden-1296-up">
               <HeaderIcon
                 onClick={toggleNav}
