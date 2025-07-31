@@ -44,9 +44,6 @@ export const getScorecardCarbonEmissionSuccess = payload => ({
     type: scoreCardType.GET_SCORECARD_CARBON_EMISSION_SUCCESS,
     payload,
   });
-  console.log('ACTION-CREATOR-getScorecardCarbonEmissionSuccess', getScorecardCarbonEmissionSuccess);
-  console.log('ACTION-CREATOR-getPAPRSuccess', getPAPRSuccess);
-  
 
 export const getGeneratorSizeEfficiencyLoading = (payload = true) => ({
     type: scoreCardType.GET_GENERATOR_SIZE_EFFICIENCY_LOADING,

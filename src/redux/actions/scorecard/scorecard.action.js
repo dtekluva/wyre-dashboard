@@ -141,7 +141,6 @@ export const fetchScorecardCarbonEmissionData = (userDateRange) => async (dispat
       },
     },
     );
-    console.log('Carbon Emission Data:',  response.data.authenticatedData);
     
     dispatch(getScorecardCarbonEmissionSuccess(response.data.authenticatedData));
     dispatch(getScorecardCarbonEmissionLoading(false))

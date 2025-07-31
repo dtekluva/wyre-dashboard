@@ -27,8 +27,6 @@ const INITIAL_STATE = {
    fetchOperatingtimeDeviationLoading: false,
    operatingTimeDeviationData: false,
 };
-console.log('INITIAL_STATE', INITIAL_STATE);
-
 
 const reducer = (state = INITIAL_STATE, action) => {
 
