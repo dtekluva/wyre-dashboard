@@ -43,6 +43,7 @@ function ScoreCard({
   fetchGeneratorFuelEfficiencyData,
   scorecard,
 }) {
+  
   const scoreCardInfo = useSelector((state) => state.scorecard);
   const [baselineEnergyBranchData, setBaselineEnergyBranchData] =
     useState(null);
@@ -75,6 +76,7 @@ function ScoreCard({
     checkedDevicesId,
     userDateRange,
   } = useContext(CompleteDataContext);
+  
 
   // Memoize data processing functions
   const combineArrayDataMemo = useMemo(() => {
@@ -123,14 +125,14 @@ function ScoreCard({
       operatingTimeDeviationBranchData &&
       operatingTimeDeviationBranchData.devices
     ) {
-      const devicesArrayData = devicesArray(
-        [operatingTimeDeviationBranchData],
-        checkedBranchId,
-        checkedDevicesId
-      );
+      // const devicesArrayData = devicesArray(
+      //   [operatingTimeDeviationBranchData],
+      //   checkedBranchId,
+      //   checkedDevicesId
+      // );
       operatingTimeDeviationBranchData &&
-        devicesArrayData &&
-        devicesArrayData.devices.map((data) => {
+        operatingTimeDeviationBranchData &&
+        operatingTimeDeviationBranchData.devices.map((data) => {
           if (data.score_card.is_generator) {
             allGenOpTime.push(data);
           }
@@ -266,7 +268,7 @@ function ScoreCard({
   useEffect(() => {
     if (pageLoaded && scorecard.paprData) {
       const devicesArrayData = devicesArray(
-        scorecard.paprData.branches,
+        scorecard.paprData.branches[0],
         checkedBranchId,
         checkedDevicesId
       );
@@ -275,10 +277,11 @@ function ScoreCard({
     setPageLoaded(true);
   }, [scorecard.paprData, checkedBranchId, checkedDevicesId.length]);
 
+  // THE REDUCER STATE FOR THIS ENDPOINT FAILS SOMETIMES!
   useEffect(() => {
     if (pageLoaded && scorecard.scorecardCarbonEmissionData) {
       const devicesArrayData = devicesArray(
-        scorecard.scorecardCarbonEmissionData.branches,
+        scorecard.scorecardCarbonEmissionData.branches[0],
         checkedBranchId,
         checkedDevicesId
       );
@@ -294,7 +297,7 @@ function ScoreCard({
   useEffect(() => {
     if (pageLoaded && scorecard.generatorSizeEfficiencyData) {
       const devicesArrayData = devicesArray(
-        scorecard.generatorSizeEfficiencyData.branches,
+        scorecard.generatorSizeEfficiencyData.branches[0],
         checkedBranchId,
         checkedDevicesId
       );
@@ -310,7 +313,7 @@ function ScoreCard({
   useEffect(() => {
     if (pageLoaded && scorecard.generatorFuelEfficiencyData) {
       const devicesArrayData = devicesArray(
-        scorecard.generatorFuelEfficiencyData.branches,
+        scorecard.generatorFuelEfficiencyData,
         checkedBranchId,
         checkedDevicesId
       );
@@ -326,7 +329,7 @@ function ScoreCard({
   useEffect(() => {
     if (pageLoaded && scorecard.operatingTimeDeviationData) {
       const devicesArrayData = devicesArray(
-        scorecard.operatingTimeDeviationData.branches,
+        scorecard.operatingTimeDeviationData,
         checkedBranchId,
         checkedDevicesId
       );
@@ -356,7 +359,6 @@ function ScoreCard({
   // const {
   //   peak_to_avg_power_ratio,
   // } = refinedScoreCardData;
-  // // console.log('operating_time ==> ', operating_time);
   // useEffect(() => {
   //   if (peak_to_avg_power_ratio) {
   //     const pekToAvgData = {

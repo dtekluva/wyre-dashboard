@@ -12,9 +12,10 @@ import EcoFriendlyIcon from "../../icons/EcoFriendlyIcon";
 import { getOrganizationScoreCardCarbonEmissions } from "../../helpers/organizationDataHelpers";
 
 const ScorecardCarbonEmmission = ({ scorecardCarbonEmissionBranchData, uiSettings }) => {
-    const [scorecardCarbonEmissionData, setScorecardCarbonEmissionData] = useState({});
+    const [scorecardCarbonEmissionData, setScorecardCarbonEmissionData] = useState(null);
 
     useEffect(() => {
+      if(scorecardCarbonEmissionBranchData){
         const paprPageData = {peak_to_avg_power_ratio: {}}
         scorecardCarbonEmissionBranchData && scorecardCarbonEmissionBranchData.devices && scorecardCarbonEmissionBranchData.devices.forEach(data => {
           const score_card = data.score_card.score_card_carbon_emissions;
@@ -22,11 +23,16 @@ const ScorecardCarbonEmmission = ({ scorecardCarbonEmissionBranchData, uiSetting
             setScorecardCarbonEmissionData(score_card)
             }
         });
-    }, [scorecardCarbonEmissionBranchData]);
-
-    useEffect(() => {
       const score_card_carbon_emissions = getOrganizationScoreCardCarbonEmissions({ branches: [scorecardCarbonEmissionBranchData] });
       setScorecardCarbonEmissionData(score_card_carbon_emissions);
+      }
+
+    }, [scorecardCarbonEmissionBranchData]);
+    
+
+    useEffect(() => {
+
+
     }, [scorecardCarbonEmissionBranchData]);
 
     let noOfTrees, message, savingdInboundCarbonEmmission;
@@ -61,10 +67,10 @@ const ScorecardCarbonEmmission = ({ scorecardCarbonEmissionBranchData, uiSetting
           <span>
             {scorecardCarbonEmissionData &&
               (calculatePercentage(
-                scorecardCarbonEmissionData.actual_value,
-                scorecardCarbonEmissionData.estimated_value
-              ) || `-`)}{scorecardCarbonEmissionData.actual_value && '%'}
-          </span>{scorecardCarbonEmissionData.actual_value ? `used` : ' '}
+                scorecardCarbonEmissionData?.actual_value,
+                scorecardCarbonEmissionData?.estimated_value
+              ) || `-`)}{scorecardCarbonEmissionData?.actual_value && '%'}
+          </span>{scorecardCarbonEmissionData?.actual_value ? `used` : ' '}
         </p>
       </div>
 
