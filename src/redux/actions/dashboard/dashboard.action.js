@@ -16,6 +16,7 @@ import {
 import dataHttpServices from '../../../services/devices';
 import moment from 'moment';
 import jwtDecode from "jwt-decode";
+import { APIService } from "../../../config/api/apiConfig";
 
 
 export const fetchDashBoardData = (userDateRange) => async (dispatch) => {
@@ -23,12 +24,14 @@ export const fetchDashBoardData = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
@@ -52,27 +55,23 @@ export const fetchDashBoardDataCard_1 = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
+  const requestUrl = `dashboard/total_energy/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`;
   try {
-    const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/total_energy/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-    );
+    const response = await APIService.get(requestUrl);
     dispatch(fetchDashBoardCard_1_Success(response.data.authenticatedData));
     dispatch(fetchDashBoardCard_1_Loading(false))
   } catch (error) {
-    dispatch(fetchDashBoardCard_1_Loading(error));
+    dispatch(fetchDashBoardCard_1_Loading(false));
   }
 };
 
@@ -81,27 +80,23 @@ export const fetchDashBoardDataCard_2 = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
+  const requestUrl = `dashboard/device_usage/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`
   try {
-    const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/device_usage/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-    );
+    const response = await APIService.get(requestUrl);
     dispatch(fetchDashBoardCard_2_Success(response.data.authenticatedData));
     dispatch(fetchDashBoardCard_2_Loading(false))
   } catch (error) {
-    dispatch(fetchDashBoardCard_2_Loading(error));
+    dispatch(fetchDashBoardCard_2_Loading(false));
   }
 };
 
@@ -110,27 +105,23 @@ export const fetchDashBoardDataCard_3 = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
+  const requestUrl = `dashboard/daily_consumption/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`
   try {
-    const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/daily_consumption/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-    );
+    const response = await APIService.get(requestUrl);
     dispatch(fetchDashBoardCard_3_Success(response.data.authenticatedData));
     dispatch(fetchDashBoardCard_3_Loading(false))
   } catch (error) {
-    dispatch(fetchDashBoardCard_3_Loading(error));
+    dispatch(fetchDashBoardCard_3_Loading(false));
   }
 };
 
@@ -139,27 +130,23 @@ export const fetchLoadOverviewData = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
+  const requestUrl = `dashboard/load_overview/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`
   try {
-    const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/load_overview/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-    );
+    const response = await APIService.get(requestUrl);
     dispatch(fetchLoadOverview_Success(response.data.authenticatedData));
     dispatch(fetchLoadOverview_Loading(false))
   } catch (error) {
-    dispatch(fetchLoadOverview_Loading(error));
+    dispatch(fetchLoadOverview_Loading(false));
   }
 };
 
@@ -168,17 +155,19 @@ export const fetchBlendedCostData = (branch_id, userDateRange) => async (dispatc
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
+    // userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}blended_cost/${branch_id}/${dateToUse}/`, {
+      `${EnvData.REACT_APP_API_URL}blended_cost/${branchId}/${dateToUse}/`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -197,26 +186,22 @@ export const fetchPAPR = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
+  const requestUrl = `branch_demand/${branchId}/${dateToUse}`;
   try {
-    const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}branch_demand/${userId}/${dateToUse}`, {
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-    );
+    const response = await APIService.get(requestUrl);
     dispatch(fetchDemandSuccess(response.data.data));
     dispatch(fetchDemandLoading(false))
   } catch (error) {
-    dispatch(fetchDemandLoading(error));
+    dispatch(fetchDemandLoading(false));
   }
 };

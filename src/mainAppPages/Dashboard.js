@@ -63,8 +63,12 @@ function Dashboard({
     userDateRange,
     uiSettings,
   } = useContext(CompleteDataContext);
-
+  
+  
   const dashBoardInfo = useSelector((state) => state.dashboard);
+  const branchId =
+    sideDetails?.sideBarData?.branches &&
+    sideDetails?.sideBarData?.branches[0]?.branch_id;
 
   const { setCurrentUrl, userData } = useContext(CompleteDataContext);
   const [totalEnergyBranchData, setTotalEnergyBranchData] = useState(null);
@@ -95,14 +99,7 @@ function Dashboard({
       const end_date = moment().startOf("month").format("YYYY-MM-DD");
       fetchAllPowerFactor(allDevices, { start_date, end_date });
     }
-
-    const branchId =
-      sideDetails?.sideBarData?.branches &&
-      sideDetails?.sideBarData?.branches[0]?.branch_id;
-
-    if (sideDetails.sideBarData && sideDetails.sideBarData.branches) {
-      fetchBlendedost(branchId, userDateRange);
-    }
+      fetchBlendedost(userDateRange);
   }, [sideDetails.sideBarData, userDateRange]);
 
   useEffect(() => {
@@ -138,7 +135,7 @@ function Dashboard({
         checkedBranchId,
         checkedDevicesId
       );
-      setTotalEnergyBranchData(devicesArrayData);
+      setTotalEnergyBranchData(devicesArrayData[0]);
     }
     setPageLoaded(true);
   }, [
@@ -154,7 +151,7 @@ function Dashboard({
         checkedBranchId,
         checkedDevicesId
       );
-      setTotalDeviceUsageBranchData(devicesArrayData);
+      setTotalDeviceUsageBranchData(devicesArrayData[0]);
     }
 
     setPageLoaded(true);
@@ -255,7 +252,7 @@ function Dashboard({
           spinning={dashboard.fetchDashBoardCard_2_Loading}
         >
           <div className="dashboard-row-1b">
-            {totalDeviceUsageBranchData &&
+            {totalDeviceUsageBranchData && totalDeviceUsageBranchData.devices &&
               totalDeviceUsageBranchData.devices
                 .filter((device) => device.is_source)
                 .map((eachDevice, index) => {
