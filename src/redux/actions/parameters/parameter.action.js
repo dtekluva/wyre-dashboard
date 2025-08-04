@@ -5,6 +5,7 @@ import {fetchEnergyConsumptionLoading, fetchEnergyConsumptionSuccess, fetchLastR
 import dataHttpServices from '../../../services/devices';
 import moment from 'moment';
 import jwtDecode from "jwt-decode";
+import { APIService } from "../../../config/api/apiConfig";
 
 export const fetchEnergyConsumptionData = (userDateRange) => async (dispatch) => {
   dispatch(fetchEnergyConsumptionLoading());
@@ -19,19 +20,13 @@ export const fetchEnergyConsumptionData = (userDateRange) => async (dispatch) =>
     userId = user.id;
     token = userToken.access;
   }
+  const requestUrl = `dashboard/energy_consumption/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`;
   try {
-    const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/energy_consumption/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-    );
+    const response = await APIService.get(requestUrl);
     dispatch(fetchEnergyConsumptionSuccess(response.data.authenticatedData));
     dispatch(fetchEnergyConsumptionLoading(false))
   } catch (error) {
-    dispatch(fetchEnergyConsumptionLoading(error));
+    dispatch(fetchEnergyConsumptionLoading(false));
   }
 };
 
@@ -48,19 +43,13 @@ export const fetchPowerQualityData = (userDateRange) => async (dispatch) => {
     userId = user.id;
     token = userToken.access;
   }
+  const requestUrl = `dashboard/power_quality/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`;
   try {
-    const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/power_quality/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-    );
+    const response = await APIService.get(requestUrl);
     dispatch(fetchPowerQualitySuccess(response.data));
     dispatch(fetchPowerQualityLoading(false))
   } catch (error) {
-    dispatch(fetchPowerQualityLoading(error));
+    dispatch(fetchPowerQualityLoading(false));
   }
 };
 
@@ -77,19 +66,13 @@ export const fetchPowerDemandData = (userDateRange) => async (dispatch) => {
     userId = user.id;
     token = userToken.access;
   }
+  const requestUrl = `dashboard/power_demand/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`;
   try {
-    const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/power_demand/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`, {
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-    );
+    const response = await APIService.get(requestUrl);
     dispatch(fetchPowerDemandSuccess(response.data));
     dispatch(fetchPowerDemandLoading(false))
   } catch (error) {
-    dispatch(fetchPowerDemandLoading(error));
+    dispatch(fetchPowerDemandLoading(false));
   }
 };
 
@@ -107,18 +90,12 @@ export const fetchLastReadingData = (userDate) => async (dispatch) => {
     userId = user.id;
     token = userToken.access;
   }
+  const requestUrl = `dashboard/last_reading/${userId}/${singleDateToUse}`;
   try {
-    const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}dashboard/last_reading/${userId}/${singleDateToUse}`, {
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-    );
+    const response = await APIService.get(requestUrl);
     dispatch(fetchLastReadingSuccess(response.data.data));
     dispatch(fetchLastReadingLoading(false))
   } catch (error) {
-    dispatch(fetchLastReadingLoading(error));
+    dispatch(fetchLastReadingLoading(false));
   }
 };
