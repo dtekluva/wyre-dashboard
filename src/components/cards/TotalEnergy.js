@@ -13,7 +13,7 @@ const TotalEnergyCard = ({ totalEnergyBranchData, userData }) => {
 
     useEffect(() => {
         const totalData = {total_kwh: {}, solar_hours: {}}
-        totalEnergyBranchData && totalEnergyBranchData.devices && totalEnergyBranchData.devices.forEach(data => {           
+        totalEnergyBranchData && totalEnergyBranchData.devices && totalEnergyBranchData.devices.forEach(data => {
             const dashboard = data.dashboard;
             if (data.is_source && data.source_tag=='AGGREGATORY') {
               totalData.total_kwh.value =
@@ -26,11 +26,7 @@ const TotalEnergyCard = ({ totalEnergyBranchData, userData }) => {
             }
         });
         setTotalEnergyData(totalData)
-
-
     }, [totalEnergyBranchData]);
-
-
 
     return (
         <article className="dashboard__total-energy dashboard__banner--small">

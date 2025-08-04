@@ -40,7 +40,8 @@ function Login() {
         password: password,
       });
 
-      window.localStorage.setItem('loggedWyreUser', JSON.stringify(user));
+      window.localStorage.setItem('loggedWyreUser', JSON.stringify(user.data.token));
+      
       window.location.href = from;
       // dataHttpServices.setUserId(user.data.id);
       // dataHttpServices.setToken(user.data.token);
