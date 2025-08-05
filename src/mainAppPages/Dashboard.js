@@ -169,7 +169,7 @@ function Dashboard({
         checkedBranchId,
         checkedDevicesId
       );
-      setDailyConsumptionBranchData(devicesArrayData);
+      setDailyConsumptionBranchData(devicesArrayData[0]);
     }
 
     setPageLoaded(true);
