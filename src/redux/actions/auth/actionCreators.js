@@ -13,7 +13,6 @@ export const getPermittedBranchesLoading = (payload = true) => ({
     payload,
 });
 export const getPermittedBranchesSuccess = (payload) => {
-    console.log('getPermittedBranchesSuccess called with payload:', payload);
     return {
         type: authTypes.GET_PERMITTED_BRANCHES_SUCCESS,
         payload,

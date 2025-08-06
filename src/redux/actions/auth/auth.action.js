@@ -77,9 +77,6 @@ export const getPermittedBranches = () => async (dispatch) => {
         },
       }
     );
-    console.log('API Response:', response);
-    console.log('API Response Data:', response.data);
-    console.log('API Response Data.data:', response.data.data);
 
     dispatch(getPermittedBranchesSuccess(response.data));
     dispatch(getPermittedBranchesLoading(false));

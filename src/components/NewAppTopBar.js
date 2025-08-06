@@ -499,12 +499,12 @@ function NewAppTopBar() {
           />
         </Space>
 
-        <BranchSwitcher 
+        {/* <BranchSwitcher 
           onBranchChange={(branchData) => {
             // Handle branch switch if needed
             console.log('Branch switched:', branchData);
           }}
-        />
+        /> */}
       </div>
 
       {

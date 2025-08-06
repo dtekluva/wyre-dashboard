@@ -25,7 +25,6 @@ const reducer = (state = INITIAL_STATE, action) => {
                 fetchPermittedBranchesLoading: action.payload,
             };
         case authTypes.GET_PERMITTED_BRANCHES_SUCCESS:
-            console.log('Reducer GET_PERMITTED_BRANCHES_SUCCESS:', action.payload);
             return {
                 ...state,
                 permittedBranches: action.payload,
