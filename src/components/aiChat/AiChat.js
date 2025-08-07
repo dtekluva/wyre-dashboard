@@ -7,6 +7,7 @@ import {
   SendOutlined,
   DownOutlined,
   ShrinkOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 
 export default function AiChat() {
@@ -36,6 +37,7 @@ export default function AiChat() {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState(null);
   const chatRef = useRef(null);
   const widgetRef = useRef(null);
@@ -76,37 +78,120 @@ export default function AiChat() {
 
   const downloadChatAsPDF = async () => {
     setIsLoading(true);
+    setIsDownloading(true);
     setDownloadError(null);
 
     try {
-      // Prevent multiple downloads
       if (isLoading) return;
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // Create a canvas from the chat container
-      const canvas = await html2canvas(chatRef.current);
+      // Ensure the chat container is fully scrollable
+      const chatElement = chatRef.current;
+      const originalStyle = {
+        overflowY: chatElement.style.overflowY,
+        height: chatElement.style.height,
+      };
+
+      // Temporarily set the chat container to display all content
+      chatElement.style.overflowY = "visible";
+      chatElement.style.height = "auto";
+
+      // Create canvas with full scroll height
+      const canvas = await html2canvas(chatElement, {
+        scale: 2,
+        height: chatElement.scrollHeight,
+        width: chatElement.offsetWidth,
+        scrollX: 0,
+        scrollY: 0,
+      });
+
+      // Restore original styles
+      chatElement.style.overflowY = originalStyle.overflowY;
+      chatElement.style.height = originalStyle.height;
+
       // Create a new PDF document
       const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const margin = 15;
+      const titleHeight = 20;
+      const usablePageHeight = pageHeight - margin - titleHeight;
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const aspectRatio = imgWidth / usablePageHeight;
+      const pdfImgWidth = pageWidth - 2 * margin;
+      const pdfImgHeight = pdfImgWidth / aspectRatio;
+      const pixelsPerMm = imgWidth / pdfImgWidth;
 
-      // Get the canvas data URL
-      const imgData = canvas.toDataURL("image/png");
-
-      // Add the image to the PDF
-      pdf.addImage(imgData, "PNG", 15, 40, 180, 0);
-
-      // Add title
+      // Add title on first page
       pdf.setFontSize(20);
       pdf.setTextColor(0, 0, 0);
-      pdf.text("Wyre AI Chat History", 105, 30, { align: "center" });
+      pdf.text("Wyre AI Chat History", pageWidth / 2, margin + 10, {
+        align: "center",
+      });
+
+      // Paginate content
+      let yOffset = 0;
+      let pageCount = 1;
+
+      while (yOffset < imgHeight) {
+        if (pageCount > 1) {
+          pdf.addPage();
+          pdf.setFontSize(20);
+          pdf.setTextColor(0, 0, 0);
+        }
+
+        // Create a temporary canvas for cropping
+        const tempCanvas = document.createElement("canvas");
+        const tempCtx = tempCanvas.getContext("2d");
+        tempCanvas.width = imgWidth;
+        tempCanvas.height = Math.min(
+          usablePageHeight * pixelsPerMm,
+          imgHeight - yOffset
+        );
+
+        // Draw the cropped portion
+        tempCtx.drawImage(
+          canvas,
+          0,
+          yOffset,
+          imgWidth,
+          tempCanvas.height,
+          0,
+          0,
+          imgWidth,
+          tempCanvas.height
+        );
+        const croppedImgData = tempCanvas.toDataURL("image/png");
+
+        // Add cropped image to PDF
+        const croppedImgHeight = tempCanvas.height / pixelsPerMm;
+        pdf.addImage(
+          croppedImgData,
+          "PNG",
+          margin,
+          margin + titleHeight,
+          pdfImgWidth,
+          croppedImgHeight
+        );
+
+        // Add page number
+        pdf.setFontSize(10);
+        pdf.text(`Page ${pageCount}`, pageWidth - margin - 10, pageHeight - 10);
+
+        yOffset += usablePageHeight * pixelsPerMm;
+        pageCount++;
+      }
 
       // Save the PDF
       pdf.save("wyre_ai_chat_history.pdf");
-
-      // Reset loading state after a short delay to ensure the download completes
       setTimeout(() => setIsLoading(false), 1000);
     } catch (error) {
       setDownloadError("Failed to generate PDF. Please try again.");
       setIsLoading(false);
       console.error("Error generating PDF:", error);
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -173,13 +258,20 @@ export default function AiChat() {
           fontSize: "18px",
           fontWeight: "500",
           zIndex: 40,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           transition: "all 0.3s ease",
           transform: isOpen ? "scale(0)" : "scale(1)",
           opacity: isOpen ? 0 : 1,
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
         }}
       >
-        AI
+        <img
+          src="/icon/wyre-ai-logo.svg"
+          alt="Wyre Ai Logo"
+          style={{ width: "30px", height: "30px" }}
+        />
       </Button>
       <Button
         type="primary"
@@ -295,6 +387,41 @@ export default function AiChat() {
             gap: "12px",
           }}
         >
+          {!isDownloading && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "14px",
+                  fontWeight: 550,
+                  letterSpacing: "0.5px",
+                  color: "gray",
+                }}
+              >
+                Wyre AI Chat
+              </p>
+              <p
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  letterSpacing: "0.5px",
+                  color: "gray",
+                  marginTop: "4px",
+                }}
+              >
+                <InfoCircleOutlined
+                  style={{ fontSize: "12px", marginRight: "6px" }}
+                />
+                Please Ask Questions Related to Wyre
+              </p>
+            </div>
+          )}
           {messages.map((message) => (
             <div key={message.id}>
               {message.type === "ai" ? (
@@ -317,15 +444,11 @@ export default function AiChat() {
                       flexShrink: 0,
                     }}
                   >
-                    <p
-                      style={{
-                        color: "white",
-                        fontSize: "12px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      AI
-                    </p>
+                    <img
+                      src="/icon/wyre-ai-logo.svg"
+                      alt="Wyre Ai Logo"
+                      style={{ width: "15px", height: "15px" }}
+                    />
                   </div>
                   <div
                     style={{
@@ -396,15 +519,11 @@ export default function AiChat() {
                   flexShrink: 0,
                 }}
               >
-                <p
-                  style={{
-                    color: "white",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  AI
-                </p>
+                <img
+                  src="/icon/wyre-ai-logo.svg"
+                  alt="Wyre Ai Logo"
+                  style={{ width: "15px", height: "15px" }}
+                />
               </div>
               <div
                 style={{
