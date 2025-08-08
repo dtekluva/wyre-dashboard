@@ -379,7 +379,7 @@ export default function AiChat() {
             flex: 1,
             padding: "12px",
             overflowY: "auto",
-            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            backgroundColor: "rgb(247,244,251)",
             backdropFilter: "blur(15px)",
             WebkitBackdropFilter: "blur(16px)",
             display: "flex",
@@ -475,7 +475,7 @@ export default function AiChat() {
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
                   <div
                     style={{
-                      backgroundColor: "#5C35922B",
+                      backgroundColor: "#d9c6ec",
                       borderRadius: "8px",
                       padding: "12px",
                       border: "1px solid #b9b9b9",
@@ -574,7 +574,8 @@ export default function AiChat() {
         <div
           style={{
             padding: "8px 12px",
-            backgroundColor: "#fafafa",
+            borderTop: "1px solid #d9d9d9",
+            backgroundColor: "rgb(247,244,251)",
             display: "flex",
             flexDirection: "column",
             gap: "8px",
