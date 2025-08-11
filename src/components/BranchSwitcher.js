@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Button, Dropdown, Menu, message, Select, Spin, Tooltip } from 'antd';
-import { ApartmentOutlined, SwapOutlined } from '@ant-design/icons';
+import { Button, Drawer, Dropdown, Input, Menu, message, Select, Spin, Table, Tooltip, Typography } from 'antd';
+import { ApartmentOutlined, SearchOutlined, SwapOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch, connect } from 'react-redux';
 import { getPermittedBranches, switchBranch } from '../redux/actions/auth/auth.action';
 
-const { Option } = Select;
+const { Search } = Input;
+const { Text } = Typography;
 
-const BranchSwitcher = ({ switchBranch, currentBranchId, onBranchChange, style }) => {
-  const dispatch = useDispatch();
-  const [selectedBranch, setSelectedBranch] = useState(currentBranchId);
-  const [sssselectedBranch, setSssselectedBranch] = useState(null);
-
+const BranchSwitcher = ({ switchBranch, getPermittedBranches, query, setQuery, style }) => {
+  const [filteredBranches, setFilteredBranches] = useState([]);
+  const [open, setOpen] = useState(false);
   // Get auth state from Redux
   const {
     permittedBranches,
@@ -18,110 +17,121 @@ const BranchSwitcher = ({ switchBranch, currentBranchId, onBranchChange, style }
     switchNewBranchLoading,
     switchedNewBranch
   } = useSelector((state) => state.auth);
-  console.log('permittedBranches---------> ', permittedBranches);
-  console.log('switchedNewBranch---------> ', switchedNewBranch);
-  console.log('currentBranchId---------> ', currentBranchId);
-  
 
   // Fetch permitted branches on component mount
   useEffect(() => {
     // Check if user is authenticated and branches haven't been fetched yet
     const loggedUserJSON = localStorage.getItem('loggedWyreUser');
     if (loggedUserJSON && permittedBranches === false && !fetchPermittedBranchesLoading) {
-      dispatch(getPermittedBranches());
+      getPermittedBranches();
     }
-  }, [dispatch]);
+  }, []);
 
-  // Update selected branch when currentBranchId changes
   useEffect(() => {
-    if (currentBranchId) {
-      setSelectedBranch(currentBranchId);
+    if (
+      permittedBranches &&
+      Array.isArray(permittedBranches.branches)
+    ) {
+      setFilteredBranches(permittedBranches.branches);
     }
-  }, [currentBranchId]);
+  }, [permittedBranches]);
 
   // Handle successful branch switch
   useEffect(() => {
     if (switchedNewBranch) {
-      window.localStorage.setItem('loggedWyreUser', JSON.stringify(switchedNewBranch.data.token));
+      localStorage.setItem('loggedWyreUser', JSON.stringify(switchedNewBranch.data.token));
       window.location.reload();
-      // onBranchChange(switchedNewBranch);
     }
   }, [switchedNewBranch]);
 
-  const handleChange = (value) => {
-    setSelectedBranch(value);
-    
-    dispatch(switchBranch(value));
+  // Show loading spinner while fetching branches
+  // if (fetchPermittedBranchesLoading) {
+  //   return <Spin size="small" />;
+  // }
+
+  // Don't render if no branches available
+  // if (!permittedBranches || !Array.isArray(permittedBranches.branches) || permittedBranches.branches.length === 0) {
+  //   return null;
+  // }
+
+  // if (fetchPermittedBranchesLoading || !filteredBranches) {
+  //   return <Spin size="large" />;
+  // }
+  // if (!filteredBranches.length) {
+  //   return <Text type="secondary">No branches available.</Text>;
+  // }
+
+  // const handleMenuClick = ({ key }) => {
+  //   const branch = permittedBranches.branches.find(b =>  String(b.id) === key);
+  //   if (branch) {
+  //     message.success(`Switching to: ${branch.name}`);
+  //     switchBranch(branch.id)
+  //   }
+  // };
+
+  const handleSearch = (value) => {
+    const filtered = permittedBranches.branches.filter((branch) =>
+      branch.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredBranches(filtered);
   };
 
-  // Show loading spinner while fetching branches
+  const handleSwitchBranch = (branch) => {
+    message.loading(`Switching to ${branch.name}...`, 1);
+    switchBranch(branch.id);
+  };
+
+  const handleRowClick = (record) => {
+    // message.success(`Switching to: ${record.name}`);
+    message.loading(`Switching to: ${record.name}`, 1);
+    switchBranch(record.id);
+  };
+
   if (fetchPermittedBranchesLoading) {
     return <Spin size="small" />;
   }
 
-  // Don't render if no branches available
-  if (!permittedBranches || !Array.isArray(permittedBranches.branches) || permittedBranches.branches.length === 0) {
+  if (!permittedBranches || !permittedBranches.branches?.length) {
     return null;
   }
-
-  const handleMenuClick = ({ key }) => {
-    const branch = permittedBranches.branches.find(b =>  String(b.id) === key);
-    
-    // setSssselectedBranch(branch.name);
-    // // 🔄 Call your login/switch branch logic here
-    // switchBranch(branch.id)
-    // message.success(`Switched to ${branch.name}`);
-    // loginToBranch(branch.key) // <-- your real logic
-    if (branch) {
-      message.success(`Switching to: ${branch.name}`);
-      switchBranch(branch.id)
-    }
-  };
-  const menu = (
-    <Menu onClick={handleMenuClick}>
-      {permittedBranches.branches.map(branch => (
-        <Menu.Item key={branch.id}>{branch.name}</Menu.Item>
-      ))}
-    </Menu>
-  );
-
   // const menu = (
   //   <Menu onClick={handleMenuClick}>
-  //     {permittedBranches.branches.map((branch, index )=> (
-  //       <Menu.Item key={String(branch.id) + index}>{branch.name}</Menu.Item>
+  //     {permittedBranches.branches.map(branch => (
+  //       <Menu.Item key={branch.id}>{branch.name}</Menu.Item>
   //     ))}
   //   </Menu>
   // );
 
+  const columns = [
+    {
+      title: 'Branch Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Region',
+      dataIndex: 'region',
+      key: 'region',
+      responsive: ['md'],
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Tooltip title="Click to switch">
+          <SwapOutlined
+            onClick={() => handleRowClick(record)}
+            style={{ cursor: 'pointer', fontSize: 18 }}
+            spin={switchNewBranchLoading}
+          />
+        </Tooltip>
+      ),
+    },
+  ];
+
   return (
     <>
-      {/* <Select
-        value={selectedBranch}
-        style={{
-          width: 140,
-          ...style,
-        }}
-        className="rounded-select"
-        onChange={handleChange}
-        dropdownMatchSelectWidth={false}
-        placeholder="Select Branch"
-        loading={switchNewBranchLoading}
-        disabled={switchNewBranchLoading}
-      >
-        {permittedBranches.branches.map((branch) => (
-          <Option key={branch.id} value={branch.id}>
-            {branch.name}
-          </Option>
-        ))}
-      </Select> */}
-
-      {/* <Dropdown overlay={menu} trigger={['click']}>
-        <Button type="default">
-          {sssselectedBranch || 'Select Branch'}
-        </Button>
-      </Dropdown> */}
-
-      <Dropdown
+      {/* <Dropdown
         overlay={menu}
         trigger={['click']}
         placement="bottomRight"
@@ -135,7 +145,95 @@ const BranchSwitcher = ({ switchBranch, currentBranchId, onBranchChange, style }
           }}
         />
         </Tooltip>
-      </Dropdown>
+      </Dropdown> */}
+
+      {/* <div style={{ ...style, padding: '1rem' }}> */}
+      {/* <Search
+        placeholder="Search branches..."
+        onSearch={handleSearch}
+        enterButton
+        allowClear
+        style={{ maxWidth: 300, marginBottom: 16 }}
+      /> */}
+      {/* <Table
+        dataSource={filteredBranches}
+        columns={columns}
+        rowKey="id"
+        pagination={{ pageSize: 5 }}
+        onRow={(record) => ({
+          onClick: () => handleRowClick(record),
+        })}
+        loading={switchNewBranchLoading}
+        bordered
+        rowClassName="branch-switch-row"
+      /> */}
+      <div
+        title="Switch Branch"
+        placement="right"
+        onClose={() => setOpen(false)}
+        open={open}
+        width={300}
+      >
+        {/* <Search
+          placeholder="Search branches..."
+          allowClear
+          onSearch={handleSearch}
+          style={{ marginBottom: 16 }}
+        /> */}
+        <Input
+          allowClear
+          size="large"
+          placeholder="Search for a branch"
+          prefix={<SearchOutlined />}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{ borderRadius: 12, marginBottom: 16 }}
+        />
+
+        {filteredBranches.map((branch) => (
+          <Button
+            key={branch.id}
+            block
+            size="large"
+            onClick={() => handleSwitchBranch(branch)}
+            // style={{ marginBottom: 12, textAlign: 'left' }}
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 16,
+              borderRadius: 12,
+              background: "#f5f5f5",
+              padding: "14px 10px",
+              textAlign: "left",
+            }}
+            loading={switchNewBranchLoading}
+          >
+            {/* {branch.name} */}
+            <span style={{ fontSize: 12, fontWeight: 400, color: "#000" }}>{branch.name}</span>
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: 20,
+                width: 20,
+                borderRadius: 9999,
+                border: "2px solid #6d28d9",
+                color: "#6d28d9",
+              }}
+            >
+              <SwapOutlined />
+            </span>
+          </Button>
+        ))}
+
+        {!filteredBranches.length && (
+          <Text type="secondary">No branches match your search.</Text>
+        )}
+      </div>
+    {/* </div> */}
     </>
   );
 };
