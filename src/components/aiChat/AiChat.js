@@ -9,6 +9,8 @@ import {
   ShrinkOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
+import { APIService } from "../../config/api/apiConfig";
+import axios from "axios";
 
 export default function AiChat() {
   const [isOpen, setIsOpen] = useState(true);
@@ -17,21 +19,11 @@ export default function AiChat() {
       id: "1",
       type: "ai",
       content:
-        "Welcome back, chief! Just ran a quick check on your energy habits today and guess what? You're doing great, power use is smooth, no major spikes.",
-      timestamp: "12:47 pm",
-    },
-    {
-      id: "2",
-      type: "user",
-      content: "Is my battery fully charged?",
-      timestamp: "12:48 pm",
-    },
-    {
-      id: "3",
-      type: "ai",
-      content:
-        "Your battery is currently at 78%. However, there's a communication issue between the inverter and the battery, so the status might not update in real time.",
-      timestamp: "12:48 pm",
+        "Hello 👋, I'm here to help you with any questions you may have on your Wyre Dashboard",
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     },
   ]);
   const [inputValue, setInputValue] = useState("");
@@ -39,6 +31,7 @@ export default function AiChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState(null);
+  const [sessionId, setSessionId] = useState(null);
   const chatRef = useRef(null);
   const widgetRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -52,12 +45,18 @@ export default function AiChat() {
   }, [messages]);
 
   useEffect(() => {
-    // Small delay to ensure smooth initial animation
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 500);
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue =
+        "Are you sure you want to leave? Your AI chat session will be lost.";
+      return "Are you sure you want to leave? Your AI chat session will be lost.";
+    };
 
-    return () => clearTimeout(timer);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, []);
 
   useEffect(() => {
@@ -109,7 +108,6 @@ export default function AiChat() {
       chatElement.style.overflowY = originalStyle.overflowY;
       chatElement.style.height = originalStyle.height;
 
-      // Create a new PDF document
       const pdf = new jsPDF("p", "mm", "a4");
       const pageWidth = 210;
       const pageHeight = 297;
@@ -123,7 +121,6 @@ export default function AiChat() {
       const pdfImgHeight = pdfImgWidth / aspectRatio;
       const pixelsPerMm = imgWidth / pdfImgWidth;
 
-      // Add title on first page
       pdf.setFontSize(20);
       pdf.setTextColor(0, 0, 0);
       pdf.text("Wyre AI Chat History", pageWidth / 2, margin + 10, {
@@ -183,7 +180,6 @@ export default function AiChat() {
         pageCount++;
       }
 
-      // Save the PDF
       pdf.save("wyre_ai_chat_history.pdf");
       setTimeout(() => setIsLoading(false), 1000);
     } catch (error) {
@@ -212,21 +208,37 @@ export default function AiChat() {
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const response = await axios.post(
+        "https://backend.wyreng.com/api/chatbot/chat/branch/",
+        {
+          question: inputValue,
+          session_id: sessionId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.loggedWyreUser).access
+            }`,
+          },
+        }
+      );
       const aiResponse = {
         id: (Date.now() + 1).toString(),
         type: "ai",
-        content:
-          "Thanks for your question! I'm analyzing your battery and power consumption data. This is a simulated response for demonstration purposes.",
+        content: response.data.data.answer,
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
       };
+      setSessionId(response.data.data.session_id);
       setMessages((prev) => [...prev, aiResponse]);
       setIsTyping(false);
-    }, 1500);
+    } catch (error) {
+      console.error("Error fetching AI response:", error);
+    }
   };
 
   const handleSuggestedQuestion = (question) => {
@@ -372,14 +384,13 @@ export default function AiChat() {
           )}
         </div>
 
-        {/* Chat Messages */}
         <div
           ref={chatRef}
           style={{
             flex: 1,
             padding: "12px",
             overflowY: "auto",
-            backgroundColor: "rgb(247,244,251)",
+            backgroundColor: !isDownloading ? "rgb(247,235,251, 0.5)" : "white",
             backdropFilter: "blur(15px)",
             WebkitBackdropFilter: "blur(16px)",
             display: "flex",
@@ -454,7 +465,7 @@ export default function AiChat() {
                     style={{
                       backgroundColor: "white",
                       borderRadius: "8px",
-                      padding: "12px",
+                      padding: "8px 12px",
                       maxWidth: "200px",
                       boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
                       border: "1px solid #b9b9b9",
@@ -467,7 +478,9 @@ export default function AiChat() {
                         wordBreak: "break-word",
                       }}
                     >
-                      {message.content}
+                      <div
+                        dangerouslySetInnerHTML={{ __html: message.content }}
+                      />
                     </p>
                   </div>
                 </div>
@@ -475,15 +488,17 @@ export default function AiChat() {
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
                   <div
                     style={{
-                      backgroundColor: "#d9c6ec",
+                      backgroundColor: "#5C35922B",
                       borderRadius: "8px",
-                      padding: "12px",
+                      padding: "8px 12px",
                       border: "1px solid #b9b9b9",
                       maxWidth: "200px",
                     }}
                   >
                     <p style={{ fontSize: "12px", wordBreak: "break-word" }}>
-                      {message.content}
+                      <div
+                        dangerouslySetInnerHTML={{ __html: message.content }}
+                      />
                     </p>
                   </div>
                 </div>
