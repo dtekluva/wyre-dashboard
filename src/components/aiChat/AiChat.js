@@ -209,21 +209,10 @@ export default function AiChat() {
     setIsTyping(true);
 
     try {
-      const response = await axios.post(
-        "https://backend.wyreng.com/api/chatbot/chat/branch/",
-        {
-          question: inputValue,
-          session_id: sessionId,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.loggedWyreUser).access
-            }`,
-          },
-        }
-      );
+      const response = await APIService.post("/chatbot/chat/branch/", {
+        question: inputValue,
+        session_id: sessionId,
+      });
       const aiResponse = {
         id: (Date.now() + 1).toString(),
         type: "ai",
@@ -586,7 +575,7 @@ export default function AiChat() {
         </div>
 
         {/* Suggested Questions */}
-        <div
+        {/* <div
           style={{
             padding: "8px 12px",
             borderTop: "1px solid #d9d9d9",
@@ -635,7 +624,7 @@ export default function AiChat() {
           >
             Average diesel usage?
           </Button>
-        </div>
+        </div> */}
 
         {/* Input Area */}
         <div
