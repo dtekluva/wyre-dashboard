@@ -107,6 +107,35 @@
   font-weight: $regular;
 }
 
+/* Branch search bar styles starts */
+.unified-search-bar .ant-input {
+  background: transparent !important;
+  color: white !important;
+}
+
+.unified-search-bar .ant-input::placeholder {
+  color: #585858 !important;
+}
+
+.unified-search-bar .ant-input-clear-icon {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.unified-search-bar .ant-input-clear-icon:hover {
+  color: white !important;
+}
+
+.unified-search-bar:hover {
+  border-color: #7C3AED !important;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2) !important;
+}
+
+.unified-search-bar:focus-within {
+  border-color: #7C3AED !important;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3) !important;
+}
+/* Branch search bar styles ends */
+
 .small-banner-section__subheading {
   display: block;
   margin-top: 9px;
