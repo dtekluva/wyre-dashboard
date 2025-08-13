@@ -89,7 +89,6 @@ export const fetchLastReadingData = (userDate) => async (dispatch) => {
   let userId;
   let branchId;
   let token;
-  // const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   const singleDateToUse = userDate && userDate.length > 0 && `${moment(userDate[0]).format('DD-MM-YYYY HH:mm')}`
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
@@ -101,7 +100,7 @@ export const fetchLastReadingData = (userDate) => async (dispatch) => {
   const requestUrl = `dashboard/last_reading/${branchId}/${singleDateToUse}`;
   try {
     const response = await APIService.get(requestUrl);
-    dispatch(fetchLastReadingSuccess(response.data.data));
+    dispatch(fetchLastReadingSuccess(response.data.authenticatedData));
     dispatch(fetchLastReadingLoading(false))
   } catch (error) {
     dispatch(fetchLastReadingLoading(false));
