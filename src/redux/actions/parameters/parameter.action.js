@@ -12,6 +12,7 @@ export const fetchEnergyConsumptionData = (userDateRange) => async (dispatch) =>
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
@@ -19,8 +20,9 @@ export const fetchEnergyConsumptionData = (userDateRange) => async (dispatch) =>
     const user = jwtDecode(userToken.access)
     userId = user.id;
     token = userToken.access;
+    branchId = user.branch_id;
   }
-  const requestUrl = `dashboard/energy_consumption/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`;
+  const requestUrl = `dashboard/energy_consumption/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`;
   try {
     const response = await APIService.get(requestUrl);
     dispatch(fetchEnergyConsumptionSuccess(response.data.authenticatedData));
@@ -35,6 +37,7 @@ export const fetchPowerQualityData = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
@@ -42,8 +45,9 @@ export const fetchPowerQualityData = (userDateRange) => async (dispatch) => {
     const user = jwtDecode(userToken.access)
     userId = user.id;
     token = userToken.access;
+    branchId = user.branch_id;
   }
-  const requestUrl = `dashboard/power_quality/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`;
+  const requestUrl = `dashboard/power_quality/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`;
   try {
     const response = await APIService.get(requestUrl);
     dispatch(fetchPowerQualitySuccess(response.data));
@@ -58,6 +62,7 @@ export const fetchPowerDemandData = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
@@ -65,8 +70,9 @@ export const fetchPowerDemandData = (userDateRange) => async (dispatch) => {
     const user = jwtDecode(userToken.access)
     userId = user.id;
     token = userToken.access;
+    branchId = user.branch_id;
   }
-  const requestUrl = `dashboard/power_demand/${userId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`;
+  const requestUrl = `dashboard/power_demand/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`;
   try {
     const response = await APIService.get(requestUrl);
     dispatch(fetchPowerDemandSuccess(response.data));
@@ -81,6 +87,7 @@ export const fetchLastReadingData = (userDate) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
+  let branchId;
   let token;
   // const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   const singleDateToUse = userDate && userDate.length > 0 && `${moment(userDate[0]).format('DD-MM-YYYY HH:mm')}`
@@ -88,9 +95,10 @@ export const fetchLastReadingData = (userDate) => async (dispatch) => {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
+    branchId = user.branch_id;
     token = userToken.access;
   }
-  const requestUrl = `dashboard/last_reading/${userId}/${singleDateToUse}`;
+  const requestUrl = `dashboard/last_reading/${branchId}/${singleDateToUse}`;
   try {
     const response = await APIService.get(requestUrl);
     dispatch(fetchLastReadingSuccess(response.data.data));
