@@ -1,25 +1,12 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 import { connect, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import CompleteDataContext from "../Context"
 import LatestLogo from "../icons/LatestLogo"
 import { fetchSideBar } from "../redux/actions/sidebar/sidebar.action"
 import SidebarOrganization from "./SidebarOrganization"
-import { Button, Input, List } from "antd"
-import { SwapOutlined, SearchOutlined } from "@ant-design/icons"
+import { Button } from "antd"
 import BranchSwitcher from "./BranchSwitcher"
-
-type Branch = { id: string; name: string }
-
-const BRANCHES: Branch[] = [
-  { id: "1", name: "Polaris Agodi" },
-  { id: "2", name: "Polaris Marina" },
-  { id: "3", name: "Polaris Ikoyi" },
-  { id: "4", name: "Polaris Abuja" },
-  { id: "5", name: "Polaris Yaba" },
-  { id: "6", name: "Polaris Lekki" },
-  { id: "7", name: "Polaris VI" },
-]
 
 const CircleSwitchIcon = () => (
   <svg width="20" height="20" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,17 +21,17 @@ const CircleSwitchIcon = () => (
   </svg>
 )
 
-function Sidebar({ fetchSideBar: fetchSideBarData }: { fetchSideBar: () => void }) {
+function Sidebar({ fetchSideBar: fetchSideBarData }) {
   const sidebarRef = useRef(null)
   const [panelOpen, setPanelOpen] = useState(false)
-  const [query, setQuery] = useState("")
   const { isSidebarOpen, currentUrl } = useContext(CompleteDataContext)
+  const sideBarData = useSelector((state) => state.sideBar.sideBarData);
 
-  const sideBarData = useSelector((state: any) => state.sideBar.sideBarData)
-
-  useEffect(() => {
-    if (!sideBarData || !sideBarData.name) fetchSideBarData()
-  }, [])
+ useEffect(() => {
+    if (!sideBarData || !sideBarData.name) {
+      fetchSideBarData();
+    }
+  }, []);
 
   const organizationComponent =
     sideBarData?.name ? <SidebarOrganization orgData={sideBarData} /> : null

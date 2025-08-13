@@ -21,7 +21,6 @@ const CircleSwitchIcon = () => (
 
 const BranchSwitcher = ({ switchBranch, getPermittedBranches, panelOpen, setPanelOpen, style }) => {
   const [filteredBranches, setFilteredBranches] = useState([]);
-  // const [panelOpen, setPanelOpen] = useState(false)
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("")
   // Get auth state from Redux
@@ -58,31 +57,6 @@ const BranchSwitcher = ({ switchBranch, getPermittedBranches, panelOpen, setPane
     }
   }, [switchedNewBranch]);
 
-  // Show loading spinner while fetching branches
-  // if (fetchPermittedBranchesLoading) {
-  //   return <Spin size="small" />;
-  // }
-
-  // Don't render if no branches available
-  // if (!permittedBranches || !Array.isArray(permittedBranches.branches) || permittedBranches.branches.length === 0) {
-  //   return null;
-  // }
-
-  // if (fetchPermittedBranchesLoading || !filteredBranches) {
-  //   return <Spin size="large" />;
-  // }
-  // if (!filteredBranches.length) {
-  //   return <Text type="secondary">No branches available.</Text>;
-  // }
-
-  // const handleMenuClick = ({ key }) => {
-  //   const branch = permittedBranches.branches.find(b =>  String(b.id) === key);
-  //   if (branch) {
-  //     message.success(`Switching to: ${branch.name}`);
-  //     switchBranch(branch.id)
-  //   }
-  // };
-
   const handleSearch = (value) => {
     const filtered = permittedBranches.branches.filter((branch) =>
       branch.name.toLowerCase().includes(value.toLowerCase())
@@ -91,15 +65,10 @@ const BranchSwitcher = ({ switchBranch, getPermittedBranches, panelOpen, setPane
   };
 
   const handleSwitchBranch = (branch) => {
-    message.loading(`Switching to ${branch.name}...`, 3);
+    message.loading(`Switching to ${branch.name}...`, 6);
     switchBranch(branch.id);
   };
 
-  const handleRowClick = (record) => {
-    // message.success(`Switching to: ${record.name}`);
-    message.loading(`Switching to: ${record.name}`, 1);
-    switchBranch(record.id);
-  };
 
   if (fetchPermittedBranchesLoading) {
     return <Spin size="small" />;
@@ -109,97 +78,28 @@ const BranchSwitcher = ({ switchBranch, getPermittedBranches, panelOpen, setPane
     return null;
   }
 
-  const columns = [
-    {
-      title: 'Branch Name',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'Region',
-      dataIndex: 'region',
-      key: 'region',
-      responsive: ['md'],
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <Tooltip title="Click to switch">
-          <SwapOutlined
-            onClick={() => handleRowClick(record)}
-            style={{ cursor: 'pointer', fontSize: 18 }}
-            spin={switchNewBranchLoading}
-          />
-        </Tooltip>
-      ),
-    },
-  ];
-
   return (
     <>
-      {/* <div style={{ ...style, padding: '1rem' }}> */}
       <div
-        title="Switch Branch"
         placement="right"
         onClose={() => setOpen(false)}
         open={open}
         width={300}
       >
-        {/* <Input
-          className="custom-search"
-          allowClear
-          placeholder="Search for a branch"
-          prefix={<SearchOutlined style={{ color: "#999" }} />}
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            const value = e.target.value.toLowerCase();
-            const filtered = permittedBranches.branches.filter((branch) =>
-              branch.name.toLowerCase().includes(value)
-            );
-            setFilteredBranches(filtered);
-          }}
-          style={{
-            marginBottom: 12,
-            borderRadius: 8,
-            background: "#8686864D"
-          }}
-        /> */}
-        {/* <Input
-          allowClear
-          placeholder="Search for a branch"
-          prefix={<SearchOutlined style={{ color: "#ccc" }} />}
-          value={query}
-          onChange={(e) => {
-            const value = e.target.value.toLowerCase();
-            setQuery(e.target.value);
-            const filtered = permittedBranches.branches.filter((branch) =>
-              branch.name.toLowerCase().includes(value)
-            );
-            setFilteredBranches(filtered);
-          }}
-          className="branch-search"
-          style={{
-            marginBottom: 12,
-            borderRadius: 8,
-            background: "#5C12A71A",
-            color: "white"
-          }}
-          styles={{
-            input: {
-              background: "#5C12A71A",
-              color: "white"
-            }
-          }}
-        /> */}
-
         <Input
           allowClear
           placeholder="Search for a branch"
           prefix={<SearchOutlined style={{ color: "#9CA3AF" }} />}
           value={query}
-          onChange={handleSearch}
+          // onChange={handleSearch}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            const value = e.target.value.toLowerCase();
+            const filtered = permittedBranches.branches.filter((branch) =>
+              branch.name.toLowerCase().includes(value)
+            );
+            setFilteredBranches(filtered);
+          }}
           className="unified-search-bar"
           style={{
             marginBottom: 32,
@@ -217,7 +117,6 @@ const BranchSwitcher = ({ switchBranch, getPermittedBranches, panelOpen, setPane
             },
           }}
         />
-
         <List
           dataSource={filteredBranches}
           renderItem={(branch) => (
@@ -236,13 +135,11 @@ const BranchSwitcher = ({ switchBranch, getPermittedBranches, panelOpen, setPane
                 alignItems: "center",
                 justifyContent: "space-between",
                 gap: 16,
-                // background: "#f5f5f5",
                 background: "#DADADA33",
                 marginBottom: "8px",
                 borderRadius: "8px",
                 padding: "14px 12px",
                 textAlign: "left",
-                // border: "1px solid #e5e5e5",
                 boxShadow: "none",
                 border: "none"
               }}
@@ -258,7 +155,6 @@ const BranchSwitcher = ({ switchBranch, getPermittedBranches, panelOpen, setPane
                   height: 20,
                   width: 20,
                   borderRadius: "50%",
-                  // border: "2px solid #6d28d9",
                   color: "#6d28d9",
                 }}
               >
@@ -271,7 +167,6 @@ const BranchSwitcher = ({ switchBranch, getPermittedBranches, panelOpen, setPane
           <Text type="secondary">No branches match your search.</Text>
         )}
       </div>
-    {/* </div> */}
     </>
   );
 };
