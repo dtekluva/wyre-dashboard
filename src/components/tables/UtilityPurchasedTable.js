@@ -19,12 +19,13 @@ const openNotificationWithIcon = (type, formName) => {
 
 const { Text } = Typography;
 
-const UtilityPurchasedTable = ({ data, userId, setEditUtilityPurchaseModal, setUtilityPurchaseData, deletePrepaidUtilityPaymentData:deletePrepaidPayment }) => {
+const UtilityPurchasedTable = ({ data, userId, role, setEditUtilityPurchaseModal, setUtilityPurchaseData, deletePrepaidUtilityPaymentData:deletePrepaidPayment }) => {
   const {
     isMediumScreen
   } = useContext(CompleteDataContext);
 
   const sortedData = sortArrayOfObjectByDate(data);
+  const isOperator = role === "OPERATOR";
 
   const handleDelete = async (id) => {
     const parameter = {
@@ -163,7 +164,7 @@ const UtilityPurchasedTable = ({ data, userId, setEditUtilityPurchaseModal, setU
         return value? numberFormatter(value.toFixed(2)) : 0;
       }
     },
-    optionsColumn()
+    ...(isOperator ? [optionsColumn()] : [])
   ];
 
   let valueSum = 0;

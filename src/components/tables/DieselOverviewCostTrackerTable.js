@@ -16,7 +16,7 @@ const { Text } = Typography;
 
 const DieselOverviewCostTrackerTable = (
   { dieselOverviewData, isLoading,
-    userId,
+    userId, role,
     fetchFuelConsumptionInfo, deleteFuelConsumptionData: deleteDieselEntry }
 ) => {
 
@@ -145,6 +145,7 @@ const DieselOverviewCostTrackerTable = (
   ];
 
   const entryId = dieselEntryData.fuel_consumption_id
+  const isOperator = role === "OPERATOR";
 
   const handleDelete = async () => {
     const parameter = {
@@ -278,7 +279,6 @@ const DieselOverviewCostTrackerTable = (
       dataIndex: 'energy_per_litre',
       width: '15%',
     },
-    optionsColumn()
   ];
 
   function onChange(pagination, filters, sorter, extra) {
@@ -467,58 +467,64 @@ const DieselOverviewCostTrackerTable = (
             key="energy_per_litre_gen_3"
           /> )}
           </ColumnGroup>
-          <Column
-            title="More"
-            key="more"
-            render={
-              (_, record) => {
-                const items = itemData(record);
-                return (
-                  <Dropdown
-                    trigger={["click"]}
-                    getPopupContainer={(trigger) => trigger.parentElement}
-                    placement="topLeft"
-                    overlay={
-                      <Menu>
-                        <Menu.Item onClick={() => { }}>
-                          <Space size={4}>
-                            <EditOutlined />{" "}
-                            <a
-                              target="_blank"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setEditDieselEntryModal(true);
-                                setDieselEntryData(record);
-                              }}
-                              rel="noopener noreferrer"
-                            >Edit Diesel Entry</a>
-                          </Space>
-                        </Menu.Item>
-                        <Menu.Item onClick={() => { }} type="link">
-                          <Space size={4}>
-                            <Icon icon="ant-design:delete-outlined" />
-                            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
-                              <a
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  setDieselEntryData(record)
-                                }}
-                              >Delete Diesel Entry</a>
-                            </Popconfirm>
-                          </Space>
-                        </Menu.Item>
-                      </Menu>
+          {
+            isOperator ? 
+              (
+                <Column
+                  title="More"
+                  key="more"
+                  render={
+                    (_, record) => {
+                      const items = itemData(record);
+                      return (
+                        <Dropdown
+                          trigger={["click"]}
+                          getPopupContainer={(trigger) => trigger.parentElement}
+                          placement="topLeft"
+                          overlay={
+                            <Menu>
+                              <Menu.Item onClick={() => { }}>
+                                <Space size={4}>
+                                  <EditOutlined />{" "}
+                                  <a
+                                    target="_blank"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setEditDieselEntryModal(true);
+                                      setDieselEntryData(record);
+                                    }}
+                                    rel="noopener noreferrer"
+                                  >Edit Diesel Entry</a>
+                                </Space>
+                              </Menu.Item>
+                              <Menu.Item onClick={() => { }} type="link">
+                                <Space size={4}>
+                                  <Icon icon="ant-design:delete-outlined" />
+                                  <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record)}>
+                                    <a
+                                      onClick={(e) => {
+                                        e.preventDefault()
+                                        setDieselEntryData(record)
+                                      }}
+                                    >Delete Diesel Entry</a>
+                                  </Popconfirm>
+                                </Space>
+                              </Menu.Item>
+                            </Menu>
+                          }
+                        >
+                          <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                            More <DownOutlined />
+                          </a>
+                        </Dropdown>
+                      );
+      
                     }
-                  >
-                    <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                      More <DownOutlined />
-                    </a>
-                  </Dropdown>
-                );
-
-              }
-            }
-          />
+                  }
+                />
+              ) 
+              : ''
+          }
         </Table>
       </Modal>
     </div>
