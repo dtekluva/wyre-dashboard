@@ -31,7 +31,7 @@ function LastReading({ match, fetchLastReadingData }) {
     isAuthenticatedDataLoading,
   } = useContext(CompleteDataContext);
 
-  const userDateRange = moment().format("DD-MM-YYYY HH:mm");
+  const singleDateToUse = moment().format("DD-MM-YYYY HH:mm");
 
   useEffect(() => {
     if (match && match.url) {
@@ -40,24 +40,24 @@ function LastReading({ match, fetchLastReadingData }) {
   }, [match, setCurrentUrl]);
 
   useEffect(() => {
-    fetchLastReadingData(userDateRange)
+    fetchLastReadingData(singleDateToUse)
   }, []);
   
   useEffect(() => {
     if (!pageLoaded && isEmpty(parametersData || {})) {
-      fetchLastReadingData(userDateRange);
+      fetchLastReadingData(singleDateToUse);
     }
 
     if (!isEmpty(parametersData) > 0 && pageLoaded) {
-      fetchLastReadingData(userDateRange);
+      fetchLastReadingData(singleDateToUse);
     }
     setPageLoaded(true);
-  }, [userDateRange]);
+  }, [singleDateToUse]);
 
   useEffect(() => {
     if (pageLoaded && parametersData.fetchedLastReading) {
       let openDevicesArrayData
-      const devicesArrayData = devicesArray(parametersData.fetchedLastReading.branches, checkedBranchId, checkedDevicesId);
+      const devicesArrayData = devicesArray(parametersData.fetchedLastReading, checkedBranchId, checkedDevicesId);
       openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
       setLastReadingData(openDevicesArrayData)
     }

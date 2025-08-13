@@ -72,7 +72,7 @@ function PowerDemand({ match, fetchPowerDemandData }) {
   useEffect(() => {
     if (pageLoaded && parametersData.fetchedPowerDemand) {
       let openDevicesArrayData
-      const devicesArrayData = devicesArray(parametersData.fetchedPowerDemand.branches, checkedBranchId, checkedDevicesId);
+      const devicesArrayData = devicesArray(parametersData.fetchedPowerDemand.authenticatedData, checkedBranchId, checkedDevicesId);
       openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
       setPowerDemandData(openDevicesArrayData)
     }
