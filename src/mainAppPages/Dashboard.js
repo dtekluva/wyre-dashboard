@@ -77,6 +77,7 @@ function Dashboard({
   const [totalDailyConsumptionBranchData, setDailyConsumptionBranchData] =
     useState(null);
   const [demandData, setDemandData] = useState({});
+  const [blendedCostData, setBlendedCostData] = useState({});
   const [pageLoaded, setPageLoaded] = useState(false);
 
   const pDemand = dashboard?.demandData;
@@ -129,13 +130,19 @@ function Dashboard({
   }, [dashboard.demandData]);
 
   useEffect(() => {
+    if (dashBoardInfo.blendedCostEnergyData) {
+      setBlendedCostData(dashBoardInfo.blendedCostEnergyData);
+    }
+  }, [dashBoardInfo.blendedCostEnergyData]);
+
+  useEffect(() => {
     if (pageLoaded && dashboard.dashBoardCard_1_Data) {
       const devicesArrayData = devicesArray(
-        dashboard.dashBoardCard_1_Data.branches,
+        dashboard.dashBoardCard_1_Data?.branches?.[0],
         checkedBranchId,
         checkedDevicesId
       );
-      setTotalEnergyBranchData(devicesArrayData[0]);
+      setTotalEnergyBranchData(devicesArrayData);
     }
     setPageLoaded(true);
   }, [
@@ -147,11 +154,11 @@ function Dashboard({
   useEffect(() => {
     if (pageLoaded && dashboard.dashBoardCard_2_Data) {
       const devicesArrayData = devicesArray(
-        dashboard.dashBoardCard_2_Data.branches,
+        dashboard.dashBoardCard_2_Data?.branches?.[0],
         checkedBranchId,
         checkedDevicesId
       );
-      setTotalDeviceUsageBranchData(devicesArrayData[0]);
+      setTotalDeviceUsageBranchData(devicesArrayData);
     }
 
     setPageLoaded(true);
@@ -164,11 +171,11 @@ function Dashboard({
   useEffect(() => {
     if (pageLoaded && dashboard.dashBoardCard_3_Data) {
       const devicesArrayData = devicesArray(
-        dashboard.dashBoardCard_3_Data.branches,
+        dashboard.dashBoardCard_3_Data?.branches?.[0],
         checkedBranchId,
         checkedDevicesId
       );
-      setDailyConsumptionBranchData(devicesArrayData[0]);
+      setDailyConsumptionBranchData(devicesArrayData);
     }
 
     setPageLoaded(true);
@@ -245,6 +252,7 @@ function Dashboard({
 
           <CarbonEmmission
             totalEnergyBranchData={totalEnergyBranchData}
+            blendedCost={blendedCostData}
             userData={userData}
           />
         </div>
