@@ -172,7 +172,7 @@ export const addMonthlyFuelConsumptionData = (branchId, parameters) => async (di
     return { fullfilled: true, message: response.data.detail }
   } catch (error) {
     dispatch(addMonthlyFuelDataLoading(false));
-    return { fullfilled: false, message: error.response.detail }
+    return { fullfilled: false, message: error?.response?.data }
   }
 };
 
