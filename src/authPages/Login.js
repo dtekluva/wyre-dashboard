@@ -51,7 +51,7 @@ function Login() {
       setIsAuthenticating(false)
       setErrorMessage(exception.response.data.error);
       notification.error({
-        message: "Invalid Username or Password"
+        message: "Invalid Email or Password"
       })
     }
   };
