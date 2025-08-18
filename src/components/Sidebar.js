@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react"
-import { connect, useSelector } from "react-redux"
+import { connect, useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import CompleteDataContext from "../Context"
 import LatestLogo from "../icons/LatestLogo"
@@ -7,6 +7,7 @@ import { fetchSideBar } from "../redux/actions/sidebar/sidebar.action"
 import SidebarOrganization from "./SidebarOrganization"
 import { Button } from "antd"
 import BranchSwitcher from "./BranchSwitcher"
+import { getPermittedBranches } from "../redux/actions/auth/auth.action"
 
 const CircleSwitchIcon = () => (
   <svg width="20" height="20" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -26,12 +27,23 @@ function Sidebar({ fetchSideBar: fetchSideBarData }) {
   const [panelOpen, setPanelOpen] = useState(false)
   const { isSidebarOpen, currentUrl } = useContext(CompleteDataContext)
   const sideBarData = useSelector((state) => state.sideBar.sideBarData);
+  // const { permittedBranches } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { permittedBranches, fetchPermittedBranchesLoading } = useSelector((state) => state.auth);
+  
 
  useEffect(() => {
     if (!sideBarData || !sideBarData.name) {
       fetchSideBarData();
     }
   }, []);
+
+  useEffect(() => {
+    const loggedUserJSON = localStorage.getItem("loggedWyreUser");
+    if (loggedUserJSON && permittedBranches === false && !fetchPermittedBranchesLoading) {
+      dispatch(getPermittedBranches());
+    }
+  }, [dispatch, permittedBranches, fetchPermittedBranchesLoading]);
 
   const organizationComponent =
     sideBarData?.name ? <SidebarOrganization orgData={sideBarData} /> : null
@@ -80,51 +92,54 @@ function Sidebar({ fetchSideBar: fetchSideBarData }) {
       )}
 
       {/* Switch Branch Button */}
-      <div style={{ marginTop: "auto", padding: "12px 16px" }}>
-        <Button
-          type="primary"
-          size="large"
-          onClick={() => setPanelOpen((v) => !v)}
-          style={{
-            width: "142%",
-            right:42,
-            height: 44,
-            borderRadius: 10,
-            background: "#8686864D",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "none",
-            border: "none"
-          }}
-        >
-          <span
+      {Array.isArray(permittedBranches?.branches) && permittedBranches.branches.length > 1 && (
+
+        <div style={{ marginTop: "auto", padding: "12px 16px" }}>
+          <Button
+            type="primary"
+            size="large"
+            onClick={() => setPanelOpen((v) => !v)}
             style={{
-              display: "inline-flex",
+              width: "142%",
+              right: 42,
+              height: 44,
+              borderRadius: 10,
+              background: "#8686864D",
+              display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              height: 20,
-              width: 20,
-              borderRadius: 9999,
-              // border: "2px solid #f5f5f5",
-              color: "#f5f5f5",
-              marginRight: 8,
+              boxShadow: "none",
+              border: "none"
             }}
           >
-            {/* <SwapOutlined /> */}
-            <CircleSwitchIcon />
-          </span>
-          <span
-            style={{
-              fontSize: 16,
-              fontWeight: 400,
-              color: "#f5f5f5",
-            }}
-          >
-            Switch Branch
-          </span>
-        </Button>
-      </div>
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: 20,
+                width: 20,
+                borderRadius: 9999,
+                // border: "2px solid #f5f5f5",
+                color: "#f5f5f5",
+                marginRight: 8,
+              }}
+            >
+              {/* <SwapOutlined /> */}
+              <CircleSwitchIcon />
+            </span>
+            <span
+              style={{
+                fontSize: 16,
+                fontWeight: 400,
+                color: "#f5f5f5",
+              }}
+            >
+              Switch Branch
+            </span>
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

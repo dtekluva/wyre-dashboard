@@ -13,6 +13,7 @@ import Loader from '../components/Loader';
 import { DateField, DateRangeField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
 import { InputField, SubmitButton, FlowMeterUpload } from '../components/FormFields/CostTrackerFields';
 import EnvData from '../config/EnvData';
+import UnAuthorizeResponse from './UnAuthorizeResponse';
 
 
 const breadCrumbRoutes = [
@@ -49,10 +50,12 @@ function AddBills({ match }) {
   const [postPaidLoading, setPostPaidLoading] = React.useState(false);
   const [EOMFlowReadingLoading, setEOMFlowReadingLoading] = React.useState(false);
 
-  const { setCurrentUrl, token, userId } = useContext(
+  const { setCurrentUrl, token, userId, userData } = useContext(
     CompleteDataContext
   );
-const sideBarData = useSelector((state) => state.sideBar.sideBarData);
+
+  const sideBarData = useSelector((state) => state.sideBar.sideBarData);
+  const isOperator = userData.role_text === "OPERATOR";
 
   const data = {
     quantity: {
@@ -318,230 +321,231 @@ const sideBarData = useSelector((state) => state.sideBar.sideBarData);
 
   return (
     <>
-      <div className="breadcrumb-and-print-buttons">
-        <BreadCrumb routesArray={breadCrumbRoutes} />
-      </div>
+      {isOperator ?
+        <>
+          <div className="breadcrumb-and-print-buttons">
+            <BreadCrumb routesArray={breadCrumbRoutes} />
+          </div>
+          <div className="cost-tracker-forms-content-wrapper">
 
-      <div className="cost-tracker-forms-content-wrapper">
+            <h1 className="center-main-heading">Add Bills</h1>
 
-          <h1 className="center-main-heading">Add Bills</h1>
+            <section className="cost-tracker-form-section add-bills-section">
+              <Spin spinning={purchaseLoading}>
+                <h2 className="form-section-heading add-bills-section__heading">
+                  Diesel Purchase Tracker
+                </h2>
+                <Form
+                  form={dieslePurchaseForm}
+                  name="diesel-purchase"
+                  className="cost-tracker-form"
+                  initialValues={{
+                    fuelType: 'diesel',
+                  }}
+                  onFinish={onPurchaseTrackerSubmit}
+                >
+                  <div className="cost-tracker-form-inputs-wrapper">
+                    <div className="cost-tracker-input-container">
+                      <NumberField
+                        data={
+                          data.quantity
+                        }
+                      />
+                    </div>
+                    <div className="cost-tracker-input-container">
+                      <NumberField
+                        data={
+                          data.pricePerLitter
+                        }
+                      />
+                    </div>
+                    <div className="cost-tracker-input-container">
+                      <DateField data={data.purchaseDate} />
+                    </div>
+                    <div className="cost-tracker-input-container">
+                      <SelectField
+                        data={data.fuelType}
+                      />
+                    </div>
+                  </div>
+                  <SubmitButton />
+                </Form>
+              </Spin>
+            </section>
 
-          <section className="cost-tracker-form-section add-bills-section">
-          <Spin spinning={purchaseLoading}>
-            <h2 className="form-section-heading add-bills-section__heading">
-              Diesel Purchase Tracker
-            </h2>
-            <Form
-              form={dieslePurchaseForm}
-              name="diesel-purchase"
-              className="cost-tracker-form"
-              initialValues={{
-                fuelType: 'diesel',
-              }}
-              onFinish={onPurchaseTrackerSubmit}
-            >
-              <div className="cost-tracker-form-inputs-wrapper">
-                <div className="cost-tracker-input-container">
-                  <NumberField
-                    data={
-                      data.quantity
-                    }
-                  />
-                </div>
-                <div className="cost-tracker-input-container">
-                  <NumberField
-                    data={
-                      data.pricePerLitter
-                    }
-                  />
-                </div>
-                <div className="cost-tracker-input-container">
-                  <DateField data={data.purchaseDate} />
-                </div>
-                <div className="cost-tracker-input-container">
-                  <SelectField
-                    data={data.fuelType}
-                  />
-                </div>
-              </div>
-              <SubmitButton />
-            </Form>
-            </Spin>
-          </section>
+            <section className="cost-tracker-form-section">
+              <Spin spinning={prePaidLoading}>
+                <h2 className="form-section-heading">
+                  Utility Payment Tracker (Pre-paid)
+                </h2>
 
-          <section className="cost-tracker-form-section">
-          <Spin spinning={prePaidLoading}>
-            <h2 className="form-section-heading">
-              Utility Payment Tracker (Pre-paid)
-            </h2>
+                <Form
+                  form={prePaidForm}
+                  name="diesel-purchase"
+                  className="cost-tracker-form"
+                  onFinish={onUtilityPaymentTrackerPreSubmit}
+                >
+                  <div className="cost-tracker-form-inputs-wrapper">
+                    <div className="cost-tracker-input-container">
+                      <NumberField
+                        data={
+                          {
+                            ...data.amount,
+                            onDataChange: onAmountOrValueChange
+                          }
+                        }
+                      />
+                    </div>
 
-            <Form
-              form={prePaidForm}
-              name="diesel-purchase"
-              className="cost-tracker-form"
-              onFinish={onUtilityPaymentTrackerPreSubmit}
-            >
-              <div className="cost-tracker-form-inputs-wrapper">
-                <div className="cost-tracker-input-container">
-                  <NumberField
-                    data={
-                      {
-                        ...data.amount,
-                        onDataChange: onAmountOrValueChange
-                      }
-                    }
-                  />
-                </div>
+                    <div className="cost-tracker-input-container">
+                      <DateField data={data.utitliyPurchaseDate} />
+                    </div>
 
-                <div className="cost-tracker-input-container">
-                  <DateField data={data.utitliyPurchaseDate} />
-                </div>
+                    <div className="cost-tracker-input-container">
+                      <NumberField
+                        data={
+                          data.tariff
+                        }
+                        disabled={true}
+                        required={false}
+                      />
+                    </div>
 
-                <div className="cost-tracker-input-container">
-                  <NumberField
-                    data={
-                      data.tariff
-                    }
-                    disabled={true}
-                    required={false}
-                  />
-                </div>
+                    <div className="cost-tracker-input-container">
+                      <NumberField
+                        data={
+                          {
+                            ...data.value,
+                            onDataChange: onAmountOrValueChange
+                          }
+                        }
+                      />
+                    </div>
+                  </div>
 
-                <div className="cost-tracker-input-container">
-                  <NumberField
-                    data={
-                      {
-                        ...data.value,
-                        onDataChange: onAmountOrValueChange
-                      }
-                    }
-                  />
-                </div>
-              </div>
+                  <SubmitButton />
+                </Form>
+              </Spin>
+            </section>
 
-              <SubmitButton />
-            </Form>
-            </Spin>
-          </section>
+            <section className="cost-tracker-form-section">
+              <Spin spinning={ippPurchaseLoading}>
+                <h2 className="form-section-heading">
+                  IPP Payment Tracker
+                </h2>
 
-          <section className="cost-tracker-form-section">
-          <Spin spinning={ippPurchaseLoading}>
-            <h2 className="form-section-heading">
-              IPP Payment Tracker
-            </h2>
+                <Form
+                  form={ippPurchaseForm}
+                  name="diesel-purchase"
+                  className="cost-tracker-form"
+                  onFinish={onIppPaymentTrackerSubmit}
+                >
+                  <div className="cost-tracker-form-inputs-wrapper">
+                    <div className="cost-tracker-input-container">
+                      <NumberField
+                        data={
+                          {
+                            ...data.amount,
+                            onDataChange: onIppAmountOrValueChange
+                          }
+                        }
+                      />
+                    </div>
 
-            <Form
-              form={ippPurchaseForm}
-              name="diesel-purchase"
-              className="cost-tracker-form"
-              onFinish={onIppPaymentTrackerSubmit}
-            >
-              <div className="cost-tracker-form-inputs-wrapper">
-                <div className="cost-tracker-input-container">
-                  <NumberField
-                    data={
-                      {
-                        ...data.amount,
-                        onDataChange: onIppAmountOrValueChange
-                      }
-                    }
-                  />
-                </div>
+                    <div className="cost-tracker-input-container">
+                      <DateField data={data.ippPurchaseDate} />
+                    </div>
 
-                <div className="cost-tracker-input-container">
-                  <DateField data={data.ippPurchaseDate} />
-                </div>
+                    <div className="cost-tracker-input-container">
+                      <NumberField
+                        data={
+                          data.tariff
+                        }
+                        disabled={true}
+                        required={false}
+                      />
+                    </div>
 
-                <div className="cost-tracker-input-container">
-                  <NumberField
-                    data={
-                      data.tariff
-                    }
-                    disabled={true}
-                    required={false}
-                  />
-                </div>
+                    <div className="cost-tracker-input-container">
+                      <NumberField
+                        data={
+                          {
+                            ...data.value,
+                            onDataChange: onIppAmountOrValueChange
+                          }
+                        }
+                      />
+                    </div>
+                  </div>
 
-                <div className="cost-tracker-input-container">
-                  <NumberField
-                    data={
-                      {
-                        ...data.value,
-                        onDataChange: onIppAmountOrValueChange
-                      }
-                    }
-                  />
-                </div>
-              </div>
+                  <SubmitButton />
+                </Form>
+              </Spin>
+            </section>
 
-              <SubmitButton />
-            </Form>
-            </Spin>
-          </section>
+            <section className="cost-tracker-form-section">
+              <Spin spinning={postPaidLoading}>
+                <h2 className="form-section-heading">
+                  Utility Payment Tracker (Post-paid)
+                </h2>
 
-          <section className="cost-tracker-form-section">
-          <Spin spinning={postPaidLoading}>
-            <h2 className="form-section-heading">
-              Utility Payment Tracker (Post-paid)
-            </h2>
+                <Form
+                  form={postPaidForm}
+                  name="diesel-purchase"
+                  className="cost-tracker-form"
+                  onFinish={onUtilityPaymentTrackerPostSubmit}
+                >
+                  <div className="cost-tracker-form-inputs-wrapper">
 
-            <Form
-              form={postPaidForm}
-              name="diesel-purchase"
-              className="cost-tracker-form"
-              onFinish={onUtilityPaymentTrackerPostSubmit}
-            >
-              <div className="cost-tracker-form-inputs-wrapper">
+                    <div className="cost-tracker-input-container">
+                      <NumberField
+                        data={
+                          {
+                            ...data.amount,
+                            onDataChange: onPostpaidAmountOrValueChange
+                          }
+                        }
+                      />
+                    </div>
 
-                <div className="cost-tracker-input-container">
-                  <NumberField
-                    data={
-                      {
-                        ...data.amount,
-                        onDataChange: onPostpaidAmountOrValueChange
-                      }
-                    }
-                  />
-                </div>
+                    <div className="cost-tracker-input-container">
+                      <DateRangeField data={data.periodCovered} />
+                    </div>
 
-                <div className="cost-tracker-input-container">
-                  <DateRangeField data={data.periodCovered} />
-                </div>
+                    <div className="cost-tracker-input-container">
+                      <NumberField
+                        data={
+                          data.tariff
+                        }
+                        required={false}
+                        disabled={true}
+                      />
+                    </div>
 
-                <div className="cost-tracker-input-container">
-                  <NumberField
-                    data={
-                      data.tariff
-                    }
-                    required={false}
-                    disabled={true}
-                  />
-                </div>
+                    <div className="cost-tracker-input-container">
+                      <NumberField
+                        data=
+                        {
+                          {
+                            ...data.value,
+                            onDataChange: onPostpaidAmountOrValueChange
+                          }
+                        }
+                      />
+                    </div>
+                  </div>
 
-                <div className="cost-tracker-input-container">
-                  <NumberField
-                    data=
-                    {
-                      {
-                        ...data.value,
-                        onDataChange: onPostpaidAmountOrValueChange
-                      }
-                    }
-                  />
-                </div>
-              </div>
+                  <button
+                    type="submit"
+                    className="generic-submit-button cost-tracker-form-submit-button"
+                  >
+                    Submit
+                  </button>
+                </Form>
+              </Spin>
+            </section>
 
-              <button
-                type="submit"
-                className="generic-submit-button cost-tracker-form-submit-button"
-              >
-                Submit
-              </button>
-            </Form>
-            </Spin>
-          </section>
-
-          {/* <section className="cost-tracker-form-section add-bills-section">
+            {/* <section className="cost-tracker-form-section add-bills-section">
           <Spin spinning={EOMFlowReadingLoading}>
             <h2 className="form-section-heading add-bills-section__heading">
               End of Month Diesel flow meter reading
@@ -577,7 +581,11 @@ const sideBarData = useSelector((state) => state.sideBar.sideBarData);
             </Spin>
           </section> */}
 
-      </div>
+          </div>
+        </>
+        :
+        <UnAuthorizeResponse />
+      }
     </>
   );
 }

@@ -11,6 +11,7 @@ import Loader from '../components/Loader';
 import { addFuelConsumptionData, addMonthlyFuelConsumptionData, getBranchGeneratorsData } from '../redux/actions/constTracker/costTracker.action';
 import { DateField, NumberField, SelectField, SelectGenerator } from '../components/FormFields/GeneralFormFields';
 import { Option } from 'antd/lib/mentions';
+import UnAuthorizeResponse from './UnAuthorizeResponse';
 
 
 const { RangePicker } = DatePicker
@@ -48,9 +49,11 @@ function AddDieselEntry({ match, costTracker, addFuelConsumptionData: addFuelCon
   const [monthlyForm] = Form.useForm();
   const [holdBranchGenerators, setHoldBranchGenerators] = useState([]);
 
-  const { setCurrentUrl, userId } = useContext(
+  const { setCurrentUrl, userId, userData } = useContext(
     CompleteDataContext
   );
+
+  const isOperator = userData.role_text === "OPERATOR";
 
   const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   let defaultBranch;
@@ -163,142 +166,142 @@ function AddDieselEntry({ match, costTracker, addFuelConsumptionData: addFuelCon
 
   return (
     <>
-      <div className="breadcrumb-and-print-buttons">
-        <BreadCrumb routesArray={breadCrumbRoutes} />
-      </div>
+      {isOperator ?
+        <>
+          <div className="breadcrumb-and-print-buttons">
+            <BreadCrumb routesArray={breadCrumbRoutes} />
+          </div>
+          <div className="cost-tracker-forms-content-wrapper">
 
-      <div className="cost-tracker-forms-content-wrapper">
+            <h1 className="center-main-heading">Add Diesel Entry</h1>
 
-        <h1 className="center-main-heading">Add Diesel Entry</h1>
+            <section className="cost-tracker-form-section add-bills-section">
+              <Spin spinning={false}>
+                <h2 className="form-section-heading add-bills-section__heading">
+                  Daily Diesel Entry
+                </h2>
 
-        <section className="cost-tracker-form-section add-bills-section">
-          <Spin spinning={false}>
-            <h2 className="form-section-heading add-bills-section__heading">
-              Daily Diesel Entry
-            </h2>
+                <Form
+                  form={dailyForm}
+                  name="diesel-purchase"
+                  initialValues={{
+                    fuelType: 'diesel',
+                  }}
+                  className="cost-tracker-form"
+                  onFinish={onDailyDieselEntrySubmit}
+                >
+                  <div className="cost-tracker-form-inputs-wrapper">
+                    <div className="cost-tracker-input-container">
+                      <Form.Item>
+                        <DateField data={data.purchaseDate} />
+                      </Form.Item>
+                    </div>
+                    <div className="cost-tracker-input-container">
+                      <Form.Item>
+                        <NumberField
+                          data={
+                            data.quantity
+                          }
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className="cost-tracker-input-container">
+                      <Form.Item>
+                        <SelectField
+                          data={data.fuelType}
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className="cost-tracker-input-container">
+                      <Form.Item
+                        name="generator_ids"
+                        label="Generator"
+                        labelCol={{ span: 24 }}
+                        hasFeedback
+                        validateTrigger={['onChange', 'onBlur']}
+                      // rules={[
+                      //   ...(require ? [{ required: true, message: 'Please select generator' }] : []),
+                      // ]}
+                      >
+                        <Select placeholder="Select Generator">
+                          {generatorList.map((gen) => (
+                            <Option key={gen.device_id} value={gen.device_id}>
+                              {gen.name}
+                            </Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <button className="generic-submit-button cost-tracker-form-submit-button">
+                    Submit
+                  </button>
+                </Form>
+              </Spin>
+            </section>
+          </div>
+          <div className="cost-tracker-forms-content-wrapper">
 
-            <Form
-              form={dailyForm}
-              name="diesel-purchase"
-              initialValues={{
-                fuelType: 'diesel',
-              }}
-              className="cost-tracker-form"
-              onFinish={onDailyDieselEntrySubmit}
-            >
-              <div className="cost-tracker-form-inputs-wrapper">
-                <div className="cost-tracker-input-container">
-                  <Form.Item>
-                    <DateField data={data.purchaseDate} />
-                  </Form.Item>
-                </div>
-                <div className="cost-tracker-input-container">
-                  <Form.Item>
-                    <NumberField
-                      data={
-                        data.quantity
-                      }
-                    />
-                  </Form.Item>
-                </div>
-                <div className="cost-tracker-input-container">
-                  <Form.Item>
-                    <SelectField
-                      data={data.fuelType}
-                    />
-                  </Form.Item>
-                </div>
-                <div className="cost-tracker-input-container">
-                  <Form.Item
-                    name="generator_ids"
-                    label="Generator"
-                    labelCol={{ span: 24 }}
-                    hasFeedback
-                    validateTrigger={['onChange', 'onBlur']}
-                    // rules={[
-                    //   ...(require ? [{ required: true, message: 'Please select generator' }] : []),
-                    // ]}
-                  >
-                    <Select placeholder="Select Generator">
-                      {generatorList.map((gen) => (
-                        <Option key={gen.device_id} value={gen.device_id}>
-                          {gen.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </div> 
-              </div>
-              <button className="generic-submit-button cost-tracker-form-submit-button">
-                Submit
-              </button>
-            </Form>
-          </Spin>
-        </section>
-      </div>
+            <h1 className="center-main-heading">Add Monthly Diesel Entry</h1>
 
-      <div className="cost-tracker-forms-content-wrapper">
+            <section className="cost-tracker-form-section add-bills-section">
+              <Spin spinning={false}>
+                <h2 className="form-section-heading add-bills-section__heading">
+                  Monthly Diesel Entry
+                </h2>
 
-        <h1 className="center-main-heading">Add Monthly Diesel Entry</h1>
+                <Form
+                  form={monthlyForm}
+                  name="diesel-purchase"
+                  initialValues={{
+                    fuelType: 'diesel',
+                  }}
+                  className="cost-tracker-form"
+                  onFinish={onMonthDiesEntrySubmit}
+                >
+                  <div className="cost-tracker-form-inputs-wrapper">
 
-        <section className="cost-tracker-form-section add-bills-section">
-          <Spin spinning={false}>
-            <h2 className="form-section-heading add-bills-section__heading">
-              Monthly Diesel Entry
-            </h2>
-
-            <Form
-              form={monthlyForm}
-              name="diesel-purchase"
-              initialValues={{
-                fuelType: 'diesel',
-              }}
-              className="cost-tracker-form"
-              onFinish={onMonthDiesEntrySubmit}
-            >
-              <div className="cost-tracker-form-inputs-wrapper">
-
-                <div className="cost-tracker-input-container">
-                  {/* <Form.Item>
+                    <div className="cost-tracker-input-container">
+                      {/* <Form.Item>
                     <DateFieldSecond data={data.purchaseDate} />
                   </Form.Item> */}
-                  <Form.Item
-                    label={'Date'}
-                    name={'date'}
-                    labelCol={{ span: 24 }}
-                    hasFeedback
-                    validateTrigger={['onChange', 'onBlur']}
-                    rules={[
-                      { required: true, message: 'Please select date' } 
-                    ]}
-                  >
-                    <RangePicker
-                      placeholder={data.placeholder}
-                      size= 'large'
-                      style={{
-                          height: "auto",
-                          width: "100%",
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-                <div className="cost-tracker-input-container">
-                  <Form.Item>
-                    <NumberField
-                      data={
-                        data.quantity
-                      }
-                    />
-                  </Form.Item>
-                </div>
-                <div className="cost-tracker-input-container">
-                  <Form.Item>
-                    <SelectField
-                      data={data.fuelType}
-                    />
-                  </Form.Item>
-                </div>
-                {/* <div className="cost-tracker-input-container">
+                      <Form.Item
+                        label={'Date'}
+                        name={'date'}
+                        labelCol={{ span: 24 }}
+                        hasFeedback
+                        validateTrigger={['onChange', 'onBlur']}
+                        rules={[
+                          { required: true, message: 'Please select date' }
+                        ]}
+                      >
+                        <RangePicker
+                          placeholder={data.placeholder}
+                          size='large'
+                          style={{
+                            height: "auto",
+                            width: "100%",
+                          }}
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className="cost-tracker-input-container">
+                      <Form.Item>
+                        <NumberField
+                          data={
+                            data.quantity
+                          }
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className="cost-tracker-input-container">
+                      <Form.Item>
+                        <SelectField
+                          data={data.fuelType}
+                        />
+                      </Form.Item>
+                    </div>
+                    {/* <div className="cost-tracker-input-container">
                   <Form.Item>
                     <SelectGenerator
                       data={data.genType}
@@ -306,14 +309,18 @@ function AddDieselEntry({ match, costTracker, addFuelConsumptionData: addFuelCon
                   </Form.Item>
                 </div> */}
 
-              </div>
-              <button className="generic-submit-button cost-tracker-form-submit-button">
-                Submit
-              </button>
-            </Form>
-          </Spin>
-        </section>
-      </div>
+                  </div>
+                  <button className="generic-submit-button cost-tracker-form-submit-button">
+                    Submit
+                  </button>
+                </Form>
+              </Spin>
+            </section>
+          </div>
+        </>
+        :
+        <UnAuthorizeResponse />
+      }
     </>
   );
 }

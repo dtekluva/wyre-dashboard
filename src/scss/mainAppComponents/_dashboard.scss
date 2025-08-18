@@ -110,7 +110,7 @@
 /* Branch search bar styles starts */
 .unified-search-bar .ant-input {
   background: transparent !important;
-  color: white !important;
+  color: black !important;
 }
 
 .unified-search-bar .ant-input::placeholder {
@@ -133,6 +133,9 @@
 .unified-search-bar:focus-within {
   border-color: #7C3AED !important;
   box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3) !important;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 /* Branch search bar styles ends */
 

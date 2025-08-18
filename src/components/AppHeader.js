@@ -47,6 +47,7 @@ function Header() {
   const isReportPageOpen = currentUrl.includes('report');
 
   const { image: avatarImage, name: organisationName } = organization;
+  const isOperator = userData.role_text === "OPERATOR";
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -264,7 +265,10 @@ function Header() {
               linkText="Report"
             /> */}
             {renderComp()}
-            <HeaderLink onClick={toggleNav} url="/alerts-and-alarms" linkText="Alerts and Alarms" />
+            {isOperator ?
+              <HeaderLink onClick={toggleNav} url="/alerts-and-alarms" linkText="Alerts and Alarms" />
+              : ''
+            }
             {/* {!doesUserHaveAccess && ( */}
             {/* {organization && !SCORE_CARD_EXCLUDE_CLIENTS.includes(organization.name)
               &&
