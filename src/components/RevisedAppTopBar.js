@@ -20,8 +20,9 @@ function RevisedAppTopBar() {
     currentUrl,
     setPowerQualityUnit,
     setParametersDataTimeInterval,
+    userdata
   } = useContext(CompleteDataContext);
-
+  
   const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   const pagesWithDateTimePickers = [
     'dashboard',

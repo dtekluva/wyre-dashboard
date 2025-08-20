@@ -196,7 +196,6 @@ function Dashboard({
       <div className="breadcrumb-and-print-buttons">
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
-
       <section id="page" ref={pageRef}>
         <div className="dashboard-row-1">
           <TotalEnergyCard
