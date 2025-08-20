@@ -56,14 +56,12 @@ export const getPermittedBranches = () => async (dispatch) => {
         token = userToken.access;
       }
     } catch (parseError) {
-      console.error('Error parsing user token:', parseError);
       dispatch(getPermittedBranchesLoading(false));
       return;
     }
   }
 
   if (!token) {
-    console.error('No authentication token found');
     dispatch(getPermittedBranchesLoading(false));
     return;
   }
@@ -81,7 +79,6 @@ export const getPermittedBranches = () => async (dispatch) => {
     dispatch(getPermittedBranchesSuccess(response.data));
     dispatch(getPermittedBranchesLoading(false));
   } catch (error) {
-    console.error('Error fetching permitted branches:', error);
     dispatch(getPermittedBranchesLoading(false));
   }
 };
@@ -90,7 +87,6 @@ export const switchBranch = (branchId) => async (dispatch) => {
   dispatch(switchBranchLoading());
 
   if (!branchId) {
-    console.error('Branch ID is required');
     dispatch(switchBranchLoading(false));
     return;
   }
@@ -105,14 +101,12 @@ export const switchBranch = (branchId) => async (dispatch) => {
         token = userToken.access;
       }
     } catch (parseError) {
-      console.error('Error parsing user token:', parseError);
       dispatch(switchBranchLoading(false));
       return;
     }
   }
 
   if (!token) {
-    console.error('No authentication token found');
     dispatch(switchBranchLoading(false));
     return;
   }
@@ -130,7 +124,6 @@ export const switchBranch = (branchId) => async (dispatch) => {
     dispatch(switchBranchSuccess(response.data));
     dispatch(switchBranchLoading(false));
   } catch (error) {
-    console.error('Error switching branch:', error);
     dispatch(switchBranchLoading(false));
   }
 };
