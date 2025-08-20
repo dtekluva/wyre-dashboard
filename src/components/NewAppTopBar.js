@@ -498,13 +498,6 @@ function NewAppTopBar() {
             inputReadOnly={true}
           />
         </Space>
-
-        {/* <BranchSwitcher 
-          onBranchChange={(branchData) => {
-            // Handle branch switch if needed
-            console.log('Branch switched:', branchData);
-          }}
-        /> */}
       </div>
 
       {
