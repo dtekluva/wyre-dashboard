@@ -77,7 +77,7 @@ function Dashboard({
   const [totalDailyConsumptionBranchData, setDailyConsumptionBranchData] =
     useState(null);
   const [demandData, setDemandData] = useState({});
-  const [blendedCostData, setBlendedCostData] = useState({});
+  const [blendedCostData, setBlendedCostData] = useState(0);
   const [pageLoaded, setPageLoaded] = useState(false);
 
   const pDemand = dashboard?.demandData;

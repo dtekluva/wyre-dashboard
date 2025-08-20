@@ -146,8 +146,7 @@ function AddDieselEntry({ match, costTracker, addFuelConsumptionData: addFuelCon
         openNotificationWithIcon('success', 'monthly diesel entry');
         return monthlyForm.resetFields();
       }
-
-      errorNotificationWithIcon('error', 'monthly diesel entry')
+      errorNotificationWithIcon('error', request.message.error)
       return monthlyForm.resetFields();
     }
     else {
