@@ -37,7 +37,6 @@ import CarbonEmmission from "../components/cards/CarbonEmmission";
 import YesterDayAndTodayCard from "../components/cards/YesterdayAndToday";
 import PowerUsageCard from "../components/cards/PowerUsageCard";
 import DailyConsumption from "../components/cards/DailyConsumption";
-import BranchInfo from "../components/BranchInfo";
 
 const breadCrumbRoutes = [
   { url: "/", name: "Home", id: 1 },
@@ -190,10 +189,6 @@ function Dashboard({
       <div className="breadcrumb-and-print-buttons">
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
-
-      {/* Branch Information Demo */}
-      {/* <BranchInfo /> */}
-
       <section id="page" ref={pageRef}>
         <div className="dashboard-row-1">
           <TotalEnergyCard
