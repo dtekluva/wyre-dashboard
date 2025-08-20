@@ -150,6 +150,7 @@ function CostTracker({
         setDieselEntryData={setDieselEntryData}
         dieselEntryData={dieselEntryData}
         userId={userData.user_id}
+        role={userData.role_text}
         fetchFuelConsumptionInfo={fetchFuelConsumptionInfo}
       />
     </article>
@@ -228,6 +229,7 @@ function CostTracker({
           key={index}
           isLoading={costTracker.fetchCostTrackerLoading}
           data={e[1].diesel}
+          role={userData.role_text}
           userId={userData.user_id}
           setEditDieselPurchaseModal={setEditDieselPurchaseModal}
           setDieselPurchaseData={setDieselPurchaseData}
@@ -272,6 +274,7 @@ function CostTracker({
           isLoading={costTracker.fetchCostTrackerLoading}
           data={e[1].utility}
           userId={userData.user_id}
+          role={userData.role_text}
           setEditUtilityPurchaseModal={setEditUtilityPurchaseModal}
           setUtilityPurchaseData={setUtilityPurchaseData}
         />

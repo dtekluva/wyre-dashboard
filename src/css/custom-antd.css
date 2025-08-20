@@ -674,6 +674,23 @@ html {
   --antd-wave-shadow-color: #6c00fa;
   --scroll-bar: 0;
 }
+
+/* Custom styles for rounded Select component */
+.rounded-select .ant-select-selector {
+  border-radius: 8px !important;
+}
+
+.rounded-select .ant-select-selection-search-input {
+  border-radius: 8px !important;
+}
+
+.rounded-select.ant-select-focused .ant-select-selector {
+  border-radius: 8px !important;
+}
+
+.rounded-select.ant-select-open .ant-select-selector {
+  border-radius: 8px !important;
+}
 [ant-click-animating-without-extra-node='true']::after,
 .ant-click-animating-node {
   position: absolute;

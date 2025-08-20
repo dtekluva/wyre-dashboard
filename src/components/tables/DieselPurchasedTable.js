@@ -20,7 +20,7 @@ const openNotificationWithIcon = (type, formName) => {
 
 const { Text } = Typography;
 
-const DieselPurchasedTable = ({ data, userId, isLoading, setEditDieselPurchaseModal, setDieselPurchaseData, deleteFuelPurchaseData:deleteDieselPayment }) => {
+const DieselPurchasedTable = ({ data, userId, role, isLoading, setEditDieselPurchaseModal, setDieselPurchaseData, deleteFuelPurchaseData:deleteDieselPayment }) => {
   const {isMediumScreen} = useContext(CompleteDataContext);
 
   const getTariff = data?.map(element => {
@@ -32,6 +32,8 @@ const DieselPurchasedTable = ({ data, userId, isLoading, setEditDieselPurchaseMo
     return newData
   });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
   
+  const isOperator = role === "OPERATOR";
+
   const handleDelete = async (id) => {
     const parameter = {
       id
@@ -121,7 +123,7 @@ const DieselPurchasedTable = ({ data, userId, isLoading, setEditDieselPurchaseMo
         return value? numberFormatter(value.toFixed(2)) : 0;
       }
     },
-    optionsColumn()
+    ...(isOperator ? [optionsColumn()] : [])
   ];
 
   let quantitySum = 0;
