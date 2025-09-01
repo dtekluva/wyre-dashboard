@@ -5,7 +5,6 @@ import MainAppPages from "./pageSwitchers/MainAppPages";
 import AuthPages from "./pageSwitchers/AuthPages";
 import AdminPages from "./pageSwitchers/AdminPages";
 import { useSelector } from "react-redux";
-import AiChat from "./components/AiChat";
 
 function App() {
   const { userData, isUserAdmin, isAuthenticatedDataLoading } =
@@ -17,7 +16,6 @@ function App() {
       {isUserAdmin ? (
         <>
           <AdminPages />
-          <AiChat />
         </>
       ) : userData ? (
         <>
@@ -25,7 +23,6 @@ function App() {
             isLoading={isAuthenticatedDataLoading}
             uiSettings={uiSettings}
           />
-          <AiChat />
         </>
       ) : (
         <AuthPages />

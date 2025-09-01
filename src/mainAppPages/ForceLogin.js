@@ -8,7 +8,6 @@ function ForceLogin() {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    // Build user object from query params
     const user = {};
     for (const [key, value] of params.entries()) {
       user[key] = value;
