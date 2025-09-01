@@ -12,21 +12,20 @@ const DashboardDoughnutChart = ({ data, uiSettings, sideBarData }) => {
   }
 
   const isLessThan481 = useMediaQuery({ query: '(max-width: 481px)' });
-  if (data && sideBarData){
-     data.devices.forEach((deviceData, index) => {
+  if (data && sideBarData) {
+    data.devices.forEach((deviceData, index) => {
       const findName = sideBarData.branches[0].devices.find((side) => deviceData.name.endsWith(side.name) && side.is_source);
-      if(findName){
+      if (findName) {
         newData.devices.push(deviceData.name)
         newData.hours.push(deviceData.usage_hours)
       }
-     })
+    })
   }
 
 
   const { devices, hours } = newData
     ? newData
     : { devices: ['Empty'], hours: ['Empty'] };
-
   const plottedData = {
     labels: devices,
     datasets: [

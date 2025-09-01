@@ -5,18 +5,25 @@ import scoreCardType from './scorecard.types';
 const INITIAL_STATE = {
    fetchScoreCardLoading: false,
    scoreCardData: false,
+
    fetchScoreCardUiLoading: false,
    scoreCardDataUi: false,
+
    fetchBaselineEnergyLoading: false,
    baselineEnergyData: false,
+
    fetchPAPRLoading: false,
    paprData: false,
+
    fetchScorecardCarbonEmissionLoading: false,
    scorecardCarbonEmissionData: false,
+
    fetchGeneratorSizeEfficiencyLoading: false,
    generatorSizeEfficiencyData: false,
+
    fetchGeneratorFuelEfficiencyLoading: false,
    generatorFuelEfficiencyData: false,
+   
    fetchOperatingtimeDeviationLoading: false,
    operatingTimeDeviationData: false,
 };

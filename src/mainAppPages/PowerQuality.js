@@ -50,10 +50,11 @@ function PowerQuality({ match, fetchPowerQualityData }) {
     }
     setPageLoaded(true);
   }, [userDateRange]);
+  
   useEffect(() => {
     if (pageLoaded && parametersData.fetchedPowerQuality) {
       let openDevicesArrayData
-      const devicesArrayData = devicesArray(parametersData.fetchedPowerQuality.branches, checkedBranchId, checkedDevicesId);
+      const devicesArrayData = devicesArray(parametersData.fetchedPowerQuality.authenticatedData, checkedBranchId, checkedDevicesId);
       openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
       setPowerQualityData(openDevicesArrayData)
     }

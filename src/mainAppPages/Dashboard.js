@@ -63,8 +63,12 @@ function Dashboard({
     userDateRange,
     uiSettings,
   } = useContext(CompleteDataContext);
-
+  
+  
   const dashBoardInfo = useSelector((state) => state.dashboard);
+  const branchId =
+    sideDetails?.sideBarData?.branches &&
+    sideDetails?.sideBarData?.branches[0]?.branch_id;
 
   const { setCurrentUrl, userData } = useContext(CompleteDataContext);
   const [totalEnergyBranchData, setTotalEnergyBranchData] = useState(null);
@@ -73,6 +77,7 @@ function Dashboard({
   const [totalDailyConsumptionBranchData, setDailyConsumptionBranchData] =
     useState(null);
   const [demandData, setDemandData] = useState({});
+  const [blendedCostData, setBlendedCostData] = useState(0);
   const [pageLoaded, setPageLoaded] = useState(false);
 
   const pDemand = dashboard?.demandData;
@@ -95,14 +100,7 @@ function Dashboard({
       const end_date = moment().startOf("month").format("YYYY-MM-DD");
       fetchAllPowerFactor(allDevices, { start_date, end_date });
     }
-
-    const branchId =
-      sideDetails?.sideBarData?.branches &&
-      sideDetails?.sideBarData?.branches[0]?.branch_id;
-
-    if (sideDetails.sideBarData && sideDetails.sideBarData.branches) {
-      fetchBlendedost(branchId, userDateRange);
-    }
+      fetchBlendedost(userDateRange);
   }, [sideDetails.sideBarData, userDateRange]);
 
   useEffect(() => {
@@ -132,9 +130,15 @@ function Dashboard({
   }, [dashboard.demandData]);
 
   useEffect(() => {
+    if (dashBoardInfo.blendedCostEnergyData) {
+      setBlendedCostData(dashBoardInfo.blendedCostEnergyData);
+    }
+  }, [dashBoardInfo.blendedCostEnergyData]);
+
+  useEffect(() => {
     if (pageLoaded && dashboard.dashBoardCard_1_Data) {
       const devicesArrayData = devicesArray(
-        dashboard.dashBoardCard_1_Data.branches,
+        dashboard.dashBoardCard_1_Data?.branches?.[0],
         checkedBranchId,
         checkedDevicesId
       );
@@ -150,7 +154,7 @@ function Dashboard({
   useEffect(() => {
     if (pageLoaded && dashboard.dashBoardCard_2_Data) {
       const devicesArrayData = devicesArray(
-        dashboard.dashBoardCard_2_Data.branches,
+        dashboard.dashBoardCard_2_Data?.branches?.[0],
         checkedBranchId,
         checkedDevicesId
       );
@@ -167,7 +171,7 @@ function Dashboard({
   useEffect(() => {
     if (pageLoaded && dashboard.dashBoardCard_3_Data) {
       const devicesArrayData = devicesArray(
-        dashboard.dashBoardCard_3_Data.branches,
+        dashboard.dashBoardCard_3_Data?.branches?.[0],
         checkedBranchId,
         checkedDevicesId
       );
@@ -192,7 +196,6 @@ function Dashboard({
       <div className="breadcrumb-and-print-buttons">
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
-
       <section id="page" ref={pageRef}>
         <div className="dashboard-row-1">
           <TotalEnergyCard
@@ -248,6 +251,7 @@ function Dashboard({
 
           <CarbonEmmission
             totalEnergyBranchData={totalEnergyBranchData}
+            blendedCost={blendedCostData}
             userData={userData}
           />
         </div>
@@ -255,7 +259,7 @@ function Dashboard({
           spinning={dashboard.fetchDashBoardCard_2_Loading}
         >
           <div className="dashboard-row-1b">
-            {totalDeviceUsageBranchData &&
+            {totalDeviceUsageBranchData && totalDeviceUsageBranchData.devices &&
               totalDeviceUsageBranchData.devices
                 .filter((device) => device.is_source)
                 .map((eachDevice, index) => {

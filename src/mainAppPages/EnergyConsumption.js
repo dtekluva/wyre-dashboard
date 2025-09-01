@@ -64,11 +64,11 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
       }
       setPageLoaded(true);
   }, [userDateRange]);
-
+  
   useEffect(() => {
       if (pageLoaded && parametersData.fetchedEnergyConsumption) {
         let openDevicesArrayData
-        const devicesArrayData = devicesArray(parametersData.fetchedEnergyConsumption.branches, checkedBranchId, checkedDevicesId);
+        const devicesArrayData = devicesArray(parametersData.fetchedEnergyConsumption, checkedBranchId, checkedDevicesId);
         openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
         setEnergyConsumptionData(openDevicesArrayData)
       }
