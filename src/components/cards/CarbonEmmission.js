@@ -3,7 +3,7 @@ import DashboardSmallBannerSection from "../../smallComponents/DashboardSmallBan
 
 
 
-const CarbonEmmission = ({ totalEnergyBranchData, userData }) => {
+const CarbonEmmission = ({ totalEnergyBranchData, blendedCost, userData }) => {
     const [carbonEmissionEnergyData, setCarbonEmissionEnergyData] = useState({});
     
     useEffect(() => {
@@ -35,8 +35,7 @@ const CarbonEmmission = ({ totalEnergyBranchData, userData }) => {
             <DashboardSmallBannerSection
                 name="Blended Cost of Energy"
                 value={
-                    carbonEmissionEnergyData.cost_of_energy &&
-                    carbonEmissionEnergyData.cost_of_energy.value
+                    blendedCost
                 }
                 // unit={cost_of_energy && cost_of_energy.unit}
                 unit={carbonEmissionEnergyData.cost_of_energy && carbonEmissionEnergyData.cost_of_energy.unit}

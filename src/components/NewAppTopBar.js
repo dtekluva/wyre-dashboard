@@ -670,10 +670,9 @@ function NewAppTopBar() {
       {/* <Popover placement="rightBottom" trigger="click" content={content} width={'800px'} style={{ width: '100%' }} >
         <Button>RB</Button>
       </Popover> */}
-      <>
         <Space
           className="date-range-picker-containers"
-          direction="vertical"
+          direction="horizontal"
           size={12}
           onClick={() => setOpenModal(!openModal)}
         >
@@ -700,8 +699,6 @@ function NewAppTopBar() {
         </Modal>
       )}
 
-      {/* </div> */}
-    </div>
   );
 }
 

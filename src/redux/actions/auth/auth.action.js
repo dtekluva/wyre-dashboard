@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { logoutUser } from "./actionCreators";
+import { logoutUser, getPermittedBranchesLoading, getPermittedBranchesSuccess, switchBranchLoading, switchBranchSuccess } from "./actionCreators";
 import EnvData from '../../../config/EnvData';
+import jwtDecode from 'jwt-decode';
 
 
 export const logoutUserFromRedux = () => async (dispatch) => {
@@ -37,4 +38,92 @@ export const changePassword = async (data) => {
     return { fulfilled: false, message: error.response.data.message }
   }
 
+};
+
+export const getPermittedBranches = () => async (dispatch) => {
+  dispatch(getPermittedBranchesLoading());
+
+  const loggedUserJSON = localStorage.getItem('loggedWyreUser');
+  let userId;
+  let token;
+
+  if (loggedUserJSON) {
+    try {
+      const userToken = JSON.parse(loggedUserJSON);
+      if (userToken.access) {
+        const user = jwtDecode(userToken.access);
+        userId = user.id;
+        token = userToken.access;
+      }
+    } catch (parseError) {
+      dispatch(getPermittedBranchesLoading(false));
+      return;
+    }
+  }
+
+  if (!token) {
+    dispatch(getPermittedBranchesLoading(false));
+    return;
+  }
+
+  try {
+    const response = await axios.get(
+      `${EnvData.REACT_APP_API_URL}accounts/user/permitted-branches/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    dispatch(getPermittedBranchesSuccess(response.data));
+    dispatch(getPermittedBranchesLoading(false));
+  } catch (error) {
+    dispatch(getPermittedBranchesLoading(false));
+  }
+};
+
+export const switchBranch = (branchId) => async (dispatch) => {
+  dispatch(switchBranchLoading());
+
+  if (!branchId) {
+    dispatch(switchBranchLoading(false));
+    return;
+  }
+
+  const loggedUserJSON = localStorage.getItem('loggedWyreUser');
+  let token;
+
+  if (loggedUserJSON) {
+    try {
+      const userToken = JSON.parse(loggedUserJSON);
+      if (userToken.access) {
+        token = userToken.access;
+      }
+    } catch (parseError) {
+      dispatch(switchBranchLoading(false));
+      return;
+    }
+  }
+
+  if (!token) {
+    dispatch(switchBranchLoading(false));
+    return;
+  }
+
+  try {
+    const response = await axios.post(
+      `${EnvData.REACT_APP_API_URL}force-login/${branchId}/`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    dispatch(switchBranchSuccess(response.data));
+    dispatch(switchBranchLoading(false));
+  } catch (error) {
+    dispatch(switchBranchLoading(false));
+  }
 };
