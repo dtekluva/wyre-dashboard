@@ -1,13 +1,21 @@
-import React, { useContext } from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Tooltip } from 'antd';
-import CompleteDataContext from '../../Context';
+import React, { useContext } from "react";
+import { Bar } from "react-chartjs-2";
+import { Tooltip } from "antd";
+import CompleteDataContext from "../../Context";
 
-import { convertDecimalTimeToNormal, getLastArrayItems } from '../../helpers/genericHelpers';
-import { numberFormatter } from '../../helpers/numberFormatter';
-import InformationIcon from '../../icons/InformationIcon';
+import {
+  convertDecimalTimeToNormal,
+  getLastArrayItems,
+} from "../../helpers/genericHelpers";
+import { numberFormatter } from "../../helpers/numberFormatter";
+import InformationIcon from "../../icons/InformationIcon";
 
-const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettings }) => {
+const ScoreCardBarChart = ({
+  operatingTimeData,
+  dataTitle,
+  dataMessage,
+  uiSettings,
+}) => {
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
 
   const options = {
@@ -17,13 +25,21 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
 
     tooltips: {
       enabled: true,
-      mode: 'index',
+      mode: "index",
       callbacks: {
         title: function (tooltipItem, data) {
-          return data['labels'][tooltipItem[0]['index']];
+          return data["labels"][tooltipItem[0]["index"]];
         },
-        label: function (tooltipItem, data) {       
-          return convertDecimalTimeToNormal(data['datasets'][0]['data'][tooltipItem['index']])+"(" + chartWastedEnergy[tooltipItem['index']] + " kWh" + ")"
+        label: function (tooltipItem, data) {
+          return (
+            convertDecimalTimeToNormal(
+              data["datasets"][0]["data"][tooltipItem["index"]]
+            ) +
+            "(" +
+            chartWastedEnergy[tooltipItem["index"]] +
+            " kWh" +
+            ")"
+          );
         },
 
         // footer: function () {
@@ -34,7 +50,7 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
         //   return titleAndMessageArray;
         // },
       },
-      footerFontStyle: 'normal',
+      footerFontStyle: "normal",
       footerMarginTop: 12,
     },
 
@@ -47,8 +63,8 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: 'Roboto',
-            fontColor: '#A3A3A3',
+            fontFamily: "Roboto",
+            fontColor: "#A3A3A3",
             maxTicksLimit: 6,
             fontSize: 10,
             padding: 0,
@@ -56,8 +72,8 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
           scaleLabel: {
             display: true,
             padding: 10,
-            labelString: 'Wastage(hrs)',
-            fontColor: 'black',
+            labelString: "Wastage(hrs)",
+            fontColor: "black",
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
@@ -69,16 +85,16 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: 'Montserrat',
-            fontColor: '#A3A3A3',
+            fontFamily: "Montserrat",
+            fontColor: "#A3A3A3",
             maxTicksLimit: 10,
             padding: 0,
             fontSize: 12,
           },
           scaleLabel: {
             display: true,
-            labelString: 'Days of the Month',
-            fontColor: 'black',
+            labelString: "Days of the Month",
+            fontColor: "black",
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
@@ -93,8 +109,8 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
     estimated_diesel_wasted,
     estimated_cost,
   } = operatingTimeData
-      ? operatingTimeData
-      : {
+    ? operatingTimeData
+    : {
         chart: {},
         estimated_time_wasted: {},
         estimated_energy_wasted: {},
@@ -107,46 +123,48 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
 
   // const timeWasted =
   //   estimated_time_wasted.value.toFixed(2) + ' ' + estimated_time_wasted.unit;
-  const timeWasted =
-    estimated_time_wasted.value.toFixed(2);
-    
+  const timeWasted = estimated_time_wasted.value.toFixed(2);
+
   const estimatedEnergyWasted =
     // estimated_energy_wasted?.total?.toFixed(2) + ' ' + estimated_energy_wasted?.unit;
-    estimated_energy_wasted.total.toFixed(2)
+    estimated_energy_wasted.total.toFixed(2);
 
   const dieselWasted =
-    estimated_diesel_wasted.value + ' ' + estimated_diesel_wasted.unit;
+    estimated_diesel_wasted.value + " " + estimated_diesel_wasted.unit;
 
   const data = {
     labels: isMediumScreen
       ? chart.dates && getLastArrayItems(chart.dates, 7)
       : isLessThan1296
-        ? chart.dates && getLastArrayItems(chart.dates, 14)
-        : chart.dates,
+      ? chart.dates && getLastArrayItems(chart.dates, 14)
+      : chart.dates,
     datasets: [
       {
-        label: 'Wastage',
+        label: "Wastage",
         maxBarThickness: 60,
         data: chartValues,
         backgroundColor: uiSettings.appPrimaryColor,
-        borderColor: '#6c00fa',
+        borderColor: "#5C3592",
         borderWidth: 1,
       },
     ],
-
   };
 
   return (
     <div className="score-card-bar-chart-container">
       <div className="h-flex">
-        <div style={{display: 'flex'}}>
-        <h2 className="score-card-heading">Operating Time Deviation</h2>
-        <Tooltip placement='top' style={{ textAlign: 'justify' }}
-          overlayStyle={{ whiteSpace: 'pre-line' }} title={dataMessage}>
-          <p>
-            <InformationIcon className="info-icon" />
-          </p>
-        </Tooltip>
+        <div style={{ display: "flex" }}>
+          <h2 className="score-card-heading">Operating Time Deviation</h2>
+          <Tooltip
+            placement="top"
+            style={{ textAlign: "justify" }}
+            overlayStyle={{ whiteSpace: "pre-line" }}
+            title={dataMessage}
+          >
+            <p>
+              <InformationIcon className="info-icon" />
+            </p>
+          </Tooltip>
         </div>
         <div className="score-card-bar-chart__text-wrapper">
           {/* <p>
@@ -157,10 +175,12 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
             <strong>{`₦ ${numberFormatter(estimated_cost.value)}`}</strong>
           </p> */}
           <p>
-            Total Time: <strong>{convertDecimalTimeToNormal(timeWasted)}</strong>
+            Total Time:{" "}
+            <strong>{convertDecimalTimeToNormal(timeWasted)}</strong>
           </p>
           <p>
-            Total Energy Wasted: <strong>{numberFormatter(estimatedEnergyWasted)} kWh</strong>
+            Total Energy Wasted:{" "}
+            <strong>{numberFormatter(estimatedEnergyWasted)} kWh</strong>
           </p>
         </div>
       </div>

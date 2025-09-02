@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { Bar } from 'react-chartjs-2';
-import CompleteDataContext from '../../Context';
+import React, { useContext } from "react";
+import { Bar } from "react-chartjs-2";
+import CompleteDataContext from "../../Context";
 
-import { getLastArrayItems } from '../../helpers/genericHelpers';
+import { getLastArrayItems } from "../../helpers/genericHelpers";
 
 const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
@@ -24,15 +24,15 @@ const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
       yAxes: [
         {
           gridLines: {
-            color: '#f0f0f0',
+            color: "#f0f0f0",
             drawBorder: false,
             drawTicks: false,
-            zeroLineColor: '#f0f0f0',
+            zeroLineColor: "#f0f0f0",
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: 'Roboto',
-            fontColor: '#A3A3A3',
+            fontFamily: "Roboto",
+            fontColor: "#A3A3A3",
             maxTicksLimit: 6,
             fontSize: 10,
             padding: 10,
@@ -40,8 +40,8 @@ const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
           scaleLabel: {
             display: true,
             padding: 10,
-            labelString: 'Monthly Consumption (Naira)',
-            fontColor: 'black',
+            labelString: "Monthly Consumption (Naira)",
+            fontColor: "black",
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
@@ -50,21 +50,21 @@ const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
         {
           gridLines: {
             drawTicks: false,
-            color: '#f0f0f0',
-            zeroLineColor: '#f0f0f0',
+            color: "#f0f0f0",
+            zeroLineColor: "#f0f0f0",
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: 'Roboto',
-            fontColor: '#A3A3A3',
+            fontFamily: "Roboto",
+            fontColor: "#A3A3A3",
             maxTicksLimit: 10,
             padding: 10,
             fontSize: 10,
           },
           scaleLabel: {
             display: true,
-            labelString: 'Date and Time',
-            fontColor: 'black',
+            labelString: "Date and Time",
+            fontColor: "black",
             fontSize: isMediumScreen ? 14 : 18,
             padding: isMediumScreen ? 10 : 25,
           },
@@ -81,11 +81,11 @@ const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
       : chartDates,
     datasets: [
       {
-        label: 'Monthly Consumption (Naira)',
+        label: "Monthly Consumption (Naira)",
         maxBarThickness: 60,
         data: chartValues,
-        backgroundColor: '#6C00FA',
-        borderColor: '#6C00FA',
+        backgroundColor: "#5C3592",
+        borderColor: "#5C3592",
         borderWidth: 1,
       },
     ],
