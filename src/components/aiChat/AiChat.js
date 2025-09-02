@@ -32,6 +32,16 @@ export default function AiChat() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState(null);
   const [sessionId, setSessionId] = useState(null);
+
+  // New feature states
+  const [topic, setTopic] = useState(null);
+  const [suggestedPrompts, setSuggestedPrompts] = useState([
+    "What is my total energy usage?",
+    "Which branch is contributing more to diesel consumption?",
+    "Show total cost breakdown by branch for last month",
+  ]);
+  const [promptsVersion, setPromptsVersion] = useState(0);
+
   const chatRef = useRef(null);
   const widgetRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -123,7 +133,8 @@ export default function AiChat() {
 
       pdf.setFontSize(20);
       pdf.setTextColor(0, 0, 0);
-      pdf.text("Wyre AI Chat History", pageWidth / 2, margin + 10, {
+      const pdfTitle = topic ? `Wyre AI • ${topic}` : "Wyre AI Chat History";
+      pdf.text(pdfTitle, pageWidth / 2, margin + 10, {
         align: "center",
       });
 
@@ -194,10 +205,24 @@ export default function AiChat() {
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
+    const question = inputValue;
+    setInputValue("");
+    await sendQuestion(question);
+  };
+
+  const handleSuggestedQuestion = (question) => {
+    if (isTyping) return;
+    sendQuestion(question);
+  };
+
+  const sendQuestion = async (question) => {
+    const trimmed = (question || "").trim();
+    if (!trimmed) return;
+
     const newMessage = {
       id: Date.now().toString(),
       type: "user",
-      content: inputValue,
+      content: trimmed,
       timestamp: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
@@ -205,38 +230,45 @@ export default function AiChat() {
     };
 
     setMessages((prev) => [...prev, newMessage]);
-    setInputValue("");
     setIsTyping(true);
 
     try {
+      // Keep existing endpoint intact
       const response = await APIService.post("/chatbot/chat/branch/", {
-        question: inputValue,
+        question: trimmed,
         session_id: sessionId,
       });
+
+      const responseData = response?.data?.data || {};
       const aiResponse = {
         id: (Date.now() + 1).toString(),
         type: "ai",
-        content: response.data.data.answer,
+        content: responseData.answer,
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
       };
-      setSessionId(response.data.data.session_id);
+
+      setSessionId(responseData.session_id);
+
+      // New: capture topic and dynamic prompts if provided
+      if (!topic && responseData.topic) {
+        setTopic(responseData.topic);
+      }
+      if (
+        Array.isArray(responseData.suggested_prompts) &&
+        responseData.suggested_prompts.length > 0
+      ) {
+        setSuggestedPrompts(responseData.suggested_prompts);
+        setPromptsVersion((v) => v + 1);
+      }
+
       setMessages((prev) => [...prev, aiResponse]);
       setIsTyping(false);
     } catch (error) {
       console.error("Error fetching AI response:", error);
-    }
-  };
-
-  const handleSuggestedQuestion = (question) => {
-    setInputValue(question);
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleSendMessage();
+      setIsTyping(false);
     }
   };
 
@@ -301,7 +333,7 @@ export default function AiChat() {
 
       {/* Chat Widget */}
       <div
-        // ref={widgetRef}
+        ref={widgetRef}
         style={{
           position: "fixed",
           bottom: "80px",
@@ -358,7 +390,7 @@ export default function AiChat() {
                 letterSpacing: "0.5px",
               }}
             >
-              BATTERY HEALTH & POWER
+              {topic || "Wyre AI Dashboard Assistant"}
             </p>
           </div>
           <DownloadOutlined
@@ -574,57 +606,47 @@ export default function AiChat() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Suggested Questions */}
-        {/* <div
+        {/* Suggested Prompts */}
+        <div
           style={{
             padding: "8px 12px",
+            backgroundColor: "rgb(247,235,251, 0.5)",
+            backdropFilter: "blur(15px)",
+            WebkitBackdropFilter: "blur(16px)",
             borderTop: "1px solid #d9d9d9",
-            backgroundColor: "rgb(247,244,251)",
             display: "flex",
             flexDirection: "column",
             gap: "8px",
           }}
         >
-          <Button
-            size="small"
-            onClick={() =>
-              handleSuggestedQuestion(
-                "Which branch is contributing more to diesel consumption?"
-              )
-            }
-            style={{
-              textAlign: "left",
-              height: "auto",
-              padding: "8px 12px",
-              borderRadius: "16px",
-              backgroundColor: "white",
-              border: "1px solid #d9d9d9",
-              fontSize: "12px",
-              color: "#666",
-              whiteSpace: "normal",
-              lineHeight: "1.3",
-            }}
-          >
-            Which branch is contributing more to diesel consumption?
-          </Button>
-          <Button
-            size="small"
-            onClick={() => handleSuggestedQuestion("Average diesel usage?")}
-            style={{
-              textAlign: "left",
-              height: "auto",
-              padding: "8px 12px",
-              borderRadius: "16px",
-              backgroundColor: "white",
-              border: "1px solid #d9d9d9",
-              fontSize: "12px",
-              color: "#666",
-              width: "fit-content",
-            }}
-          >
-            Average diesel usage?
-          </Button>
-        </div> */}
+          {suggestedPrompts.map((prompt, index) => (
+            <Button
+              key={`${prompt}-${index}-${promptsVersion}`}
+              size="small"
+              onClick={() => handleSuggestedQuestion(prompt)}
+              disabled={isTyping}
+              style={{
+                textAlign: "left",
+                height: "auto",
+                padding: "8px 12px",
+                borderRadius: "16px",
+                backgroundColor: isTyping ? "#f5f5f5" : "white",
+                border: "1px solid #d9d9d9",
+                fontSize: "12px",
+                color: isTyping ? "#ccc" : "#666",
+                whiteSpace: "normal",
+                lineHeight: "1.3",
+                width: "fit-content",
+                opacity: 0,
+                animation: "fadeInUp 280ms ease-out forwards",
+                animationDelay: `${index * 80}ms`,
+                cursor: isTyping ? "not-allowed" : "pointer",
+              }}
+            >
+              {prompt}
+            </Button>
+          ))}
+        </div>
 
         {/* Input Area */}
         <div
@@ -637,9 +659,12 @@ export default function AiChat() {
         >
           <Input
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onPressEnter={handleSendMessage}
-            placeholder="Ask Wyre AI anything..."
+            onChange={(e) => !isTyping && setInputValue(e.target.value)}
+            onPressEnter={!isTyping ? handleSendMessage : undefined}
+            placeholder={
+              isTyping ? "Wyre AI is responding..." : "Ask Wyre AI anything..."
+            }
+            disabled={isTyping}
             suffix={
               <Button
                 type="primary"
@@ -647,22 +672,24 @@ export default function AiChat() {
                 shape="circle"
                 color="#5C3592"
                 icon={<SendOutlined size={34} />}
-                onClick={handleSendMessage}
-                disabled={!inputValue.trim()}
+                onClick={!isTyping ? handleSendMessage : undefined}
+                disabled={!inputValue.trim() || isTyping}
                 style={{
                   // backgroundColor: "#5C3592",
                   // borderColor: "#5C3592",
                   width: "34px",
                   height: "34px",
                   minWidth: "34px",
+                  opacity: isTyping ? 0.5 : 1,
                 }}
               />
             }
             style={{
               borderRadius: "20px",
-              backgroundColor: "#fafafa",
+              backgroundColor: isTyping ? "#f0f0f0" : "#fafafa",
               fontSize: "12px",
               paddingRight: "4px",
+              cursor: isTyping ? "not-allowed" : "text",
             }}
           />
         </div>
@@ -677,6 +704,16 @@ export default function AiChat() {
           }
           40% {
             transform: scale(1);
+          }
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(6px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
           }
         }
       `}</style>
