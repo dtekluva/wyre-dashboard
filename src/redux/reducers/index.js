@@ -9,11 +9,13 @@ import setting from './setting/setting.reducer';
 import powerFactor from './powerFactor/powerFactor.reducer';
 import breakers from './breakers/breakers.reducer';
 import parametersReducer from './parameters/parameters.reducer';
+import dieselReducer from './diesel/diesel.reducer';
 
 const appReducer = combineReducers({
     dashboard,
     scorecard,
     parametersReducer,
+    dieselReducer,
     billing,
     sideBar,
     costTracker,
