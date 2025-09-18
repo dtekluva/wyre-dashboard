@@ -1,203 +1,158 @@
+import { Spin } from "antd";
 import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
-const COLORS = ["#5C12A7", "#FCCC43"]; // Gen1 (purple), Gen2 (orange)
-
-const runHoursData = [
-  { name: "Gen1", value: 12 },
-  { name: "Gen2", value: 8 },
-];
-
-const fuelUsedData = [
-  { name: "Gen1", value: 20 },
-  { name: "Gen2", value: 15 },
-];
-
-const GeneratorStatus2 = () => {
-  const totalRunHours = runHoursData.reduce((acc, d) => acc + d.value, 0);
-  const totalFuelUsed = fuelUsedData.reduce((acc, d) => acc + d.value, 0);
+const GeneratorStatus2 = ({ genStatusChartData, loader }) => {
+  const { total_fuel_liters, total_runtime, total_runtime_hours, generators=[] } = genStatusChartData && genStatusChartData.data || {}
+  const COLORS = ["#5C12A7", "#FCCC43","#52AC0B"];
+  const runHoursData = generators.map((g) => ({
+    name: g.name,
+    value: g.runtime_hours,
+    formatted: g.runtime_formatted,
+  }));
+  const fuelUsedData = generators.map((g) => ({
+    name: g.name,
+    value: g.fuel_liters,
+    formatted: `${g.fuel_liters} Litres`,
+  }));
 
   return (
     <div className="card">
-      <h3 style={{fontSize: '14px', textAlign: 'left'}}>Generator Status</h3>
-      <div className="card-body grid-2">
-        {/* Run Hours Donut */}
-        <div className="status-item">
-          {/* <h4>Run Hours</h4> */}
-          <div style={{ width: "100%", height: 180, position: "relative" }}>
-            <ResponsiveContainer>
-              <PieChart>
-                <Pie
-                  data={runHoursData}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={55}
-                  outerRadius={80}
-                  startAngle={90}
-                  endAngle={-270}
-                  stroke="none"
-                  // cornerRadius={8}
-                >
-                  {runHoursData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-            {/* Center label */}
-            <div className="center-label">
-              <div className="label">Run</div>
-              <div className="label">Hours</div>
-            </div>
-
-            {/* Right-side labels */}
-            <div
-              style={{
-                position: "absolute",
-                right: "50px",
-                top: "30%",
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px",
-              }}
-            >
-              {runHoursData.map((d, i) => (
-                <div
-                  key={i}
-                  style={{ display: "flex", alignItems: "center", gap: "6px" }}
-                >
-                  <span
-                    style={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      background: COLORS[i],
-                    }}
-                  />
-                  <span style={{ fontSize: "14px" }}>
-                    {d.value}h
-                  </span>
+      <Spin spinning={loader}>
+      <>
+        <h3 className="card-title">
+          Generator Status
+        </h3>
+        <div className="card-body grid-2">
+          {/* Run Hours Donut */}
+          <div className="status-item">
+            <div className="donut-wrapper">
+              {/* Donut Chart */}
+              <div className="donut-chart">
+                <ResponsiveContainer>
+                  <PieChart>
+                    <Pie
+                      data={runHoursData}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={50}
+                      outerRadius={70}
+                      startAngle={90}
+                      endAngle={-270}
+                      stroke="none"
+                    >
+                      {runHoursData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                {/* Center label */}
+                <div className="center-label">
+                  <div className="label">Run</div>
+                  <div className="label">Hours</div>
                 </div>
-              ))}
+              </div>
+
+              {/* Right-side labels */}
+              <div className="donut-labels">
+                {runHoursData.map((d, i) => (
+                  <div key={i} className="label-row">
+                    <span
+                      className="dot"
+                      style={{ background: COLORS[i] }}
+                    />
+                    <span className="label-text">{d.formatted}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Bottom cumulative label */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "-20px",
-                width: "100%",
-                textAlign: "center",
-                fontWeight: "600",
-              }}
-            >
-              {totalRunHours}h 59m 06s
+            <div className="donut-total">
+              {total_runtime}
+            </div>
+          </div>
+
+          {/* Fuel Used Donut */}
+          <div className="status-item">
+            <div className="donut-wrapper">
+              {/* Donut Chart */}
+              <div className="donut-chart">
+                <ResponsiveContainer>
+                  <PieChart>
+                    <Pie
+                      data={fuelUsedData}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={50}
+                      outerRadius={70}
+                      startAngle={90}
+                      endAngle={-270}
+                      stroke="none"
+                    >
+                      {fuelUsedData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                {/* Center label */}
+                <div className="center-label">
+                  <div className="label">Fuel</div>
+                  <div className="label">Used</div>
+                </div>
+              </div>
+
+              {/* Right-side labels */}
+              <div className="donut-labels">
+                {fuelUsedData.map((d, i) => (
+                  <div key={i} className="label-row">
+                    <span
+                      className="dot"
+                      style={{ background: COLORS[i] }}
+                    />
+                    <span className="label-text">{d.formatted}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bottom cumulative label */}
+            <div className="donut-total">
+              {total_fuel_liters} Litres
             </div>
           </div>
         </div>
 
-        {/* Fuel Used Donut */}
-        <div className="status-item">
-          {/* <h4>Fuel Used</h4> */}
-          <div style={{ width: "100%", height: 180, position: "relative" }}>
-            <ResponsiveContainer>
-              <PieChart>
-                <Pie
-                  data={fuelUsedData}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={55}
-                  outerRadius={80}
-                  startAngle={90}
-                  endAngle={-270}
-                  stroke="none"
-                  // cornerRadius={8}
-                >
-                  {fuelUsedData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-            {/* Center label */}
-            <div className="center-label">
-              <div className="label">Fuel</div>
-              <div className="label">Used</div>
-            </div>
-
-            {/* Right-side labels */}
+        {/* Legends for Gen1 & Gen2 */}
+        <div
+          style={{
+            marginTop: "12px",
+            display: "flex",
+            justifyContent: "center",
+            gap: "20px",
+          }}
+        >
+          {runHoursData.map((d, i) => (
             <div
-              style={{
-                position: "absolute",
-                right: "50px",
-                top: "30%",
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px",
-              }}
+              key={i}
+              style={{ display: "flex", alignItems: "center", gap: "6px" }}
             >
-              {fuelUsedData.map((d, i) => (
-                <div
-                  key={i}
-                  style={{ display: "flex", alignItems: "center", gap: "6px" }}
-                >
-                  <span
-                    style={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      background: COLORS[i],
-                    }}
-                  />
-                  <span style={{ fontSize: "14px" }}>
-                    {d.value}L
-                  </span>
-                </div>
-              ))}
+              <span
+                style={{
+                  width: "10px",
+                  height: "10px",
+                  borderRadius: "50%",
+                  background: COLORS[i],
+                }}
+              />
+              <span style={{ fontSize: "13px" }}>{d.name}</span>
             </div>
-
-            {/* Bottom cumulative label */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "-20px",
-                width: "100%",
-                textAlign: "center",
-                fontWeight: "600",
-              }}
-            >
-              {totalFuelUsed}Litres
-            </div>
-          </div>
+          ))}
         </div>
-      </div>
-
-      {/* Legends for Gen1 & Gen2 */}
-      <div
-        style={{
-          marginTop: "12px",
-          display: "flex",
-          justifyContent: "center",
-          gap: "20px",
-        }}
-      >
-        {runHoursData.map((d, i) => (
-          <div
-            key={i}
-            style={{ display: "flex", alignItems: "center", gap: "6px" }}
-          >
-            <span
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                background: COLORS[i],
-              }}
-            />
-            <span style={{ fontSize: "13px" }}>{d.name}</span>
-          </div>
-        ))}
-      </div>
+      </>
+    </Spin>
     </div>
   );
 };

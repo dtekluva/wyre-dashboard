@@ -219,165 +219,44 @@
   height: 60px;
 }
 
-/* ========== Diesel-Overview Layout ========== */
-.diesel-overview {
-  min-height: 100vh;
-  background-color: #f9fafb; /* light gray background */
-  padding: 24px;
-  font-family: Arial, sans-serif;
-}
-
-/* Grid utilities */
-.grid {
-  display: grid;
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.grid.two-cols {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.grid.three-cols {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-/* ========== Cards ========== */
-.card {
-  background: #fff;
-  border-radius: 16px;
-  // box-shadow: 0px 2px 6px rgba(0,0,0,0.08);
-  padding: 16px;
-}
-
-.card h3 {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 12px;
-}
-
-.card p {
-  margin: 4px 0;
-  font-size: 13px;
-  color: #444;
-}
-
-.highlight {
-  font-weight: bold;
-  color: #5C12A7; /* purple highlight */
-}
-
-.green-highlight {
-  font-weight: bold;
-  color: #52AC0B; /* purple highlight */
-}
-
-/* ========== Header ========== */
-.header h1 {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
-}
-
-/* ========== Summary Card ========== */
-.summary-card {
-  text-align: center;
-}
-
-.summary-card .summary-value {
-  font-size: 20px;
-  font-weight: bold;
-  margin-top: 8px;
-}
-
-/* ========== Generator Card ========== */
-.generator-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.generator-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.generator-icon {
-  font-size: 32px;
-}
-
-.generator-right {
-  text-align: right;
-}
-
-.generator-right p {
-  font-size: 13px;
-  margin: 2px 0;
-}
-
-.generator-right .highlight {
-  font-size: 16px;
-  color: #e11d48; /* red for price highlight */
-}
-
-/* ========== Generator Status (Donut charts) ========== */
-.generator-status {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.status-card {
-  text-align: center;
-}
-
-.status-text {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #555;
-}
-
-/* === Dashboard Header === */
+/* === Diesel-Overview page === */
+/* Header */
 .dashboard-header {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.dashboard-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #111;
+  // margin-bottom: 2rem;
 }
 
 .header-cards {
   display: grid;
-  // grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  grid-template-columns: 1.2fr 0.5fr 1.3fr;
+  grid-template-columns: 2fr 0.8fr 1.5fr; /* generator biggest, emission smaller, price wider */
   gap: 1rem;
+  align-items: stretch;
 }
 
+/* Generic card */
 .header-card {
-  background: #fff;
-  // border: 1px solid #eaeaea;
+  background: #FFFFFF;
   border-radius: 12px;
-  padding: 3rem;
+  padding: 1.5rem;
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  // box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  align-items: center;
+  gap: 1rem;
+  height: 100%;
 }
 
 .card-icon {
-  font-size: 1.4rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-label {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  // color: #666;
+  color: #444;
 }
 
 .card-value {
@@ -390,21 +269,103 @@
   color: #7d3cff;
 }
 
+.card-value.green {
+  color: #52AC0B;
+}
+
 .status-dot {
   display: inline-block;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #52AC0B;
+  // background: #52AC0B;
+  background: grey;
   margin-right: 6px;
 }
 
-/* Responsive tweak */
+.value-red {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+/* === Generator Card Layout === */
+.generator-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* left icon, middle label, right status */
+  align-items: center;
+}
+
+.gen-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.gen-center {
+  text-align: center;
+}
+
+.gen-center .title {
+  font-size: 2.5rem;
+}
+
+.gen-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.last-posted {
+  font-size: 1rem;
+  // color: #666;
+}
+
+/* === Price Card Layout === */
+.price-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* icon, labels, values */
+  align-items: center;
+  gap: 1rem;
+}
+
+.price-center {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.price-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .header-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .header-cards {
     grid-template-columns: 1fr;
   }
+  .generator-card,
+  .price-card {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+  .gen-center,
+  .gen-right,
+  .price-right {
+    text-align: left;
+    align-items: flex-start;
+  }
 }
+
 
 /* 2nd Row grid layout */
 .diesel-grid1 {
@@ -424,7 +385,7 @@
 .total-energy-card {
   padding: 16px;
   border-radius: 12px;
-  background-color: #f9f9fc;
+  background-color: #FFFFFF;
   text-align: center;
   width: 100%;
   height: 100%;
@@ -432,7 +393,7 @@
 }
 
 .card-title {
-  font-size: 14px;
+  font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 12px;
   color: #222;
@@ -497,7 +458,7 @@
 
 /* Card styling */
 .card {
-  background: #fff;
+  background: #FFFFFF;
   border-radius: 12px;
   padding: 1.5rem;
   // box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
@@ -575,6 +536,61 @@
   margin-right: 0.4rem;
 }
 
+.donut-wrapper {
+  display: flex;
+  align-items: center; /* vertical centering */
+  justify-content: center;
+  gap: 20px; /* space between chart and labels */
+}
+
+.donut-chart {
+  width: 180px;
+  height: 180px;
+  position: relative;
+}
+
+.center-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.donut-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.label-text {
+  font-size: 14px;
+  color: #333;
+}
+
+.donut-total {
+  margin-top: 8px;
+  text-align: center;
+  margin-right: 50px;
+  font-weight: 600;
+}
+
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .diesel-grid1 {
@@ -610,7 +626,7 @@
 }
 
 .card-title {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
   color: #111827;
@@ -620,9 +636,57 @@
   flex: 1;
 }
 
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fub-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.fub-toggle-btn {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.fub-toggle-btn.active {
+  background: #5c12a7;
+  color: white;
+  border-color: #5c12a7;
+}
+
+.fub-tooltip {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+.fub-tooltip-label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.fub-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fub-tooltip-gen {
+  font-weight: 600;
+}
+
+
 .diesel-grid3 {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.7fr 1.3fr;
   gap: 1rem;
   margin-bottom: 1rem;
 }
@@ -634,165 +698,138 @@
   }
 }
 
-/* Operational Efficiency card */
-// .op-grid {
+// .op-cards-grid {
 //   display: grid;
-//   grid-template-columns: 2fr auto 1.3fr; /* left section larger */
-//   align-items: stretch;
-//   margin-top: 10px;
-//   position: relative;
+//   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+//   gap: 1rem;
 // }
 
-// /* Shared item style */
-// .op-item {
+// .op-card {
+//   background: #f9fafb;
+//   border-radius: 12px;
+//   padding: 1rem;
 //   display: flex;
 //   flex-direction: column;
-//   margin-bottom: 16px;
+//   align-items: flex-start;
+//   justify-content: center;
+//   margin-top: 15px;
 // }
 
-// .fuel-effic-section {
-//   margin-left: 20px;
-// }
-
-// .label {
-//   font-size: 14px;
-//   color: #111;
-// }
-
-// .sub-label {
-//   font-size: 12px;
-//   color: #555;
-//   margin-right: 6px;
-// }
-
-// /* Values */
-// .value {
-//   font-weight: 600;
-//   margin-left: 4px;
-// }
-
-// .value.red {
+// .value-red {
 //   color: #E74C3C;
 //   font-size: 16px;
 // }
 
-// .value.green {
+// .value-green {
 //   color: #52AC0B;
 //   font-size: 14px;
 // }
 
-// .value.big {
-//   font-size: 18px;
-// }
-
-// /* Power demand values stacked */
-// .powerDemand-section {
-//   display: flex;
-// }
-
-// .powerDemand {
-//   margin: 45px 0 0 20px;
-// }
-
 // .power-values {
-//   margin-top: 24px;
-//   margin-left: 70px;
+//   margin-top: 0.5rem;
 //   display: flex;
 //   flex-direction: column;
-//   gap: 2px;
+//   gap: 0.4rem;
 // }
 
-// /* Divider (vertical + horizontal lines) */
-// .op-divider {
-//   position: relative;
-//   width: 40px;
+// .power-badge {
 //   display: flex;
-//   flex-direction: column;
 //   align-items: center;
+//   gap: 0.5rem;
 // }
 
-// /* Vertical line */
-// .op-divider::before {
-//   content: "";
-//   position: absolute;
-//   top: 0;
-//   bottom: 0;
-//   left: 55%;
-//   width: 2px;
-//   background: #c7aef5; /* soft purple */
-//   transform: translateX(-50%);
-//   z-index: 1;
+// .badge {
+//   padding: 0.3rem 0.6rem;
+//   border-radius: 999px;
+//   font-size: 0.85rem;
+//   font-weight: 500;
+//   color: #fff;
 // }
 
-// /* Horizontal line */
-// .op-grid::after {
-//   content: "";
-//   position: absolute;
-//   top: 40%;
-//   left: 0;
-//   right: 0;
-//   height: 2px;
-//   background: #c7aef5;
-//   z-index: 0;
+// .badge.green {
+//   background-color: #52AC0B;
 // }
 
-.op-cards-grid {
+// .badge.blue {
+//   background-color: #5C12A7;
+// }
+
+// .badge.orange {
+//   background-color: #FFC205;
+// }
+
+.operational-efficiency-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.efficiency-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+  margin-top: 1rem;
 }
 
-.op-card {
-  background: #f9fafb;
-  border-radius: 12px;
-  padding: 1rem;
+/* Each mini card */
+.eff-item {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
+  justify-content: space-between;
 }
 
-.value-red {
-  color: #E74C3C;
-  font-size: 16px;
-}
-
-.value-green {
-  color: #52AC0B;
+.eff-label {
   font-size: 14px;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 6px;
 }
 
-.power-values {
-  margin-top: 0.5rem;
+.eff-value {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.eff-value.red {
+  color: #d9534f;
+}
+
+.eff-value.green {
+  color: #28a745;
+}
+
+.eff-value.big {
+  font-size: 20px;
+}
+
+/* Power demand section */
+.power-demand .power-values {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 4px;
 }
 
-.power-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.badge {
-  padding: 0.3rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
+.sub-label {
+  font-size: 12px;
   font-weight: 500;
-  color: #fff;
+  margin-right: 6px;
+  color: #555;
 }
 
-.badge.green {
-  background-color: #52AC0B;
+.value.green {
+  font-size: 14px;
+  font-weight: 600;
+  color: #28a745;
 }
 
-.badge.blue {
-  background-color: #5C12A7;
-}
-
-.badge.orange {
-  background-color: #FFC205;
+/* ✅ Responsive layout */
+@media (max-width: 768px) {
+  .efficiency-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 

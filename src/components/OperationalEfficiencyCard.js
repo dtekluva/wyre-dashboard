@@ -1,49 +1,53 @@
+import { Spin } from "antd";
 import React from "react";
 
-const OperationalEfficiencyCard = () => {
+const OperationalEfficiencyCard = ({ operationalEfficiencyData, loader }) => {
+  
   return (
-    <div className="card operational-efficiency-card">
-      <h3 className="card-title">Operational efficiency</h3>
+    <Spin spinning={loader}>
+      <div className="card operational-efficiency-card">
+        <h3 className="card-title">Operational efficiency</h3>
+        <div className="efficiency-grid">
+          {/* Fuel efficiency */}
+          <div className="eff-item">
+            <span className="eff-label">Fuel efficiency</span>
+            <span className="eff-value red">{operationalEfficiencyData?.data?.fuel_efficiency.value} kWh/L</span>
+          </div>
 
-      <div className="op-cards-grid">
-        {/* Fuel Efficiency */}
-        <div className="op-card">
-          <span className="label">Fuel efficiency</span>
-          <span className="value-red">3.22 kWh/L</span>
-        </div>
+          {/* Specific fuel consumption */}
+          <div className="eff-item">
+            <span className="eff-label">Specific fuel consumption</span>
+            <span className="eff-value red">{operationalEfficiencyData?.data?.fuel_consumption.value} mL/kWh</span>
+          </div>
 
-        {/* Power Demand */}
-        <div className="op-card">
-          <span className="label">Power demand</span>
-          <div className="power-values">
-            <div className="power-badge">
-              <span className="sub-label">MAX •</span>
-              <span className="badge green">575.04 kVA</span>
-            </div>
-            <div className="power-badge">
-              <span className="sub-label">AVG •</span>
-              <span className="badge blue">301.895 kVA</span>
-            </div>
-            <div className="power-badge">
-              <span className="sub-label">MIN •</span>
-              <span className="badge orange">28.75 kVA</span>
+          {/* Generator efficiency score */}
+          {/* Power demand */}
+          <div className="eff-item power-demand">
+            <span className="eff-label">Power demand</span>
+            <div className="power-values">
+              <div>
+                <span className="sub-label">MAX •</span>
+                <span className="value green">{operationalEfficiencyData?.data?.power_demand_kva.max.value} kVA</span>
+              </div>
+              <div>
+                <span className="sub-label">AVG •</span>
+                <span className="value green">{operationalEfficiencyData?.data?.power_demand_kva.avg.value} kVA</span>
+              </div>
+              <div>
+                <span className="sub-label">MIN •</span>
+                <span className="value green">{operationalEfficiencyData?.data?.power_demand_kva.min.value} kVA</span>
+              </div>
             </div>
           </div>
-        </div>
+          <div className="eff-item">
+            <span className="eff-label">Generator efficiency score</span>
+            <span className="eff-value green big" style={{ fontSize: '4rem' }}>{operationalEfficiencyData?.data?.generator_efficiency_score.value}</span>
+          </div>
 
-        {/* Specific Fuel Consumption */}
-        <div className="op-card">
-          <span className="label">Specific fuel consumption</span>
-          <span className="value-red">263 mL/kWh</span>
-        </div>
 
-        {/* Generator Efficiency Score */}
-        <div className="op-card">
-          <span className="label">Generator efficiency score</span>
-          <span className="value-green" style={{fontSize: 18}}>38</span>
         </div>
       </div>
-    </div>
+    </Spin>
   );
 };
 

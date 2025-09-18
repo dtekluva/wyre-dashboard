@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BarChart,
   Bar,
@@ -8,37 +8,88 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { fetchFuelUsageData } from "../redux/actions/diesel/diesel.action";
+import { connect } from "react-redux";
+import { Spin } from "antd";
 
-const fuelUsageData = [
-  { day: "Mon", liters: 220 },
-  { day: "Tue", liters: 280 },
-  { day: "Wed", liters: 160 },
-  { day: "Thu", liters: 360 },
-  { day: "Fri", liters: 310 },
-  { day: "Sat", liters: 260 },
-  { day: "Sun", liters: 190 },
-];
+const FuelUsageCard = ({ fetchFuelUsageData, fuelUsageData, loader }) => {
+  const [frequency, setFrequency] = useState("daily");
 
-const FuelUsageCard = () => {
+  const formatDate = (str) => {
+    const d = new Date(str);
+    if (isNaN(d)) return str;
+
+    if (frequency === "monthly") {
+      return d.toLocaleString("default", { month: "short", year: "numeric" }); // e.g. Sep
+    } else {
+      return `${d.toLocaleString("default", { month: "short" })} ${d.getDate()}`; // e.g. Sep 15
+    }
+  }; 
+  const handleDailyView = () => {
+    setFrequency("daily");
+    fetchFuelUsageData(new Date(), "daily"); // or pass the currently selected date
+  };
+
+  const handleMonthlyView = () => {
+    setFrequency("monthly");
+    fetchFuelUsageData(new Date(), "monthly"); // or pass the currently selected date
+  };
   return (
     <div className="card">
-      <h3 className="card-title">Fuel Usage</h3>
-      <div className="card-body">
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart 
-            data={fuelUsageData}
-            barCategoryGap="30%"
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="day" />
-            <YAxis />
-            <Tooltip formatter={(val) => [`${val} L`, "Fuel"]} />
-            <Bar dataKey="liters" fill="#5C12A7" radius={[6, 6, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      <Spin spinning={loader}>
+        <div className="card-header">
+          <h3 className="card-title">Fuel Usage</h3>
+          <div className="fub-toggle">
+            <button
+              className={frequency === "daily" ? "fub-toggle-btn active" : "fub-toggle-btn"}
+              onClick={handleDailyView}
+              type="button"
+            >
+              Daily
+            </button>
+            <button
+              className={frequency === "monthly" ? "fub-toggle-btn active" : "fub-toggle-btn"}
+              onClick={handleMonthlyView}
+              type="button"
+            >
+              Monthly
+            </button>
+          </div>
+        </div>
+        <div className="card-body">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={fuelUsageData?.data?.series}
+              barCategoryGap="30%"
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis 
+                dataKey="label"
+                fontSize={3}
+                tickFormatter={formatDate}
+                angle={-40}
+                textAnchor="end"
+                height={65}
+              />
+              <YAxis 
+                label={{ value: "Fuel Used", angle: -90, position: "insideLeft" }}
+              />
+              <Tooltip formatter={(val) => [`${val} L`, "Fuel"]} />
+              <Bar dataKey="fuel_liters" fill="#5C12A7" radius={[6, 6, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Spin>
     </div>
   );
 };
+
+// const mapDispatchToProps = {
+//   fetchFuelUsageData,
+// };
+
+// const mapStateToProps = (state) => ({
+//   diesel: state.dieselReducer,
+// });
 
 export default FuelUsageCard;

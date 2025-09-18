@@ -194,6 +194,7 @@ function Header() {
         >
           <ul className="header-nav-list">
             <HeaderLink onClick={toggleNav} url="/" linkText="Dashboard" />
+            <HeaderLink onClick={toggleNav} url="/diesel-overview" linkText="Diesel Overview" />
 
             {/* {!doesUserHaveAccess && ( */}
             {/* {organization && !SCORE_CARD_EXCLUDE_CLIENTS.includes(organization.name)
