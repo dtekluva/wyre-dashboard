@@ -10,6 +10,7 @@ import powerFactor from './powerFactor/powerFactor.reducer';
 import breakers from './breakers/breakers.reducer';
 import parametersReducer from './parameters/parameters.reducer';
 import dieselReducer from './diesel/diesel.reducer';
+import auth from './auth/auth.reducers';
 
 const appReducer = combineReducers({
     dashboard,
@@ -23,6 +24,7 @@ const appReducer = combineReducers({
     setting,
     powerFactor,
     breakers,
+    auth
 });
 
 const rootReducer = (state, action) => {
