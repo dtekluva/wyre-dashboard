@@ -112,7 +112,7 @@ const DieselOverviewPage = ({
         <FuelUsageCard
           fetchFuelUsageData={fetchFuelUsageData}
           fuelUsageData={fuelUsageData}
-          loader={diesel.genFuelUsageLoading}
+          loader={diesel.fuelUsageLoading}
         />
       </div>
       <div className="diesel-grid3">

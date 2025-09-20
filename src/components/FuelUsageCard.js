@@ -8,8 +8,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { fetchFuelUsageData } from "../redux/actions/diesel/diesel.action";
-import { connect } from "react-redux";
 import { Spin } from "antd";
 
 const FuelUsageCard = ({ fetchFuelUsageData, fuelUsageData, loader }) => {
@@ -64,7 +62,7 @@ const FuelUsageCard = ({ fetchFuelUsageData, fuelUsageData, loader }) => {
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis 
-                dataKey="label"
+                dataKey="date"
                 fontSize={3}
                 tickFormatter={formatDate}
                 angle={-40}
@@ -83,13 +81,5 @@ const FuelUsageCard = ({ fetchFuelUsageData, fuelUsageData, loader }) => {
     </div>
   );
 };
-
-// const mapDispatchToProps = {
-//   fetchFuelUsageData,
-// };
-
-// const mapStateToProps = (state) => ({
-//   diesel: state.dieselReducer,
-// });
 
 export default FuelUsageCard;

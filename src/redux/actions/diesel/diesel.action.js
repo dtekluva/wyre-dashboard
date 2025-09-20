@@ -142,9 +142,8 @@ export const fetchGenFuelUsageData = (date, frequency) => async (dispatch) => {
     userId = user.id;
     branchId = user.branch_id;
   }
-    const initUrl = `branch/${branchId}/generator-energy-fuel-series/?month=${month}&year=${year}`
-    const reqUrl = frequency ? initUrl + `&frequency=${frequency}` : initUrl
-  // const requestUrl = `branch/${branchId}/generator-energy-fuel-series/?month=${month}&year=${year}&frequency=daily`;
+  const initUrl = `branch/${branchId}/generator-energy-fuel-series/?month=${month}&year=${year}`
+  const reqUrl = frequency ? initUrl + `&frequency=${frequency}` : initUrl
   try {
     const response = await APIService.get(reqUrl);
     dispatch(getGenFuelUsageSuccess(response.data));
@@ -154,7 +153,7 @@ export const fetchGenFuelUsageData = (date, frequency) => async (dispatch) => {
   }
 };
 
-export const fetchFuelUsageData = (date) => async (dispatch) => {
+export const fetchFuelUsageData = (date, frequency) => async (dispatch) => {
   dispatch(getFuelUsageLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   const { month, year } = getMonthYear(date);
@@ -166,9 +165,10 @@ export const fetchFuelUsageData = (date) => async (dispatch) => {
     userId = user.id;
     branchId = user.branch_id;
   }
-  const requestUrl = `branch/${branchId}/fuel-usage-series/?month=${month}&year=${year}&frequency=daily`;
+  const initUrl = `branch/${branchId}/fuel-usage-series/?month=${month}&year=${year}`
+  const reqUrl = frequency ? initUrl + `&frequency=${frequency}` : initUrl
   try {
-    const response = await APIService.get(requestUrl);
+    const response = await APIService.get(reqUrl);
     dispatch(getFuelUsageSuccess(response.data));
     dispatch(getFuelUsageLoading(false))
   } catch (error) {
