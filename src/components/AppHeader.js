@@ -23,6 +23,9 @@ import PadlockIcon from '../icons/PadlockIcon';
 import SettingsIcon from '../icons/SettingsIcon';
 import LogoutIcon from '../icons/LogoutIcon';
 import { SCORE_CARD_EXCLUDE_CLIENTS, BESPOKE_ADD_LIST } from '../helpers/constants';
+import DropdownButton from 'antd/lib/dropdown/dropdown-button';
+import { Dropdown } from 'antd';
+import BranchSwitcher from './BranchSwitcher';
 
 function Header() {
   const {
@@ -44,6 +47,7 @@ function Header() {
   const isReportPageOpen = currentUrl.includes('report');
 
   const { image: avatarImage, name: organisationName } = organization;
+  const isOperator = userData.role_text === "OPERATOR";
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -262,7 +266,10 @@ function Header() {
               linkText="Report"
             /> */}
             {renderComp()}
-            <HeaderLink onClick={toggleNav} url="/alerts-and-alarms" linkText="Alerts and Alarms" />
+            {isOperator ?
+              <HeaderLink onClick={toggleNav} url="/alerts-and-alarms" linkText="Alerts and Alarms" />
+              : ''
+            }
             {/* {!doesUserHaveAccess && ( */}
             {/* {organization && !SCORE_CARD_EXCLUDE_CLIENTS.includes(organization.name)
               &&
