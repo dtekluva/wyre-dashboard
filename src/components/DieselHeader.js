@@ -22,7 +22,7 @@ const DieselHeader = ({ dieselPrice, genStatus, Co2, loader }) => {
                 <span className="status-dot"></span> Gen 001 1500 kVA
               </p>
               <p className="last-posted">
-                Last used <span className="value-red">20 Hours ago</span>
+                Last used <span className="value-red">3 Hours ago</span>
               </p>
             </div>
           </div>
