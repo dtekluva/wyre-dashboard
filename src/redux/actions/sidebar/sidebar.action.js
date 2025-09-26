@@ -19,7 +19,7 @@ export const fetchSideBar = () => async (dispatch) => {
   }
   try {
     const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}side_bar_data/${userId}`, {
+      `${EnvData.REACT_APP_API_URL}side_bar_data`, {
     }, {
       headers: {
         Authorization: `Bearer ${token}`,
