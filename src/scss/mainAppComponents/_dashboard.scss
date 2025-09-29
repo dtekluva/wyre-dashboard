@@ -250,3 +250,84 @@
 .power-icon__image {
   height: 60px;
 }
+
+.solar-overview {
+  // padding: 20px;
+  // background: #f9f9fb;
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.power-card {
+  text-align: center;
+}
+
+.power-details {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.flow-card {
+  height: 100%;
+}
+
+.flow-diagram {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.circle {
+  text-align: center;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.circle h4 {
+  margin: 5px 0 0;
+}
+
+.production {
+  color: #f59e0b;
+}
+
+.battery {
+  color: #22c55e;
+}
+
+.grid {
+  color: #3b82f6;
+}
+
+.usage {
+  color: #ef4444;
+}
+
+.charts-row {
+  margin-top: 20px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.placeholder-chart {
+  height: 200px;
+  background: #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+}
+
+.yield-row {
+  margin-top: 20px;
+}

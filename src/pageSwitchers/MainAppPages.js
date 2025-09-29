@@ -34,6 +34,7 @@ import LoadOverview from '../mainAppPages/LoadOverview';
 import RevisedAppTopBar from '../components/RevisedAppTopBar';
 import AddDieselEntry from '../mainAppPages/AddDieselEntry';
 import Breakers from '../mainAppPages/Breakers';
+import SolarOverviewPage from '../mainAppPages/SolarOverviewPage';
 // import Breakers from '../mainAppPages/Breakers';
 
 function MainAppPages() {
@@ -103,6 +104,7 @@ function MainAppPages() {
                 <Route path="/report" component={Report} />
                 {/* <Route path="/breakers" component={Breakers} /> */}
                 <Route path="/score-card" component={ScoreCard} />
+                <Route path="/solar-overview" component={SolarOverviewPage} />
                 <Route path="/client-profile" component={ClientProfile} />
                 {/* <Route path="/password" component={Dashboard} /> */}
                 <Route path="/password" component={Password} />
