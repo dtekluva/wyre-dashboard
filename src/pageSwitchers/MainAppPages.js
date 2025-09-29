@@ -35,6 +35,7 @@ import RevisedAppTopBar from '../components/RevisedAppTopBar';
 import AddDieselEntry from '../mainAppPages/AddDieselEntry';
 import Breakers from '../mainAppPages/Breakers';
 import SolarOverviewPage from '../mainAppPages/SolarOverviewPage';
+import DieselOverviewPage from '../mainAppPages/DieselOverviewPage';
 // import Breakers from '../mainAppPages/Breakers';
 
 function MainAppPages() {
@@ -110,6 +111,7 @@ function MainAppPages() {
                 <Route path="/password" component={Password} />
                 <Route path="/load-overview" component={LoadOverview} />
                 <Route path="/alerts-and-alarms" component={AlertsAndAlarms} />
+                <Route path="/diesel-overview" component={DieselOverviewPage} />
                 <Route
                   exact
                   path="/branches"

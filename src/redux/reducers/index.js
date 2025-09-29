@@ -9,12 +9,14 @@ import setting from './setting/setting.reducer';
 import powerFactor from './powerFactor/powerFactor.reducer';
 import breakers from './breakers/breakers.reducer';
 import parametersReducer from './parameters/parameters.reducer';
+import dieselReducer from './diesel/diesel.reducer';
 import auth from './auth/auth.reducers';
 
 const appReducer = combineReducers({
     dashboard,
     scorecard,
     parametersReducer,
+    dieselReducer,
     billing,
     sideBar,
     costTracker,
@@ -22,7 +24,7 @@ const appReducer = combineReducers({
     setting,
     powerFactor,
     breakers,
-    auth,
+    auth
 });
 
 const rootReducer = (state, action) => {
