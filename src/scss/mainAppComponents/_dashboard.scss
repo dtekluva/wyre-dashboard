@@ -315,6 +315,10 @@
   margin-right: 6px;
 }
 
+.status-dot.on {
+  background: #52AC0B;
+}
+
 .value-red {
   color: #d32f2f;
   font-weight: 600;
@@ -694,7 +698,8 @@
 }
 
 .fub-tooltip {
-  background: white;
+  background: #4B4F52;
+  color: #FFFFFF;
   border: 1px solid #ccc;
   padding: 6px 10px;
   border-radius: 4px;
@@ -729,66 +734,6 @@
     grid-template-columns: 1fr;
   }
 }
-
-// .op-cards-grid {
-//   display: grid;
-//   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-//   gap: 1rem;
-// }
-
-// .op-card {
-//   background: #f9fafb;
-//   border-radius: 12px;
-//   padding: 1rem;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: flex-start;
-//   justify-content: center;
-//   margin-top: 15px;
-// }
-
-// .value-red {
-//   color: #E74C3C;
-//   font-size: 16px;
-// }
-
-// .value-green {
-//   color: #52AC0B;
-//   font-size: 14px;
-// }
-
-// .power-values {
-//   margin-top: 0.5rem;
-//   display: flex;
-//   flex-direction: column;
-//   gap: 0.4rem;
-// }
-
-// .power-badge {
-//   display: flex;
-//   align-items: center;
-//   gap: 0.5rem;
-// }
-
-// .badge {
-//   padding: 0.3rem 0.6rem;
-//   border-radius: 999px;
-//   font-size: 0.85rem;
-//   font-weight: 500;
-//   color: #fff;
-// }
-
-// .badge.green {
-//   background-color: #52AC0B;
-// }
-
-// .badge.blue {
-//   background-color: #5C12A7;
-// }
-
-// .badge.orange {
-//   background-color: #FFC205;
-// }
 
 .operational-efficiency-card {
   display: flex;
