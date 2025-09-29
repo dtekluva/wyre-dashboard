@@ -2,7 +2,6 @@ import { Spin } from "antd";
 import React from "react";
 
 const DieselHeader = ({ dieselPrice, genStatus, Co2, loader }) => {
-  
   return (
     <div className="dashboard-header">
       <div className="header-cards">
@@ -14,17 +13,21 @@ const DieselHeader = ({ dieselPrice, genStatus, Co2, loader }) => {
                 <img src="/electric-generator_2695268 1.png" alt="Logo" />
               </span>
             </div>
-            <div className="gen-center">
-              <p className="card-label title">Generators</p>
-            </div>
-            <div className="gen-right">
-              <p className="card-value">
-                <span className="status-dot"></span> Gen 001 1500 kVA
-              </p>
-              <p className="last-posted">
-                Last used <span className="value-red">3 Hours ago</span>
-              </p>
-            </div>
+            {genStatus?.generators?.map((gen, index) => (
+              <React.Fragment>
+                <div className="gen-center">
+                  <p className="card-label title">Generator</p>
+                </div>
+                <div className="gen-right">
+                  <p className="card-value">
+                    <span className={`status-dot ${gen.is_currently_on ? 'on' : ''}`}></span> {gen.name}
+                  </p>
+                  <p className="last-posted">
+                    Last used <span className="value-red">{gen.last_usage_time_relative}</span>
+                  </p>
+                </div>
+              </React.Fragment>
+            ))}
           </div>
         </Spin>
 
