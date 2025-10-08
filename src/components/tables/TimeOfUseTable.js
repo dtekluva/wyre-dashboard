@@ -1,7 +1,8 @@
 import React from 'react';
 import { Table, Input, Button, Space } from 'antd';
-import Highlighter from 'react-highlight-words';
+// import Highlighter from '../Highlighter';
 import { SearchOutlined } from '@ant-design/icons';
+import Highlighter from '../Highlighter';
 
 class TimeOfUseTable extends React.Component {
   state = {

@@ -57,7 +57,7 @@ const PowerDemandStackedBarChart = ({
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           stacked: true,
           display: true,
@@ -81,8 +81,7 @@ const PowerDemandStackedBarChart = ({
             fontColor: 'black',
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           ticks: {
             fontFamily: 'Roboto',
@@ -103,7 +102,6 @@ const PowerDemandStackedBarChart = ({
             fontColor: 'black',
           },
         },
-      ],
     },
     tooltips: {
       enabled: true,

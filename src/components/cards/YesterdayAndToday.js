@@ -36,7 +36,7 @@ const YesterDayAndTodayCard = ({ totalEnergyBranchData, userData }) => {
             <div className="today-usage">
                 <div style={{ textAlign: "right", paddingRight: 20, position: "relative" }}>
                     <Tooltip placement="top" style={{ textAlign: "right" }}
-                        overlayStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.TODAY_VS_YESTERDAY} >
+                        popupStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.TODAY_VS_YESTERDAY} >
                         <p>
                             <InformationIcon className="info-icon" />
                         </p>
