@@ -219,7 +219,7 @@ function NewAppTopBar() {
     }
 
     const currentTime = moment().startOf('day');
-    
+
     setSelectedDate(setDateValueOnSelect(moment(date).set({
       hour: currentTime.get('hour'),
       minute: currentTime.get('minute'),
@@ -407,6 +407,7 @@ function NewAppTopBar() {
           })}
         </div>
         <Form
+          form={form}
           layout="vertical"
           hideRequiredMark
           initialValues={{

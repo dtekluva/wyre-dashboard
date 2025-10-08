@@ -59,7 +59,7 @@ const EnergyConsumptionMultipleChart = ({ energyData = [], uiSettings }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           gridLines: {
             color: '#f0f0f0',
@@ -83,8 +83,7 @@ const EnergyConsumptionMultipleChart = ({ energyData = [], uiSettings }) => {
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           gridLines: {
             drawTicks: false,
@@ -107,7 +106,6 @@ const EnergyConsumptionMultipleChart = ({ energyData = [], uiSettings }) => {
             padding: isMediumScreen ? 10 : 25,
           },
         },
-      ],
     },
   };
 

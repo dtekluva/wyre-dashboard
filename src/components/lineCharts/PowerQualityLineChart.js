@@ -87,7 +87,7 @@ const PowerQualityLineChart = ({ data, dates, powerQualityUnit }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           gridLines: {
             color: '#f0f0f0',
@@ -110,8 +110,7 @@ const PowerQualityLineChart = ({ data, dates, powerQualityUnit }) => {
             fontColor: 'black',
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           ticks: {
             fontColor: '#A3A3A3',
@@ -132,7 +131,6 @@ const PowerQualityLineChart = ({ data, dates, powerQualityUnit }) => {
             fontColor: 'black',
           },
         },
-      ],
     },
     tooltips: {
       enabled: true,

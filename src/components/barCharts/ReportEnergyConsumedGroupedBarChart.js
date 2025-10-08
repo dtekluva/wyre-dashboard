@@ -43,7 +43,7 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           stacked: false,
           display: true,
@@ -69,8 +69,7 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
             fontColor: 'black',
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           stacked: false,
           ticks: {
@@ -93,7 +92,6 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
             fontColor: 'black',
           },
         },
-      ],
     },
   };
 

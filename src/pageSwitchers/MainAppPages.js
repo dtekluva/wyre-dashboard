@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Routes, Redirect, Navigate } from 'react-router-dom';
 
 import CompleteDataContext from '../Context';
 
@@ -66,16 +66,19 @@ function MainAppPages() {
           <ScrollToTop>
             <div className="page-content">
               {/* {!isAuthenticatedDataLoading ? */}
-              <Switch>
-                <Route exact path="/">
-                  <Redirect to="/dashboard" />
+              <Routes>
+                {/* <Route exact path="/"> */}
+                {/* <Redirect to="/dashboard" /> */}
+                {/* <Route path="/dashboard" element={<Dashboard to="/dashboard" replace />} /> */}
+                {/* </Route> */}
+                <Route path="/" element={<Dashboard to="/dashboard" replace />}/>
+                <Route path="/dashboard" element={<Dashboard to="/dashboard" replace />} />
+                <Route path="/breakers" element={<Breakers to="/breakers" replace />} />
+                <Route path="/billing" element={<Billing to="/billing" replace />} />
+                {/* <Route exact path="/log-in">
+                  <Route path="/" element={<Navigate to="/" replace />} />
                 </Route>
-                <Route path="/dashboard" component={Dashboard} />
-                {/* <Route path="/breakers" component={Breakers} /> */}
-                <Route exact path="/log-in">
-                  <Redirect to="/" />
-                </Route>
-                <Route path="/billing" component={Billing} />
+ 
                 <Route exact path="/cost-tracker" component={CostTracker} />
                 <Route path="/cost-tracker/add-bills" component={AddBills} />
                 <Route path="/cost-tracker/add-diesel-entry" component={AddDieselEntry} />
@@ -86,30 +89,31 @@ function MainAppPages() {
                 {/* <Route path="/messages" component={Messages} /> */}
                 <Route
                   path="/parameters/last-reading"
-                  component={LastReading}
+                  element={<LastReading to="/parameters/last-reading" replace />}
                 />
-                <Route path="/parameters/time-of-use" component={TimeOfUse} />
+                <Route exact path="/cost-tracker" element={<CostTracker to="/cost-tracker" />} />
+                <Route path="/parameters/time-of-use" element={<TimeOfUse to="/parameters/time-of-use" />} />
                 <Route
                   path="/parameters/power-demand"
-                  component={PowerDemand}
+                  element={<PowerDemand to="/parameters/power-demand" />}
                 />
                 <Route
                   path="/parameters/power-quality"
-                  component={PowerQuality}
+                  element={<PowerQuality to="/parameters/power-quality" />}
                 />
                 <Route
                   path="/parameters/energy-consumption"
-                  component={EnergyConsumption}
+                  element={<EnergyConsumption to="/parameters/energy-consumption" />}
                 />
-                <Route path="/report" component={Report} />
+                <Route path="/report" element={<Report to="/report" />} />
                 {/* <Route path="/breakers" component={Breakers} /> */}
-                <Route path="/score-card" component={ScoreCard} />
+                <Route path="/score-card" element={<ScoreCard to="/score-card" />} />
                 <Route path="/client-profile" component={ClientProfile} />
                 {/* <Route path="/password" component={Dashboard} /> */}
                 <Route path="/password" component={Password} />
-                <Route path="/load-overview" component={LoadOverview} />
-                <Route path="/alerts-and-alarms" component={AlertsAndAlarms} />
-                <Route path="/diesel-overview" component={DieselOverviewPage} />
+                <Route path="/load-overview" element={<LoadOverview to="/load-overview" />} />
+                <Route path="/alerts-and-alarms" element={<AlertsAndAlarms to="/alerts-and-alarms" />} />
+                <Route path="/diesel-overview" element={<DieselOverviewPage to="/diesel-overview" />} />
                 <Route
                   exact
                   path="/branches"
@@ -119,8 +123,8 @@ function MainAppPages() {
                   path="/branches/user-form"
                   component={BranchesUserForm}
                 />
-                <Route component={Error} />
-              </Switch>
+                <Route path="*" element={<Error />} />
+              </Routes>
               {/* : <Loader />} */}
             </div>
           </ScrollToTop>

@@ -59,7 +59,7 @@ function AlertsAndAlarms({ match }) {
     }
   }, [match, setCurrentUrl]);
 
-  const { register, handleSubmit, control, errors, reset } = useForm({
+  const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
     defaultValues: preloadedAlertsFormData,
   });
 
@@ -210,9 +210,7 @@ const defaultDate = (data)=>{
                           width="50"
                           name="highPowerFactor"
                           id="high-power-factor"
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
+                          {...register("highPowerFactor", { pattern: /^-?\d+\.?\d*$/ })}
                           placeholder={preloadedAlertsFormData.max_power_factor}
                           value={max_power_factor}
                           onChange={(e) => {
@@ -235,6 +233,7 @@ const defaultDate = (data)=>{
                           inputMode="decimal"
                           name="lowPowerFactor"
                           id="low-power-factor"
+                          {...register("lowPowerFactor", { pattern: /^-?\d+\.?\d*$/ })}
                           placeholder={preloadedAlertsFormData.min_power_factor}
                           value={min_power_factor}
                           onChange={(e) => {
@@ -242,9 +241,6 @@ const defaultDate = (data)=>{
                             setmin_power_factor(e.target.value)
                             preloadedAlertsFormData.min_power_factor = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                       </p>
                       <p className="input-error-message">
@@ -322,15 +318,13 @@ const defaultDate = (data)=>{
                           inputMode="decimal"
                           name="frequencyVariance"
                           id="frequency-variance-factor"
+                          {...register("frequencyVariance", { pattern: /^-?\d+\.?\d*$/ })}
                           placeholder={preloadedAlertsFormData.frequency_precision}
                           value={frequency_precision}
                           onChange={(e) => {
                             setfrequency_precision(e.target.value)
                             preloadedAlertsFormData.frequency_precision = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                       </p>
                       <p className="input-error-message">
@@ -382,15 +376,13 @@ const defaultDate = (data)=>{
                           inputMode="decimal"
                           name="highVoltage"
                           id="high-voltage"
+                          {...register("highVoltage", { pattern: /^-?\d+\.?\d*$/ })}
                           placeholder={preloadedAlertsFormData.max_voltage}
                           value={max_voltage}
                           onChange={(e) => {
                             setmax_voltage(e.target.value)
                             preloadedAlertsFormData.max_voltage = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />{' '}
                         <span className="alerts-and-alarms-unit">volts</span> or
                         goes below{' '}
@@ -406,15 +398,13 @@ const defaultDate = (data)=>{
                           inputMode="decimal"
                           name="lowVoltage"
                           id="low-voltage"
+                          {...register("lowVoltage", { pattern: /^-?\d+\.?\d*$/ })}
                           placeholder={preloadedAlertsFormData.min_voltage}
                           value={min_voltage}
                           onChange={(e) => {
                             setmin_voltage(e.target.value)
                             preloadedAlertsFormData.min_voltage = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />{' '}
                         <span className="alerts-and-alarms-unit">volts</span>
                       </p>
@@ -500,15 +490,13 @@ const defaultDate = (data)=>{
                           inputMode="decimal"
                           name="set-baseline"
                           id="set-baseline"
+                          {...register("set-baseline", { pattern: /^-?\d+\.?\d*$/ })}
                           placeholder={preloadedAlertsFormData.energy_usage_max}
                           value={energy_usage_max}
                           onChange={(e) => {
                             setEnergy_usage_max(e.target.value)
                             preloadedAlertsFormData.energy_usage_max = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                         <span className="alerts-and-alarms-unit">kWh</span>
                       </p>
@@ -590,15 +578,13 @@ const defaultDate = (data)=>{
                           inputMode="decimal"
                           name="set-baseline"
                           id="set-baseline"
+                          {...register("set-baseline", { pattern: /^-?\d+\.?\d*$/ })}
                           placeholder={preloadedAlertsFormData.set_co2_value}
                           value={set_co2_value}
                           onChange={(e) => {
                             reset_co2_value(e.target.value)
                             preloadedAlertsFormData.set_co2_value = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                         <span className="alerts-and-alarms-unit">tons</span>
                       </p>
@@ -676,14 +662,12 @@ const defaultDate = (data)=>{
                           inputMode="decimal"
                           name="loadExcess"
                           id="load-excess"
+                          {...register("loadExcess", { pattern: /^-?\d+\.?\d*$/ })}
                           placeholder={preloadedAlertsFormData.load_threshold_value}
                           onChange={(e) => {
                             setload_threshold_value(e.target.value)
                             preloadedAlertsFormData.load_threshold_value = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />{' '}
                         <span className="alerts-and-alarms-unit">kW</span>
                       </p>
