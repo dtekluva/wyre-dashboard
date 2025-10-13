@@ -26,7 +26,7 @@ export const getAlertAndAlarm = () => async (dispatch) => {
   }
 };
 
-export const setAlertAndAlarm = () => async (dispatch) => {
+export const setAlertAndAlarm = (parameters) => async (dispatch) => {
   dispatch(setAlertsAndAlarmLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
@@ -42,10 +42,12 @@ export const setAlertAndAlarm = () => async (dispatch) => {
   }
   const requestUrl = `alerts_data/${branchId}/`;
   try {
-    const response = await APIService.post(requestUrl);
+    const response = await APIService.post(requestUrl, parameters);
     dispatch(setAlertsAndAlarmSuccess(response.data));
     dispatch(setAlertsAndAlarmLoading(false))
+    return { fullfilled: true, message: response.data }
   } catch (error) {
     dispatch(setAlertsAndAlarmLoading(false));
+    return { fullfilled: false, message: error?.response?.data }
   }
 };
