@@ -7,6 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
 import { Spin } from "antd";
 
@@ -61,19 +62,39 @@ const FuelUsageCard = ({ fetchFuelUsageData, fuelUsageData, loader }) => {
               barCategoryGap="30%"
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis 
+              <XAxis
                 dataKey="date"
-                fontSize={3}
+                fontSize={12}
                 tickFormatter={formatDate}
                 angle={-40}
                 textAnchor="end"
                 height={65}
               />
-              <YAxis 
-                label={{ value: "Fuel Used", angle: -90, position: "insideLeft" }}
+              <YAxis
+                label={{ value: "Fuel Used (L)", angle: -90, position: "insideLeft" }}
               />
-              <Tooltip formatter={(val) => [`${val} L`, "Fuel"]} />
-              <Bar dataKey="fuel_liters" fill="#5C12A7" radius={[6, 6, 0, 0]} />
+              <Tooltip
+                formatter={(value, name) => {
+                  const labelMap = {
+                    fuel_liters: "Reported usage",
+                    predicted_liters: "EMS usage"
+                  };
+                  return [`${value} L`, labelMap[name] || name];
+                }}
+              />
+              <Legend />
+              <Bar
+                dataKey="fuel_liters"
+                fill="#5C12A7"
+                name="Reported usag"
+                radius={[6, 6, 0, 0]}
+              />
+              <Bar
+                dataKey="predicted_liters"
+                fill="#FCCC43"
+                name="EMS usage"
+                radius={[6, 6, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
