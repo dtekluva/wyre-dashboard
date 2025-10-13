@@ -324,12 +324,10 @@ function Header() {
                 <img
                   className="header-avatar__image"
                   src={
-                    organisationName ? `https://backend.wyreng.com${avatarImage}` : ''
+                    organisationName ? `https://backend.wyreng.com${avatarImage}` : '/wyreLogo.png'
                   }
                   alt={
-                    organisationName
-                      ? `Avatar for ${organisationName}`
-                      : 'Avatar'
+                    'Avatar'
                   }
                 />
               </button>
@@ -428,7 +426,7 @@ function Header() {
           >
             <img
               className="header-avatar__image"
-              src={organisationName ? `https://backend.wyreng.com${avatarImage}` : ''}
+              src={organisationName ? `https://backend.wyreng.com${avatarImage}` : '/wyreLogo.png'}
               alt={
                 organisationName ? `Avatar for ${organisationName}` : 'Avatar'
               }
