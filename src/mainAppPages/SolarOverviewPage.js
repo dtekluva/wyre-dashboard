@@ -1,4 +1,3 @@
-// SolarOverviewPage.jsx
 import React, { useState } from "react";
 import { Card, Row, Col, Progress, Select, Table } from "antd";
 import {
@@ -17,6 +16,12 @@ import {
   SettingOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
+// === Import your exported PNG icons ===
+import productionImg from "../assets/icons/production.png";
+import capacityImg from "../assets/icons/capacity.png";
+import batteryImg from "../assets/icons/battery.png";
+import gridImg from "../assets/icons/grid.png";
+import usageImg from "../assets/icons/usage.png";
 import { motion } from "framer-motion/dist/framer-motion"; // Node12-safe import
 import BreadCrumb from "../components/BreadCrumb";
 // import "./SolarOverviewPage.css";
@@ -32,7 +37,8 @@ const { Option } = Select;
    CircleGauge (Segmented SVG)
    --------------------------- */
 const CircleGauge = ({ value, max, size = 200, segments = 48 }) => {
-  const percentage = Math.max(0, Math.min(100, Math.round((value / max) * 100)));
+  // const percentage = Math.max(0, Math.min(100, Math.round((value / max) * 100)));
+  const percentage = 13;
   const cx = size / 2;
   const cy = size / 2;
   const inner = size * 0.34; // inner radius for ticks start
@@ -94,116 +100,110 @@ const CircleGauge = ({ value, max, size = 200, segments = 48 }) => {
 };
 
 /* ---------------------------
-   FlowDiagram (Z-shaped with stretched-S bends)
+   FlowDiagram (Final curved Z-shape + glowing pulses)
    --------------------------- */
 const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
   const nodes = {
-    production: { x: 300, y: 160, r: 52, label: "Production", color: "#f59e0b", bg: "#fde68a", value: `${production} kW` },
-    capacity:   { x: 140, y: 50,  r: 36, label: "Capacity",   color: "#6d28d9", bg: "#f3e8ff", value: `${capacity} kWp` },
-    battery:    { x: 140, y: 270, r: 36, label: "Battery",    color: "#16a34a", bg: "#dcfce7", value: `${battery}%` },
-    grid:       { x: 460, y: 50,  r: 36, label: "Grid",       color: "#2563eb", bg: "#dbeafe", value: `${grid} kW` },
-    usage:      { x: 460, y: 270, r: 36, label: "Usage",      color: "#dc2626", bg: "#fee2e2", value: `${usage} kW` },
+    production: {
+      x: 300,
+      y: 160,
+      r: 62,
+      color: "#f59e0b",
+      bg: "#fde68a",
+      icon: productionImg,
+      label: "Production",
+      value: `${production} kW`,
+    },
+    capacity: {
+      x: -40,
+      y: 50,
+      r: 38,
+      color: "#6d28d9",
+      bg: "#f3e8ff",
+      icon: capacityImg,
+      label: "Capacity",
+      value: `${capacity} kWp`,
+      percentage: 62.5,
+    },
+    battery: {
+      x: -40,
+      y: 270,
+      r: 38,
+      color: "#16a34a",
+      bg: "#dcfce7",
+      icon: batteryImg,
+      label: "Battery",
+      value: `${battery} kW`,
+      percentage: 83.8,
+    },
+    grid: {
+      x: 660,
+      y: 50,
+      r: 38,
+      color: "#2563eb",
+      bg: "#dbeafe",
+      icon: gridImg,
+      label: "Grid",
+      value: `${grid} kW`,
+    },
+    usage: {
+      x: 660,
+      y: 270,
+      r: 38,
+      color: "#dc2626",
+      bg: "#fee2e2",
+      icon: usageImg,
+      label: "Usage",
+      value: `${usage} kW`,
+    },
   };
 
-  // Spaced offsets so lines don't meet
   const connectors = [
-    { from: "capacity", to: "production", color: nodes.capacity.color, side: "left",  offset: -28 },
-    { from: "battery",  to: "production", color: nodes.battery.color,  side: "left",  offset:  12 },
-    { from: "grid",     to: "production", color: nodes.grid.color,     side: "right", offset: -18 },
-    { from: "usage",    to: "production", color: nodes.usage.color,    side: "right", offset:  22 },
+    { from: "capacity", to: "production", color: nodes.capacity.color, side: "left", offset: -22 },
+    { from: "battery", to: "production", color: nodes.battery.color, side: "left", offset: 18 },
+    { from: "grid", to: "production", color: nodes.grid.color, side: "right", offset: -22 },
+    { from: "usage", to: "production", color: nodes.usage.color, side: "right", offset: 22 },
   ];
 
   return (
-    <svg width="100%" height="320" viewBox="0 0 600 320" preserveAspectRatio="xMidYMid meet" className="flow-svg">
-      {/* nodes */}
-      {Object.entries(nodes).map(([key, n]) => (
-        <g key={key} className="node-group">
-          <circle cx={n.x} cy={n.y} r={n.r} fill={n.bg} stroke={n.color} strokeWidth="2" />
-          <text x={n.x} y={n.y - 8} textAnchor="middle" fontSize="11" fill={n.color}>{n.label}</text>
-          <text x={n.x} y={n.y + 14} textAnchor="middle" fontSize="13" fontWeight="700" fill={n.color}>{n.value}</text>
-        </g>
-      ))}
-
-      {/* connectors: Z-layout but smoothed into stretched-S curves */}
-      {/* {connectors.map(({ from, to, color, side, offset }, idx) => {
-        const start = nodes[from];
-        const end = nodes[to];
-
-        const sx = start.x + (start.x < end.x ? start.r : -start.r);
-        const sy = start.y;
-
-        const prodAttachX = end.x + (side === "left" ? -end.r : end.r);
-        const prodAttachY = end.y + offset;
-
-        // Horizontal step from source
-        const midX1 = sx + (prodAttachX - sx) * 0.67;
-        const midY1 = sy;
-
-        // Diagonal middle leg
-        const midX2 = sx + (prodAttachX - sx) * 0.25;
-        const midY2 = prodAttachY;
-
-        const pathD = [
-          `M ${sx},${sy}`,
-          `Q ${(sx + midX1) / 2},${sy} ${midX1},${midY1}`, // rounded first bend
-          `L ${midX2},${midY2}`,
-          `Q ${(midX2 + prodAttachX) / 2},${prodAttachY} ${prodAttachX},${prodAttachY}` // rounded second bend
-        ].join(" ");
-
-        return (
-          <motion.path
-            key={idx}
-            d={pathD}
-            fill="none"
-            stroke={color}
-            strokeWidth="3"
-            strokeLinecap="round"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 1.2 + idx * 0.1, ease: "easeInOut" }}
-          />
-        );
-      })} */}
+    <svg
+      width="100%"
+      height="320"
+      viewBox="0 0 600 320"
+      preserveAspectRatio="xMidYMid meet"
+      className="flow-svg"
+    >
+      {/* === CONNECTORS === */}
       {connectors.map(({ from, to, color, side, offset }, idx) => {
         const start = nodes[from];
         const end = nodes[to];
 
-        // Start point
         const sx = start.x + (start.x < end.x ? start.r : -start.r);
         const sy = start.y;
-
-        // End point
         const ex = end.x + (side === "left" ? -end.r : end.r);
         const ey = end.y + offset;
 
-        // Middle control points for stretched Z-shape
-        const midX1 = sx + (ex - sx) * 0.25;
-        const midY1 = sy;
-
-        const midX2 = sx + (ex - sx) * 0.75;
-        const midY2 = ey;
-
-        const pathD = [
-          `M ${sx},${sy}`,
-          `Q ${(sx + midX1) / 2},${sy} ${midX1},${midY1}`,
-          `L ${midX2},${midY2}`,
-          `Q ${(midX2 + ex) / 2},${ey} ${ex},${ey}`
-        ].join(" ");
+        // smooth S-like stretched connector
+        const control1X = sx + (ex - sx) * 0.35;
+        const control1Y = sy + (ey - sy) * 0.15;
+        const control2X = sx + (ex - sx) * 0.65;
+        const control2Y = sy + (ey - sy) * 0.85;
+        const pathD = `M ${sx},${sy} C ${control1X},${control1Y} ${control2X},${control2Y} ${ex},${ey}`;
 
         return (
           <g key={idx}>
-            {/* Base line (always visible) */}
+            {/* Base connector line */}
             <path
               d={pathD}
               fill="none"
-              stroke="#ccc"
+              stroke={color}
               strokeWidth="2"
               strokeLinecap="round"
-              opacity="0.4"
+              opacity="0.25"
             />
 
-            {/* Glowing pulses */}
-            {[0, 0.6, 1.2].map((delay, pulseIdx) => (
+            {/* Multiple glowing pulses */}
+            {[0, 0.7, 1.4].map((delay, pulseIdx) => (
               <motion.path
                 key={pulseIdx}
                 d={pathD}
@@ -211,26 +211,129 @@ const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
                 stroke={color}
                 strokeWidth="3"
                 strokeLinecap="round"
-                strokeDasharray="10 300"
+                strokeDasharray="20 300"
                 initial={{ strokeDashoffset: 300 }}
                 animate={{ strokeDashoffset: 0 }}
                 transition={{
                   duration: 2.5,
                   repeat: Infinity,
                   ease: "linear",
-                  delay: delay
+                  delay: delay,
                 }}
                 style={{
-                  filter: "drop-shadow(0px 0px 6px rgba(0, 191, 255, 0.8))"
+                  filter: `drop-shadow(0px 0px 6px ${color}80)`,
                 }}
               />
             ))}
           </g>
         );
       })}
+
+      {/* === CIRCLES (NODES) WITH LABELS & IMAGES === */}
+      {Object.entries(nodes).map(([key, n]) => {
+        const iconSize = n.r * 0.9;
+
+        // Label positioning logic
+        let labelOffsetX = 0;
+        let textAnchor = "middle";
+        if (key === "capacity" || key === "battery") {
+          labelOffsetX = -n.r - 95;
+          textAnchor = "start";
+        } else if (key === "grid" || key === "usage") {
+          labelOffsetX = n.r + 95;
+          textAnchor = "end";
+        }
+
+        return (
+          <g key={key} className="node-group">
+            {/* Main circle */}
+            <circle cx={n.x} cy={n.y} r={n.r} fill={n.bg} stroke={n.color} strokeWidth="2" />
+
+            {/* Progress arc for Capacity & Battery */}
+            {["capacity", "battery"].includes(key) && n.percentage !== undefined && (
+              <circle
+                cx={n.x}
+                cy={n.y}
+                r={n.r + 5}
+                fill="none"
+                stroke={n.color}
+                strokeWidth="4"
+                strokeDasharray={`${(2 * Math.PI * (n.r + 5) * n.percentage) / 100} ${
+                  2 * Math.PI * (n.r + 5)
+                }`}
+                strokeDashoffset="0"
+                strokeLinecap="round"
+                opacity="0.6"
+              />
+            )}
+
+            {/* PNG Image (icon) */}
+            <motion.image
+              href={n.icon}
+              x={n.x - iconSize / 2}
+              y={n.y - iconSize / 2}
+              width={iconSize}
+              height={iconSize}
+              preserveAspectRatio="xMidYMid meet"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
+              style={{ pointerEvents: "none" }}
+            />
+
+            {/* Labels and Values */}
+            {key === "production" ? (
+              <>
+                <text
+                  x={n.x}
+                  y={n.y - n.r - 22}
+                  textAnchor="middle"
+                  fontSize="13"
+                  fill="#111827"
+                  fontWeight="600"
+                >
+                  {n.label}
+                </text>
+                <text
+                  x={n.x}
+                  y={n.y - n.r - 7}
+                  textAnchor="middle"
+                  fontSize="12"
+                  fill="#6B7280"
+                >
+                  {n.value}
+                </text>
+              </>
+            ) : (
+              <>
+                <text
+                  x={n.x + labelOffsetX}
+                  y={n.y - 34}
+                  textAnchor={textAnchor}
+                  fontSize="13"
+                  fill="#111827"
+                  fontWeight="600"
+                >
+                  {n.label}
+                </text>
+                <text
+                  x={n.x + labelOffsetX}
+                  y={n.y - 14}
+                  textAnchor={textAnchor}
+                  fontSize="12"
+                  fill="#6B7280"
+                >
+                  {n.value}
+                </text>
+              </>
+            )}
+          </g>
+        );
+      })}
     </svg>
   );
 };
+
 
 /* ---------------------------
    Main SolarOverviewPage
@@ -289,28 +392,22 @@ const SolarOverviewPage = () => {
       <div className="breadcrumb-and-print-buttons">
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
-
       {/* Top row: Left gauge card (span=11) + Right flow card (span=13) */}
       <Row gutter={16}>
-        <Col span={11}>
+        <Col span={14}>
           <Card className="left-card">
             <div className="left-card-header">
               <div className="header-left">
-                <EnvironmentOutlined className="icon-small" />
                 <div className="header-text">
-                  <div className="location">Lekki — cloudy 23°C</div>
-                  <div className="sun-info"><CloudOutlined /> Sunrise 06:38 • Sunset 18:53 (UTC+01)</div>
+                  <div className="location"><EnvironmentOutlined className="icon-small" />Lekki — cloudy 23°C</div>
+                  <div className="sun-info"><CloudOutlined /> Sunshine 06:38 - 18:53 <p>(UTC+01)</p></div>
                 </div>
-              </div>
-              <div className="header-right">
-                <SettingOutlined className="icon-small" />
-                <InfoCircleOutlined className="icon-small" />
               </div>
             </div>
 
             <div className="left-card-body">
               <div className="gauge-area">
-                <CircleGauge value={productionPower} max={capacity} size={220} segments={48} />
+                <CircleGauge value={productionPower} max={capacity} size={175} segments={30} />
               </div>
 
               <div className="gauge-stats">
@@ -333,9 +430,23 @@ const SolarOverviewPage = () => {
             </div>
           </Card>
         </Col>
-
-        <Col span={13}>
+        <Col span={10}>
           <Card className="right-card">
+            <Table
+              dataSource={yieldData}
+              pagination={false}
+              columns={[
+                { title: "Type", dataIndex: "type", key: "type" },
+                { title: "Value", dataIndex: "value", key: "value" },
+                { title: "Price", dataIndex: "price", key: "price" },
+              ]}
+            />
+          </Card>
+        </Col>
+      </Row>     
+      <Row gutter={16} className="svg-row">
+        <Col span={24}>
+          <Card className="">
             <FlowDiagram
               production={productionPower}
               battery={battery}
@@ -346,13 +457,12 @@ const SolarOverviewPage = () => {
           </Card>
         </Col>
       </Row>
-
       {/* Charts section — unchanged structure */}
       <Row gutter={16} className="charts-row">
         <Col span={24}>
           <Card>
             <div className="chart-header">
-              <h3>Mix, Circuit, and Balance</h3>
+              <h3>Consumption</h3>
               <Select value={period} onChange={setPeriod} style={{ width: 120 }}>
                 <Option value="today">Today</Option>
                 <Option value="week">This week</Option>
@@ -393,7 +503,7 @@ const SolarOverviewPage = () => {
       </Row>
 
       <Row gutter={16} className="yield-row">
-        <Col span={16}>
+        <Col span={24}>
           <Card>
             <h3>Battery Storage</h3>
             <ResponsiveContainer width="100%" height={250}>
@@ -407,20 +517,6 @@ const SolarOverviewPage = () => {
                 <Area type="monotone" dataKey="discharge" stroke="#ef4444" />
               </AreaChart>
             </ResponsiveContainer>
-          </Card>
-        </Col>
-
-        <Col span={8}>
-          <Card>
-            <Table
-              dataSource={yieldData}
-              pagination={false}
-              columns={[
-                { title: "Type", dataIndex: "type", key: "type" },
-                { title: "Value", dataIndex: "value", key: "value" },
-                { title: "Price", dataIndex: "price", key: "price" },
-              ]}
-            />
           </Card>
         </Col>
       </Row>

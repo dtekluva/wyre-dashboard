@@ -849,7 +849,7 @@
   color: #6a1b9a;
 }
 
-
+// SOLAR-OVERVIEW PAGE
 .solar-overview {
   // padding: 20px;
   // background: #f9f9fb;
@@ -970,10 +970,6 @@
   color: #ef4444;
 }
 
-.charts-row {
-  margin-top: 20px;
-}
-
 .chart-header {
   display: flex;
   justify-content: space-between;
@@ -1028,10 +1024,15 @@
 
 /* left card main */
 .left-card-body { display:block; }
-.left-card .left-card-body { }
 
 /* layout inside left card */
-.left-card .left-card-body { display:flex; gap: 18px; align-items:center; justify-content: flex-start; padding-top: 10px; }
+.left-card .left-card-body { 
+  display:flex; 
+  gap: 48px; 
+  align-items:center; 
+  justify-content: center; 
+  padding-top: 10px; 
+}
 
 /* gauge area */
 .circle-gauge { display:block; }
@@ -1052,6 +1053,11 @@
 
 /* node group subtle styling */
 .node-group text { font-family: Inter, Arial, sans-serif; }
+
+// SVG
+.svg-row {
+  margin-top: 20px;
+}
 
 /* charts */
 .charts-row { margin-top: 20px; }
