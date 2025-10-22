@@ -108,20 +108,20 @@ function MainAppPages() {
                 <Route path="/report" element={<Report to="/report" />} />
                 {/* <Route path="/breakers" component={Breakers} /> */}
                 <Route path="/score-card" element={<ScoreCard to="/score-card" />} />
-                <Route path="/client-profile" component={ClientProfile} />
+                <Route path="/client-profile" element={<ClientProfile to="/score-card" />} />
                 {/* <Route path="/password" component={Dashboard} /> */}
-                <Route path="/password" component={Password} />
+                <Route path="/password" element={<Password to="/password" />} />
                 <Route path="/load-overview" element={<LoadOverview to="/load-overview" />} />
                 <Route path="/alerts-and-alarms" element={<AlertsAndAlarms to="/alerts-and-alarms" />} />
                 <Route path="/diesel-overview" element={<DieselOverviewPage to="/diesel-overview" />} />
                 <Route
                   exact
                   path="/branches"
-                  component={BranchesDevicesAndUsers}
+                  element={<BranchesDevicesAndUsers to="/branches" />}
                 />
                 <Route
                   path="/branches/user-form"
-                  component={BranchesUserForm}
+                  element={<BranchesUserForm to="/branches/user-form" />}
                 />
                 <Route path="*" element={<Error />} />
               </Routes>
