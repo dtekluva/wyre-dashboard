@@ -40,7 +40,7 @@ const DieselHeader = ({ dieselPrice, genStatus, Co2, loader }) => {
             <p className="card-label">CO emission</p>
             <Spin spinning={loader.co2EmissionLoading}>
               <p className="card-value highlight">
-                {Co2?.data?.total_co2_tonnes} <span className="unit">tons</span>
+                {(Co2?.data?.total_co2_tonnes)?.toLocaleString()} <span className="unit">tons</span>
               </p>
             </Spin>
           </div>
@@ -61,9 +61,9 @@ const DieselHeader = ({ dieselPrice, genStatus, Co2, loader }) => {
           </div>
           <Spin spinning={loader.dieselPriceLoading}>
             <div className="price-right">
-              <p className="card-value highlight">₦ {dieselPrice.diesel_price_per_litre}</p>
-              <p className="card-value green">{dieselPrice.diesel_efficiency} kWh/L</p>
-              <p className="card-value highlight">₦ {dieselPrice.month_estimated_cost}</p>
+              <p className="card-value highlight">₦ {(dieselPrice.diesel_price_per_litre)?.toLocaleString()}</p>
+              <p className="card-value green">{(dieselPrice.diesel_efficiency)?.toLocaleString()} kWh/L</p>
+              <p className="card-value highlight">₦ {(dieselPrice.month_estimated_cost)?.toLocaleString()}</p>
             </div>
           </Spin>
         </div>

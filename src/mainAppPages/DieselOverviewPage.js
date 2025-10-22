@@ -155,7 +155,7 @@ const DieselOverviewPage = ({
       pdf.addImage(imgData, "PNG", 0, 25, pageWidth, pdfHeight);
 
       // ✅ Add watermark text
-      const watermarkText = "Wyreng Energy";
+      const watermarkText = "Wyre Energy";
       pdf.setFontSize(50);
       pdf.setTextColor(150, 150, 150);
       pdf.setDrawColor(255, 255, 255);

@@ -4,7 +4,7 @@ import UnAuthorizeResponse from './UnAuthorizeResponse';
 import { getAlertAndAlarm, setAlertAndAlarm } from '../redux/actions/alertsAndAlarm/alertsAndAlarm.action';
 import { connect } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form/dist/index.ie11';
-import { Checkbox, notification } from 'antd';
+import { Checkbox, Collapse, Form, notification } from 'antd';
 import { useEffect } from 'react';
 import BreadCrumb from '../components/BreadCrumb';
 import { useState } from 'react';
@@ -16,7 +16,10 @@ const breadCrumbRoutes = [
   { url: '/alerts-and-alarms', name: 'Alerts and Alarms', id: 2 },
 ];
 
+const { Panel } = Collapse;
+
 function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, match }) {
+  const [alertsForm] = Form.useForm();
   const { setCurrentUrl, token, userId, userData } = useContext(CompleteDataContext);
   const [preloadedAlertsFormData, setPreloadedAlertsFormData] = useState({});
   const [generator_data, setGenerator_data] = useState([])
@@ -89,56 +92,19 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
     }
   }
 
-  const onSubmit = ({
-    highPowerFactor,
-    lowPowerFactor,
-    dailyDieselUsageChecked,
-    powerFactorChecked,
-    loadBalanceIssuesChecked,
-    frequencyVariance,
-    frequencyVarianceChecked,
-    highVoltage,
-    lowVoltage,
-    voltageChecked,
-    eliminatedCo2Checked,
-    setCo2Checked,
-    generatorOnChecked,
-    loadExcess,
-    loadExcessChecked,
-    priorityPowerUnusedChecked,
-    generatorMaintenanceTimeChecked,
-  }) => {
-    const newAlertsFormData = {
-      highPowerFactor,
-      lowPowerFactor,
-      dailyDieselUsageChecked,
-      powerFactorChecked,
-      loadBalanceIssuesChecked,
-      frequencyVariance,
-      frequencyVarianceChecked,
-      highVoltage,
-      lowVoltage,
-      voltageChecked,
-      eliminatedCo2Checked,
-      setCo2Checked,
-      generatorOnChecked,
-      loadExcess,
-      loadExcessChecked,
-      priorityPowerUnusedChecked,
-      generatorMaintenanceTimeChecked,
-    };
+  const handleAlertsSubmit = async () => {
     const updatedAlertsFormData = {
       'data': preloadedAlertsFormData,
-      'generator_data': generator_data,
+      'generator_data': generator_data
     };
+    const request = await setAlertAndAlarm(updatedAlertsFormData);
 
-    setAlertAndAlarm(updatedAlertsFormData).then((res) => {
-      openNotification('success', 'Success', 'Your changes has been updated succesfully')
-    }).catch((err) => {
-      openNotification('error', 'Error', 'Something un-expected occured, please try again.')
-      console.log(err)
-    });
-  };
+      if (request.fullfilled) {
+        openNotification("success", "Success", "Your changes has been updated succesfully");
+      }else {
+        openNotification('error', "Error", 'Something un-expected occured, please try again.')
+      }
+    }
 
   return (
     <>
@@ -154,39 +120,59 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
           <form
             action="#"
             className="alerts-and-alarms-form"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleAlertsSubmit}
           >
             <fieldset className="alerts-and-alarms-form-inputs-wrapper">
               <legend className="alerts-and-alarms-form-section-heading">
                 Standard Alerts on Anomalies
               </legend>
-
-              <ol className="alerts-and-alarms-list">
+              <ol className="alerts-and-alarms-list">            
                 <li className="alerts-and-alarms-list-item">
                   <div className="alerts-and-alarms-question-container">
-                    {' '}
-                    <label
-                      htmlFor="load-balance-issues-checkbox"
-                      className="alerts-and-alarms-question"
-                    >
-                      Get Diesel Usage Alerts
-                    </label>{' '}
-                    <Controller
-                      name="dailyDieselUsageChecked"
-                      defaultValue={preloadedAlertsFormData?.daily_diesel_usage_alerts}
-                      control={control}
-                      render={(props) => (
-                        <Checkbox
-                          onChange={(e) => {
-                            props.onChange(e.target.checked)
-                            preloadedAlertsFormData.daily_diesel_usage_alerts = e.target.checked
-                          }}
-                          checked={preloadedAlertsFormData?.daily_diesel_usage_alerts}
-                          className="daily-diesel-usage-checkbox alerts-and-alarms-checkbox"
-                          id="daily-diesel-usage-checkbox"
-                        />
-                      )}
-                    />
+                    <label className="alerts-and-alarms-question">
+                      Get energy usage alerts
+                    </label>
+                    <Collapse ghost expandIconPosition="end">
+                      <Panel header="Choose alert frequency" key="1">
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                          {/* Daily diesel usage alert */}
+                          <Controller
+                            name="dailyDieselUsageChecked"
+                            defaultValue={preloadedAlertsFormData?.daily_energy_usage_alerts}
+                            control={control}
+                            render={(props) => (
+                              <Checkbox
+                                onChange={(e) => {
+                                  props.onChange(e.target.checked);
+                                  preloadedAlertsFormData.daily_energy_usage_alerts = e.target.checked;
+                                }}
+                                checked={preloadedAlertsFormData?.daily_energy_usage_alerts}
+                              >
+                                Daily energy usage alerts
+                              </Checkbox>
+                            )}
+                          />
+
+                          {/* Weekly diesel usage alert */}
+                          <Controller
+                            name="weeklyDieselUsageChecked"
+                            defaultValue={preloadedAlertsFormData?.weekly_energy_usage_alerts}
+                            control={control}
+                            render={(props) => (
+                              <Checkbox
+                                onChange={(e) => {
+                                  props.onChange(e.target.checked);
+                                  preloadedAlertsFormData.weekly_energy_usage_alerts = e.target.checked;
+                                }}
+                                checked={preloadedAlertsFormData?.weekly_energy_usage_alerts}
+                              >
+                                Weekly energy usage alerts
+                              </Checkbox>
+                            )}
+                          />
+                        </div>
+                      </Panel>
+                    </Collapse>
                   </div>
                 </li>
 
