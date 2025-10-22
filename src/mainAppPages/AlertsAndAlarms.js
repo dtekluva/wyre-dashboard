@@ -130,7 +130,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                 <li className="alerts-and-alarms-list-item">
                   <div className="alerts-and-alarms-question-container">
                     <label className="alerts-and-alarms-question">
-                      Get diesel usage alerts
+                      Get energy usage alerts
                     </label>
                     <Collapse ghost expandIconPosition="end">
                       <Panel header="Choose alert frequency" key="1">
@@ -148,7 +148,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                                 }}
                                 checked={preloadedAlertsFormData?.daily_energy_usage_alerts}
                               >
-                                Daily diesel usage alert
+                                Daily energy usage alerts
                               </Checkbox>
                             )}
                           />
@@ -166,7 +166,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                                 }}
                                 checked={preloadedAlertsFormData?.weekly_energy_usage_alerts}
                               >
-                                Weekly diesel usage alert
+                                Weekly energy usage alerts
                               </Checkbox>
                             )}
                           />

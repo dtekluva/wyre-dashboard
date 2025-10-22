@@ -13,7 +13,7 @@ const GeneratorStatus2 = ({ genStatusChartData, loader }) => {
   const fuelUsedData = generators.map((g) => ({
     name: g.name,
     value: g.fuel_liters,
-    formatted: `${g.fuel_liters} Litres`,
+    formatted: `${(g.fuel_liters)?.toLocaleString()} Litres`,
   }));
 
   return (
@@ -120,7 +120,7 @@ const GeneratorStatus2 = ({ genStatusChartData, loader }) => {
 
             {/* Bottom cumulative label */}
             <div className="donut-total">
-              {total_fuel_liters} Litres
+              {(total_fuel_liters)?.toLocaleString()} Litres
             </div>
           </div>
         </div>
