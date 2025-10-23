@@ -250,6 +250,23 @@
 .power-icon__image {
   height: 60px;
 }
+// New Alerts and Alarm (Energy usage)
+.alerts-and-alarms-subheading {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.alerts-and-alarms-suboption label {
+  font-size: 1.5rem;
+  color: #444;
+}
+
+.alerts-and-alarms-suboption .alerts-and-alarms-checkbox {
+  margin-left: 1rem;
+}
+
 
 /* === Diesel-Overview page === */
 /* Header */
