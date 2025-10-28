@@ -890,6 +890,26 @@
   border-radius: 2px;
 }
 
+.custom-card {
+  margin-top: 35px;
+  position: relative;
+  overflow: visible; /* Allow label to “pop out” */
+  border-radius: 0 8px 8px 8px;
+}
+
+.card-label {
+  position: absolute;
+  top: -38px;     /* Moves it above the card edge */
+  left: 0px;
+  text-align: center;
+  background: white;
+  padding: 7px 35px;
+  border-radius: 6px 6px 0 0;
+  font-weight: 500;
+  font-size: 16px;
+  // box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
 .page-title {
   font-size: 24px;
   margin-bottom: 20px;
@@ -971,9 +991,12 @@
 }
 
 .chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  // display: flex;
+  // justify-content: space-between;
+  // align-items: center;
+  position: absolute;
+  top: -43px;     /* Moves it above the card edge */
+  right: 0px;
 }
 
 .placeholder-chart {

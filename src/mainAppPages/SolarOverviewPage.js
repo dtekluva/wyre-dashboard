@@ -158,11 +158,17 @@ const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
     },
   };
 
+  // const connectors = [
+  //   { from: "capacity", to: "production", color: nodes.capacity.color, side: "left", offset: -22 },
+  //   { from: "battery", to: "production", color: nodes.battery.color, side: "left", offset: 18 },
+  //   { from: "grid", to: "production", color: nodes.grid.color, side: "right", offset: -22 },
+  //   { from: "usage", to: "production", color: nodes.usage.color, side: "right", offset: 22 },
+  // ];
   const connectors = [
-    { from: "capacity", to: "production", color: nodes.capacity.color, side: "left", offset: -22 },
-    { from: "battery", to: "production", color: nodes.battery.color, side: "left", offset: 18 },
-    { from: "grid", to: "production", color: nodes.grid.color, side: "right", offset: -22 },
-    { from: "usage", to: "production", color: nodes.usage.color, side: "right", offset: 22 },
+    { from: "capacity", to: "production", color: nodes.capacity.color, side: "left",  offset: -28 },
+    { from: "battery",  to: "production", color: nodes.battery.color,  side: "left",  offset:  12 },
+    { from: "grid",     to: "production", color: nodes.grid.color,     side: "right", offset: -18 },
+    { from: "usage",    to: "production", color: nodes.usage.color,    side: "right", offset:  22 },
   ];
 
   return (
@@ -178,32 +184,42 @@ const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
         const start = nodes[from];
         const end = nodes[to];
 
+        // Start point
         const sx = start.x + (start.x < end.x ? start.r : -start.r);
         const sy = start.y;
+
+        // End point
         const ex = end.x + (side === "left" ? -end.r : end.r);
         const ey = end.y + offset;
 
-        // smooth S-like stretched connector
-        const control1X = sx + (ex - sx) * 0.35;
-        const control1Y = sy + (ey - sy) * 0.15;
-        const control2X = sx + (ex - sx) * 0.65;
-        const control2Y = sy + (ey - sy) * 0.85;
-        const pathD = `M ${sx},${sy} C ${control1X},${control1Y} ${control2X},${control2Y} ${ex},${ey}`;
+        // Middle control points for stretched Z-shape
+        const midX1 = sx + (ex - sx) * 0.25;
+        const midY1 = sy;
+
+        const midX2 = sx + (ex - sx) * 0.75;
+        const midY2 = ey;
+
+        const pathD = [
+          `M ${sx},${sy}`,
+          `Q ${(sx + midX1) / 2},${sy} ${midX1},${midY1}`,
+          `L ${midX2},${midY2}`,
+          `Q ${(midX2 + ex) / 2},${ey} ${ex},${ey}`
+        ].join(" ");
 
         return (
           <g key={idx}>
-            {/* Base connector line */}
+            {/* Base line (always visible) */}
             <path
               d={pathD}
               fill="none"
-              stroke={color}
+              stroke="#ccc"
               strokeWidth="2"
               strokeLinecap="round"
-              opacity="0.25"
+              opacity="0.4"
             />
 
-            {/* Multiple glowing pulses */}
-            {[0, 0.7, 1.4].map((delay, pulseIdx) => (
+            {/* Glowing pulses */}
+            {[0, 0.6, 1.2].map((delay, pulseIdx) => (
               <motion.path
                 key={pulseIdx}
                 d={pathD}
@@ -211,17 +227,17 @@ const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
                 stroke={color}
                 strokeWidth="3"
                 strokeLinecap="round"
-                strokeDasharray="20 300"
+                strokeDasharray="10 300"
                 initial={{ strokeDashoffset: 300 }}
                 animate={{ strokeDashoffset: 0 }}
                 transition={{
                   duration: 2.5,
                   repeat: Infinity,
                   ease: "linear",
-                  delay: delay,
+                  delay: delay
                 }}
                 style={{
-                  filter: `drop-shadow(0px 0px 6px ${color}80)`,
+                  filter: "drop-shadow(0px 0px 6px rgba(0, 191, 255, 0.8))"
                 }}
               />
             ))}
@@ -460,9 +476,14 @@ const SolarOverviewPage = () => {
       {/* Charts section — unchanged structure */}
       <Row gutter={16} className="charts-row">
         <Col span={24}>
-          <Card>
+          <Card className="custom-card">
+              <h3 className="card-label">Consumption</h3>
             <div className="chart-header">
-              <h3>Consumption</h3>
+              <Select value={period} onChange={setPeriod} style={{ width: 120 }}>
+                <Option value="today">Today</Option>
+                <Option value="week">This week</Option>
+                <Option value="month">This month</Option>
+              </Select>
               <Select value={period} onChange={setPeriod} style={{ width: 120 }}>
                 <Option value="today">Today</Option>
                 <Option value="week">This week</Option>
@@ -487,8 +508,15 @@ const SolarOverviewPage = () => {
 
       <Row gutter={16} className="charts-row">
         <Col span={24}>
-          <Card>
-            <h3>Yield</h3>
+          <Card className="custom-card">
+            <h3 className="card-label">Yield</h3>
+            <div className="chart-header">
+              <Select value={period} onChange={setPeriod} style={{ width: 120 }}>
+                <Option value="today">Today</Option>
+                <Option value="week">This week</Option>
+                <Option value="month">This month</Option>
+              </Select>
+            </div>
             <ResponsiveContainer width="100%" height={250}>
               <AreaChart data={yieldCurve}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -504,8 +532,8 @@ const SolarOverviewPage = () => {
 
       <Row gutter={16} className="yield-row">
         <Col span={24}>
-          <Card>
-            <h3>Battery Storage</h3>
+          <Card className="custom-card">
+            <h3 className="card-label">Battery Storage</h3>
             <ResponsiveContainer width="100%" height={250}>
               <AreaChart data={batteryData}>
                 <CartesianGrid strokeDasharray="3 3" />
