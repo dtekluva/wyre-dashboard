@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Card, Row, Col, Progress, Select, Table } from "antd";
+import React, { useEffect, useState } from "react";
+import { Card, Row, Col, Progress, Select, Tabs, Table, DatePicker } from "antd";
+import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import {
   AreaChart,
   Area,
@@ -15,8 +16,7 @@ import {
   CloudOutlined,
   SettingOutlined,
   InfoCircleOutlined,
-} from "@ant-design/icons";
-// === Import your exported PNG icons ===
+} from "@ant-design/icons";  
 import productionImg from "../assets/icons/production.png";
 import capacityImg from "../assets/icons/capacity.png";
 import batteryImg from "../assets/icons/battery.png";
@@ -24,6 +24,8 @@ import gridImg from "../assets/icons/grid.png";
 import usageImg from "../assets/icons/usage.png";
 import { motion } from "framer-motion/dist/framer-motion"; // Node12-safe import
 import BreadCrumb from "../components/BreadCrumb";
+import { fetchBatterySystemData, fetchComponentsTableData, fetchConsumptionsData, fetchInverterGridsData, fetchPvProductionData, fetchWeatherReadingsData } from "../redux/actions/solar/solar.action";
+import { connect } from "react-redux";
 // import "./SolarOverviewPage.css";
 
 const breadCrumbRoutes = [
@@ -99,10 +101,72 @@ const CircleGauge = ({ value, max, size = 200, segments = 48 }) => {
   );
 };
 
+const EnergySummary = ({ tableContentsData }) => {
+  if (!tableContentsData) return null;
+
+  const tabs = ["generation", "battery", "load", "grid"];
+  const tabLabels = {
+    generation: "Generation",
+    battery: "Battery",
+    load: "Load",
+    grid: "Grid",
+  };
+
+  const formatValue = (val) => (val ? Number(val).toLocaleString() : "0");
+
+  return (
+    <div className="energy-summary-container" style={{ background: "#fff" }}>
+      <Tabs defaultActiveKey="generation" tabBarGutter={50}>
+        {tabs.map((key) => (
+          <Tabs.TabPane tab={tabLabels[key]} key={key}>
+            <div className="energy-tab-content" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+              {["total", "today", "monthly"].map((period) => {
+                const item = tableContentsData[key]?.[period] || {};
+                return (
+                  <div
+                    key={period}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ fontSize: "14px", fontWeight: 500, color: "#333" }}>
+                      {period === "total"
+                        ? "Total yield"
+                        : period === "today"
+                        ? "Today yield"
+                        : "Monthly yield"}
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+                      <div style={{ fontSize: "14px", fontWeight: 500, color: "#999" }}>
+                        {formatValue(item.kwh)} <span style={{ color: "#999" }}>kWh</span>
+                      </div>
+                      <div style={{ fontSize: "14px", fontWeight: 500, color: "#999" }}>
+                        {formatValue(item.cost)} <span style={{ color: "#00b140" }}>NGN</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Tabs.TabPane>
+        ))}
+      </Tabs>
+    </div>
+  );
+};
+
 /* ---------------------------
    FlowDiagram (Final curved Z-shape + glowing pulses)
    --------------------------- */
-const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
+const FlowDiagram = ({ inverterData }) => {
+  const { pv, battery, grid, load } = inverterData || {};
+
+  const production = pv?.kw ?? 0;
+  const capacity = pv?.installed_capacity_kwp ?? 0;
+  const capacityPercentage = pv?.percentage ?? 0;
+
   const nodes = {
     production: {
       x: 300,
@@ -112,7 +176,7 @@ const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
       bg: "#fde68a",
       icon: productionImg,
       label: "Production",
-      value: `${production} kW`,
+      value: `${production.toFixed(2)} kW`,
     },
     capacity: {
       x: -40,
@@ -123,7 +187,8 @@ const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
       icon: capacityImg,
       label: "Capacity",
       value: `${capacity} kWp`,
-      percentage: 62.5,
+      percentage: capacityPercentage,
+      direction: pv?.direction,
     },
     battery: {
       x: -40,
@@ -133,8 +198,9 @@ const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
       bg: "#dcfce7",
       icon: batteryImg,
       label: "Battery",
-      value: `${battery} kW`,
-      percentage: 83.8,
+      value: `${(battery?.kw ?? 0).toFixed(2)} kW`,
+      percentage: battery?.percentage ?? 0,
+      direction: battery?.direction,
     },
     grid: {
       x: 660,
@@ -144,7 +210,9 @@ const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
       bg: "#dbeafe",
       icon: gridImg,
       label: "Grid",
-      value: `${grid} kW`,
+      value: `${(grid?.kw ?? 0).toFixed(2)} kW`,
+      direction: grid?.direction,
+      status: grid?.status,
     },
     usage: {
       x: 660,
@@ -154,199 +222,161 @@ const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
       bg: "#fee2e2",
       icon: usageImg,
       label: "Usage",
-      value: `${usage} kW`,
+      value: `${(load?.kw ?? 0).toFixed(2)} kW`,
+      direction: load?.direction,
     },
   };
 
-  // const connectors = [
-  //   { from: "capacity", to: "production", color: nodes.capacity.color, side: "left", offset: -22 },
-  //   { from: "battery", to: "production", color: nodes.battery.color, side: "left", offset: 18 },
-  //   { from: "grid", to: "production", color: nodes.grid.color, side: "right", offset: -22 },
-  //   { from: "usage", to: "production", color: nodes.usage.color, side: "right", offset: 22 },
-  // ];
   const connectors = [
-    { from: "capacity", to: "production", color: nodes.capacity.color, side: "left",  offset: -28 },
-    { from: "battery",  to: "production", color: nodes.battery.color,  side: "left",  offset:  12 },
-    { from: "grid",     to: "production", color: nodes.grid.color,     side: "right", offset: -18 },
-    { from: "usage",    to: "production", color: nodes.usage.color,    side: "right", offset:  22 },
+    { from: "capacity", to: "production", color: nodes.capacity.color, side: "left", offset: -28 },
+    { from: "battery", to: "production", color: nodes.battery.color, side: "left", offset: 12 },
+    { from: "grid", to: "production", color: nodes.grid.color, side: "right", offset: -18 },
+    { from: "usage", to: "production", color: nodes.usage.color, side: "right", offset: 22 },
   ];
 
   return (
-    <svg
-      width="100%"
-      height="320"
-      viewBox="0 0 600 320"
-      preserveAspectRatio="xMidYMid meet"
-      className="flow-svg"
-    >
-      {/* === CONNECTORS === */}
-      {connectors.map(({ from, to, color, side, offset }, idx) => {
-        const start = nodes[from];
-        const end = nodes[to];
+    <div style={{ textAlign: "center" }}>
+      <svg width="100%" height="320" viewBox="0 0 600 320" preserveAspectRatio="xMidYMid meet">
+        {connectors.map(({ from, to, color, side, offset }, idx) => {
+          const start = nodes[from];
+          const end = nodes[to];
+          const direction = start?.direction;
+          const isOutgoing = direction === "OUT";
+          const isIdle = direction === "IDLE";
+          const isGridOff = start?.status === "OFF";
 
-        // Start point
-        const sx = start.x + (start.x < end.x ? start.r : -start.r);
-        const sy = start.y;
+          const [sx, sy, ex, ey] = isOutgoing
+            ? [end.x + (side === "left" ? -end.r : end.r), end.y + offset, start.x + (start.x < end.x ? start.r : -start.r), start.y]
+            : [start.x + (start.x < end.x ? start.r : -start.r), start.y, end.x + (side === "left" ? -end.r : end.r), end.y + offset];
 
-        // End point
-        const ex = end.x + (side === "left" ? -end.r : end.r);
-        const ey = end.y + offset;
+          const midX1 = sx + (ex - sx) * 0.25;
+          const midX2 = sx + (ex - sx) * 0.75;
 
-        // Middle control points for stretched Z-shape
-        const midX1 = sx + (ex - sx) * 0.25;
-        const midY1 = sy;
+          const pathD = `
+            M ${sx},${sy}
+            Q ${(sx + midX1) / 2},${sy} ${midX1},${sy}
+            L ${midX2},${ey}
+            Q ${(midX2 + ex) / 2},${ey} ${ex},${ey}
+          `;
 
-        const midX2 = sx + (ex - sx) * 0.75;
-        const midY2 = ey;
+          return (
+            <g key={idx}>
+              <path d={pathD} fill="none" stroke="#ccc" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
+              {!isIdle && !isGridOff &&
+                [0, 0.6, 1.2].map((delay, pulseIdx) => (
+                  <motion.path
+                    key={pulseIdx}
+                    d={pathD}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeDasharray="10 300"
+                    initial={{ strokeDashoffset: isOutgoing ? 300 : -300 }}
+                    animate={{ strokeDashoffset: 0 }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      ease: "linear",
+                      delay,
+                    }}
+                    style={{ filter: `drop-shadow(0px 0px 6px ${color}80)` }}
+                  />
+                ))}
+            </g>
+          );
+        })}
 
-        const pathD = [
-          `M ${sx},${sy}`,
-          `Q ${(sx + midX1) / 2},${sy} ${midX1},${midY1}`,
-          `L ${midX2},${midY2}`,
-          `Q ${(midX2 + ex) / 2},${ey} ${ex},${ey}`
-        ].join(" ");
+        {Object.entries(nodes).map(([key, n]) => {
+          const iconSize = n.r * 0.9;
+          let labelOffsetX = 0;
+          let textAnchor = "middle";
 
-        return (
-          <g key={idx}>
-            {/* Base line (always visible) */}
-            <path
-              d={pathD}
-              fill="none"
-              stroke="#ccc"
-              strokeWidth="2"
-              strokeLinecap="round"
-              opacity="0.4"
-            />
+          if (key === "capacity" || key === "battery") {
+            labelOffsetX = -n.r - 95;
+            textAnchor = "start";
+          } else if (key === "grid" || key === "usage") {
+            labelOffsetX = n.r + 95;
+            textAnchor = "end";
+          }
 
-            {/* Glowing pulses */}
-            {[0, 0.6, 1.2].map((delay, pulseIdx) => (
-              <motion.path
-                key={pulseIdx}
-                d={pathD}
-                fill="none"
-                stroke={color}
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeDasharray="10 300"
-                initial={{ strokeDashoffset: 300 }}
-                animate={{ strokeDashoffset: 0 }}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  ease: "linear",
-                  delay: delay
-                }}
-                style={{
-                  filter: "drop-shadow(0px 0px 6px rgba(0, 191, 255, 0.8))"
-                }}
+          return (
+            <g key={key}>
+              <circle cx={n.x} cy={n.y} r={n.r} fill={n.bg} stroke={n.color} strokeWidth="2" />
+              {["capacity", "battery"].includes(key) && n.percentage !== undefined && (
+                <circle
+                  cx={n.x}
+                  cy={n.y}
+                  r={n.r + 5}
+                  fill="none"
+                  stroke={n.color}
+                  strokeWidth="4"
+                  strokeDasharray={`${(2 * Math.PI * (n.r + 5) * n.percentage) / 100} ${2 * Math.PI * (n.r + 5)}`}
+                  strokeLinecap="round"
+                  opacity="0.6"
+                />
+              )}
+              {key === "grid" && (
+                <circle
+                  cx={n.x + n.r - 6}
+                  cy={n.y - n.r + 6}
+                  r="6"
+                  fill={n.status === "ON" ? "#22c55e" : "#ef4444"}
+                  stroke="#fff"
+                  strokeWidth="1.5"
+                  style={{
+                    filter:
+                      n.status === "ON"
+                        ? "drop-shadow(0px 0px 6px #22c55e)"
+                        : "drop-shadow(0px 0px 6px #ef4444)",
+                  }}
+                />
+              )}
+              <motion.image
+                href={n.icon}
+                x={n.x - iconSize / 2}
+                y={n.y - iconSize / 2}
+                width={iconSize}
+                height={iconSize}
+                preserveAspectRatio="xMidYMid meet"
               />
-            ))}
-          </g>
-        );
-      })}
+              {key === "production" ? (
+                <>
+                  <text x={n.x} y={n.y - n.r - 24} textAnchor="middle" fontSize="13" fill="#111827" fontWeight="600">
+                    {n.label}
+                  </text>
+                  <text x={n.x} y={n.y - n.r - 9} textAnchor="middle" fontSize="12" fill="#6B7280">
+                    {n.value}
+                  </text>
+                </>
+              ) : (
+                <>
+                  <text x={n.x + labelOffsetX} y={n.y - 34} textAnchor={textAnchor} fontSize="13" fill="#111827" fontWeight="600">
+                    {n.label}
+                  </text>
+                  <text x={n.x + labelOffsetX} y={n.y - 14} textAnchor={textAnchor} fontSize="12" fill="#6B7280">
+                    {n.value}
+                  </text>
+                </>
+              )}
+            </g>
+          );
+        })}
+      </svg>
 
-      {/* === CIRCLES (NODES) WITH LABELS & IMAGES === */}
-      {Object.entries(nodes).map(([key, n]) => {
-        const iconSize = n.r * 0.9;
-
-        // Label positioning logic
-        let labelOffsetX = 0;
-        let textAnchor = "middle";
-        if (key === "capacity" || key === "battery") {
-          labelOffsetX = -n.r - 95;
-          textAnchor = "start";
-        } else if (key === "grid" || key === "usage") {
-          labelOffsetX = n.r + 95;
-          textAnchor = "end";
-        }
-
-        return (
-          <g key={key} className="node-group">
-            {/* Main circle */}
-            <circle cx={n.x} cy={n.y} r={n.r} fill={n.bg} stroke={n.color} strokeWidth="2" />
-
-            {/* Progress arc for Capacity & Battery */}
-            {["capacity", "battery"].includes(key) && n.percentage !== undefined && (
-              <circle
-                cx={n.x}
-                cy={n.y}
-                r={n.r + 5}
-                fill="none"
-                stroke={n.color}
-                strokeWidth="4"
-                strokeDasharray={`${(2 * Math.PI * (n.r + 5) * n.percentage) / 100} ${
-                  2 * Math.PI * (n.r + 5)
-                }`}
-                strokeDashoffset="0"
-                strokeLinecap="round"
-                opacity="0.6"
-              />
-            )}
-
-            {/* PNG Image (icon) */}
-            <motion.image
-              href={n.icon}
-              x={n.x - iconSize / 2}
-              y={n.y - iconSize / 2}
-              width={iconSize}
-              height={iconSize}
-              preserveAspectRatio="xMidYMid meet"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
-              style={{ pointerEvents: "none" }}
-            />
-
-            {/* Labels and Values */}
-            {key === "production" ? (
-              <>
-                <text
-                  x={n.x}
-                  y={n.y - n.r - 22}
-                  textAnchor="middle"
-                  fontSize="13"
-                  fill="#111827"
-                  fontWeight="600"
-                >
-                  {n.label}
-                </text>
-                <text
-                  x={n.x}
-                  y={n.y - n.r - 7}
-                  textAnchor="middle"
-                  fontSize="12"
-                  fill="#6B7280"
-                >
-                  {n.value}
-                </text>
-              </>
-            ) : (
-              <>
-                <text
-                  x={n.x + labelOffsetX}
-                  y={n.y - 34}
-                  textAnchor={textAnchor}
-                  fontSize="13"
-                  fill="#111827"
-                  fontWeight="600"
-                >
-                  {n.label}
-                </text>
-                <text
-                  x={n.x + labelOffsetX}
-                  y={n.y - 14}
-                  textAnchor={textAnchor}
-                  fontSize="12"
-                  fill="#6B7280"
-                >
-                  {n.value}
-                </text>
-              </>
-            )}
-          </g>
-        );
-      })}
-    </svg>
+      {/* === LEGEND === */}
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "8px", gap: "16px", fontSize: "12px", color: "#4b5563" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div style={{ width: 10, height: 10, background: "#22c55e", borderRadius: "50%" }}></div> Grid: ON
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div style={{ width: 10, height: 10, background: "#ef4444", borderRadius: "50%" }}></div> Grid: OFF
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div style={{ width: 12, height: 2, background: "#ccc" }}></div> Idle / No flow
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -354,8 +384,43 @@ const FlowDiagram = ({ production, battery, grid, usage, capacity }) => {
 /* ---------------------------
    Main SolarOverviewPage
    --------------------------- */
-const SolarOverviewPage = () => {
-  const [period, setPeriod] = useState("today");
+const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTableData, fetchInverterGridsData, fetchConsumptionsData, fetchPvProductionData, fetchBatterySystemData }) => {
+  const [period, setPeriod] = useState("Select period");
+  const [parameters, setParameters] = useState("Parameters");
+  const [weatherContentsData, setWeatherContentsData] = useState(null);
+  const [tableContentsData, setTableContentsData] = useState(null);
+  const [inverterContentsData, setInverterContentsData] = useState({});
+  const [consumptionChartContents, setConsumptionChartContents] = useState(null);
+  const [pvProductionChartContents, setPvProductionChartContents] = useState(null);
+  const [batteryChartContents, setBatteryChartContents] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  console.log('period === ', period);
+  console.log('solar === ', solar);
+  console.log('consumptionChartContents === ', consumptionChartContents);
+  console.log('weatherContentsData === ', weatherContentsData);
+  console.log('pvProductionChartContents === ', pvProductionChartContents);
+  console.log('batteryChartContents === ', batteryChartContents);
+  
+useEffect(() => {
+    // if (!selectedDate) return;
+    fetchWeatherReadingsData()
+    fetchComponentsTableData()
+    fetchInverterGridsData()
+    fetchConsumptionsData()
+    fetchPvProductionData()
+    fetchBatterySystemData()
+  }, []);
+
+  useEffect(() => {
+    if (solar) {  
+      setWeatherContentsData(solar?.weatherReadingsData);
+      setTableContentsData(solar?.componentsTableData)
+      setInverterContentsData(solar?.inverterGridsData);
+      setConsumptionChartContents(solar?.consumptionChartData);
+      setPvProductionChartContents(solar?.pvProductionChartData);
+      setBatteryChartContents(solar?.batteryChartData);
+    }
+  }, [solar]);
 
   // sample data (swap with your real state/API)
   const productionPower = 29.38;
@@ -364,22 +429,35 @@ const SolarOverviewPage = () => {
   const usage = 13.77;
   const capacity = 49.2;
 
-  const yieldData = [
-    { key: "1", type: "Total yield", value: "28.4 kWh", price: "789,699 NGN" },
-    { key: "2", type: "Today yield", value: "28.4 kWh", price: "5,777 NGN" },
-    { key: "3", type: "Monthly yield", value: "28.4 kWh", price: "398,756 NGN" },
-  ];
+  // const chartData = [
+  //   { time: "00:00", production: 100, grid: 50, load: 70 },
+  //   { time: "03:00", production: 200, grid: 80, load: 150 },
+  //   { time: "06:00", production: 400, grid: 100, load: 220 },
+  //   { time: "09:00", production: 600, grid: 120, load: 500 },
+  //   { time: "12:00", production: 900, grid: 160, load: 700 },
+  //   { time: "15:00", production: 700, grid: 140, load: 600 },
+  //   { time: "18:00", production: 400, grid: 100, load: 300 },
+  //   { time: "21:00", production: 200, grid: 80, load: 150 },
+  // ];
+  // Map API data for chart
+  const consumptionChartData = consumptionChartContents?.hours?.map((h) => ({
+    time: h.hour_label,
+    production: h.pv_kw ?? 0,
+    grid: h.grid_kw ?? 0,
+    load: h.load_kw ?? 0,
+  })) || [];
 
-  const chartData = [
-    { time: "00:00", production: 100, grid: 50, load: 70 },
-    { time: "03:00", production: 200, grid: 80, load: 150 },
-    { time: "06:00", production: 400, grid: 100, load: 220 },
-    { time: "09:00", production: 600, grid: 120, load: 500 },
-    { time: "12:00", production: 900, grid: 160, load: 700 },
-    { time: "15:00", production: 700, grid: 140, load: 600 },
-    { time: "18:00", production: 400, grid: 100, load: 300 },
-    { time: "21:00", production: 200, grid: 80, load: 150 },
-  ];
+  const PvChartData = pvProductionChartContents?.hours?.map((h) => ({
+    time: h.hour_label,
+    pv_kw: h.pv_kw ?? 0,
+  })) || [];
+  
+  const batteryChartData = batteryChartContents?.hours?.map((h) => ({
+    time: h.hour_label,
+    backup_load: h.backup_load_kwh ?? 0,
+    battery_charge: h.battery_charge_kwh ?? 0,
+    battery_discharge: h.battery_discharge_kwh ?? 0,
+  })) || [];
 
   const yieldCurve = [
     { time: "00:00", yield: 0 },
@@ -410,13 +488,13 @@ const SolarOverviewPage = () => {
       </div>
       {/* Top row: Left gauge card (span=11) + Right flow card (span=13) */}
       <Row gutter={16}>
-        <Col span={14}>
+        <Col span={13}>
           <Card className="left-card">
             <div className="left-card-header">
               <div className="header-left">
                 <div className="header-text">
-                  <div className="location"><EnvironmentOutlined className="icon-small" />Lekki — cloudy 23°C</div>
-                  <div className="sun-info"><CloudOutlined /> Sunshine 06:38 - 18:53 <p>(UTC+01)</p></div>
+                  <div className="location"><EnvironmentOutlined className="icon-small" />Lagos — Clouds (overcast clouds) 25.2°C</div>
+                  <div className="sun-info"><CloudOutlined /> Sunshine 06:33 - 18:25 <p>(UTC+01)</p></div>
                 </div>
               </div>
             </div>
@@ -446,30 +524,16 @@ const SolarOverviewPage = () => {
             </div>
           </Card>
         </Col>
-        <Col span={10}>
-          <Card className="right-card">
-            <Table
-              dataSource={yieldData}
-              pagination={false}
-              columns={[
-                { title: "Type", dataIndex: "type", key: "type" },
-                { title: "Value", dataIndex: "value", key: "value" },
-                { title: "Price", dataIndex: "price", key: "price" },
-              ]}
-            />
+        <Col span={11}>
+          <Card className="summary-card">
+            <EnergySummary tableContentsData={tableContentsData} />
           </Card>
         </Col>
       </Row>     
       <Row gutter={16} className="svg-row">
         <Col span={24}>
           <Card className="">
-            <FlowDiagram
-              production={productionPower}
-              battery={battery}
-              grid={grid}
-              usage={usage}
-              capacity={capacity}
-            />
+            <FlowDiagram inverterData={inverterContentsData} />
           </Card>
         </Col>
       </Row>
@@ -479,27 +543,51 @@ const SolarOverviewPage = () => {
           <Card className="custom-card">
               <h3 className="card-label">Consumption</h3>
             <div className="chart-header">
-              <Select value={period} onChange={setPeriod} style={{ width: 120 }}>
-                <Option value="today">Today</Option>
-                <Option value="week">This week</Option>
-                <Option value="month">This month</Option>
-              </Select>
-              <Select value={period} onChange={setPeriod} style={{ width: 120 }}>
-                <Option value="today">Today</Option>
-                <Option value="week">This week</Option>
-                <Option value="month">This month</Option>
+              <DatePicker placeholder="Select period" style={{ height: 40 }} />
+              <Select value={parameters} onChange={setParameters} style={{ width: 150 }}>
+                <Option value="Parameters">All parameters</Option>
+                <Option value="pv">Production</Option>
+                <Option value="grid">Grid</Option>
+                <Option value="load">Load</Option>
               </Select>
             </div>
             <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={chartData}>
+              <AreaChart data={consumptionChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Area type="monotone" dataKey="production" stroke="#f59e0b" fill="#fde68a" />
-                <Area type="monotone" dataKey="grid" stroke="#7B61FF" fill="#c4b5fd" />
-                <Area type="monotone" dataKey="load" stroke="#3b82f6" fill="#bfdbfe" />
+
+                {(!parameters || parameters === "Parameters" || parameters === "pv") && (
+                  <Area
+                    type="monotone"
+                    dataKey="production"
+                    name="Production (kW)"
+                    stroke="#f59e0b"
+                    fill="#fde68a"
+                  />
+                )}
+
+                {(!parameters || parameters === "Parameters" || parameters === "grid") && (
+                  <Area
+                    type="monotone"
+                    dataKey="grid"
+                    name="Grid (kW)"
+                    stroke="#7B61FF"
+                    fill="#c4b5fd"
+                  />
+                )}
+
+                {(!parameters || parameters === "Parameters" || parameters === "load") && (
+                  <Area
+                    type="monotone"
+                    dataKey="load"
+                    name="Load (kW)"
+                    stroke="#3b82f6"
+                    fill="#bfdbfe"
+                  />
+                )}
               </AreaChart>
             </ResponsiveContainer>
           </Card>
@@ -509,21 +597,24 @@ const SolarOverviewPage = () => {
       <Row gutter={16} className="charts-row">
         <Col span={24}>
           <Card className="custom-card">
-            <h3 className="card-label">Yield</h3>
+            <h3 className="card-label">PV Production</h3>
             <div className="chart-header">
-              <Select value={period} onChange={setPeriod} style={{ width: 120 }}>
-                <Option value="today">Today</Option>
-                <Option value="week">This week</Option>
-                <Option value="month">This month</Option>
-              </Select>
+              <DatePicker placeholder="Select period" style={{height:40}}/>
             </div>
             <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={yieldCurve}>
+              <AreaChart data={PvChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
                 <YAxis />
                 <Tooltip />
-                <Area type="monotone" dataKey="yield" stroke="#f59e0b" fill="#fde68a" />
+                <Legend />
+                <Area
+                  type="monotone"
+                  dataKey="pv_kw"
+                  name="Production (kW)"
+                  stroke="#f59e0b"
+                  fill="#fde68a"
+                />
               </AreaChart>
             </ResponsiveContainer>
           </Card>
@@ -533,16 +624,17 @@ const SolarOverviewPage = () => {
       <Row gutter={16} className="yield-row">
         <Col span={24}>
           <Card className="custom-card">
-            <h3 className="card-label">Battery Storage</h3>
+            <h3 className="card-label">Battery</h3>
             <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={batteryData}>
+              <AreaChart data={batteryChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Area type="monotone" dataKey="charge" stroke="#22c55e" />
-                <Area type="monotone" dataKey="discharge" stroke="#ef4444" />
+                <Area type="monotone" dataKey="backup_load" stroke="#3b82f6" />
+                <Area type="monotone" dataKey="battery_charge" stroke="#22c55e" />
+                <Area type="monotone" dataKey="battery_discharge" stroke="#ef4444" />
               </AreaChart>
             </ResponsiveContainer>
           </Card>
@@ -552,4 +644,17 @@ const SolarOverviewPage = () => {
   );
 };
 
-export default SolarOverviewPage;
+const mapDispatchToProps = {
+  fetchWeatherReadingsData,
+  fetchComponentsTableData,
+  fetchInverterGridsData,
+  fetchConsumptionsData,
+  fetchPvProductionData,
+  fetchBatterySystemData
+};
+
+const mapStateToProps = (state) => ({
+  solar: state.solarReducer,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SolarOverviewPage);

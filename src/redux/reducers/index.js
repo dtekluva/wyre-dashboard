@@ -11,12 +11,14 @@ import breakers from './breakers/breakers.reducer';
 import parametersReducer from './parameters/parameters.reducer';
 import dieselReducer from './diesel/diesel.reducer';
 import auth from './auth/auth.reducers';
+import solarReducer from './solar/solar.reducer';
 
 const appReducer = combineReducers({
     dashboard,
     scorecard,
     parametersReducer,
     dieselReducer,
+    solarReducer,
     billing,
     sideBar,
     costTracker,
