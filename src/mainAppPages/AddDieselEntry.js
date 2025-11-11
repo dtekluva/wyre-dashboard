@@ -56,6 +56,7 @@ function AddDieselEntry({
   fetchFuelConsumptionData: fetchFuelConsumptionInfo,
   deleteFuelConsumptionData: deleteDieselEntry
 }) {
+  const [entryType, setEntryType] = useState(null);
   const [dailyForm] = Form.useForm();
   const [monthlyForm] = Form.useForm();
   const [holdBranchGenerators, setHoldBranchGenerators] = useState([]);
@@ -180,6 +181,7 @@ function AddDieselEntry({
     setModalOpener(true);
     setFuelDataLoading(true);
     const fuelData = await fetchFuelConsumptionInfo(queryString);
+    
     if (fuelData && fuelData.fullfilled) {
       const newDattta = fuelData.data.map((elementData) => {
         return {
@@ -203,6 +205,9 @@ function AddDieselEntry({
     }
     setFuelDataLoading(false);
   }
+  useEffect(() => {
+    fetchFuelData()
+  }, []);
 
   const onDailyDieselEntrySubmit = async ({ from_date, to_date, quantity, fuelType, generator_ids, genType }) => {
     if (defaultBranch != null) {
