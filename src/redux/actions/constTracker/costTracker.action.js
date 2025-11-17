@@ -13,7 +13,11 @@ import {
   fetchCostTrackerBaselineLoading,
   fetchCostTrackerBaselineSuccess,
   fetchIppOverviewLoading,
-  fetchIppOverviewSuccess
+  fetchIppOverviewSuccess,
+  fetchDieselDailyUsageLoading,
+  fetchDieselDailyUsageSuccess,
+  fetchDieselMonthlyUsageLoading,
+  fetchDieselMonthlyUsageSuccess
 } from "./actionCreators";
 import { APIService } from "../../../config/api/apiConfig";
 import jwtDecode from "jwt-decode";
@@ -145,6 +149,52 @@ export const fetchFuelConsumptionData = (queryString) => async (dispatch) => {
     }
   } catch (error) {
     dispatch(fetchFuelDataLoading(false));
+  }
+};
+
+export const fetchDieselDailyUsageData = () => async (dispatch) => {
+  dispatch(fetchDieselDailyUsageLoading());
+  const loggedUserJSON = localStorage.getItem('loggedWyreUser');
+    let branchId;
+    if (loggedUserJSON) {
+      const userToken = JSON.parse(loggedUserJSON);
+      const user = jwtDecode(userToken.access)
+      branchId = user.branch_id;
+  }
+  const requestUrl = `cost-tracker/diesel-daily-usage/${branchId}`;
+  try {
+    const response = await APIService.get(requestUrl);
+    dispatch(fetchDieselDailyUsageSuccess(response.data.data));
+    dispatch(fetchDieselDailyUsageLoading(false))
+    return {
+      fullfilled: true,
+      data: response.data.data
+    }
+  } catch (error) {
+    dispatch(fetchDieselDailyUsageLoading(false));
+  }
+};
+
+export const fetchDieselMonthlyUsageData = () => async (dispatch) => {
+  dispatch(fetchDieselMonthlyUsageLoading());
+  const loggedUserJSON = localStorage.getItem('loggedWyreUser');
+  let branchId;
+  if (loggedUserJSON) {
+    const userToken = JSON.parse(loggedUserJSON);
+    const user = jwtDecode(userToken.access)
+    branchId = user.branch_id;
+  }
+  const requestUrl = `cost-tracker/diesel-monthly-usage/${branchId}`;
+  try {
+    const response = await APIService.get(requestUrl);
+    dispatch(fetchDieselMonthlyUsageSuccess(response.data.data));
+    dispatch(fetchDieselMonthlyUsageLoading(false))
+    return {
+      fullfilled: true,
+      data: response.data.data
+    }
+  } catch (error) {
+    dispatch(fetchDieselMonthlyUsageLoading(false));
   }
 };
 
