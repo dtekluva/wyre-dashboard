@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Row, Col, Progress, Select, Tabs, Table, DatePicker, Spin } from "antd";
-import { CheckCircleOutlined, CloseCircleOutlined, SunOutlined } from "@ant-design/icons";
+import { EnvironmentOutlined, SunOutlined } from "@ant-design/icons";
 import {
   AreaChart,
   Area,
@@ -11,12 +11,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import {
-  EnvironmentOutlined,
-  CloudOutlined,
-  SettingOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons";  
 import productionImg from "../assets/icons/production.png";
 import capacityImg from "../assets/icons/capacity.png";
 import parametersImg from "../assets/icons/parameterIcon.png";
