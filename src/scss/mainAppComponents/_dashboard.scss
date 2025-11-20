@@ -1024,16 +1024,15 @@
 .left-card {
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
-  // padding: 18px;
   background: #fff;
+  height: 275px;
 }
 
 .summary-card {
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
-  padding: 18px 16px;
   background: #fff;
-  // height: 323px;
+  height: 275px;
 }
 
 /* left card header */
@@ -1124,6 +1123,12 @@
   color:#111827; 
 }
 
+.animation-card {
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
+  background: #fff;
+}
+
 /* right card flow svg */
 .flow-svg { 
   width:100%; 
@@ -1156,4 +1161,92 @@
 @media (max-width: 1000px) {
   .left-card .left-card-body { flex-direction: column; align-items: center; }
   .gauge-stats { min-width: auto; text-align:center; }
+}
+
+.custom-params-select .ant-select-selector {
+  display: flex !important;
+  align-items: center !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  height: 40px !important;  /* matches screenshot height */
+}
+
+.custom-params-select .ant-select-selection-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------------------- */
+/*  SHARED POLISHED STYLE */
+/* ---------------------- */
+
+.custom-filter .ant-select-selector,
+.custom-filter .ant-picker {
+  border: none !important;
+  border-radius: 6px !important;   /* Soft rounded corners */
+  box-shadow: none !important;
+  background: #fff !important;
+  height: 34px !important;
+  padding: 0 10px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Remove hover/focus borders */
+.custom-filter .ant-select-selector:hover,
+.custom-filter .ant-select-selector:focus,
+.custom-filter.ant-select-focused .ant-select-selector,
+.custom-filter .ant-picker:hover,
+.custom-filter .ant-picker-focused {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ----------------------- */
+/*  SELECT SPECIFIC STYLES */
+/* ----------------------- */
+
+.custom-filter .ant-select-selection-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px;
+  font-size: 13px;
+  margin-top: 0 !important;
+}
+
+.custom-filter .ant-select-arrow {
+  display: none !important;  /* remove the default dropdown arrow */
+}
+
+/* dropdown panel */
+.custom-filter .ant-select-dropdown {
+  border-radius: 10px !important;
+  padding: 6px 0 !important;
+}
+
+/* hovering items */
+.custom-filter .ant-select-item-option-active {
+  background: #f4f4f4 !important;
+}
+
+/* selected item */
+.custom-filter .ant-select-item-option-selected {
+  background: #e7f0ff !important;
+  font-weight: 500;
+}
+
+/* ----------------------- */
+/* DATE PICKER EXTRAS */
+/* ----------------------- */
+
+/* Remove calendar icon */
+.custom-filter .ant-picker-suffix {
+  display: none !important;
+}
+
+/* Perfect text alignment */
+.custom-filter .ant-picker-input > input {
+  font-size: 13px;
+  margin-top: 2px;
 }

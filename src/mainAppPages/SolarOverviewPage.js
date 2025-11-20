@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Progress, Select, Tabs, Table, DatePicker } from "antd";
-import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { Card, Row, Col, Progress, Select, Tabs, Table, DatePicker, Spin } from "antd";
+import { CheckCircleOutlined, CloseCircleOutlined, SunOutlined } from "@ant-design/icons";
 import {
   AreaChart,
   Area,
@@ -19,6 +19,7 @@ import {
 } from "@ant-design/icons";  
 import productionImg from "../assets/icons/production.png";
 import capacityImg from "../assets/icons/capacity.png";
+import parametersImg from "../assets/icons/parameterIcon.png";
 import batteryImg from "../assets/icons/battery.png";
 import gridImg from "../assets/icons/grid.png";
 import usageImg from "../assets/icons/usage.png";
@@ -26,7 +27,6 @@ import { motion } from "framer-motion/dist/framer-motion"; // Node12-safe import
 import BreadCrumb from "../components/BreadCrumb";
 import { fetchBatterySystemData, fetchComponentsTableData, fetchConsumptionsData, fetchInverterGridsData, fetchPvProductionData, fetchWeatherReadingsData } from "../redux/actions/solar/solar.action";
 import { connect } from "react-redux";
-// import "./SolarOverviewPage.css";
 
 const breadCrumbRoutes = [
   { url: "/", name: "Home", id: 1 },
@@ -38,9 +38,9 @@ const { Option } = Select;
 /* ---------------------------
    CircleGauge (Segmented SVG)
    --------------------------- */
-const CircleGauge = ({ value, max, size = 200, segments = 48 }) => {
+const CircleGauge = ({ value, max, percentage, size = 200, segments = 48 }) => {
   // const percentage = Math.max(0, Math.min(100, Math.round((value / max) * 100)));
-  const percentage = 13;
+  // const percentage = 13;
   const cx = size / 2;
   const cy = size / 2;
   const inner = size * 0.34; // inner radius for ticks start
@@ -340,13 +340,39 @@ const FlowDiagram = ({ inverterData }) => {
                 height={iconSize}
                 preserveAspectRatio="xMidYMid meet"
               />
+              {/* Percentage on the connector line (Capacity & Battery only) */}
+              {["capacity", "battery"].includes(key) && n.percentage !== undefined && (
+                <text
+                  x={n.x + (key === "capacity" ? n.r + 16 : n.r + 17)}   // slight adjustment
+                  y={n.y + -10}
+                  textAnchor="start"
+                  fontSize="13"
+                  fill={n.color}
+                  fontWeight="600"
+                >
+                  {n.percentage}%
+                </text>
+              )}
               {key === "production" ? (
                 <>
-                  <text x={n.x} y={n.y - n.r - 24} textAnchor="middle" fontSize="13" fill="#111827" fontWeight="600">
-                    {n.label}
-                  </text>
-                  <text x={n.x} y={n.y - n.r - 9} textAnchor="middle" fontSize="12" fill="#6B7280">
+                  <text
+                    x={n.x}
+                    y={n.y - n.r - 18}
+                    textAnchor="middle"
+                    fontSize="13"
+                    fill={n.color}
+                    fontWeight="600"
+                  >
                     {n.value}
+                  </text>
+                  <text
+                    x={n.x}
+                    y={n.y - n.r - 32}
+                    textAnchor="middle"
+                    fontSize="10"
+                    fill="#555"
+                  >
+                    {n.label}
                   </text>
                 </>
               ) : (
@@ -379,8 +405,6 @@ const FlowDiagram = ({ inverterData }) => {
     </div>
   );
 };
-
-
 /* ---------------------------
    Main SolarOverviewPage
    --------------------------- */
@@ -394,21 +418,37 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
   const [pvProductionChartContents, setPvProductionChartContents] = useState(null);
   const [batteryChartContents, setBatteryChartContents] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  console.log('period === ', period);
-  console.log('solar === ', solar);
-  console.log('consumptionChartContents === ', consumptionChartContents);
-  console.log('weatherContentsData === ', weatherContentsData);
-  console.log('pvProductionChartContents === ', pvProductionChartContents);
-  console.log('batteryChartContents === ', batteryChartContents);
-  
-useEffect(() => {
-    // if (!selectedDate) return;
+
+  const handleConsumptionDateChange = (date) => {
+    if (!date) return;
+
+    const jsDate = date.toDate();          // Moment → JS date
+    const day = jsDate.getDate();
+
+    setSelectedDate(jsDate);
+
+    fetchConsumptionsData(jsDate, day);
+  };
+
+  const handlePvDateChange = (date) => {
+    if (!date) return;
+
+    const jsDate = date.toDate();
+    const day = jsDate.getDate();
+
+    fetchPvProductionData(jsDate, day);
+  };
+
+  useEffect(() => {
+    const today = new Date();
+    const day = today.getDate();
+
     fetchWeatherReadingsData()
     fetchComponentsTableData()
     fetchInverterGridsData()
-    fetchConsumptionsData()
-    fetchPvProductionData()
-    fetchBatterySystemData()
+    fetchConsumptionsData(today, day);
+    fetchPvProductionData(today, day);
+    fetchBatterySystemData(today, day);
   }, []);
 
   useEffect(() => {
@@ -422,23 +462,6 @@ useEffect(() => {
     }
   }, [solar]);
 
-  // sample data (swap with your real state/API)
-  const productionPower = 29.38;
-  const battery = 83.8;
-  const grid = 2.12;
-  const usage = 13.77;
-  const capacity = 49.2;
-
-  // const chartData = [
-  //   { time: "00:00", production: 100, grid: 50, load: 70 },
-  //   { time: "03:00", production: 200, grid: 80, load: 150 },
-  //   { time: "06:00", production: 400, grid: 100, load: 220 },
-  //   { time: "09:00", production: 600, grid: 120, load: 500 },
-  //   { time: "12:00", production: 900, grid: 160, load: 700 },
-  //   { time: "15:00", production: 700, grid: 140, load: 600 },
-  //   { time: "18:00", production: 400, grid: 100, load: 300 },
-  //   { time: "21:00", production: 200, grid: 80, load: 150 },
-  // ];
   // Map API data for chart
   const consumptionChartData = consumptionChartContents?.hours?.map((h) => ({
     time: h.hour_label,
@@ -459,28 +482,6 @@ useEffect(() => {
     battery_discharge: h.battery_discharge_kwh ?? 0,
   })) || [];
 
-  const yieldCurve = [
-    { time: "00:00", yield: 0 },
-    { time: "03:00", yield: 50 },
-    { time: "06:00", yield: 120 },
-    { time: "09:00", yield: 200 },
-    { time: "12:00", yield: 400 },
-    { time: "15:00", yield: 600 },
-    { time: "18:00", yield: 750 },
-    { time: "21:00", yield: 800 },
-  ];
-
-  const batteryData = [
-    { time: "00:00", charge: 20, discharge: 10 },
-    { time: "03:00", charge: 25, discharge: 15 },
-    { time: "06:00", charge: 40, discharge: 20 },
-    { time: "09:00", charge: 60, discharge: 30 },
-    { time: "12:00", charge: 80, discharge: 40 },
-    { time: "15:00", charge: 90, discharge: 50 },
-    { time: "18:00", charge: 85, discharge: 60 },
-    { time: "21:00", charge: 70, discharge: 40 },
-  ];
-
   return (
     <div className="solar-overview">
       <div className="breadcrumb-and-print-buttons">
@@ -489,155 +490,220 @@ useEffect(() => {
       {/* Top row: Left gauge card (span=11) + Right flow card (span=13) */}
       <Row gutter={16}>
         <Col span={13}>
-          <Card className="left-card">
-            <div className="left-card-header">
-              <div className="header-left">
-                <div className="header-text">
-                  <div className="location"><EnvironmentOutlined className="icon-small" />Lagos — Clouds (overcast clouds) 25.2°C</div>
-                  <div className="sun-info"><CloudOutlined /> Sunshine 06:33 - 18:25 <p>(UTC+01)</p></div>
-                </div>
-              </div>
-            </div>
+          <Spin spinning={solar.weatherReadingsLoading}>
+            <Card className="left-card">
+              <div className="left-card-header">
+                <div className="header-left">
+                  <div className="header-text">
+                    <div className="location">
+                      <EnvironmentOutlined className="icon-small" />
+                      {weatherContentsData?.weather?.city || "--"} —{" "}
+                      {weatherContentsData?.weather?.condition || "--"}{" "}
+                      {weatherContentsData?.weather?.temperature_c
+                        ? `${weatherContentsData.weather.temperature_c}°C`
+                        : "--"}
+                    </div>
 
-            <div className="left-card-body">
-              <div className="gauge-area">
-                <CircleGauge value={productionPower} max={capacity} size={175} segments={30} />
-              </div>
-
-              <div className="gauge-stats">
-                <div className="stat-row">
-                  <span className="dot dot-active" />
-                  <div>
-                    <div className="stat-label">PV Production</div>
-                    <div className="stat-value">{productionPower} kW</div>
-                  </div>
-                </div>
-
-                <div className="stat-row">
-                  <span className="dot dot-muted" />
-                  <div>
-                    <div className="stat-label">Installed Capacity</div>
-                    <div className="stat-value">{capacity} kWp</div>
+                    <div className="sun-info">
+                      <SunOutlined /> Sunshine{" "}
+                      {weatherContentsData?.weather?.sunshine || "--"}{" "}
+                      <p>(UTC+01)</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Card>
+
+              <div className="left-card-body">
+                <div className="gauge-area">
+                  <CircleGauge
+                    value={weatherContentsData?.metrics?.pv_production_kw || 0}
+                    max={weatherContentsData?.metrics?.installed_capacity_kWp || 100}
+                    percentage={weatherContentsData?.metrics?.percentage_usage || 0}
+                    size={175}
+                    segments={30}
+                  />
+                </div>
+
+                <div className="gauge-stats">
+                  <div className="stat-row">
+                    <span className="dot dot-active" />
+                    <div>
+                      <div className="stat-label">PV Production</div>
+                      <div className="stat-value">
+                        {weatherContentsData?.metrics?.pv_production_kw || 0} kW
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="stat-row">
+                    <span className="dot dot-muted" />
+                    <div>
+                      <div className="stat-label">Installed Capacity</div>
+                      <div className="stat-value">
+                        {weatherContentsData?.metrics?.installed_capacity_kWp || 0} kWp
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </Spin>
         </Col>
         <Col span={11}>
-          <Card className="summary-card">
-            <EnergySummary tableContentsData={tableContentsData} />
-          </Card>
+          <Spin spinning={solar.componentsTableLoading}>
+            <Card className="summary-card">
+              <EnergySummary tableContentsData={tableContentsData} />
+            </Card>
+          </Spin>
         </Col>
-      </Row>     
+      </Row>  
+         {/* Flow Diagram animation */}
       <Row gutter={16} className="svg-row">
         <Col span={24}>
-          <Card className="">
+        <Spin spinning={solar.inverterGridsLoading}>          
+          <Card className="animation-card">
             <FlowDiagram inverterData={inverterContentsData} />
           </Card>
+        </Spin>
         </Col>
       </Row>
       {/* Charts section — unchanged structure */}
       <Row gutter={16} className="charts-row">
         <Col span={24}>
-          <Card className="custom-card">
+          <Spin spinning={solar.consumptionChartLoading}>
+            <Card className="custom-card">
               <h3 className="card-label">Consumption</h3>
-            <div className="chart-header">
-              <DatePicker placeholder="Select period" style={{ height: 40 }} />
-              <Select value={parameters} onChange={setParameters} style={{ width: 150 }}>
-                <Option value="Parameters">All parameters</Option>
-                <Option value="pv">Production</Option>
-                <Option value="grid">Grid</Option>
-                <Option value="load">Load</Option>
-              </Select>
-            </div>
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={consumptionChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="time" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
+              <div className="chart-header">
+                <DatePicker
+                  placeholder="Select period"
+                  onChange={handleConsumptionDateChange}
+                  style={{ borderRadius: 6, height: 40, marginRight: 10 }}
+                  allowClear={false}
+                />
+                <Select className="custom-filter" value={parameters} onChange={setParameters} style={{ width: 150 }} suffixIcon={null}>
+                  <Option value="Parameters">
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: 0,
+                      margin: 0
+                    }}>
+                      <span style={{ fontSize: 13, marginTop: -1 }}>All Parameters</span>
+                      <img
+                        src={parametersImg}
+                        alt=""
+                        style={{
+                          width: 16,
+                          height: 16,
+                          objectFit: "contain",
+                          marginTop: -2   // reduces the bottom spacing
+                        }}
+                      />
+                    </div>
+                  </Option>
+                  <Option value="pv">Production</Option>
+                  <Option value="grid">Grid</Option>
+                  <Option value="load">Load</Option>
+                </Select>
+              </div>
+              <ResponsiveContainer width="100%" height={250}>
+                <AreaChart data={consumptionChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="time" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
 
-                {(!parameters || parameters === "Parameters" || parameters === "pv") && (
-                  <Area
-                    type="monotone"
-                    dataKey="production"
-                    name="Production (kW)"
-                    stroke="#f59e0b"
-                    fill="#fde68a"
-                  />
-                )}
+                  {(!parameters || parameters === "Parameters" || parameters === "pv") && (
+                    <Area
+                      type="monotone"
+                      dataKey="production"
+                      name="Production (kW)"
+                      stroke="#FCCC43B2"
+                      fill="#FCCC43B2"
+                    />
+                  )}
 
-                {(!parameters || parameters === "Parameters" || parameters === "grid") && (
-                  <Area
-                    type="monotone"
-                    dataKey="grid"
-                    name="Grid (kW)"
-                    stroke="#7B61FF"
-                    fill="#c4b5fd"
-                  />
-                )}
+                  {(!parameters || parameters === "Parameters" || parameters === "grid") && (
+                    <Area
+                      type="monotone"
+                      dataKey="grid"
+                      name="Grid (kW)"
+                      stroke="#0078FF"
+                      fill="#0078FF"
+                    />
+                  )}
 
-                {(!parameters || parameters === "Parameters" || parameters === "load") && (
-                  <Area
-                    type="monotone"
-                    dataKey="load"
-                    name="Load (kW)"
-                    stroke="#3b82f6"
-                    fill="#bfdbfe"
-                  />
-                )}
-              </AreaChart>
-            </ResponsiveContainer>
-          </Card>
+                  {(!parameters || parameters === "Parameters" || parameters === "load") && (
+                    <Area
+                      type="monotone"
+                      dataKey="load"
+                      name="Load (kW)"
+                      stroke="#D7C6F3"
+                      fill="#D7C6F3"
+                    />
+                  )}
+                </AreaChart>
+              </ResponsiveContainer>
+            </Card>
+          </Spin>
         </Col>
       </Row>
 
       <Row gutter={16} className="charts-row">
         <Col span={24}>
-          <Card className="custom-card">
-            <h3 className="card-label">PV Production</h3>
-            <div className="chart-header">
-              <DatePicker placeholder="Select period" style={{height:40}}/>
-            </div>
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={PvChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="time" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Area
-                  type="monotone"
-                  dataKey="pv_kw"
-                  name="Production (kW)"
-                  stroke="#f59e0b"
-                  fill="#fde68a"
+          <Spin spinning={solar.pvProductionChartLoading}>
+            <Card className="custom-card">
+              <h3 className="card-label">PV Production</h3>
+              <div className="chart-header">
+                <DatePicker
+                  placeholder="Select period"
+                  onChange={handlePvDateChange}
+                  style={{ borderRadius: 6, height: 40 }}
+                  allowClear={false}
                 />
-              </AreaChart>
-            </ResponsiveContainer>
-          </Card>
+              </div>
+              <ResponsiveContainer width="100%" height={250}>
+                <AreaChart data={PvChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="time" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="pv_kw"
+                    name="Production (kW)"
+                    stroke="#0078FF99"
+                    fill="#0078FF99"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </Card>
+          </Spin>
         </Col>
       </Row>
 
       <Row gutter={16} className="yield-row">
         <Col span={24}>
-          <Card className="custom-card">
-            <h3 className="card-label">Battery</h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={batteryChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="time" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Area type="monotone" dataKey="backup_load" stroke="#3b82f6" />
-                <Area type="monotone" dataKey="battery_charge" stroke="#22c55e" />
-                <Area type="monotone" dataKey="battery_discharge" stroke="#ef4444" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </Card>
+          <Spin spinning={solar.batteryChartLoading}>
+            <Card className="custom-card">
+              <h3 className="card-label">Battery</h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <AreaChart data={batteryChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="time" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Area type="monotone" dataKey="backup_load" stroke="#FCCC43" fill="#FCCC43" />
+                  <Area type="monotone" dataKey="battery_charge" stroke="#D7C6F3" fill="#D7C6F3" />
+                  <Area type="monotone" dataKey="battery_discharge" stroke="#58B90A" fill="#58B90A" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </Card>
+          </Spin>
         </Col>
       </Row>
     </div>
