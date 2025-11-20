@@ -926,8 +926,8 @@ const calculateDemandMinMaxAvgValues = (data) => {
     avg_demand = Math.max(avg_demand, device.avg);
     if (Number(device.min) !== 0) {
       totalMin += device.min;
+      countMin++;
     }
-    countMin++;
   });
 
   const min_demand = countMin > 0 ? totalMin / countMin : 0;

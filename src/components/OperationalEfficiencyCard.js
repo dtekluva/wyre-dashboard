@@ -11,13 +11,13 @@ const OperationalEfficiencyCard = ({ operationalEfficiencyData, loader }) => {
           {/* Fuel efficiency */}
           <div className="eff-item">
             <span className="eff-label">Fuel efficiency</span>
-            <span className="eff-value red">{operationalEfficiencyData?.data?.fuel_efficiency.value} kWh/L</span>
+            <span className="eff-value red">{(operationalEfficiencyData?.data?.fuel_efficiency.value)?.toLocaleString()} kWh/L</span>
           </div>
 
           {/* Specific fuel consumption */}
           <div className="eff-item">
             <span className="eff-label">Specific fuel consumption</span>
-            <span className="eff-value red">{operationalEfficiencyData?.data?.fuel_consumption.value} mL/kWh</span>
+            <span className="eff-value red">{(operationalEfficiencyData?.data?.fuel_consumption.value)?.toLocaleString()} mL/kWh</span>
           </div>
 
           {/* Generator efficiency score */}
@@ -27,15 +27,15 @@ const OperationalEfficiencyCard = ({ operationalEfficiencyData, loader }) => {
             <div className="power-values">
               <div>
                 <span className="sub-label">MAX •</span>
-                <span className="value green">{operationalEfficiencyData?.data?.power_demand_kva.max.value} kVA</span>
+                <span className="value green">{(operationalEfficiencyData?.data?.power_demand_kva.max.value)?.toLocaleString()} kVA</span>
               </div>
               <div>
                 <span className="sub-label">AVG •</span>
-                <span className="value green">{operationalEfficiencyData?.data?.power_demand_kva.avg.value} kVA</span>
+                <span className="value green">{(operationalEfficiencyData?.data?.power_demand_kva.avg.value)?.toLocaleString()} kVA</span>
               </div>
               <div>
                 <span className="sub-label">MIN •</span>
-                <span className="value green">{operationalEfficiencyData?.data?.power_demand_kva.min.value} kVA</span>
+                <span className="value green">{(operationalEfficiencyData?.data?.power_demand_kva.min.value)?.toLocaleString()} kVA</span>
               </div>
             </div>
           </div>

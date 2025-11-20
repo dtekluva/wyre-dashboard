@@ -34,7 +34,7 @@ function LastReadingPageSections({ lrData }) {
   return (
     <section className="parameter-section">
       <h2 className="parameter-section__heading">
-        {lrData && lrData.deviceName}
+        {lrData && lrData.name}
       </h2>
 
       <article className="last-reading-table-container">
@@ -45,7 +45,7 @@ function LastReadingPageSections({ lrData }) {
                 PDF
               </button> */}
               <ExportToCsv
-                filename={`${lrData && lrData.deviceName} last-reading.csv`}
+                filename={`${lrData && lrData.name} last-reading.csv`}
                 csvHeaders={csvHeaders}
                 csvData={phaseMeasuresData}
               >

@@ -12,6 +12,7 @@ import parametersReducer from './parameters/parameters.reducer';
 import dieselReducer from './diesel/diesel.reducer';
 import auth from './auth/auth.reducers';
 import solarReducer from './solar/solar.reducer';
+import alertsAndAlarmReducer from './alertsAndAlarm/alertsAndAlarm.reducer';
 
 const appReducer = combineReducers({
     dashboard,
@@ -26,7 +27,8 @@ const appReducer = combineReducers({
     setting,
     powerFactor,
     breakers,
-    auth
+    auth,
+    alertsAndAlarmReducer,
 });
 
 const rootReducer = (state, action) => {
