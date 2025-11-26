@@ -1043,6 +1043,10 @@
 .header-text .location {
   // font-weight: 600;
   color: #6b7280; 
+  display: flex;
+  align-items: center;
+  gap: 6px;        /* space between icon and text */
+  font-size: 14px;
 }
 
 .header-text .sun-info { 

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Card, Row, Col, Progress, Select, Tabs, Table, DatePicker, Spin } from "antd";
-import { EnvironmentOutlined, SunOutlined } from "@ant-design/icons";
 import {
   AreaChart,
   Area,
@@ -478,6 +477,13 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
     battery_discharge: h.battery_discharge_kwh ?? 0,
   })) || [];
 
+  const IconLabel = ({ icon, text }) => (
+  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+    <img src={icon} alt="" style={{ width: 16, height: 16 }} />
+    {text}
+  </span>
+);
+
   return (
     <div className="solar-overview">
       <div className="breadcrumb-and-print-buttons">
@@ -492,8 +498,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
                 <div className="header-left">
                   <div className="header-text">
                     <div className="location">
-                      {/* <EnvironmentOutlined className="icon-small" /> */}
-                      {locationLogo}
+                      <IconLabel icon={locationLogo} className="icon-small" />
                       {weatherContentsData?.weather?.city || "--"} —{" "}
                       {weatherContentsData?.weather?.condition || "--"}{" "}
                       {weatherContentsData?.weather?.temperature_c
@@ -502,7 +507,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
                     </div>
 
                     <div className="sun-info">
-                      {sunLogo} Sunshine{" "}
+                      <IconLabel icon={sunLogo} text="Sunshine" />
                       {weatherContentsData?.weather?.sunshine || "--"}{" "}
                       <p>(UTC+01)</p>
                     </div>
