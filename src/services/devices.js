@@ -71,7 +71,6 @@ const getAllData = async () => {
   const config = null;
 
   //const resp = await axios.get(test, config);
-  //console.log(resp.data.authenticatedData);
 
   const response = await axios.get(baseUrl, config);
   return response.data.authenticatedData;  
