@@ -20,7 +20,7 @@ function RevisedAppTopBar() {
     currentUrl,
     setPowerQualityUnit,
     setParametersDataTimeInterval,
-    userData
+    userdata
   } = useContext(CompleteDataContext);
   
   const sideBarData = useSelector((state) => state.sideBar.sideBarData);
@@ -74,112 +74,129 @@ function RevisedAppTopBar() {
     setPowerQualityUnit(unit);
   };
 
-  return userData.is_solar_customer ? null
-  : (
-  <div className={isSidebarOpen ? 'top-bar' : 'top-bar h-hidden-medium-down'}>
-    <div className="top-bar__left">
+  return (
+    <div className={isSidebarOpen ? 'top-bar' : 'top-bar h-hidden-medium-down'}>
+      <div className='top-bar__left'>
+        <div className={isDateTimePickerDisplayed ? '' : 'h-hide'}>
+          <NewAppTopBar />
+        </div>
 
-      {/* Date/Time Picker */}
-      <div className={isDateTimePickerDisplayed ? '' : 'h-hide'}>
-        <NewAppTopBar />
-      </div>
-
-      {/* Time Interval Selector */}
-      <div
-        className={
-          isTimeIntervalSelectorDisplayed
-            ? 'time-interval-selector-container'
-            : 'time-interval-selector-container h-hide'
-        }
-      >
-        <Select
-          className="time-interval-selector h-8-br"
-          defaultValue="hourly"
-          onChange={handleIntervalChange}
-          suffixIcon={<CaretDownFilled />}
+        <div
+          className={
+            isTimeIntervalSelectorDisplayed
+              ? 'time-interval-selector-container'
+              : 'time-interval-selector-container h-hide'
+          }
         >
-          <Option value="15mins">15Mins</Option>
-          <Option value="30mins">30Mins</Option>
-          <Option value="hourly">Hourly</Option>
-          <Option value="daily">Daily</Option>
-          <Option value="weekly">Weekly</Option>
-          <Option value="monthly">Monthly</Option>
-        </Select>
-      </div>
-
-      {/* Switchable Picker */}
-      <div
-        className={
-          isPageWithSwitchableSelector
-            ? 'switch-table-picker-container'
-            : 'switch-table-picker-container h-hide'
-        }
-      >
-        <SwitchablePicker />
-      </div>
-
-      {/* Plotted Unit Selector */}
-      <div
-        className={
-          isPlottedUnitSelectorDisplayed
-            ? 'plotted-unit-selector-container'
-            : 'plotted-unit-selector-container h-hide'
-        }
-      >
-        <Select
-          className="plotted-unit-selector h-8-br"
-          defaultValue="Current (Amps)"
-          suffixIcon={<CaretDownFilled />}
-          onChange={handleUnitChange}
+          <Select
+            className='time-interval-selector h-8-br'
+            defaultValue='hourly'
+            onChange={handleIntervalChange}
+            suffixIcon={<CaretDownFilled />}
+          >
+            <Option className='time-interval-option' value='15mins'>
+              15Mins
+            </Option>
+            <Option className='time-interval-option' value='30mins'>
+              30Mins
+            </Option>
+            <Option className='time-interval-option' value='hourly'>
+              Hourly
+            </Option>
+            <Option className='time-interval-option' value='daily'>
+              Daily
+            </Option>
+            <Option className='time-interval-option' value='weekly'>
+              Weekly
+            </Option>
+            <Option className='time-interval-option' value='monthly'>
+              Monthly
+            </Option>
+          </Select>
+        </div>
+        <div
+          className={
+            isPageWithSwitchableSelector
+              ? 'switch-table-picker-container'
+              : 'switch-table-picker-container h-hide'
+          }
         >
-          <Option value="Current (Amps)">Current (Amps)</Option>
-          <Option value="Voltage (Volts)">Voltage (Volts)</Option>
-          <Option value="Active-Power (kW)">Active-Power (kW)</Option>
-          <Option value="Reactive-Power (kVar)">Reactive-Power (kVar)</Option>
-        </Select>
+          <SwitchablePicker />
+        </div>
+        <div
+          className={
+            isPlottedUnitSelectorDisplayed
+              ? 'plotted-unit-selector-container'
+              : 'plotted-unit-selector-container h-hide'
+          }
+        >
+          <Select
+            className='plotted-unit-selector h-8-br'
+            defaultValue='Current (Amps)'
+            suffixIcon={<CaretDownFilled />}
+            onChange={handleUnitChange}
+          >
+            <Option className='plotted-unit-option' value='Current (Amps)'>
+              Current (Amps)
+            </Option>
+            <Option className='plotted-unit-option' value='Voltage (Volts)'>
+              Voltage (Volts)
+            </Option>
+            <Option className='plotted-unit-option' value='Active-Power (kW)'>
+              Active-Power (kW)
+            </Option>
+            <Option
+              className='plotted-unit-option'
+              value='Reactive-Power (kVar)'
+            >
+              Reactive-Power (kVar)
+            </Option>
+            {/* <Option className='plotted-unit-option' value='Energy (kWh)'>
+              Energy (kWh)
+            </Option> */}
+          </Select>
+        </div>
       </div>
 
-    </div>
-
-    {/* Cost Tracker Buttons */}
-    {sideBarData.branches?.length === 1 && (
+      {sideBarData.branches && sideBarData.branches.length === 1 ?
+        <div
+          className={
+            isTopBarCostTrackerRightDisplayed
+              ? 'top-bar__right'
+              : 'top-bar__right h-hide'
+          }
+        >
+          <Link className='top-bar-right__button' to='/cost-tracker/add-bills'>
+            Add Bills
+          </Link>
+          <Link className='top-bar-right__button' to='/cost-tracker/add-diesel-entry'>
+            Add Diesel Entry
+          </Link>
+          <Link
+            className='top-bar-right__button'
+            to='/cost-tracker/add-equipment'
+          >
+            Add Equipment
+          </Link>
+        </div>
+        : null
+      }
       <div
         className={
-          isTopBarCostTrackerRightDisplayed
+          isTopBarUserBranchesRightDisplayed
             ? 'top-bar__right'
             : 'top-bar__right h-hide'
         }
       >
-        <Link className="top-bar-right__button" to="/cost-tracker/add-bills">
-          Add Bills
-        </Link>
         <Link
-          className="top-bar-right__button"
-          to="/cost-tracker/add-diesel-entry"
+          className='top-bar-right__button h-extra-padding'
+          to='/client-profile'
         >
-          Add Diesel Entry
-        </Link>
-        <Link className="top-bar-right__button" to="/cost-tracker/add-equipment">
-          Add Equipment
+          Edit Client
         </Link>
       </div>
-    )}
-
-    {/* Edit Client Button */}
-    <div
-      className={
-        isTopBarUserBranchesRightDisplayed
-          ? 'top-bar__right'
-          : 'top-bar__right h-hide'
-      }
-    >
-      <Link className="top-bar-right__button h-extra-padding" to="/client-profile">
-        Edit Client
-      </Link>
     </div>
-  </div>
-);
-
+  );
 }
 
 export default RevisedAppTopBar;

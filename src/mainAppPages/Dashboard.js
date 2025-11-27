@@ -37,7 +37,6 @@ import CarbonEmmission from "../components/cards/CarbonEmmission";
 import YesterDayAndTodayCard from "../components/cards/YesterdayAndToday";
 import PowerUsageCard from "../components/cards/PowerUsageCard";
 import DailyConsumption from "../components/cards/DailyConsumption";
-import SolarOverviewPage from "./SolarOverviewPage";
 
 const breadCrumbRoutes = [
   { url: "/", name: "Home", id: 1 },
@@ -197,8 +196,7 @@ function Dashboard({
       <div className="breadcrumb-and-print-buttons">
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
-      {userData.is_solar_customer === false ?
-        <section id="page" ref={pageRef}>
+      <section id="page" ref={pageRef}>
         <div className="dashboard-row-1">
           <TotalEnergyCard
             totalEnergyBranchData={totalEnergyBranchData}
@@ -334,9 +332,7 @@ function Dashboard({
               </article>
             </div>
           )}
-      </section> :
-       <SolarOverviewPage />      
-      }     
+      </section>
     </>
   );
 }
