@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Card, Row, Col, Progress, Select, Tabs, Table, DatePicker, Spin } from "antd";
-import { EnvironmentOutlined, SunOutlined } from "@ant-design/icons";
 import {
   AreaChart,
   Area,
@@ -17,6 +16,8 @@ import parametersImg from "../assets/icons/parameterIcon.png";
 import batteryImg from "../assets/icons/battery.png";
 import gridImg from "../assets/icons/grid.png";
 import usageImg from "../assets/icons/usage.png";
+import locationLogo from "../assets/icons/locationIcon.png";
+import sunLogo from "../assets/icons/sunIcon.png";
 import { motion } from "framer-motion/dist/framer-motion"; // Node12-safe import
 import BreadCrumb from "../components/BreadCrumb";
 import { fetchBatterySystemData, fetchComponentsTableData, fetchConsumptionsData, fetchInverterGridsData, fetchPvProductionData, fetchWeatherReadingsData } from "../redux/actions/solar/solar.action";
@@ -476,6 +477,13 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
     battery_discharge: h.battery_discharge_kwh ?? 0,
   })) || [];
 
+  const IconLabel = ({ icon, text }) => (
+  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+    <img src={icon} alt="" style={{ width: 16, height: 16 }} />
+    {text}
+  </span>
+);
+
   return (
     <div className="solar-overview">
       <div className="breadcrumb-and-print-buttons">
@@ -490,7 +498,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
                 <div className="header-left">
                   <div className="header-text">
                     <div className="location">
-                      <EnvironmentOutlined className="icon-small" />
+                      <IconLabel icon={locationLogo} className="icon-small" />
                       {weatherContentsData?.weather?.city || "--"} —{" "}
                       {weatherContentsData?.weather?.condition || "--"}{" "}
                       {weatherContentsData?.weather?.temperature_c
@@ -499,7 +507,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
                     </div>
 
                     <div className="sun-info">
-                      <SunOutlined /> Sunshine{" "}
+                      <IconLabel icon={sunLogo} text="Sunshine" />
                       {weatherContentsData?.weather?.sunshine || "--"}{" "}
                       <p>(UTC+01)</p>
                     </div>
