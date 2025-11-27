@@ -30,7 +30,7 @@ const NotAllowedNotification = () => {
   })
 }
 
-function UpdateDieselEntry({ match, setModal, reloadTableLists, dieselEntryData, updateFuelConsumptionData:editFuelConsumption, holdBranchGenerators }) {
+function UpdateMonthlyDieselEntry({ match, setModal, reloadTableLists, dieselEntryData, updateFuelConsumptionData:editFuelConsumption }) {
   const [dailyForm] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -83,11 +83,6 @@ function UpdateDieselEntry({ match, setModal, reloadTableLists, dieselEntryData,
     defaultBranch = branchId
   }
 
-  let generatorList
-  if (holdBranchGenerators) {
-    generatorList = holdBranchGenerators.flat()
-  }
-
   const onUsedTrackerSubmit = async ({ start_date, end_date, quantity, fuelType, generator_name }) => {
     if (!defaultBranch) {
       return NotAllowedNotification();
@@ -99,9 +94,7 @@ function UpdateDieselEntry({ match, setModal, reloadTableLists, dieselEntryData,
       quantity,
       start_date: startDate,
       end_date: endDate,
-      fuel_type: fuelType || "diesel",
-      generator_ids: [generator_name],
-      consumption_type: "Daily",
+      consumption_type: "Monthly",
       entry_id: entryId
     };
     const request = await editFuelConsumption(defaultBranch, parameters);
@@ -188,23 +181,6 @@ function UpdateDieselEntry({ match, setModal, reloadTableLists, dieselEntryData,
                     <NumberField data={data.quantity} />
                   </Form.Item>
                 </div>
-                <div className="cost-tracker-input-container">
-                  <Form.Item
-                    name="generator_name"
-                    label="Generator"
-                    labelCol={{ span: 24 }}
-                    hasFeedback
-                    validateTrigger={["onChange", "onBlur"]}
-                  >
-                    <Select placeholder="Select Generator">
-                      {generatorList.map((gen) => (
-                        <Option key={gen.device_id} value={gen.device_id}>
-                          {gen.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </div>
               </div>
               <button
                 className="generic-submit-button cost-tracker-form-submit-button"
@@ -224,4 +200,4 @@ const mapDispatchToProps = {
   updateFuelConsumptionData,
 };
 
-export default connect(null, mapDispatchToProps)(UpdateDieselEntry);
+export default connect(null, mapDispatchToProps)(UpdateMonthlyDieselEntry);
