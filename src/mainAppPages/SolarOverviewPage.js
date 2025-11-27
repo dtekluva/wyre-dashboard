@@ -18,7 +18,7 @@ import gridImg from "../assets/icons/grid.png";
 import usageImg from "../assets/icons/usage.png";
 import locationLogo from "../assets/icons/locationIcon.png";
 import sunLogo from "../assets/icons/sunIcon.png";
-import { motion } from "framer-motion/dist/framer-motion"; // Node12-safe import
+// import { motion } from "framer-motion/dist/framer-motion"; // Node12-safe import
 import BreadCrumb from "../components/BreadCrumb";
 import { fetchBatterySystemData, fetchComponentsTableData, fetchConsumptionsData, fetchInverterGridsData, fetchPvProductionData, fetchWeatherReadingsData } from "../redux/actions/solar/solar.action";
 import { connect } from "react-redux";
@@ -257,7 +257,7 @@ const FlowDiagram = ({ inverterData }) => {
           return (
             <g key={idx}>
               <path d={pathD} fill="none" stroke="#ccc" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
-              {!isIdle && !isGridOff &&
+              {/* {!isIdle && !isGridOff &&
                 [0, 0.6, 1.2].map((delay, pulseIdx) => (
                   <motion.path
                     key={pulseIdx}
@@ -277,7 +277,7 @@ const FlowDiagram = ({ inverterData }) => {
                     }}
                     style={{ filter: `drop-shadow(0px 0px 6px ${color}80)` }}
                   />
-                ))}
+                ))} */}
             </g>
           );
         })}
@@ -327,14 +327,14 @@ const FlowDiagram = ({ inverterData }) => {
                   }}
                 />
               )}
-              <motion.image
+              {/* <motion.image
                 href={n.icon}
                 x={n.x - iconSize / 2}
                 y={n.y - iconSize / 2}
                 width={iconSize}
                 height={iconSize}
                 preserveAspectRatio="xMidYMid meet"
-              />
+              /> */}
               {/* Percentage on the connector line (Capacity & Battery only) */}
               {["capacity", "battery"].includes(key) && n.percentage !== undefined && (
                 <text
