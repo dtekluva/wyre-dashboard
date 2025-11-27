@@ -228,9 +228,9 @@ export const addMonthlyFuelConsumptionData = (branchId, parameters) => async (di
 
 export const updateFuelConsumptionData = (id, parameters) => async (dispatch) => {
   dispatch(editFuelDataLoading());
-  const requestUrl = `update-fuel-entry/${id}/`;
+  const requestUrl = `fuel-entry/${id}/`;
   try {
-    const response = await APIService.post(requestUrl, parameters);
+    const response = await APIService.patch(requestUrl, parameters);
     dispatch(editFuelDataSuccess(response.data.data));
     dispatch(editFuelDataLoading(false))
     return { fullfilled: true, message: response.data.detail }

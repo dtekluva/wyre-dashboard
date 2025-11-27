@@ -16,6 +16,7 @@ import { Option } from 'antd/lib/mentions';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import UpdateDieselEntry from './UpdateDieselEntry';
+import UpdateMonthlyDieselEntry from './UpdateMonthlyDieselEntry';
 
 
 const { RangePicker } = DatePicker
@@ -73,22 +74,22 @@ function AddDieselEntry({
   const [dieselEntryData, setDieselEntryData] = useState({})
   const [dataSources, setDataSources] = useState({})
 
-  const { setCurrentUrl, userId, userData } = useContext(
+  const { setCurrentUrl, userId, userData, branchId, organization } = useContext(
     CompleteDataContext
   );
 
   const isOperator = userData.role_text === "OPERATOR";
 
   const canEditRecord = (recordTime) => {
-  if (!recordTime) return false;
+    if (!recordTime) return false;
 
-  const now = moment();
-  const recTime = moment(recordTime);
+    const now = moment();
+    const recTime = moment(recordTime);
 
-  const diffInMinutes = now.diff(recTime, "minutes");
+    const diffInMinutes = now.diff(recTime, "minutes");
 
-  return diffInMinutes <= 30;  // allows editing only within 30 mins
-};
+    return diffInMinutes <= 30;
+  };
 
 
   const sideBarData = useSelector((state) => state.sideBar.sideBarData);
@@ -209,12 +210,13 @@ function AddDieselEntry({
 
     if (fuelData && fuelData.fullfilled) {
       const newData = fuelData.data.map((elementData) => ({
-        fuel_consumption_id: elementData.fuel_consumption_id,
+        id: elementData.id,
         start_date: elementData.start_date,
         end_date: elementData.end_date,
         quantity: elementData.quantity,
         record_time: elementData.record_time,
         generator_name: elementData.generator_name,
+        generator_ids: elementData.device_id,
       }));
       // Sort by date (newest first)
       const sortedData = newData.sort(
@@ -238,7 +240,7 @@ function AddDieselEntry({
         year: elementData.year,
         quantity: elementData.quantity,
         record_time: elementData.record_time,
-        fuel_consumption_id: elementData.fuel_consumption_id,
+        id: elementData.id,
       }));
       // Sort by date (newest first)
       const sortedData = newData.sort(
@@ -534,7 +536,7 @@ function AddDieselEntry({
                   dataSource={modalData}
                   columns={dailyConsumptionColumn}
                   loading={fuelDataLoading}
-                  rowKey="fuel_consumption_id"
+                  rowKey="id"
                   // pagination={{ pageSize: 6 }}
                 />
                 <Modal
@@ -549,6 +551,7 @@ function AddDieselEntry({
                     dieselEntryData={dieselEntryData}
                     holdBranchGenerators={holdBranchGenerators}
                     setModal={setEditDieselEntryModal}
+                    reloadTableLists={fetchDailyFuelData}
                   />
                 </Modal>
               </>
@@ -597,7 +600,6 @@ function AddDieselEntry({
                           </Form.Item>
                         </div>
                       </div>
-
                       <button className="generic-submit-button cost-tracker-form-submit-button">
                         Submit
                       </button>
@@ -620,9 +622,10 @@ function AddDieselEntry({
                   width={1000}
                   footer={null}
                 >
-                  <UpdateDieselEntry
+                  <UpdateMonthlyDieselEntry
                     dieselEntryData={dieselEntryData}
                     setModal={setEditDieselEntryModal}
+                    reloadTableLists={fetchMonthlyFuelData}
                   />
                 </Modal>
               </div>
