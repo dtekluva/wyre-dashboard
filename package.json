@@ -14,7 +14,7 @@
     "chartjs-plugin-piechart-outlabels": "^0.1.4",
     "color-hash": "^2.0.1",
     "dayjs": "^1.9.7",
-    "framer-motion": "^12.23.12",
+    "framer-motion": "4.1.17",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "jwt-decode": "^3.1.2",
