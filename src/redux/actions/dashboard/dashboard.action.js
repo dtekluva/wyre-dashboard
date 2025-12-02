@@ -15,7 +15,7 @@ import {
 } from "./actionCreators";
 import dataHttpServices from '../../../services/devices';
 import moment from 'moment';
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import { APIService } from "../../../config/api/apiConfig";
 
 

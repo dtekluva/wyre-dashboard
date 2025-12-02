@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { logoutUser, getPermittedBranchesLoading, getPermittedBranchesSuccess, switchBranchLoading, switchBranchSuccess } from "./actionCreators";
 import EnvData from '../../../config/EnvData';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 
 export const logoutUserFromRedux = () => async (dispatch) => {

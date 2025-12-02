@@ -6,7 +6,7 @@ import {
   fetchReportSuccess,
 } from "./actionCreators";
 import { APIService } from "../../../config/api/apiConfig";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 
 export const fetchReportData = (date, type) => async (dispatch) => {
   dispatch(fetchReportLoading());
