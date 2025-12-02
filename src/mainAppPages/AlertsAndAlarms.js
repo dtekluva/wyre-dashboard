@@ -3,7 +3,7 @@ import HiddenInputLabel from '../smallComponents/HiddenInputLabel';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import { getAlertAndAlarm, setAlertAndAlarm } from '../redux/actions/alertsAndAlarm/alertsAndAlarm.action';
 import { connect } from 'react-redux';
-import { Controller, useForm } from 'react-hook-form/dist/index.ie11';
+import { Controller, useForm } from 'react-hook-form';
 import { Checkbox, Collapse, Form, notification } from 'antd';
 import { useEffect } from 'react';
 import BreadCrumb from '../components/BreadCrumb';

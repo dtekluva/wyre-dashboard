@@ -18,7 +18,7 @@ import gridImg from "../assets/icons/grid.png";
 import usageImg from "../assets/icons/usage.png";
 import locationLogo from "../assets/icons/locationIcon.png";
 import sunLogo from "../assets/icons/sunIcon.png";
-import { motion } from "framer-motion/dist/framer-motion"; // Node12-safe import
+import { motion } from "framer-motion"; // Node12-safe import
 import BreadCrumb from "../components/BreadCrumb";
 import { fetchBatterySystemData, fetchComponentsTableData, fetchConsumptionsData, fetchInverterGridsData, fetchPvProductionData, fetchWeatherReadingsData } from "../redux/actions/solar/solar.action";
 import { connect } from "react-redux";
