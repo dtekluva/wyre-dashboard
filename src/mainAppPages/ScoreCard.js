@@ -453,7 +453,7 @@ function ScoreCard({
               </h2>
               <div>
                 <Tooltip placement='top' style={{ textAlign: 'justify' }}
-                  overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.BASE_ENERGY}>
+                  popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.BASE_ENERGY}>
                   <p>
                     <InformationIcon className="info-icon" />
                   </p>
@@ -511,7 +511,7 @@ function ScoreCard({
               </h2>
               <div>
                 <Tooltip placement='top' style={{ textAlign: 'justify' }}
-                  overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.PEAK_RATIO}>
+                  popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.PEAK_RATIO}>
                   <p>
                     <InformationIcon className="info-icon" />
                   </p>
@@ -563,7 +563,7 @@ function ScoreCard({
               </h2>
               <div>
                 <Tooltip placement='top' style={{ textAlign: 'justify' }}
-                  overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.CARBON}>
+                  popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.CARBON}>
                   <p>
                     <InformationIcon className="info-icon" />
                   </p>
@@ -638,7 +638,7 @@ function ScoreCard({
           <div className='doughnut-card-heading'>
             <h2 className='score-card-heading'>Generator Size Efficiency</h2>
             <Tooltip placement='top' style={{ textAlign: 'justify' }}
-              overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.SIZE_EFFICIENCY}>
+              popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.SIZE_EFFICIENCY}>
               <p>
                 <InformationIcon className="info-icon" />
               </p>
@@ -659,7 +659,7 @@ function ScoreCard({
           <div className='doughnut-card-heading'>
             <h2 className='score-card-heading'>Fuel Efficiency</h2>
             <Tooltip placement='top' style={{ textAlign: 'justify' }}
-              overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.FUEL_EFFICIENCYL}>
+              popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.FUEL_EFFICIENCYL}>
               <p>
                 <InformationIcon className="info-icon" />
               </p>

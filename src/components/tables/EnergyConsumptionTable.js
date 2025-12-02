@@ -1,8 +1,9 @@
 import React from 'react';
 import { Table, Input, Button, Space } from 'antd';
-import Highlighter from 'react-highlight-words';
+// import Highlighter from '../Highlighter';
 import { SearchOutlined } from '@ant-design/icons';
 import { sortByDateTime } from '../../helpers/genericHelpers';
+import Highlighter from '../Highlighter';
 
 class EnergyConsumptionTable extends React.Component {
   state = {

@@ -34,7 +34,7 @@ const BaselineEnergy = ({ baselineEnergyBranchData, uiSettings }) => {
               </h2>
               <div>
                 <Tooltip placement='top' style={{ textAlign: 'justify' }}
-                  overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.BASE_ENERGY}>
+                  popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.BASE_ENERGY}>
                   <p>
                     <InformationIcon className="info-icon" />
                   </p>

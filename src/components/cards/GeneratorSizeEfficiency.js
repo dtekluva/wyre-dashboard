@@ -54,7 +54,7 @@ const GeneratorSizeEfficiency = ({ generatorSizeEfficiencyData, uiSettings }) =>
             <div className='doughnut-card-heading'>
               <h2 className='score-card-heading'>Generator Size Efficiency</h2>
               <Tooltip placement='top' style={{ textAlign: 'justify' }}
-                overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.SIZE_EFFICIENCY}>
+                popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.SIZE_EFFICIENCY}>
                 <p>
                   <InformationIcon className="info-icon" />
                 </p>

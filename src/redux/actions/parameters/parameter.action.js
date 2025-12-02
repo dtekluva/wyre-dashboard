@@ -4,7 +4,7 @@ import EnvData from "../../../config/EnvData";
 import {fetchEnergyConsumptionLoading, fetchEnergyConsumptionSuccess, fetchLastReadingLoading, fetchLastReadingSuccess, fetchPowerDemandLoading, fetchPowerDemandSuccess, fetchPowerQualityLoading, fetchPowerQualitySuccess} from "./actionCreators";
 import dataHttpServices from '../../../services/devices';
 import moment from 'moment';
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import { APIService } from "../../../config/api/apiConfig";
 
 export const fetchEnergyConsumptionData = (userDateRange) => async (dispatch) => {

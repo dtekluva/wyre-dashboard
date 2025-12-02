@@ -41,7 +41,7 @@ const ComparisonBarChart = ({comparisonData}) => {
     },
     // maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           display: true,
           gridLines: {
@@ -66,8 +66,7 @@ const ComparisonBarChart = ({comparisonData}) => {
             fontColor: 'black',
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           ticks: {
             fontFamily: 'Roboto',
@@ -89,7 +88,6 @@ const ComparisonBarChart = ({comparisonData}) => {
             fontColor: 'black',
           },
         },
-      ],
     },
   };
 

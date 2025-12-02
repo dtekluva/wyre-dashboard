@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import Overview from '../adminPages/Overview';
 import AddDevices from '../adminPages/AddDevices';
@@ -26,7 +26,7 @@ function AdminPages() {
 
         <ScrollToTop>
           <div className='page-content'>
-            <Switch>
+            <Routes>
               <Route exact path='/' component={Overview} />
               <Route path='/add-devices' component={AddDevices} />
               <Route path='/view-branches' component={ViewBranches} />
@@ -37,7 +37,7 @@ function AdminPages() {
               <Route path='/view-branch' component={ViewBranch} />
 
               <Route component={Error} />
-            </Switch>
+            </Routes>
           </div>
         </ScrollToTop>
       </main>

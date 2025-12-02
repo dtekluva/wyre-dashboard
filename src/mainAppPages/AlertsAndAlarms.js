@@ -3,7 +3,7 @@ import HiddenInputLabel from '../smallComponents/HiddenInputLabel';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import { getAlertAndAlarm, setAlertAndAlarm } from '../redux/actions/alertsAndAlarm/alertsAndAlarm.action';
 import { connect } from 'react-redux';
-import { Controller, useForm } from 'react-hook-form/dist/index.ie11';
+import { Controller, useForm } from 'react-hook-form';
 import { Checkbox, Collapse, Form, notification } from 'antd';
 import { useEffect } from 'react';
 import BreadCrumb from '../components/BreadCrumb';
@@ -32,7 +32,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
     }
   }, [match, setCurrentUrl]);
 
-  const { register, handleSubmit, control, errors, reset } = useForm({
+  const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
     defaultValues: preloadedAlertsFormData,
   });
 
@@ -226,9 +226,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setmin_power_factor(e.target.value)
                             preloadedAlertsFormData.min_power_factor = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                       </p>
                       <p className="input-error-message">
@@ -312,9 +309,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setfrequency_precision(e.target.value)
                             preloadedAlertsFormData.frequency_precision = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                       </p>
                       <p className="input-error-message">
@@ -372,9 +366,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setmax_voltage(e.target.value)
                             preloadedAlertsFormData.max_voltage = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />{' '}
                         <span className="alerts-and-alarms-unit">volts</span> or
                         goes below{' '}
@@ -396,9 +387,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setmin_voltage(e.target.value)
                             preloadedAlertsFormData.min_voltage = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />{' '}
                         <span className="alerts-and-alarms-unit">volts</span>
                       </p>
@@ -490,9 +478,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setEnergy_usage_max(e.target.value)
                             preloadedAlertsFormData.energy_usage_max = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                         <span className="alerts-and-alarms-unit">kWh</span>
                       </p>
@@ -580,9 +565,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // reset_co2_value(e.target.value)
                             preloadedAlertsFormData.set_co2_value = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                         <span className="alerts-and-alarms-unit">tons</span>
                       </p>
@@ -665,9 +647,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setload_threshold_value(e.target.value)
                             preloadedAlertsFormData.load_threshold_value = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />{' '}
                         <span className="alerts-and-alarms-unit">kW</span>
                       </p>

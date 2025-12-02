@@ -16,7 +16,7 @@ import {
   fetchIppOverviewSuccess
 } from "./actionCreators";
 import { APIService } from "../../../config/api/apiConfig";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import { message } from "antd";
 
 
