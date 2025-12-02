@@ -257,7 +257,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  // margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .header-cards {
@@ -428,13 +428,6 @@
   // max-width: 240px;
 }
 
-.card-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #222;
-}
-
 .chart-wrapper {
   position: relative;
   width: 100%;
@@ -497,26 +490,7 @@
   background: #FFFFFF;
   border-radius: 12px;
   padding: 1.5rem;
-  // box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   height: 100%;
-}
-
-.card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.card-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.energy-value {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #2d6cdf;
 }
 
 /* Generator Status card */
@@ -847,4 +821,421 @@
 
 .cost-value.purple {
   color: #6a1b9a;
+}
+
+// SOLAR-OVERVIEW PAGE
+.solar-overview {
+  // padding: 20px;
+  // background: #f9f9fb;
+}
+
+.flow-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: relative;
+}
+
+.circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 0 20px;
+  text-align: center;
+}
+
+.circle h4 {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.flow-line {
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #7B61FF, #7B61FF, transparent);
+  background-size: 200% 100%;
+  border-radius: 2px;
+}
+
+.custom-card {
+  margin-top: 35px;
+  position: relative;
+  overflow: visible; /* Allow label to “pop out” */
+  border-radius: 0 8px 8px 8px;
+}
+
+.card-label {
+  position: absolute;
+  top: -38px;     /* Moves it above the card edge */
+  left: 0px;
+  text-align: center;
+  background: white;
+  padding: 7px 35px;
+  border-radius: 6px 6px 0 0;
+  font-weight: 500;
+  font-size: 16px;
+  // box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+// .power-card {
+//   text-align: center;
+// }
+
+// .power-details {
+//   margin-top: 15px;
+//   font-size: 14px;
+//   color: #555;
+// }
+
+.power-card {
+  text-align: center;
+  background: #fafafa;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.weather-info {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.power-details {
+  margin-top: -10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.power-details .highlight {
+  color: #7B61FF;
+  font-weight: 600;
+}
+
+.power-details .muted {
+  color: #9CA3AF;
+}
+
+.flow-card {
+  height: 100%;
+}
+
+.flow-diagram {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.circle {
+  text-align: center;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.circle h4 {
+  margin: 5px 0 0;
+}
+
+.production {
+  color: #f59e0b;
+}
+
+.battery {
+  color: #22c55e;
+}
+
+.grid {
+  color: #3b82f6;
+}
+
+.usage {
+  color: #ef4444;
+}
+
+.chart-header {
+  // display: flex;
+  // justify-content: space-between;
+  // align-items: center;
+  position: absolute;
+  top: -43px;
+  /* Moves it above the card edge */
+  right: 0px;
+}
+
+.charts-row {
+  margin-top: 20px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.placeholder-chart {
+  height: 200px;
+  background: #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+}
+
+.yield-row {
+  margin-top: 20px;
+}
+
+
+/* layout */
+.solar-overview { }
+
+/* breadcrumb wrapper */
+.breadcrumb-and-print-buttons { margin-bottom: 12px; }
+
+/* cards */
+.left-card {
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
+  background: #fff;
+  height: 275px;
+}
+
+.summary-card {
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
+  background: #fff;
+  height: 275px;
+}
+
+/* left card header */
+.left-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  // margin-bottom: 12px;
+}
+
+.header-left { 
+  display: flex; 
+  gap: 12px;
+  align-items: center; 
+}
+
+.header-left .icon-small { 
+  font-size: 18px; 
+  color: #6b7280; 
+  margin-right: 8px; 
+}
+
+.header-text .location {
+  // font-weight: 600;
+  color: #6b7280; 
+  display: flex;
+  align-items: center;
+  gap: 6px;        /* space between icon and text */
+  font-size: 14px;
+}
+
+.header-text .sun-info { 
+  font-size: 12px; 
+  color: #6b7280; 
+  display:flex; 
+  gap:6px;
+  // align-items:center; 
+}
+
+/* left card main */
+.left-card-body { 
+  display:block;
+}
+
+/* layout inside left card */
+.left-card .left-card-body { 
+  display:flex; 
+  gap: 48px; 
+  align-items:center; 
+  justify-content: center; 
+  padding-top: 10px; 
+}
+
+/* gauge area */
+.circle-gauge { display:block; }
+
+/* right of gauge stats */
+.gauge-stats { 
+  display:flex; 
+  flex-direction:column; 
+  gap: 18px; 
+  min-width: 160px; 
+}
+.stat-row { 
+  display:flex; 
+  gap: 12px; 
+  align-items:center; 
+}
+.dot { 
+  width:10px; 
+  height:10px; 
+  border-radius:50%; 
+  display:inline-block; 
+  flex-shrink:0; 
+}
+.dot-active { 
+  background: linear-gradient(90deg,#7B61FF,#6C4CFF); 
+  box-shadow: 0 4px 16px rgba(124,58,237,0.12); 
+}
+.dot-muted { 
+  background: #E6E9EE; 
+}
+
+/* stat text */
+.stat-label { 
+  font-size:12px; 
+  color:#6b7280; 
+}
+.stat-value { 
+  font-size:16px; 
+  font-weight:700; 
+  color:#111827; 
+}
+
+.animation-card {
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
+  background: #fff;
+}
+
+/* right card flow svg */
+.flow-svg { 
+  width:100%; 
+  height:320px; 
+  overflow:visible; 
+}
+
+/* node group subtle styling */
+.node-group text { 
+  font-family: Inter, Arial, sans-serif; 
+}
+
+// SVG
+.svg-row {
+  margin-top: 20px;
+}
+
+/* charts */
+.charts-row { 
+  margin-top: 20px; 
+}
+.chart-header { 
+  display:flex; 
+  justify-content:space-between; 
+  align-items:center; 
+  margin-bottom:8px; 
+}
+
+/* responsive */
+@media (max-width: 1000px) {
+  .left-card .left-card-body { flex-direction: column; align-items: center; }
+  .gauge-stats { min-width: auto; text-align:center; }
+}
+
+.custom-params-select .ant-select-selector {
+  display: flex !important;
+  align-items: center !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  height: 40px !important;  /* matches screenshot height */
+}
+
+.custom-params-select .ant-select-selection-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------------------- */
+/*  SHARED POLISHED STYLE */
+/* ---------------------- */
+
+.custom-filter .ant-select-selector,
+.custom-filter .ant-picker {
+  border: none !important;
+  border-radius: 6px !important;   /* Soft rounded corners */
+  box-shadow: none !important;
+  background: #fff !important;
+  height: 34px !important;
+  padding: 0 10px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Remove hover/focus borders */
+.custom-filter .ant-select-selector:hover,
+.custom-filter .ant-select-selector:focus,
+.custom-filter.ant-select-focused .ant-select-selector,
+.custom-filter .ant-picker:hover,
+.custom-filter .ant-picker-focused {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ----------------------- */
+/*  SELECT SPECIFIC STYLES */
+/* ----------------------- */
+
+.custom-filter .ant-select-selection-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px;
+  font-size: 13px;
+  margin-top: 0 !important;
+}
+
+.custom-filter .ant-select-arrow {
+  display: none !important;  /* remove the default dropdown arrow */
+}
+
+/* dropdown panel */
+.custom-filter .ant-select-dropdown {
+  border-radius: 10px !important;
+  padding: 6px 0 !important;
+}
+
+/* hovering items */
+.custom-filter .ant-select-item-option-active {
+  background: #f4f4f4 !important;
+}
+
+/* selected item */
+.custom-filter .ant-select-item-option-selected {
+  background: #e7f0ff !important;
+  font-weight: 500;
+}
+
+/* ----------------------- */
+/* DATE PICKER EXTRAS */
+/* ----------------------- */
+
+/* Remove calendar icon */
+.custom-filter .ant-picker-suffix {
+  display: none !important;
+}
+
+/* Perfect text alignment */
+.custom-filter .ant-picker-input > input {
+  font-size: 13px;
+  margin-top: 2px;
 }

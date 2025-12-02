@@ -87,8 +87,9 @@ export const fetchDieselPriceData = () => async (dispatch) => {
   }
 };
 
-export const fetchGenTotalEnergyUsedData = () => async (dispatch) => {
+export const fetchGenTotalEnergyUsedData = (date) => async (dispatch) => {
   dispatch(getGeneratorMonthlyEnergyLoading());
+  const { month, year } = getMonthYear(date);
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
   let branchId;
@@ -98,7 +99,7 @@ export const fetchGenTotalEnergyUsedData = () => async (dispatch) => {
     userId = user.id;
     branchId = user.branch_id;
   }
-  const requestUrl = `branch/${branchId}/generators-monthly-energy/`;
+  const requestUrl = `branch/${branchId}/generators-monthly-energy/?month=${month}&year=${year}`;
   try {
     const response = await APIService.get(requestUrl);
     dispatch(getGeneratorMonthlyEnergySuccess(response.data));

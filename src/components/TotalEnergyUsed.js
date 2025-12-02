@@ -40,7 +40,7 @@ const TotalEnergyUsed = ({ genTotalEnergyUsedData, loader }) => {
           {/* Center label */}
           <div className="center-label">
             <div className="unit">Total</div>
-            <div className="total">{total_energy?.toFixed(0)}</div>
+            <div className="total">{total_energy?.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
             <div className="unit">kWh</div>
           </div>
         </div>
