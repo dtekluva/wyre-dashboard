@@ -92,11 +92,11 @@ const getOrganizationMonthlyUsage = (data) => {
   ----------------*/
 const getBranchEnergyDataArray = (data, powerFactor = null) => {
   return (
-    data.branches &&
-    data.branches.map((eachBranch) => {
+    data?.branches &&
+    data?.branches?.map((eachBranch) => {
       
       const energySumValueNames = Object.keys(
-        eachBranch.devices[0].dashboard || {}
+        eachBranch?.devices[0]?.dashboard || {}
       ).filter(
         (eachName) =>
           !['name', 'id', 'avg_demand', 'min_demand', 'max_demand'].includes(
@@ -604,7 +604,7 @@ const getOrganizationBillingConsumptionNairaValues = (data) => {
   );
 
   const organizationConsumptionNairaDates =
-    allDevicesConsumptionNairaObjects[0].dates;
+    allDevicesConsumptionNairaObjects[0]?.dates;
 
   const allDevicesConsumptionNairaValues = allDevicesConsumptionNairaObjects.map(
     (eachDevice) => eachDevice.values

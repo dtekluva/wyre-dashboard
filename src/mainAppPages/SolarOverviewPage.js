@@ -25,17 +25,13 @@ import { connect } from "react-redux";
 
 const breadCrumbRoutes = [
   { url: "/", name: "Home", id: 1 },
-  { url: "/", name: "Solar Overview", id: 2 },
+  { url: "#", name: "Solar Overview", id: 2 },
 ];
 
 const { Option } = Select;
 
-/* ---------------------------
-   CircleGauge (Segmented SVG)
-   --------------------------- */
+  //  CircleGauge (Segmented SVG)
 const CircleGauge = ({ value, max, percentage, size = 200, segments = 48 }) => {
-  // const percentage = Math.max(0, Math.min(100, Math.round((value / max) * 100)));
-  // const percentage = 13;
   const cx = size / 2;
   const cy = size / 2;
   const inner = size * 0.34; // inner radius for ticks start
@@ -152,9 +148,7 @@ const EnergySummary = ({ tableContentsData }) => {
   );
 };
 
-/* ---------------------------
-   FlowDiagram (Final curved Z-shape + glowing pulses)
-   --------------------------- */
+/* FlowDiagram - Framer Motion v4 compatible */
 const FlowDiagram = ({ inverterData }) => {
   const { pv, battery, grid, load } = inverterData || {};
 
@@ -235,10 +229,10 @@ const FlowDiagram = ({ inverterData }) => {
         {connectors.map(({ from, to, color, side, offset }, idx) => {
           const start = nodes[from];
           const end = nodes[to];
-          const direction = start?.direction;
+          const direction = start && start.direction;
           const isOutgoing = direction === "OUT";
           const isIdle = direction === "IDLE";
-          const isGridOff = start?.status === "OFF";
+          const isGridOff = start && start.status === "OFF";
 
           const [sx, sy, ex, ey] = isOutgoing
             ? [end.x + (side === "left" ? -end.r : end.r), end.y + offset, start.x + (start.x < end.x ? start.r : -start.r), start.y]
@@ -254,9 +248,22 @@ const FlowDiagram = ({ inverterData }) => {
             Q ${(midX2 + ex) / 2},${ey} ${ex},${ey}
           `;
 
+          // strokeDash start offset (animated) — pick a large value so the dash moves visibly
+          const startOffset = isOutgoing ? 300 : -300;
+
           return (
             <g key={idx}>
-              <path d={pathD} fill="none" stroke="#ccc" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
+              {/* base muted connector */}
+              <path
+                d={pathD}
+                fill="none"
+                stroke="#DDD"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0.45"
+              />
+
+              {/* animated pulses (only when not IDLE and connector's grid is not OFF) */}
               {!isIdle && !isGridOff &&
                 [0, 0.6, 1.2].map((delay, pulseIdx) => (
                   <motion.path
@@ -266,18 +273,20 @@ const FlowDiagram = ({ inverterData }) => {
                     stroke={color}
                     strokeWidth="3"
                     strokeLinecap="round"
-                    strokeDasharray="10 300"
-                    initial={{ strokeDashoffset: isOutgoing ? 300 : -300 }}
-                    animate={{ strokeDashoffset: 0 }}
+                    strokeLinejoin="round"
+                    strokeDasharray="12 260"
+                    // animate as keyframes (v4 friendly)
+                    animate={{ strokeDashoffset: [startOffset, 0] }}
                     transition={{
-                      duration: 2.5,
+                      duration: 2.2,
                       repeat: Infinity,
                       ease: "linear",
                       delay,
                     }}
-                    style={{ filter: `drop-shadow(0px 0px 6px ${color}80)` }}
+                    style={{ filter: `drop-shadow(0 0 6px ${color}80)` }}
                   />
-                ))}
+                ))
+              }
             </g>
           );
         })}
@@ -327,7 +336,9 @@ const FlowDiagram = ({ inverterData }) => {
                   }}
                 />
               )}
-              <motion.image
+
+              {/* Use plain SVG <image> (stable across builds) */}
+              <image
                 href={n.icon}
                 x={n.x - iconSize / 2}
                 y={n.y - iconSize / 2}
@@ -335,11 +346,12 @@ const FlowDiagram = ({ inverterData }) => {
                 height={iconSize}
                 preserveAspectRatio="xMidYMid meet"
               />
+
               {/* Percentage on the connector line (Capacity & Battery only) */}
               {["capacity", "battery"].includes(key) && n.percentage !== undefined && (
                 <text
-                  x={n.x + (key === "capacity" ? n.r + 16 : n.r + 17)}   // slight adjustment
-                  y={n.y + -10}
+                  x={n.x + (key === "capacity" ? n.r + 16 : n.r + 17)}
+                  y={n.y - 10}
                   textAnchor="start"
                   fontSize="13"
                   fill={n.color}
@@ -348,6 +360,7 @@ const FlowDiagram = ({ inverterData }) => {
                   {n.percentage}%
                 </text>
               )}
+
               {key === "production" ? (
                 <>
                   <text
@@ -400,6 +413,7 @@ const FlowDiagram = ({ inverterData }) => {
     </div>
   );
 };
+
 /* ---------------------------
    Main SolarOverviewPage
    --------------------------- */
