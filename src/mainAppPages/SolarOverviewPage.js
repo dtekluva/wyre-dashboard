@@ -152,6 +152,11 @@ const EnergySummary = ({ tableContentsData }) => {
 const FlowDiagram = ({ inverterData }) => {
   const { pv, battery, grid, load } = inverterData || {};
 
+  const gridStatus = inverterData?.grid?.status === "ON" ? "ON" : "OFF";
+  const solarStatus = inverterData?.pv?.kw > 0 ? "ON" : "OFF";
+  const statusColor = (status) =>
+    status === "ON" ? "#22c55e" : "#ef4444"; // green / red
+
   const production = pv?.kw ?? 0;
   const capacity = pv?.installed_capacity_kwp ?? 0;
   const capacityPercentage = pv?.percentage ?? 0;
@@ -399,17 +404,41 @@ const FlowDiagram = ({ inverterData }) => {
       </svg>
 
       {/* === LEGEND === */}
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "8px", gap: "16px", fontSize: "12px", color: "#4b5563" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <div style={{ width: 10, height: 10, background: "#22c55e", borderRadius: "50%" }}></div> Grid: ON
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <div style={{ width: 10, height: 10, background: "#ef4444", borderRadius: "50%" }}></div> Grid: OFF
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <div style={{ width: 12, height: 2, background: "#ccc" }}></div> Idle / No flow
-        </div>
-      </div>
+      {/* Dynamic Legend */}
+<div style={{ display: "flex", justifyContent: "center", marginTop: 10, gap: 20 }}>
+  
+  {/* GRID Legend */}
+  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+    <div
+      style={{
+        width: 12,
+        height: 12,
+        backgroundColor: statusColor(gridStatus),
+        borderRadius: "50%",
+      }}
+    ></div>
+    <span style={{ fontSize: 12, fontWeight: 600 }}>
+      Grid: {gridStatus}
+    </span>
+  </div>
+
+  {/* SOLAR Legend */}
+  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+    <div
+      style={{
+        width: 12,
+        height: 12,
+        backgroundColor: statusColor(solarStatus),
+        borderRadius: "50%",
+      }}
+    ></div>
+    <span style={{ fontSize: 12, fontWeight: 600 }}>
+      Solar: {solarStatus}
+    </span>
+  </div>
+
+</div>
+
     </div>
   );
 };
