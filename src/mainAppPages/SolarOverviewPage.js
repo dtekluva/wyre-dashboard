@@ -239,9 +239,33 @@ const FlowDiagram = ({ inverterData }) => {
           const isIdle = direction === "IDLE";
           const isGridOff = start && start.status === "OFF";
 
-          const [sx, sy, ex, ey] = isOutgoing
-            ? [end.x + (side === "left" ? -end.r : end.r), end.y + offset, start.x + (start.x < end.x ? start.r : -start.r), start.y]
-            : [start.x + (start.x < end.x ? start.r : -start.r), start.y, end.x + (side === "left" ? -end.r : end.r), end.y + offset];
+          // Correct direction based on your rule:
+          // IN  = Production → Node
+          // OUT = Node → Production
+
+          let sx, sy, ex, ey;
+
+          // If flow is OUT → start at node, end at Production
+          if (direction === "OUT") {
+            sx = start.x + (start.x < end.x ? start.r : -start.r);
+            sy = start.y;
+            ex = end.x + (side === "left" ? -end.r : end.r);
+            ey = end.y + offset;
+          }
+          // If flow is IN → start at Production, end at node
+          else if (direction === "IN") {
+            sx = end.x + (side === "left" ? -end.r : end.r);
+            sy = end.y + offset;
+            ex = start.x + (start.x < end.x ? start.r : -start.r);
+            ey = start.y;
+          }
+          // When IDLE → no animation, but still draw base connector
+          else {
+            sx = start.x + (start.x < end.x ? start.r : -start.r);
+            sy = start.y;
+            ex = end.x + (side === "left" ? -end.r : end.r);
+            ey = end.y + offset;
+          }
 
           const midX1 = sx + (ex - sx) * 0.25;
           const midX2 = sx + (ex - sx) * 0.75;
@@ -254,7 +278,7 @@ const FlowDiagram = ({ inverterData }) => {
           `;
 
           // strokeDash start offset (animated) — pick a large value so the dash moves visibly
-          const startOffset = isOutgoing ? 300 : -300;
+          const startOffset = direction === "OUT" ? 300 : 300;
 
           return (
             <g key={idx}>
@@ -403,41 +427,40 @@ const FlowDiagram = ({ inverterData }) => {
         })}
       </svg>
 
-      {/* === LEGEND === */}
       {/* Dynamic Legend */}
-<div style={{ display: "flex", justifyContent: "center", marginTop: 10, gap: 20 }}>
-  
-  {/* GRID Legend */}
-  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-    <div
-      style={{
-        width: 12,
-        height: 12,
-        backgroundColor: statusColor(gridStatus),
-        borderRadius: "50%",
-      }}
-    ></div>
-    <span style={{ fontSize: 12, fontWeight: 600 }}>
-      Grid: {gridStatus}
-    </span>
-  </div>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 10, gap: 20 }}>
 
-  {/* SOLAR Legend */}
-  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-    <div
-      style={{
-        width: 12,
-        height: 12,
-        backgroundColor: statusColor(solarStatus),
-        borderRadius: "50%",
-      }}
-    ></div>
-    <span style={{ fontSize: 12, fontWeight: 600 }}>
-      Solar: {solarStatus}
-    </span>
-  </div>
+        {/* GRID Legend */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div
+            style={{
+              width: 12,
+              height: 12,
+              backgroundColor: statusColor(gridStatus),
+              borderRadius: "50%",
+            }}
+          ></div>
+          <span style={{ fontSize: 12, fontWeight: 600 }}>
+            Grid: {gridStatus}
+          </span>
+        </div>
 
-</div>
+        {/* SOLAR Legend */}
+        {/* <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div
+            style={{
+              width: 12,
+              height: 12,
+              backgroundColor: statusColor(solarStatus),
+              borderRadius: "50%",
+            }}
+          ></div>
+          <span style={{ fontSize: 12, fontWeight: 600 }}>
+            Solar: {solarStatus}
+          </span>
+        </div> */}
+
+      </div>
 
     </div>
   );
