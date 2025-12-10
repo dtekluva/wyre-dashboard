@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
-import { Bar } from 'react-chartjs-2';
-import CompleteDataContext from '../../Context';
+import React, { useContext } from "react";
+import { Bar } from "react-chartjs-2";
+import CompleteDataContext from "../../Context";
 
 import {
   getLastArrayItems,
   convertDateStringToObject,
-} from '../../helpers/genericHelpers';
+} from "../../helpers/genericHelpers";
 
 const VerticalBar = ({ data: rawData }) => {
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
@@ -16,7 +16,7 @@ const VerticalBar = ({ data: rawData }) => {
     dates && dates.map((eachDate) => convertDateStringToObject(eachDate));
 
   const chartDates =
-    dateObjects && dateObjects.map((eachDate) => eachDate.format('MMM DD'));
+    dateObjects && dateObjects.map((eachDate) => eachDate.format("MMM DD"));
 
   const options = {
     layout: {
@@ -35,15 +35,15 @@ const VerticalBar = ({ data: rawData }) => {
       yAxes: [
         {
           gridLines: {
-            color: '#f0f0f0',
+            color: "#f0f0f0",
             drawBorder: false,
             drawTicks: false,
-            zeroLineColor: '#f0f0f0',
+            zeroLineColor: "#f0f0f0",
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: 'Roboto',
-            fontColor: '#A3A3A3',
+            fontFamily: "Roboto",
+            fontColor: "#A3A3A3",
             maxTicksLimit: 6,
             fontSize: 10,
             padding: 10,
@@ -51,8 +51,8 @@ const VerticalBar = ({ data: rawData }) => {
           scaleLabel: {
             display: false,
             padding: 10,
-            labelString: '',
-            fontColor: 'black',
+            labelString: "",
+            fontColor: "black",
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
@@ -61,21 +61,21 @@ const VerticalBar = ({ data: rawData }) => {
         {
           gridLines: {
             drawTicks: false,
-            color: '#f0f0f0',
-            zeroLineColor: '#f0f0f0',
+            color: "#f0f0f0",
+            zeroLineColor: "#f0f0f0",
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: 'Roboto',
-            fontColor: '#A3A3A3',
+            fontFamily: "Roboto",
+            fontColor: "#A3A3A3",
             maxTicksLimit: 10,
             padding: 10,
             fontSize: 10,
           },
           scaleLabel: {
             display: true,
-            labelString: 'Days of the Month',
-            fontColor: 'black',
+            labelString: "Days of the Month",
+            fontColor: "black",
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
@@ -91,11 +91,11 @@ const VerticalBar = ({ data: rawData }) => {
       : chartDates,
     datasets: [
       {
-        label: 'Power Demand',
+        label: "Power Demand",
         maxBarThickness: 60,
         data: chartValues,
-        backgroundColor: '#6c00fa',
-        borderColor: '#6c00fa',
+        backgroundColor: "#5C3592",
+        borderColor: "#5C3592",
         borderWidth: 1,
       },
     ],
