@@ -37,6 +37,7 @@ import CarbonEmmission from "../components/cards/CarbonEmmission";
 import YesterDayAndTodayCard from "../components/cards/YesterdayAndToday";
 import PowerUsageCard from "../components/cards/PowerUsageCard";
 import DailyConsumption from "../components/cards/DailyConsumption";
+import SolarOverviewPage from "./SolarOverviewPage";
 
 const breadCrumbRoutes = [
   { url: "/", name: "Home", id: 1 },
@@ -193,146 +194,150 @@ function Dashboard({
 
   return (
     <>
-      <div className="breadcrumb-and-print-buttons">
-        <BreadCrumb routesArray={breadCrumbRoutes} />
-      </div>
-      <section id="page" ref={pageRef}>
-        <div className="dashboard-row-1">
-          <TotalEnergyCard
-            totalEnergyBranchData={totalEnergyBranchData}
-            userData={userData}
-          />
+      {
+        userData.is_solar_customer === false ?
+          <section id="page" ref={pageRef}>
+            <div className="breadcrumb-and-print-buttons">
+              <BreadCrumb routesArray={breadCrumbRoutes} />
+            </div>
+            <div className="dashboard-row-1">
+              <TotalEnergyCard
+                totalEnergyBranchData={totalEnergyBranchData}
+                userData={userData}
+              />
 
-          <article className="dashboard__demand-banner dashboard__banner--small">
-            <Spin
-              spinning={dashboard.fetchDemandLoading}
-            >
-              <div
-                style={{
-                  textAlign: "right",
-                  paddingTop: 20,
-                  paddingRight: 20,
-                  marginLeft: "auto",
-                }}
-              >
-                <Tooltip
-                  placement="top"
-                  style={{ textAlign: "right" }}
-                  overlayStyle={{ whiteSpace: "pre-line" }}
-                  title={DASHBOARD_TOOLTIP_MESSAGES.MAX_MIN_AVERAGE}
+              <article className="dashboard__demand-banner dashboard__banner--small">
+                <Spin
+                  spinning={dashboard.fetchDemandLoading}
                 >
-                  <p>
-                    <InformationIcon className="info-icon" />
-                  </p>
-                </Tooltip>
-              </div>
-              <div className="dashboard__demand-banner-- ">
-                <DashboardSmallBannerSection
-                  name="Max. Demand"
-                  value={demandData.max_demand}
-                  // unit={dashboard?.demandData.unit}
-                  unit="kVA"
-                />
-                <DashboardSmallBannerSection
-                  name="Min. Demand"
-                  value={demandData.min_demand}
-                  // unit={dashboard?.demandData.unit}
-                  unit="kVA"
-                />
-                <DashboardSmallBannerSection
-                  name="Avg. Demand"
-                  value={demandData.avg_demand}
-                  // unit={dashboard?.demandData.unit}
-                  unit="kVA"
-                />
+                  <div
+                    style={{
+                      textAlign: "right",
+                      paddingTop: 20,
+                      paddingRight: 20,
+                      marginLeft: "auto",
+                    }}
+                  >
+                    <Tooltip
+                      placement="top"
+                      style={{ textAlign: "right" }}
+                      overlayStyle={{ whiteSpace: "pre-line" }}
+                      title={DASHBOARD_TOOLTIP_MESSAGES.MAX_MIN_AVERAGE}
+                    >
+                      <p>
+                        <InformationIcon className="info-icon" />
+                      </p>
+                    </Tooltip>
+                  </div>
+                  <div className="dashboard__demand-banner-- ">
+                    <DashboardSmallBannerSection
+                      name="Max. Demand"
+                      value={demandData.max_demand}
+                      // unit={dashboard?.demandData.unit}
+                      unit="kVA"
+                    />
+                    <DashboardSmallBannerSection
+                      name="Min. Demand"
+                      value={demandData.min_demand}
+                      // unit={dashboard?.demandData.unit}
+                      unit="kVA"
+                    />
+                    <DashboardSmallBannerSection
+                      name="Avg. Demand"
+                      value={demandData.avg_demand}
+                      // unit={dashboard?.demandData.unit}
+                      unit="kVA"
+                    />
+                  </div>
+                </Spin>
+              </article>
+
+              <CarbonEmmission
+                totalEnergyBranchData={totalEnergyBranchData}
+                blendedCost={blendedCostData}
+                userData={userData}
+              />
+            </div>
+            <Spin
+              spinning={dashboard.fetchDashBoardCard_2_Loading}
+            >
+              <div className="dashboard-row-1b">
+                {totalDeviceUsageBranchData && totalDeviceUsageBranchData.devices &&
+                  totalDeviceUsageBranchData.devices
+                    .filter((device) => device.is_source)
+                    .map((eachDevice, index) => {
+                      return (
+                        index < 6 &&
+                        eachDevice.is_source && (
+                          <article
+                            key={index}
+                            className="dashboard__total-energy-amount dashboard__banner--smallb"
+                          >
+                            <DashBoardAmountUsed
+                              key={index}
+                              name={eachDevice?.name}
+                              deviceType={eachDevice.device_type}
+                              totalKWH={eachDevice?.energy_consumption?.usage}
+                              amount={
+                                eachDevice.billing_totals?.present_total?.value_naira
+                              }
+                              timeInUse={eachDevice?.usage_hours}
+                            />
+                          </article>
+                        )
+                      );
+                    })}
               </div>
             </Spin>
-          </article>
 
-          <CarbonEmmission
-            totalEnergyBranchData={totalEnergyBranchData}
-            blendedCost={blendedCostData}
-            userData={userData}
-          />
-        </div>
-        <Spin
-          spinning={dashboard.fetchDashBoardCard_2_Loading}
-        >
-          <div className="dashboard-row-1b">
-            {totalDeviceUsageBranchData && totalDeviceUsageBranchData.devices &&
-              totalDeviceUsageBranchData.devices
-                .filter((device) => device.is_source)
-                .map((eachDevice, index) => {
-                  return (
-                    index < 6 &&
-                    eachDevice.is_source && (
-                      <article
-                        key={index}
-                        className="dashboard__total-energy-amount dashboard__banner--smallb"
-                      >
-                        <DashBoardAmountUsed
-                          key={index}
-                          name={eachDevice?.name}
-                          deviceType={eachDevice.device_type}
-                          totalKWH={eachDevice?.energy_consumption?.usage}
-                          amount={
-                            eachDevice.billing_totals?.present_total?.value_naira
-                          }
-                          timeInUse={eachDevice?.usage_hours}
-                        />
-                      </article>
-                    )
-                  );
-                })}
-          </div>
-        </Spin>
+            <DailyConsumption
+              totalDailyConsumptionBranchData={totalDailyConsumptionBranchData}
+              uiSettings={uiSettings}
+              sideDetails={sideDetails}
+            />
 
-        <DailyConsumption
-          totalDailyConsumptionBranchData={totalDailyConsumptionBranchData}
-          uiSettings={uiSettings}
-          sideDetails={sideDetails}
-        />
-
-        <div className="dashboard-row-3">
-          <PowerUsageCard
-            totalDeviceUsageBranchData={totalDeviceUsageBranchData}
-            uiSettings={uiSettings}
-            sideDetails={sideDetails}
-          />
-          <YesterDayAndTodayCard
-            totalEnergyBranchData={totalEnergyBranchData}
-          />
-        </div>
-
-        {userData.client_type === "BESPOKE" &&
-          dashboard.dashBoardCard_1_Data &&
-          ((dashboard.dashBoardCard_1_Data.branches.length > 1 &&
-            (!checkedItems || Object.keys(checkedItems).length === 0)) ||
-            (dashboard.dashBoardCard_1_Data.branches.length === 1 &&
-              generateLoadOverviewChartData(
-                dashboard.dashBoardCard_1_Data.branches[0].devices
-              ).label.length > 0)) && (
-            <div className="dashboard-bar-container">
-              <article className="score-card-row-3">
-                <LoadOverviewPercentBarChart
-                  uiSettings={uiSettings}
-                  pDemand={pDemand}
-                  runningPercentageData={
-                    dashboard.dashBoardCard_1_Data.branches.length > 1 &&
-                    (!checkedItems || Object.keys(checkedItems).length === 0)
-                      ? generateMultipleBranchLoadOverviewChartData(
-                          dashboard.dashBoardCard_1_Data.branches
-                        )
-                      : generateLoadOverviewChartData(
-                          dashboard.dashBoardCard_1_Data.branches[0].devices
-                        )
-                  }
-                  dataTitle="Operating Time"
-                />
-              </article>
+            <div className="dashboard-row-3">
+              <PowerUsageCard
+                totalDeviceUsageBranchData={totalDeviceUsageBranchData}
+                uiSettings={uiSettings}
+                sideDetails={sideDetails}
+              />
+              <YesterDayAndTodayCard
+                totalEnergyBranchData={totalEnergyBranchData}
+              />
             </div>
-          )}
-      </section>
+
+            {userData.client_type === "BESPOKE" &&
+              dashboard.dashBoardCard_1_Data &&
+              ((dashboard.dashBoardCard_1_Data.branches.length > 1 &&
+                (!checkedItems || Object.keys(checkedItems).length === 0)) ||
+                (dashboard.dashBoardCard_1_Data.branches.length === 1 &&
+                  generateLoadOverviewChartData(
+                    dashboard.dashBoardCard_1_Data.branches[0].devices
+                  ).label.length > 0)) && (
+                <div className="dashboard-bar-container">
+                  <article className="score-card-row-3">
+                    <LoadOverviewPercentBarChart
+                      uiSettings={uiSettings}
+                      pDemand={pDemand}
+                      runningPercentageData={
+                        dashboard.dashBoardCard_1_Data.branches.length > 1 &&
+                          (!checkedItems || Object.keys(checkedItems).length === 0)
+                          ? generateMultipleBranchLoadOverviewChartData(
+                            dashboard.dashBoardCard_1_Data.branches
+                          )
+                          : generateLoadOverviewChartData(
+                            dashboard.dashBoardCard_1_Data.branches[0].devices
+                          )
+                      }
+                      dataTitle="Operating Time"
+                    />
+                  </article>
+                </div>
+              )}
+          </section> :
+          <SolarOverviewPage />
+      }
     </>
   );
 }

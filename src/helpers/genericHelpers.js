@@ -811,10 +811,18 @@ const generateSumOfIsSource = (allDeviceData) => {
   return sum;
 };
 
-
 /* -------------------------------------------------------------------
 /* Load overview Helpers End  ----------------------------------------
 --------------------------------------------------------------------*/
+
+// Endpoint Month and Year parameters statrts
+export const getMonthYear = (date = new Date()) => {
+  return {
+    month: dayjs(date).month() + 1,
+    year: dayjs(date).year(),
+  };
+};
+// Endpoint Month and Year parameters ends
 
 const validate2DecNo = (value, label) => {
   const numbersOnly = (/^\s*-?\d+(\.\d{1,2})?\s*$/);
@@ -918,8 +926,8 @@ const calculateDemandMinMaxAvgValues = (data) => {
     avg_demand = Math.max(avg_demand, device.avg);
     if (Number(device.min) !== 0) {
       totalMin += device.min;
+      countMin++;
     }
-    countMin++;
   });
 
   const min_demand = countMin > 0 ? totalMin / countMin : 0;

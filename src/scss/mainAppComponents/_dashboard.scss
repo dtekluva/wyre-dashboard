@@ -250,3 +250,992 @@
 .power-icon__image {
   height: 60px;
 }
+
+/* === Diesel-Overview page === */
+/* Header */
+.dashboard-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.header-cards {
+  display: grid;
+  grid-template-columns: 2fr 0.8fr 1.5fr; /* generator biggest, emission smaller, price wider */
+  gap: 1rem;
+  align-items: stretch;
+}
+
+/* Generic card */
+.header-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 100%;
+}
+
+.card-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.card-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.card-value.highlight {
+  color: #7d3cff;
+}
+
+.card-value.green {
+  color: #52AC0B;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  // background: #52AC0B;
+  background: grey;
+  margin-right: 6px;
+}
+
+.status-dot.on {
+  background: #52AC0B;
+}
+
+.value-red {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+/* === Generator Card Layout === */
+.generator-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* left icon, middle label, right status */
+  align-items: center;
+}
+
+.gen-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.gen-center {
+  text-align: center;
+}
+
+.gen-center .title {
+  font-size: 2.5rem;
+}
+
+.gen-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.last-posted {
+  font-size: 1rem;
+  // color: #666;
+}
+
+/* === Price Card Layout === */
+.price-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* icon, labels, values */
+  align-items: center;
+  gap: 1rem;
+}
+
+.price-center {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.price-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .header-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-cards {
+    grid-template-columns: 1fr;
+  }
+  .generator-card,
+  .price-card {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+  .gen-center,
+  .gen-right,
+  .price-right {
+    text-align: left;
+    align-items: flex-start;
+  }
+}
+
+
+/* 2nd Row grid layout */
+.diesel-grid1 {
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* smaller left, bigger right */
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-bottom: 2rem;
+}
+
+.grid1-item {
+  display: flex;
+  flex-direction: column;
+}
+
+// Total Energy Used card
+.total-energy-card {
+  padding: 16px;
+  border-radius: 12px;
+  background-color: #FFFFFF;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  // max-width: 240px;
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 180px; /* ensures it doesn’t stretch too big */
+  aspect-ratio: 1; /* keeps it perfectly square */
+  margin: 0 auto;
+}
+
+.center-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #111;
+  // font-size: 14px;
+}
+
+.center-label .total {
+  font-size: 26px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.center-label .label {
+  font-size: 17px;
+  color: #555;
+}
+
+.center-label .unit {
+  font-size: 13px;
+  color: #555;
+}
+
+.legend {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #333;
+}
+
+.legend-item .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* Card styling */
+.card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: 100%;
+}
+
+/* Generator Status card */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.status-item {
+  text-align: center;
+}
+
+.chart-placeholder {
+  height: 120px;
+  background: #f4f4f4;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.chart-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.4rem;
+}
+
+.donut-wrapper {
+  display: flex;
+  align-items: center; /* vertical centering */
+  justify-content: center;
+  gap: 20px; /* space between chart and labels */
+}
+
+.donut-chart {
+  width: 180px;
+  height: 180px;
+  position: relative;
+}
+
+.center-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.donut-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.label-text {
+  font-size: 14px;
+  color: #333;
+}
+
+.donut-total {
+  margin-top: 8px;
+  text-align: center;
+  margin-right: 50px;
+  font-weight: 600;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .diesel-grid1 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.diesel-grid2 {
+  display: grid;
+  grid-template-columns: 1.7fr 1.3fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* ✅ responsive behavior */
+@media (max-width: 1024px) {
+  .diesel-grid2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  // box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.card-body {
+  flex: 1;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fub-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.fub-toggle-btn {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.fub-toggle-btn.active {
+  background: #5c12a7;
+  color: white;
+  border-color: #5c12a7;
+}
+
+.fub-tooltip {
+  background: #4B4F52;
+  color: #FFFFFF;
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+.fub-tooltip-label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.fub-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fub-tooltip-gen {
+  font-weight: 600;
+}
+
+
+.diesel-grid3 {
+  display: grid;
+  grid-template-columns: 1.7fr 1.3fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* ✅ responsive behavior */
+@media (max-width: 1024px) {
+  .diesel-grid3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.operational-efficiency-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.efficiency-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Each mini card */
+.eff-item {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.eff-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.eff-value {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.eff-value.red {
+  color: #d9534f;
+}
+
+.eff-value.green {
+  color: #28a745;
+}
+
+.eff-value.big {
+  font-size: 20px;
+}
+
+/* Power demand section */
+.power-demand .power-values {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sub-label {
+  font-size: 12px;
+  font-weight: 500;
+  margin-right: 6px;
+  color: #555;
+}
+
+.value.green {
+  font-size: 14px;
+  font-weight: 600;
+  color: #28a745;
+}
+
+/* ✅ Responsive layout */
+@media (max-width: 768px) {
+  .efficiency-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.cost-analysis-card {
+  background: #D7C6F3; /* light purple bg */
+  padding: 20px;
+}
+
+.cost-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* label | divider | value */
+  align-items: center;
+  background: #fff;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #e0d7f8;
+}
+
+.cost-label {
+  color: #333;
+  text-align: left;
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  background: #e0d7f8; /* soft line between label and value */
+  margin: 0 8px;
+}
+
+.cost-value {
+  font-weight: 600;
+  text-align: right;
+}
+
+.cost-value.purple {
+  color: #6a1b9a;
+}
+
+// SOLAR-OVERVIEW PAGE
+.solar-overview {
+  // padding: 20px;
+  // background: #f9f9fb;
+}
+
+.flow-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: relative;
+}
+
+.circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 0 20px;
+  text-align: center;
+}
+
+.circle h4 {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.flow-line {
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #7B61FF, #7B61FF, transparent);
+  background-size: 200% 100%;
+  border-radius: 2px;
+}
+
+.custom-card {
+  margin-top: 35px;
+  position: relative;
+  overflow: visible; /* Allow label to “pop out” */
+  border-radius: 0 8px 8px 8px;
+}
+
+.card-label {
+  position: absolute;
+  top: -38px;     /* Moves it above the card edge */
+  left: 0px;
+  text-align: center;
+  background: white;
+  padding: 7px 35px;
+  border-radius: 6px 6px 0 0;
+  font-weight: 500;
+  font-size: 16px;
+  // box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+// .power-card {
+//   text-align: center;
+// }
+
+// .power-details {
+//   margin-top: 15px;
+//   font-size: 14px;
+//   color: #555;
+// }
+
+.power-card {
+  text-align: center;
+  background: #fafafa;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.weather-info {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.power-details {
+  margin-top: -10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.power-details .highlight {
+  color: #7B61FF;
+  font-weight: 600;
+}
+
+.power-details .muted {
+  color: #9CA3AF;
+}
+
+.flow-card {
+  height: 100%;
+}
+
+.flow-diagram {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.circle {
+  text-align: center;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.circle h4 {
+  margin: 5px 0 0;
+}
+
+.production {
+  color: #f59e0b;
+}
+
+.battery {
+  color: #22c55e;
+}
+
+.grid {
+  color: #3b82f6;
+}
+
+.usage {
+  color: #ef4444;
+}
+
+.chart-header {
+  // display: flex;
+  // justify-content: space-between;
+  // align-items: center;
+  position: absolute;
+  top: -43px;
+  /* Moves it above the card edge */
+  right: 0px;
+}
+
+.charts-row {
+  margin-top: 20px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.placeholder-chart {
+  height: 200px;
+  background: #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+}
+
+.yield-row {
+  margin-top: 20px;
+}
+
+
+/* layout */
+.solar-overview { }
+
+/* breadcrumb wrapper */
+.breadcrumb-and-print-buttons { margin-bottom: 12px; }
+
+/* cards */
+.left-card {
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
+  background: #fff;
+  height: 275px;
+}
+
+.summary-card {
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
+  background: #fff;
+  height: 275px;
+}
+
+/* left card header */
+.left-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  // margin-bottom: 12px;
+}
+
+.header-left { 
+  display: flex; 
+  gap: 12px;
+  align-items: center; 
+}
+
+.header-left .icon-small { 
+  font-size: 18px; 
+  color: #6b7280; 
+  margin-right: 8px; 
+}
+
+.header-text .location {
+  // font-weight: 600;
+  color: #6b7280; 
+  display: flex;
+  align-items: center;
+  gap: 6px;        /* space between icon and text */
+  font-size: 14px;
+}
+
+.header-text .sun-info { 
+  font-size: 12px; 
+  color: #6b7280; 
+  display:flex; 
+  gap:6px;
+  // align-items:center; 
+}
+
+/* left card main */
+.left-card-body { 
+  display:block;
+}
+
+/* layout inside left card */
+.left-card .left-card-body { 
+  display:flex; 
+  gap: 48px; 
+  align-items:center; 
+  justify-content: center; 
+  padding-top: 10px; 
+}
+
+/* gauge area */
+.circle-gauge { display:block; }
+
+/* right of gauge stats */
+.gauge-stats { 
+  display:flex; 
+  flex-direction:column; 
+  gap: 18px; 
+  min-width: 160px; 
+}
+.stat-row { 
+  display:flex; 
+  gap: 12px; 
+  align-items:center; 
+}
+.dot { 
+  width:10px; 
+  height:10px; 
+  border-radius:50%; 
+  display:inline-block; 
+  flex-shrink:0; 
+}
+.dot-active { 
+  background: linear-gradient(90deg,#7B61FF,#6C4CFF); 
+  box-shadow: 0 4px 16px rgba(124,58,237,0.12); 
+}
+.dot-muted { 
+  background: #E6E9EE; 
+}
+
+/* stat text */
+.stat-label { 
+  font-size:12px; 
+  color:#6b7280; 
+}
+.stat-value { 
+  font-size:16px; 
+  font-weight:700; 
+  color:#111827; 
+}
+
+.animation-card {
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
+  background: #fff;
+}
+
+/* right card flow svg */
+.flow-svg { 
+  width:100%; 
+  height:320px; 
+  overflow:visible; 
+}
+
+/* node group subtle styling */
+.node-group text { 
+  font-family: Inter, Arial, sans-serif; 
+}
+
+// SVG
+.svg-row {
+  margin-top: 20px;
+}
+
+/* charts */
+.charts-row { 
+  margin-top: 20px; 
+}
+.chart-header { 
+  display:flex; 
+  justify-content:space-between; 
+  align-items:center; 
+  margin-bottom:8px; 
+}
+
+/* responsive */
+@media (max-width: 1000px) {
+  .left-card .left-card-body { flex-direction: column; align-items: center; }
+  .gauge-stats { min-width: auto; text-align:center; }
+}
+
+.custom-params-select .ant-select-selector {
+  display: flex !important;
+  align-items: center !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  height: 40px !important;  /* matches screenshot height */
+}
+
+.custom-params-select .ant-select-selection-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------------------- */
+/*  SHARED POLISHED STYLE */
+/* ---------------------- */
+
+.custom-filter .ant-select-selector,
+.custom-filter .ant-picker {
+  border: none !important;
+  border-radius: 6px !important;   /* Soft rounded corners */
+  box-shadow: none !important;
+  background: #fff !important;
+  height: 34px !important;
+  padding: 0 10px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Remove hover/focus borders */
+.custom-filter .ant-select-selector:hover,
+.custom-filter .ant-select-selector:focus,
+.custom-filter.ant-select-focused .ant-select-selector,
+.custom-filter .ant-picker:hover,
+.custom-filter .ant-picker-focused {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ----------------------- */
+/*  SELECT SPECIFIC STYLES */
+/* ----------------------- */
+
+.custom-filter .ant-select-selection-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px;
+  font-size: 13px;
+  margin-top: 0 !important;
+}
+
+.custom-filter .ant-select-arrow {
+  display: none !important;  /* remove the default dropdown arrow */
+}
+
+/* dropdown panel */
+.custom-filter .ant-select-dropdown {
+  border-radius: 10px !important;
+  padding: 6px 0 !important;
+}
+
+/* hovering items */
+.custom-filter .ant-select-item-option-active {
+  background: #f4f4f4 !important;
+}
+
+/* selected item */
+.custom-filter .ant-select-item-option-selected {
+  background: #e7f0ff !important;
+  font-weight: 500;
+}
+
+/* ----------------------- */
+/* DATE PICKER EXTRAS */
+/* ----------------------- */
+
+/* Remove calendar icon */
+.custom-filter .ant-picker-suffix {
+  display: none !important;
+}
+
+/* Perfect text alignment */
+.custom-filter .ant-picker-input > input {
+  font-size: 13px;
+  margin-top: 2px;
+}

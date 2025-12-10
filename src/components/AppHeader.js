@@ -196,121 +196,143 @@ function Header() {
         <nav
           className={isNavOpen ? 'header-nav' : 'header-nav h-hidden-1296-down'}
         >
-          <ul className="header-nav-list">
-            <HeaderLink onClick={toggleNav} url="/" linkText="Dashboard" />
+          <ul className="header-nav-list"
+           style={{whiteSpace: 'nowrap'}}
+          >
+            {userData.is_solar_customer === false ? (
+              <>
+                <HeaderLink onClick={toggleNav} url="/" linkText="Dashboard" />
+                <HeaderLink onClick={toggleNav} url="/diesel-overview" linkText="Diesel Overview" />
+                <HeaderLink onClick={toggleNav} url="/solar-overview" linkText="Solar Overview" />
 
-            {/* {!doesUserHaveAccess && ( */}
-            {/* {organization && !SCORE_CARD_EXCLUDE_CLIENTS.includes(organization.name)
-              &&
-              <HeaderLink
-                onClick={toggleNav}
-                url="/score-card"
-                linkText="Score Card"
+                {/* {!doesUserHaveAccess && ( */}
+                {/* {organization && !SCORE_CARD_EXCLUDE_CLIENTS.includes(organization.name)
+          &&
+          <HeaderLink
+            onClick={toggleNav}
+            url="/score-card"
+            linkText="Score Card"
+          />
+        } */}
+                {/* )} */}
+
+                <HeaderLinkWithDropdown
+                  className="header-nav-list__item header-link-with-dropdown"
+                  setIsNavLinkDropdownOpen={setIsNavLinkDropdownOpen}
+                >
+                  <button
+                    type="button"
+                    className="header-link-dropdown-button"
+                    onClick={toggleNavLinkDropdown}
+                  >
+                    Parameters
+                    <ChevronDown className="header-link-dropdown-icon" />
+                  </button>
+
+                  <ul
+                    className={
+                      isNavLinkDropdownOpen
+                        ? 'header-sublinks-list'
+                        : 'header-sublinks-list h-hide'
+                    }
+                  >
+                    <HeaderSublink
+                      onClick={toggleNavAndDropdown}
+                      url="/parameters/energy-consumption"
+                      linkText="Energy Consumption"
+                    />
+                    <HeaderSublink
+                      onClick={toggleNavAndDropdown}
+                      url="/parameters/power-quality"
+                      linkText="Power Quality"
+                    />
+                    <HeaderSublink
+                      onClick={toggleNavAndDropdown}
+                      url="/parameters/power-demand"
+                      linkText="Power Demand"
+                    />
+
+                    {/* {userData.client_type !== 'RESELLER' && (
+              <HeaderSublink
+                onClick={toggleNavAndDropdown}
+                url="/parameters/time-of-use"
+                linkText="Time of Use"
               />
-            } */}
-            {/* )} */}
+            )} */}
 
-            <HeaderLinkWithDropdown
-              className="header-nav-list__item header-link-with-dropdown"
-              setIsNavLinkDropdownOpen={setIsNavLinkDropdownOpen}
-            >
-              <button
-                type="button"
-                className="header-link-dropdown-button"
-                onClick={toggleNavLinkDropdown}
-              >
-                Parameters
-                <ChevronDown className="header-link-dropdown-icon" />
-              </button>
+                    <HeaderSublink
+                      onClick={toggleNavAndDropdown}
+                      url="/parameters/last-reading"
+                      linkText="Last Reading"
+                    />
+                  </ul>
+                </HeaderLinkWithDropdown>
 
-              <ul
-                className={
-                  isNavLinkDropdownOpen
-                    ? 'header-sublinks-list'
-                    : 'header-sublinks-list h-hide'
-                }
-              >
-                <HeaderSublink
-                  onClick={toggleNavAndDropdown}
-                  url="/parameters/energy-consumption"
-                  linkText="Energy Consumption"
-                />
-                <HeaderSublink
-                  onClick={toggleNavAndDropdown}
-                  url="/parameters/power-quality"
-                  linkText="Power Quality"
-                />
-                <HeaderSublink
-                  onClick={toggleNavAndDropdown}
-                  url="/parameters/power-demand"
-                  linkText="Power Demand"
-                />
-                {/* {userData.client_type !== 'RESELLER' && (
-                  <HeaderSublink
-                    onClick={toggleNavAndDropdown}
-                    url="/parameters/time-of-use"
-                    linkText="Time of Use"
+                {/* <HeaderLink
+          onClick={toggleNav}
+          url="/report"
+          linkText="Report"
+        /> */}
+
+                {renderComp()}
+
+                {isOperator ? (
+                  <HeaderLink
+                    onClick={toggleNav}
+                    url="/alerts-and-alarms"
+                    linkText="Alerts and Alarms"
                   />
-                )} */}
-                <HeaderSublink
-                  onClick={toggleNavAndDropdown}
-                  url="/parameters/last-reading"
-                  linkText="Last Reading"
-                />
-              </ul>
-            </HeaderLinkWithDropdown>
-            {/* <HeaderLink
-              onClick={toggleNav}
-              url="/report"
-              linkText="Report"
-            /> */}
-            {renderComp()}
-            {isOperator ?
-              <HeaderLink onClick={toggleNav} url="/alerts-and-alarms" linkText="Alerts and Alarms" />
-              : ''
-            }
-            {/* {!doesUserHaveAccess && ( */}
-            {/* {organization && !SCORE_CARD_EXCLUDE_CLIENTS.includes(organization.name)
-              &&
-              <HeaderLink
-                onClick={toggleNav}
-                url="/cost-tracker"
-                linkText="Cost Tracker"
-              />
-            } */}
-            {/* )} */}
+                ) : (
+                  ''
+                )}
 
+                {/* {!doesUserHaveAccess && ( */}
+                {/* {organization && !SCORE_CARD_EXCLUDE_CLIENTS.includes(organization.name)
+          &&
+          <HeaderLink
+            onClick={toggleNav}
+            url="/cost-tracker"
+            linkText="Cost Tracker"
+          />
+        } */}
+                {/* )} */}
 
-            {/* <HeaderLink onClick={toggleNav} url="/billing" linkText="Billing" /> */}
+                {/* <HeaderLink onClick={toggleNav} url="/billing" linkText="Billing" /> */}
 
-            {/* {!doesUserHaveAccess && (
+                {/* {!doesUserHaveAccess && (
             <HeaderLink
               onClick={toggleNav}
               url="/dashboard"
               // url='/messages'
               linkText="Messages"
             />
-            )} */}
-            <li className="header-nav-list__item h-hidden-1296-up">
-              <HeaderIcon
-                onClick={toggleNav}
-                count={0}
-                countClassName="header-icon__count"
-              >
-                <MessageIcon className="header-icon__image" />
-              </HeaderIcon>
-            </li>
+          )} */}
+              </>
+            ) : (
+              <>
+                <li className="header-nav-list__item h-hidden-1296-up">
+                  <HeaderIcon
+                    onClick={toggleNav}
+                    count={0}
+                    countClassName="header-icon__count"
+                  >
+                    <MessageIcon className="header-icon__image" />
+                  </HeaderIcon>
+                </li>
 
-            <li className="header-nav-list__item h-hidden-1296-up">
-              <HeaderIcon
-                onClick={toggleNav}
-                count={0}
-                countClassName="header-icon__count"
-              >
-                <NotificationIcon className="header-icon__image" />
-              </HeaderIcon>
-            </li>
+                <li className="header-nav-list__item h-hidden-1296-up">
+                  <HeaderIcon
+                    onClick={toggleNav}
+                    count={0}
+                    countClassName="header-icon__count"
+                  >
+                    <NotificationIcon className="header-icon__image" />
+                  </HeaderIcon>
+                </li>
+              </>
+            )}
 
+            {/* ===== MOBILE AVATAR DROPDOWN ===== */}
             <HeaderMobileAvatarWithDropdown
               className="header-nav-list__item header-avater-container h-hidden-1296-up"
               setIsMobileAvatarMenuOpen={setIsMobileAvatarMenuOpen}
@@ -323,12 +345,10 @@ function Header() {
                 <img
                   className="header-avatar__image"
                   src={
-                    organisationName ? `https://backend.wyreng.com${avatarImage}` : ''
+                    organisationName ? `https://backend.wyreng.com${avatarImage}` : '/wyreLogo.png'
                   }
                   alt={
-                    organisationName
-                      ? `Avatar for ${organisationName}`
-                      : 'Avatar'
+                    'Avatar'
                   }
                 />
               </button>
@@ -355,7 +375,6 @@ function Header() {
                     className="header-sublink avatar-sublink"
                     onClick={toggleNavAndDropdown}
                     to="/dashboard"
-                  // to='/branches'
                   >
                     <OverviewIcon /> <span>Overview</span>
                   </Link>
@@ -366,21 +385,20 @@ function Header() {
                     className="header-sublink avatar-sublink"
                     onClick={toggleNavAndDropdown}
                     to="/dashboard"
-                  // to='/password'
                   >
                     <PadlockIcon /> <span>Password</span>
                   </Link>
                 </li>
 
                 {/* <li className="header-sublinks-list__item avatar-sublink-item">
-                  <Link
-                    className="header-sublink avatar-sublink"
-                    onClick={toggleNavAndDropdown}
-                    to="/alerts-and-alarms"
-                  >
-                    <SettingsIcon /> <span>Alerts and Alarms</span>
-                  </Link>
-                </li> */}
+          <Link
+            className="header-sublink avatar-sublink"
+            onClick={toggleNavAndDropdown}
+            to="/alerts-and-alarms"
+          >
+            <SettingsIcon /> <span>Alerts and Alarms</span>
+          </Link>
+        </li> */}
 
                 <li className="header-sublinks-list__item avatar-sublink-item">
                   <Link
@@ -427,7 +445,7 @@ function Header() {
           >
             <img
               className="header-avatar__image"
-              src={organisationName ? `https://backend.wyreng.com${avatarImage}` : ''}
+              src={organisationName ? `https://backend.wyreng.com${avatarImage}` : '/wyreLogo.png'}
               alt={
                 organisationName ? `Avatar for ${organisationName}` : 'Avatar'
               }
