@@ -23,6 +23,12 @@ const INITIAL_STATE = {
   
   fuelConsumptionData: false,
   fuelConsumptionDataLoading: false,
+
+  dieselDailyUsageData: false,
+  dieselDailyUsageLoading: false,
+
+  dieselMonthlyUsageData: false,
+  dieselMonthlyUsageLoading: false,
   
   fetchedListOfGenerators: false,
   listOfGeneratorsLoading: false,
@@ -140,6 +146,28 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         fuelConsumptionDataLoading: action.payload,
+      };
+
+    case costTrackerType.FETCH_DIESEL_DAILY_USAGE_LOADING:
+      return {
+        ...state,
+        dieselDailyUsageLoading: action.payload,
+      };
+    case costTrackerType.FETCH_DIESEL_DAILY_USAGE_SUCCESS:
+      return {
+        ...state,
+        dieselDailyUsageData: action.payload,
+      };
+      
+    case costTrackerType.FETCH_DIESEL_MONTHLY_USAGE_LOADING:
+      return {
+        ...state,
+        dieselMonthlyUsageLoading: action.payload,
+      };
+    case costTrackerType.FETCH_DIESEL_MONTHLY_USAGE_SUCCESS:
+      return {
+        ...state,
+        dieselMonthlyUsageData: action.payload,
       };
 
     case costTrackerType.FETCH_GENERATOR_LISTS_SUCCESS:
