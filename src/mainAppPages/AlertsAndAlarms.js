@@ -126,53 +126,95 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
               <legend className="alerts-and-alarms-form-section-heading">
                 Standard Alerts on Anomalies
               </legend>
-              <ol className="alerts-and-alarms-list">            
+              <ol className="alerts-and-alarms-list">
                 <li className="alerts-and-alarms-list-item">
                   <div className="alerts-and-alarms-question-container">
-                    <label className="alerts-and-alarms-question">
+                    <p className="alerts-and-alarms-question">
                       Get energy usage alerts
-                    </label>
-                    <Collapse ghost expandIconPosition="end">
-                      <Panel header="Choose alert frequency" key="1">
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                          {/* Daily diesel usage alert */}
-                          <Controller
-                            name="dailyDieselUsageChecked"
-                            defaultValue={preloadedAlertsFormData?.daily_energy_usage_alerts}
-                            control={control}
-                            render={(props) => (
-                              <Checkbox
-                                onChange={(e) => {
-                                  props.onChange(e.target.checked);
-                                  preloadedAlertsFormData.daily_energy_usage_alerts = e.target.checked;
-                                }}
-                                checked={preloadedAlertsFormData?.daily_energy_usage_alerts}
-                              >
-                                Daily energy usage alerts
-                              </Checkbox>
-                            )}
-                          />
+                    </p>
 
-                          {/* Weekly diesel usage alert */}
-                          <Controller
-                            name="weeklyDieselUsageChecked"
-                            defaultValue={preloadedAlertsFormData?.weekly_energy_usage_alerts}
-                            control={control}
-                            render={(props) => (
-                              <Checkbox
-                                onChange={(e) => {
-                                  props.onChange(e.target.checked);
-                                  preloadedAlertsFormData.weekly_energy_usage_alerts = e.target.checked;
-                                }}
-                                checked={preloadedAlertsFormData?.weekly_energy_usage_alerts}
-                              >
-                                Weekly energy usage alerts
-                              </Checkbox>
-                            )}
-                          />
-                        </div>
-                      </Panel>
-                    </Collapse>
+                    <div
+                      className="alerts-and-alarms-subsection"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "15px",
+                        marginLeft: "1.5rem",
+                        marginTop: "0.5rem",
+                      }}
+                    >
+                      <p className="alerts-and-alarms-subheading" style={{ fontWeight: 500 }}>
+                        Choose alert frequency
+                      </p>
+
+                      {/* Daily diesel usage alert */}
+                      <div
+                        className="alerts-and-alarms-suboption"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <label
+                          htmlFor="daily-diesel-usage-checkbox"
+                          className="alerts-and-alarms-subquestion"
+                        >
+                          Daily energy usage alerts
+                        </label>
+                        <Controller
+                          name="dailyDieselUsageChecked"
+                          defaultValue={preloadedAlertsFormData?.daily_energy_usage_alerts}
+                          control={control}
+                          render={(props) => (
+                            <Checkbox
+                              onChange={(e) => {
+                                props.onChange(e.target.checked);
+                                preloadedAlertsFormData.daily_energy_usage_alerts =
+                                  e.target.checked;
+                              }}
+                              checked={preloadedAlertsFormData?.daily_energy_usage_alerts}
+                              className="daily-diesel-usage-checkbox alerts-and-alarms-checkbox"
+                              id="daily-diesel-usage-checkbox"
+                            />
+                          )}
+                        />
+                      </div>
+
+                      {/* Weekly diesel usage alert */}
+                      <div
+                        className="alerts-and-alarms-suboption"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <label
+                          htmlFor="weekly-diesel-usage-checkbox"
+                          className="alerts-and-alarms-subquestion"
+                        >
+                          Weekly energy usage alerts
+                        </label>
+                        <Controller
+                          name="weeklyDieselUsageChecked"
+                          defaultValue={preloadedAlertsFormData?.weekly_energy_usage_alerts}
+                          control={control}
+                          render={(props) => (
+                            <Checkbox
+                              onChange={(e) => {
+                                props.onChange(e.target.checked);
+                                preloadedAlertsFormData.weekly_energy_usage_alerts =
+                                  e.target.checked;
+                              }}
+                              checked={preloadedAlertsFormData?.weekly_energy_usage_alerts}
+                              className="weekly-diesel-usage-checkbox alerts-and-alarms-checkbox"
+                              id="weekly-diesel-usage-checkbox"
+                            />
+                          )}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </li>
 
