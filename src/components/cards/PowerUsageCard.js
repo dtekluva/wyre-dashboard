@@ -15,7 +15,7 @@ const PowerUsageCard = ({ totalDeviceUsageBranchData, uiSettings, sideDetails}) 
         <article className="dashboard-pie-container">
         <div style={{ textAlign: "right", paddingTop: 20, paddingRight: 20, float: "right" }}>
           <Tooltip placement="top" style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.POWER_USAGE} >
+            popupStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.POWER_USAGE} >
             <p>
               <InformationIcon className="info-icon" />
             </p>

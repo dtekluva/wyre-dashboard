@@ -2,12 +2,12 @@ import { Button } from 'antd';
 import React, { useContext } from 'react';
 import { Bar } from 'react-chartjs-2';
 import CompleteDataContext from '../../Context';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 
 import { getLastArrayItems } from '../../helpers/genericHelpers';
 
 const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings, pDemand }) => {
-    const history = useHistory(); 
+    const history = useNavigate(); 
     const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
     const options = {
         legend: {
@@ -31,7 +31,7 @@ const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings, pDeman
 
         maintainAspectRatio: false,
         scales: {
-            yAxes: [
+            yAxes: 
                 {
                     gridLines: {
                         color: '#f0f0f0',
@@ -55,8 +55,7 @@ const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings, pDeman
                         fontSize: isMediumScreen ? 14 : 18,
                     },
                 },
-            ],
-            xAxes: [
+            xAxes: 
                 {
                     gridLines: {
                         drawTicks: false,
@@ -77,7 +76,6 @@ const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings, pDeman
                         fontSize: isMediumScreen ? 14 : 18,
                     },
                 },
-            ],
         },
     };
 
@@ -117,7 +115,7 @@ const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings, pDeman
                     pDemand={pDemand}
                     onClick={() =>{
                         return pDemand={pDemand}, 
-                        history.push('/load-overview')
+                        history('/load-overview')
                     }
                     }
                     size='small'

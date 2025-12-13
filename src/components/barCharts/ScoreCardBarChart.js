@@ -40,7 +40,7 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
 
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           gridLines: {
             display: false,
@@ -61,8 +61,7 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           gridLines: {
             display: false,
@@ -82,7 +81,6 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
     },
   };
 
@@ -142,7 +140,7 @@ const ScoreCardBarChart = ({ operatingTimeData, dataTitle, dataMessage, uiSettin
         <div style={{display: 'flex'}}>
         <h2 className="score-card-heading">Operating Time Deviation</h2>
         <Tooltip placement='top' style={{ textAlign: 'justify' }}
-          overlayStyle={{ whiteSpace: 'pre-line' }} title={dataMessage}>
+          popupStyle={{ whiteSpace: 'pre-line' }} title={dataMessage}>
           <p>
             <InformationIcon className="info-icon" />
           </p>

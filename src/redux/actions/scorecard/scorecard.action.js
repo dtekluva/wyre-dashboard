@@ -21,7 +21,7 @@ import {
 } from "./actionCreators";
 import dataHttpServices from '../../../services/devices';
 import moment from 'moment';
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 
 
 export const fetchScoreCardData = (userDateRange) => async (dispatch) => {

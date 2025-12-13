@@ -52,7 +52,7 @@ const GeneratorFuelEfficiency = ({ generatorFuelEfficiencyData, uiSettings }) =>
             <div className='doughnut-card-heading'>
               <h2 className='score-card-heading'>Fuel Efficiency</h2>
               <Tooltip placement='top' style={{ textAlign: 'justify' }}
-                overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.FUEL_EFFICIENCYL}>
+                popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.FUEL_EFFICIENCYL}>
                 <p>
                   <InformationIcon className="info-icon" />
                 </p>

@@ -37,7 +37,7 @@ const ReportDailyConsumptionBar = ({ dailyConsumptionData, dataMessage }) => {
 
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           gridLines: {
             display: false,
@@ -58,8 +58,7 @@ const ReportDailyConsumptionBar = ({ dailyConsumptionData, dataMessage }) => {
             fontSize: isMediumScreen ? 8 : 10,
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           barPercentage: 1,
           categoryPercentage: 1,
@@ -82,7 +81,6 @@ const ReportDailyConsumptionBar = ({ dailyConsumptionData, dataMessage }) => {
             fontSize: isMediumScreen ? 10 : 14,
           },
         },
-      ],
     },
   };
 
