@@ -250,6 +250,23 @@
 .power-icon__image {
   height: 60px;
 }
+// New Alerts and Alarm (Energy usage)
+.alerts-and-alarms-subheading {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.alerts-and-alarms-suboption label {
+  font-size: 1.5rem;
+  color: #444;
+}
+
+.alerts-and-alarms-suboption .alerts-and-alarms-checkbox {
+  margin-left: 1rem;
+}
+
 
 /* === Diesel-Overview page === */
 /* Header */
@@ -1152,6 +1169,20 @@
   .gauge-stats { min-width: auto; text-align:center; }
 }
 
+.cost-tracker-form-section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 2rem;
+}
+
+.ant-table {
+  border-radius: 10px !important;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+}
 .custom-params-select .ant-select-selector {
   display: flex !important;
   align-items: center !important;

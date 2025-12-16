@@ -81,6 +81,7 @@ const CompleteDataProvider = (props) => {
   const [userData, setUserData] = useState(undefined);
   const [token, setToken] = useState();
   const [userId, setUserId] = useState();
+  const [branchId, setBranchId] = useState();
   /*--------------------------------------------------------------------
 
 
@@ -247,12 +248,14 @@ const CompleteDataProvider = (props) => {
         const userToken = JSON.parse(loggedUserJSON);
         const user = jwtDecode(userToken.access);
         dataHttpServices.setUserId(user.id);
+        // dataHttpServices.setBranchId(user.branch_id);
         dataHttpServices.setToken(userToken.access);
         setUserData(user);
         // setIsUserAdmin(userInfo.role_text === 'SUPERADMIN')
         // setIsUserAdmin(userInfo.role_text==='MANAGER')
         setToken(userToken.access);
         setUserId(user.id);
+        setBranchId(user.branch_id);
       }catch(error){
         console.log('here is the error', error);
       }
@@ -329,7 +332,9 @@ const CompleteDataProvider = (props) => {
         token: token,
         setToken: setToken,
         userId: userId,
+        branchId: branchId,
         setUserId: setUserId,
+        setBranchId: setBranchId,
 
         // Media Queries
         useMediaQuery: useMediaQuery,

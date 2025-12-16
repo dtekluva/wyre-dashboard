@@ -66,6 +66,24 @@ export const fetchFuelDataSuccess = payload => ({
   payload,
 });
 
+export const fetchDieselDailyUsageLoading = (payload = true) => ({
+  type: costTrackerType.FETCH_DIESEL_DAILY_USAGE_LOADING,
+  payload,
+});
+export const fetchDieselDailyUsageSuccess = payload => ({
+  type: costTrackerType.FETCH_DIESEL_DAILY_USAGE_SUCCESS,
+  payload,
+});
+
+export const fetchDieselMonthlyUsageLoading = (payload = true) => ({
+  type: costTrackerType.FETCH_DIESEL_MONTHLY_USAGE_LOADING,
+  payload,
+});
+export const fetchDieselMonthlyUsageSuccess = payload => ({
+  type: costTrackerType.FETCH_DIESEL_MONTHLY_USAGE_SUCCESS,
+  payload,
+});
+
 export const fetchGeneratorListsLoading = (payload = true) => ({
   type: costTrackerType.FETCH_GENERATOR_LISTS_LOADING,
   payload,
