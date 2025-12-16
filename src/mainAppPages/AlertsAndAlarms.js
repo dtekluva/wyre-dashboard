@@ -19,13 +19,13 @@ const breadCrumbRoutes = [
 const { Panel } = Collapse;
 
 function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, match }) {
-  const [alertsForm] = Form.useForm();
+
   const { setCurrentUrl, token, userId, userData } = useContext(CompleteDataContext);
   const [preloadedAlertsFormData, setPreloadedAlertsFormData] = useState({});
   const [generator_data, setGenerator_data] = useState([])
   const isDataReady = preloadedAlertsFormData && preloadedAlertsFormData
   const isOperator = userData.role_text === "OPERATOR";
-  
+
   useEffect(() => {
     if (match && match.url) {
       setCurrentUrl(match.url);
@@ -41,7 +41,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   useEffect(() => {
     getAlertAndAlarm();
   }, []);
-  
+
   useEffect(() => {
     if (alertsAndAlarms) {
       setPreloadedAlertsFormData(alertsAndAlarms?.alertsData?.data)
@@ -52,35 +52,35 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const openNotification = (type, title, desc) => {
     notification[type]({
       message: `${title}`,
-      description:`${desc}`,
-      duration : 6
+      description: `${desc}`,
+      duration: 6
     });
   };
 
-  const formatIntInputs = (e)=>{
+  const formatIntInputs = (e) => {
     let convertdataToInt = parseFloat(e.target.value)
     const value = isNaN(convertdataToInt) ? '' : convertdataToInt
     return value
   }
 
-  const setGenData = (id, dateString)=>{
-    if(dateString !== "Invalid date"){
-      let specGen = generator_data && generator_data.filter((data)=>{
+  const setGenData = (id, dateString) => {
+    if (dateString !== "Invalid date") {
+      let specGen = generator_data && generator_data.filter((data) => {
         return data.id === id
-    })
-    for(const key in specGen) {
+      })
+      for (const key in specGen) {
         const gottenData = specGen[key].next_maintenance_date = dateString
       }
-    let obj = Object.keys(generator_data).forEach((e)=>{
-      if(e===id){
-        generator_data[e]={
-          specGen
+      let obj = Object.keys(generator_data).forEach((e) => {
+        if (e === id) {
+          generator_data[e] = {
+            specGen
+          }
         }
-      }
-    })
-    return generator_data
+      })
+      return generator_data
+    }
   }
-}
 
   const defaultDate = (data) => {
     let date = data && data.next_maintenance_date
@@ -99,12 +99,12 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
     };
     const request = await setAlertAndAlarm(updatedAlertsFormData);
 
-      if (request.fullfilled) {
-        openNotification("success", "Success", "Your changes has been updated succesfully");
-      }else {
-        openNotification('error', "Error", 'Something un-expected occured, please try again.')
-      }
+    if (request.fullfilled) {
+      openNotification("success", "Success", "Your changes has been updated succesfully");
+    } else {
+      openNotification('error', "Error", 'Something un-expected occured, please try again.')
     }
+  }
 
   return (
     <>
@@ -126,7 +126,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
               <legend className="alerts-and-alarms-form-section-heading">
                 Standard Alerts on Anomalies
               </legend>
-              <ol className="alerts-and-alarms-list">            
+              <ol className="alerts-and-alarms-list">
                 <li className="alerts-and-alarms-list-item">
                   <div className="alerts-and-alarms-question-container">
                     <label className="alerts-and-alarms-question">
@@ -194,9 +194,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           width="50"
                           name="highPowerFactor"
                           id="high-power-factor"
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
+
                           placeholder={preloadedAlertsFormData?.max_power_factor}
                           value={preloadedAlertsFormData?.max_power_factor}
                           onChange={(e) => {
@@ -204,6 +202,12 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setmax_power_factor(e.target.value)
                             preloadedAlertsFormData.max_power_factor = formatIntInputs(e)
                           }}
+                          {...register("amount", {
+                            pattern: {
+                              value: /^-?\d+\.?\d*$/,
+                              message: "Invalid number"
+                            }
+                          })}
                           autoFocus
                         />{' '}
                         or goes below{' '}
