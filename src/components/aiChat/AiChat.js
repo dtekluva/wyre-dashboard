@@ -183,10 +183,6 @@ export default function AiChat() {
           croppedImgHeight
         );
 
-        // Add page number
-        pdf.setFontSize(10);
-        pdf.text(`Page ${pageCount}`, pageWidth - margin - 10, pageHeight - 10);
-
         yOffset += usablePageHeight * pixelsPerMm;
         pageCount++;
       }
