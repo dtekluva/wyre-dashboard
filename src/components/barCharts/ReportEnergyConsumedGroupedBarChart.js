@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
-import { Bar } from 'react-chartjs-2';
-import CompleteDataContext from '../../Context';
+import React, { useContext } from "react";
+import { Bar } from "react-chartjs-2";
+import CompleteDataContext from "../../Context";
 
 import {
   getLastArrayItems,
   convertDateStringToObject,
-} from '../../helpers/genericHelpers';
+} from "../../helpers/genericHelpers";
 
 const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
@@ -21,7 +21,7 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
 
   const chartDates =
     rawBranchDates &&
-    rawBranchDates.map((eachDate) => eachDate.format('MMM YYYY'));
+    rawBranchDates.map((eachDate) => eachDate.format("MMM YYYY"));
 
   const options = {
     layout: {
@@ -37,7 +37,7 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
       labels: {
         boxWidth: isMediumScreen ? 13 : 16,
         fontSize: isLessThan1296 ? 14 : 16,
-        fontColor: 'black',
+        fontColor: "black",
         padding: isLessThan1296 ? 10 : 25,
       },
     },
@@ -48,25 +48,25 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
           stacked: false,
           display: true,
           gridLines: {
-            color: '#f0f0f0',
+            color: "#f0f0f0",
             drawBorder: false,
             drawTicks: false,
-            zeroLineColor: '#f0f0f0',
+            zeroLineColor: "#f0f0f0",
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: 'Roboto',
+            fontFamily: "Roboto",
             padding: 10,
             maxTicksLimit: 6,
             fontSize: 10,
-            fontColor: '#A3A3A3',
+            fontColor: "#A3A3A3",
           },
           scaleLabel: {
             display: true,
-            labelString: `Energy Consumption (${'kWh'})`,
+            labelString: `Energy Consumption (${"kWh"})`,
             padding: isMediumScreen ? 10 : 25,
             fontSize: isMediumScreen ? 14 : 18,
-            fontColor: 'black',
+            fontColor: "black",
           },
         },
       ],
@@ -74,23 +74,23 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
         {
           stacked: false,
           ticks: {
-            fontFamily: 'Roboto',
+            fontFamily: "Roboto",
             fontSize: 10,
-            fontColor: '#A3A3A3',
+            fontColor: "#A3A3A3",
             padding: 10,
             maxTicksLimit: 10,
           },
           gridLines: {
             drawTicks: false,
-            color: '#f0f0f0',
-            zeroLineColor: '#f0f0f0',
+            color: "#f0f0f0",
+            zeroLineColor: "#f0f0f0",
           },
           scaleLabel: {
             display: true,
-            labelString: 'Date',
+            labelString: "Date",
             padding: isMediumScreen ? 10 : 25,
             fontSize: isMediumScreen ? 14 : 18,
-            fontColor: 'black',
+            fontColor: "black",
           },
         },
       ],
@@ -98,16 +98,16 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
   };
 
   const colorsArray = [
-    '#6C00FA',
-    '#FF3DA1',
-    '#00C7E6',
-    '#82ca9d',
-    '#ff9b3d',
-    '#360259',
-    '#0371b5',
-    '#D90000',
-    '#757575',
-    '#FFE11A',
+    "#5C3592",
+    "#FF3DA1",
+    "#00C7E6",
+    "#82ca9d",
+    "#ff9b3d",
+    "#360259",
+    "#0371b5",
+    "#D90000",
+    "#757575",
+    "#FFE11A",
   ];
 
   const plottedDataSet =
