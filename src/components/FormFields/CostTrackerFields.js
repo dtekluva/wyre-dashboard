@@ -1,5 +1,5 @@
 import { Button, Form, Input, Upload } from "antd";
-import path from 'path';
+import path from 'path-browserify';
 import { UploadOutlined } from '@ant-design/icons';
 import { UPLOAD_PROPS } from "../../helpers/constants";
 import EnvData from "../../config/EnvData";

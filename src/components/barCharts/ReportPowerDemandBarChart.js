@@ -32,7 +32,7 @@ const VerticalBar = ({ data: rawData }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           gridLines: {
             color: '#f0f0f0',
@@ -56,8 +56,7 @@ const VerticalBar = ({ data: rawData }) => {
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           gridLines: {
             drawTicks: false,
@@ -79,7 +78,6 @@ const VerticalBar = ({ data: rawData }) => {
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
     },
   };
 

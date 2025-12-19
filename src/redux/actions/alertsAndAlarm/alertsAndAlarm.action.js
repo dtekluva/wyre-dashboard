@@ -1,6 +1,6 @@
 import { getAlertsAndAlarmLoading, getAlertsAndAlarmSuccess, setAlertsAndAlarmLoading, setAlertsAndAlarmSuccess } from './actionCreators';
 import { APIService } from '../../../config/api/apiConfig';
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 
 export const getAlertAndAlarm = () => async (dispatch) => {
   dispatch(getAlertsAndAlarmLoading());

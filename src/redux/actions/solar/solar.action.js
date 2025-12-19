@@ -3,7 +3,7 @@
 //     getWeatherReadingsSuccess
 // } from "./actionCreators";
 import { APIService } from "../../../config/api/apiConfig";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import { message } from "antd";
 import { getMonthYear } from "../../../helpers/genericHelpers";
 import { getWeatherReadingsLoading, getWeatherReadingsSuccess, getComponentsTableLoading, getComponentsTableSuccess, getInverterGridsLoading, getInverterGridsSuccess, getConsumptionChartLoading, getConsumptionChartSuccess, getPvProductionChartLoading, getPvProductionChartSuccess, getBatteryChartLoading, getBatteryChartSuccess } from "./actionCreators";
