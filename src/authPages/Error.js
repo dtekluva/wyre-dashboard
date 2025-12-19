@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 function Error() {
 
   const location = useLocation();
+  
   const locationToGoTo = location.pathname.split('/')[1]
 
   return (
