@@ -3,8 +3,10 @@ import { Link, useLocation } from 'react-router-dom';
 
 function Error() {
 
+  const authURls = ['login', 'log-in', 'sign-up']
   const location = useLocation();
   const locationToGoTo = location.pathname.split('/')[1]
+  console.log(locationToGoTo)
 
   return (
     <div className="error-page">
@@ -31,7 +33,7 @@ function Error() {
           </li>
         </ul>
 
-        <Link className="error-cta" to={`log-in?from=${locationToGoTo}`}>
+        <Link className="error-cta" to={`/log-in${!authURls.includes(locationToGoTo)? '?from=' + locationToGoTo: '' }`}>
           Login
         </Link>
       </div>
