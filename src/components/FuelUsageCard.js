@@ -60,6 +60,7 @@ const FuelUsageCard = ({ fetchFuelUsageData, fuelUsageData, loader }) => {
             <BarChart
               data={fuelUsageData?.data?.series}
               barCategoryGap="30%"
+              margin={{left: 18}}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis
@@ -71,7 +72,8 @@ const FuelUsageCard = ({ fetchFuelUsageData, fuelUsageData, loader }) => {
                 height={65}
               />
               <YAxis
-                label={{ value: "Fuel Used (L)", angle: -90, position: "insideLeft" }}
+                width={60}
+                label={{ value: "Fuel Used (L)", angle: -90, position: "insideLeft", offset: -9  }}
               />
               <Tooltip
                 formatter={(value, name) => {
@@ -86,7 +88,7 @@ const FuelUsageCard = ({ fetchFuelUsageData, fuelUsageData, loader }) => {
               <Bar
                 dataKey="fuel_liters"
                 fill="#5C12A7"
-                name="Reported usag"
+                name="Reported usage"
                 radius={[6, 6, 0, 0]}
               />
               <Bar
