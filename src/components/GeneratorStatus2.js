@@ -132,6 +132,7 @@ const GeneratorStatus2 = ({ genStatusChartData, loader }) => {
             display: "flex",
             justifyContent: "center",
             gap: "20px",
+            color: "#333"
           }}
         >
           {runHoursData.map((d, i) => (

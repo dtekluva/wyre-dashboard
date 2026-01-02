@@ -640,7 +640,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
         <Col span={24}>
           <Spin spinning={solar.consumptionChartLoading}>
             <Card className="custom-card">
-              <h3 className="card-label">Consumption</h3>
+              <h3 className="solarPage-cardLabel">Consumption</h3>
               <div className="chart-header">
                 <DatePicker
                   placeholder="Select period"
@@ -723,7 +723,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
         <Col span={24}>
           <Spin spinning={solar.pvProductionChartLoading}>
             <Card className="custom-card">
-              <h3 className="card-label">PV Production</h3>
+              <h3 className="solarPage-cardLabel">PV Production</h3>
               <div className="chart-header">
                 <DatePicker
                   placeholder="Select period"
@@ -757,7 +757,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
         <Col span={24}>
           <Spin spinning={solar.batteryChartLoading}>
             <Card className="custom-card">
-              <h3 className="card-label">Battery</h3>
+              <h3 className="solarPage-cardLabel">Battery</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <AreaChart data={batteryChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
