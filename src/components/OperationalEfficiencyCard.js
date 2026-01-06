@@ -17,7 +17,7 @@ const OperationalEfficiencyCard = ({ operationalEfficiencyData, loader }) => {
           {/* Specific fuel consumption */}
           <div className="eff-item">
             <span className="eff-label">Specific fuel consumption</span>
-            <span className="eff-value red">{(operationalEfficiencyData?.data?.fuel_consumption.value)?.toLocaleString()} mL/kWh</span>
+            <span className="eff-value red">{(operationalEfficiencyData?.data?.fuel_consumption.value / 1000)?.toLocaleString()} L/kWh</span>
           </div>
 
           {/* Generator efficiency score */}
@@ -41,7 +41,7 @@ const OperationalEfficiencyCard = ({ operationalEfficiencyData, loader }) => {
           </div>
           <div className="eff-item">
             <span className="eff-label">Generator efficiency score</span>
-            <span className="eff-value green big" style={{ fontSize: '4rem' }}>{operationalEfficiencyData?.data?.generator_efficiency_score.value}</span>
+            <span className="eff-value green big" style={{ fontSize: '4rem' }}>{operationalEfficiencyData?.data?.generator_efficiency_score.value} %</span>
           </div>
 
 

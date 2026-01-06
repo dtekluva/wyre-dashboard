@@ -137,7 +137,7 @@ const handleMonthlyView = () => {
             <div className="fub-no-data">No data available</div>
           ) : (
             <ResponsiveContainer width="100%" height={320}>
-              <LineChart data={chartData} margin={{ top: 8, right: 32, left: 8, bottom: 8 }}>
+              <LineChart data={chartData} margin={{ top: 8, right: 12, left: 18, bottom: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e6e6f0" />
                 <XAxis
                   dataKey="date"
@@ -148,11 +148,17 @@ const handleMonthlyView = () => {
                 />
                 <YAxis
                   yAxisId="left"
-                  label={{ value: "Energy (kWh)", angle: -90, position: "insideLeft" }}
+                  width={70}
+                  label={{ 
+                    value: "Energy (kWh)", 
+                    angle: -90, position: "insideLeft", 
+                    offset: -7,
+                  }}
                 />
                 <YAxis
                   yAxisId="right"
                   orientation="right"
+                  width={70}
                   label={{ value: "Fuel (L)", angle: -90, position: "insideRight" }}
                 />
                 <Tooltip content={<CustomTooltip />} />

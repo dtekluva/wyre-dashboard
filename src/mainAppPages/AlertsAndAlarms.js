@@ -220,6 +220,34 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
 
                 <li className="alerts-and-alarms-list-item">
                   <div className="alerts-and-alarms-question-container">
+                    {' '}
+                    <label
+                      htmlFor="solar-battery-soc-checkbox"
+                      className="alerts-and-alarms-question"
+                    >
+                      Solar Battery Level Alerts
+                    </label>{' '}
+                    <Controller
+                      name="solarBatterySocChecked"
+                      defaultValue={preloadedAlertsFormData?.daily_battery_soc_alerts}
+                      control={control}
+                      render={(props) => (
+                        <Checkbox
+                          onChange={(e) => {
+                            props.onChange(e.target.checked)
+                            preloadedAlertsFormData.daily_battery_soc_alerts = e.target.checked
+                          }}
+                          checked={preloadedAlertsFormData?.daily_battery_soc_alerts}
+                          className="solar-battery-soc-checkbox alerts-and-alarms-checkbox"
+                          id="solar-battery-soc-checkbox"
+                        />
+                      )}
+                    />
+                  </div>
+                </li>
+
+                <li className="alerts-and-alarms-list-item">
+                  <div className="alerts-and-alarms-question-container">
                     <div>
                       <p className="alerts-and-alarms-question">
                         Power factor exceeds{' '}
