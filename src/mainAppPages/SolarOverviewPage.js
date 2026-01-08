@@ -126,7 +126,7 @@ const EnergySummary = ({ tableContentsData }) => {
                         ? "Total yield"
                         : period === "today"
                         ? "Today yield"
-                        : "Monthly yield"}
+                        : "This Month yield"}
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
