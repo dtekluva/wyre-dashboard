@@ -126,7 +126,7 @@ const EnergySummary = ({ tableContentsData }) => {
                         ? "Total yield"
                         : period === "today"
                         ? "Today yield"
-                        : "Monthly yield"}
+                        : "This Month yield"}
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
@@ -348,22 +348,44 @@ const FlowDiagram = ({ inverterData }) => {
                   strokeLinecap="round"
                   opacity="0.6"
                 />
-              )}
+               )
+              }
               {key === "grid" && (
-                <circle
-                  cx={n.x + n.r - 6}
-                  cy={n.y - n.r + 6}
-                  r="6"
-                  fill={n.status === "ON" ? "#22c55e" : "#ef4444"}
-                  stroke="#fff"
-                  strokeWidth="1.5"
-                  style={{
-                    filter:
-                      n.status === "ON"
-                        ? "drop-shadow(0px 0px 6px #22c55e)"
-                        : "drop-shadow(0px 0px 6px #ef4444)",
-                  }}
-                />
+                <g
+                  transform={`translate(${n.x + n.r - 24}, ${n.y - n.r - 10})`}
+                >
+                  {/* Status background */}
+                  <rect
+                    x="0"
+                    y="0"
+                    rx="10"
+                    ry="10"
+                    width="40"
+                    height="18"
+                    fill={n.status === "ON" ? "#22c55e" : "#ef4444"}
+                    stroke="#fff"
+                    strokeWidth="1.5"
+                    style={{
+                      filter:
+                        n.status === "ON"
+                          ? "drop-shadow(0 0 6px #22c55e)"
+                          : "drop-shadow(0 0 6px #ef4444)",
+                    }}
+                  />
+
+                  {/* Status text */}
+                  <text
+                    x="20"
+                    y="13"
+                    textAnchor="middle"
+                    fontSize="10"
+                    fontWeight="700"
+                    fill="#ffffff"
+                    style={{ pointerEvents: "none" }}
+                  >
+                    {n.status}
+                  </text>
+                </g>
               )}
 
               {/* Use plain SVG <image> (stable across builds) */}
@@ -431,7 +453,7 @@ const FlowDiagram = ({ inverterData }) => {
       <div style={{ display: "flex", justifyContent: "center", marginTop: 10, gap: 20 }}>
 
         {/* GRID Legend */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        {/* <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <div
             style={{
               width: 12,
@@ -443,7 +465,7 @@ const FlowDiagram = ({ inverterData }) => {
           <span style={{ fontSize: 12, fontWeight: 600 }}>
             Grid: {gridStatus}
           </span>
-        </div>
+        </div> */}
 
         {/* SOLAR Legend */}
         {/* <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -478,26 +500,29 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
   const [consumptionChartContents, setConsumptionChartContents] = useState(null);
   const [pvProductionChartContents, setPvProductionChartContents] = useState(null);
   const [batteryChartContents, setBatteryChartContents] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const handleConsumptionDateChange = (date) => {
     if (!date) return;
-
     const jsDate = date.toDate();          // Moment → JS date
     const day = jsDate.getDate();
-
-    setSelectedDate(jsDate);
 
     fetchConsumptionsData(jsDate, day);
   };
 
   const handlePvDateChange = (date) => {
     if (!date) return;
-
     const jsDate = date.toDate();
     const day = jsDate.getDate();
 
     fetchPvProductionData(jsDate, day);
+  };
+
+  const handleBatteryDateChange = (date) => {
+    if (!date) return;
+    const jsDate = date.toDate();
+    const day = jsDate.getDate();
+
+    fetchBatterySystemData(jsDate, day);
   };
 
   useEffect(() => {
@@ -758,6 +783,14 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
           <Spin spinning={solar.batteryChartLoading}>
             <Card className="custom-card">
               <h3 className="solarPage-cardLabel">Battery</h3>
+              <div className="chart-header">
+                <DatePicker
+                  placeholder="Select period"
+                  onChange={handleBatteryDateChange}
+                  style={{ borderRadius: 6, height: 40 }}
+                  allowClear={false}
+                />
+              </div>
               <ResponsiveContainer width="100%" height={250}>
                 <AreaChart data={batteryChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
