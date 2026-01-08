@@ -609,6 +609,14 @@ const convertDateStringsToObjects = (dateStrings) => {
   return dateStrings?.map((eachDate) => dayjs(eachDate));
 };
 
+const flexibleDateStringsObjects = (dateStrings) => {
+  if (!dateStrings) return null;
+  return Array.isArray(dateStrings)
+    ? dateStrings.map(eachDate => dayjs(eachDate))
+    : dayjs(dateStrings);
+};
+
+
 const formatParametersDatetimes = (dateStrings) => {
   return dateStrings?.map((eachDate) => eachDate.format('DD/MM/YYYY h:mm A'));
 };
@@ -975,6 +983,7 @@ export {
   sumOperatingTimeValues,
   convertDateStringToObject,
   convertDateStringsToObjects,
+  flexibleDateStringsObjects,
   formatParametersDatetimes,
   formatParametersDates,
   formatParametersTimes,
