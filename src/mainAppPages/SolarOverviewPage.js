@@ -152,10 +152,20 @@ const EnergySummary = ({ tableContentsData }) => {
 const FlowDiagram = ({ inverterData }) => {
   const { pv, battery, grid, load } = inverterData || {};
 
-  const gridStatus = inverterData?.grid?.status === "ON" ? "ON" : "OFF";
-  const solarStatus = inverterData?.pv?.kw > 0 ? "ON" : "OFF";
-  const statusColor = (status) =>
-    status === "ON" ? "#22c55e" : "#ef4444"; // green / red
+  const batteryKw = battery?.kw ?? 0;
+  const batteryStatus =
+    batteryKw > 0
+      ? "Discharging"
+      : batteryKw < 0
+        ? "Charging"
+        : "Idle";
+
+  const batteryStatusColor =
+    batteryStatus === "Discharging"
+      ? "#58B90A"
+      : batteryStatus === "Charging"
+        ? "#D7C6F3"
+        : "#9ca3af"; // gray for idle
 
   const production = pv?.kw ?? 0;
   const capacity = pv?.installed_capacity_kwp ?? 0;
@@ -195,6 +205,8 @@ const FlowDiagram = ({ inverterData }) => {
       value: `${(battery?.kw ?? 0).toFixed(2)} kW`,
       percentage: battery?.percentage ?? 0,
       direction: battery?.direction,
+      status: batteryStatus,
+      statusColor: batteryStatusColor,
     },
     grid: {
       x: 660,
@@ -442,48 +454,24 @@ const FlowDiagram = ({ inverterData }) => {
                   <text x={n.x + labelOffsetX} y={n.y - 14} textAnchor={textAnchor} fontSize="12" fill="#6B7280">
                     {n.value}
                   </text>
+                  {key === "battery" && (
+                    <text
+                      x={n.x + labelOffsetX}
+                      y={n.y + 2}
+                      textAnchor={textAnchor}
+                      fontSize="11"
+                      fontWeight="600"
+                      fill={n.statusColor}
+                    >
+                      {n.status}
+                    </text>
+                  )}
                 </>
               )}
             </g>
           );
         })}
       </svg>
-
-      {/* Dynamic Legend */}
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 10, gap: 20 }}>
-
-        {/* GRID Legend */}
-        {/* <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div
-            style={{
-              width: 12,
-              height: 12,
-              backgroundColor: statusColor(gridStatus),
-              borderRadius: "50%",
-            }}
-          ></div>
-          <span style={{ fontSize: 12, fontWeight: 600 }}>
-            Grid: {gridStatus}
-          </span>
-        </div> */}
-
-        {/* SOLAR Legend */}
-        {/* <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div
-            style={{
-              width: 12,
-              height: 12,
-              backgroundColor: statusColor(solarStatus),
-              borderRadius: "50%",
-            }}
-          ></div>
-          <span style={{ fontSize: 12, fontWeight: 600 }}>
-            Solar: {solarStatus}
-          </span>
-        </div> */}
-
-      </div>
-
     </div>
   );
 };
