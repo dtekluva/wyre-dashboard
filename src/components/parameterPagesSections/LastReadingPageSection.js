@@ -9,10 +9,10 @@ import TotalDemandTable from '../tables/lastReadingsTables/TotalDemandTable';
 
 import ExcelIcon from '../../icons/ExcelIcon';
 import ExportToCsv from '../ExportToCsv';
-import { convertDateStringsToObjects } from '../../helpers/genericHelpers';
+import { convertDateStringsToObjects, flexibleDateStringsObjects } from '../../helpers/genericHelpers';
 
 function LastReadingPageSections({ lrData }) {
-  const dateObjects = lrData.length > 0 && convertDateStringsToObjects(lrData.date);
+  const dateObjects = flexibleDateStringsObjects(lrData.date);
   const formattedDate =
     dateObjects && dateObjects.format('dddd, MMMM D, YYYY, hh:mm:a');
 
