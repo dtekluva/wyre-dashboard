@@ -210,6 +210,9 @@ const DieselOverviewPage = ({
             picker="month"
             value={dayjs(selectedDate)}
             onChange={(value) => value && setSelectedDate(value.toDate())}
+            disabledDate={(current) =>
+              current && current.isAfter(dayjs(), "month")
+            }
           />
         </div>
 
