@@ -1,6 +1,6 @@
 
 import axios from "axios";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import EnvData from "../../../config/EnvData";
 import { fetchSideBarLoading, fetchSideBarSuccess } from "./actionCreators";
 import { APIService } from "../../../config/api/apiConfig";

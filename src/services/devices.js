@@ -1,6 +1,6 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 // import dashBoardMock from '../mock/dashboard';
 
 // Base URL prefix
