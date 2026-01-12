@@ -22,6 +22,7 @@ import { motion } from "framer-motion/dist/framer-motion"; // Node12-safe import
 import BreadCrumb from "../components/BreadCrumb";
 import { fetchBatterySystemData, fetchComponentsTableData, fetchConsumptionsData, fetchInverterGridsData, fetchPvProductionData, fetchWeatherReadingsData } from "../redux/actions/solar/solar.action";
 import { connect } from "react-redux";
+import dayjs from "dayjs";
 
 const breadCrumbRoutes = [
   { url: "/", name: "Home", id: 1 },
@@ -659,6 +660,9 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
                   placeholder="Select period"
                   onChange={handleConsumptionDateChange}
                   style={{ borderRadius: 6, height: 40, marginRight: 10 }}
+                  disabledDate={(current) =>
+                    current && current.isAfter(dayjs(), "day")
+                  }
                   allowClear={false}
                 />
                 <Select className="custom-filter" value={parameters} onChange={setParameters} style={{ width: 150 }} suffixIcon={null}>
@@ -742,6 +746,9 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
                   placeholder="Select period"
                   onChange={handlePvDateChange}
                   style={{ borderRadius: 6, height: 40 }}
+                  disabledDate={(current) =>
+                    current && current.isAfter(dayjs(), "day")
+                  }
                   allowClear={false}
                 />
               </div>
@@ -776,6 +783,9 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
                   placeholder="Select period"
                   onChange={handleBatteryDateChange}
                   style={{ borderRadius: 6, height: 40 }}
+                  disabledDate={(current) =>
+                    current && current.isAfter(dayjs(), "day")
+                  }
                   allowClear={false}
                 />
               </div>
