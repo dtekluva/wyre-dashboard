@@ -311,7 +311,7 @@ button {
 
 button:focus,
 button:focus-visible {
-  border-color: #6c00fa;
+  border-color: #5c3592;
   outline: 5px auto -webkit-focus-ring-color;
   outline: 2px solid transparent;
   -webkit-box-shadow: 0 0 0 2px #e1cbff;
@@ -336,7 +336,7 @@ textarea {
 
 input:focus,
 textarea:focus {
-  border-color: #6c00fa;
+  border-color: #5c3592;
   outline: 5px auto -webkit-focus-ring-color;
   outline: 2px solid transparent;
   -webkit-box-shadow: 0 0 0 2px #e1cbff;
@@ -597,13 +597,13 @@ p {
 
 @media (min-width: 768px) {
   .h-purple-stroke-medium-up {
-    stroke: #6c00fa;
+    stroke: #5c3592;
   }
 }
 
 @media (min-width: 768px) {
   .h-purple-stroke-medium-up path {
-    stroke: #6c00fa;
+    stroke: #5c3592;
   }
 }
 
@@ -675,7 +675,7 @@ p {
 }
 
 .anticon.anticon-calendar svg {
-  fill: #6c00fa;
+  fill: #5c3592;
   width: 17px;
   height: 17px;
 }
@@ -692,7 +692,7 @@ p {
   .sidebar-checkbox .ant-checkbox-input,
   .sidebar-checkbox .ant-checkbox-input:hover,
   .sidebar-checkbox .ant-checkbox-input:focus + .ant-checkbox-inner {
-    background-color: #6c00fa !important;
+    background-color: #5c3592 !important;
     border-color: #ffffff !important;
   }
 }
@@ -704,7 +704,7 @@ p {
 .alerts-and-alarms-checkbox .ant-checkbox:hover .ant-checkbox-inner,
 .alerts-and-alarms-checkbox .ant-checkbox-input:focus + .ant-checkbox-inner {
   background-color: #ffffff !important;
-  border-color: #6c00fa !important;
+  border-color: #5c3592 !important;
 }
 
 .ant-checkbox-checked .ant-checkbox-inner::after {
@@ -830,7 +830,7 @@ thead.ant-table-thead tr th {
 }
 
 .short-button--purple {
-  background-color: #6c00fa;
+  background-color: #5c3592;
   color: #ffffff;
 }
 
@@ -893,7 +893,7 @@ thead.ant-table-thead tr th {
 }
 
 .generic-submit-button {
-  background-color: #6c00fa;
+  background-color: #5c3592;
   border: 0;
   color: #ffffff;
   display: block;
@@ -1001,9 +1001,9 @@ thead.ant-table-thead tr th {
 }
 
 .table-row-button {
-  border: 1px solid #6c00fa;
+  border: 1px solid #5c3592;
   border-radius: 3px;
-  color: #6c00fa;
+  color: #5c3592;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1046,7 +1046,7 @@ thead.ant-table-thead tr th {
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
-    background-image: linear-gradient(to right, #6c00fa, #6c00fa 300.45px, #ffffff 15%, #ffffff 100%);
+    background-image: linear-gradient(to right, #5C3592, #5C3592 300.45px, #ffffff 15%, #ffffff 100%);
     -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
             box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
     -webkit-box-orient: horizontal;
@@ -1222,7 +1222,7 @@ thead.ant-table-thead tr th {
 
 @media (min-width: 768px) and (max-width: 1319px) {
   .header-link:hover {
-    color: #6c00fa;
+    color: #5c3592;
   }
 }
 
@@ -1232,7 +1232,7 @@ thead.ant-table-thead tr th {
   }
 
   .header-link:hover:after {
-    background: #6c00fa;
+    background: #5c3592;
     border-radius: 4px 4px 0px 0px;
     bottom: -5px;
     content: "";
@@ -1260,7 +1260,7 @@ thead.ant-table-thead tr th {
 
 @media (min-width: 768px) and (max-width: 1319px) {
   .header-link-dropdown-button:hover {
-    color: #6c00fa;
+    color: #5c3592;
   }
 }
 
@@ -1270,7 +1270,7 @@ thead.ant-table-thead tr th {
   }
 
   .header-link-dropdown-button:hover:after {
-    background: #6c00fa;
+    background: #5c3592;
     border-radius: 4px 4px 0px 0px;
     bottom: -5px;
     content: "";
@@ -1317,7 +1317,7 @@ thead.ant-table-thead tr th {
   }
 
   .header-sublinks-list__item:hover {
-    background-color: #6c00fa;
+    background-color: #5c3592;
   }
 
   .header-sublinks-list__item:hover .header-sublink {
@@ -1333,7 +1333,7 @@ thead.ant-table-thead tr th {
 
 @media (min-width: 768px) and (max-width: 1319px) {
   .header-sublink:hover {
-    color: #6c00fa;
+    color: #5c3592;
   }
 }
 
@@ -1457,7 +1457,7 @@ thead.ant-table-thead tr th {
 }
 
 .header-avatar:hover {
-  border-color: #6c00fa;
+  border-color: #5c3592;
 }
 
 .header-avatar__image {
@@ -1484,7 +1484,7 @@ thead.ant-table-thead tr th {
 }
 
 .sidebar {
-  color: #6c00fa;
+  color: #5c3592;
   padding-top: 10px;
   text-align: center;
 }
@@ -1681,7 +1681,7 @@ thead.ant-table-thead tr th {
 }
 
 .top-bar-right__button {
-  background-color: #6c00fa;
+  background-color: #5c3592;
   border-radius: 8px;
   color: #ffffff;
   font-size: 1.2rem;
@@ -1883,7 +1883,7 @@ thead.ant-table-thead tr th {
 }
 
 .dashboard__total-energy {
-  background-color: #6c00fa;
+  background-color: #5c3592;
   color: #ffffff;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -3314,7 +3314,7 @@ thead.ant-table-thead tr th {
 }
 
 .error-cta {
-  background: #6c00fa;
+  background: #5c3592;
   border: 0;
   border-radius: 6px;
   color: #ffffff;
@@ -3477,7 +3477,7 @@ thead.ant-table-thead tr th {
 
 .password-error-text {
   margin-left: 8px;
-  color: #6c00fa;
+  color: #5c3592;
   font-size: 1.3rem;
   font-weight: 600;
 }
@@ -3988,7 +3988,7 @@ thead.ant-table-thead tr th {
 }
 
 .signup-login-contact-button {
-  background: #6c00fa;
+  background: #5c3592;
   border: 0;
   border-radius: 6px;
   color: #ffffff;
@@ -4139,7 +4139,7 @@ thead.ant-table-thead tr th {
 }
 
 .header-short-button--auth {
-  background-color: #6c00fa;
+  background-color: #5c3592;
   border: 0;
   border-radius: 8px;
   color: #ffffff;
@@ -4257,7 +4257,7 @@ thead.ant-table-thead tr th {
 }
 
 .footer-heading {
-  color: #6c00fa;
+  color: #5c3592;
   font-weight: 400;
   font-family: "Roboto", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica,
     Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
@@ -4315,7 +4315,7 @@ thead.ant-table-thead tr th {
 }
 
 .footest-text {
-  color: #6c00fa;
+  color: #5c3592;
 }
 
 /*# sourceMappingURL=style.css.map */
