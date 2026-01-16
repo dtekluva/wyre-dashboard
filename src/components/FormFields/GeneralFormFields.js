@@ -45,6 +45,58 @@ export const NumberField = ({ data, inputSize = 'large', required = true, disabl
     </Form.Item>
 );
 
+export const NumberFieldAcceptZero = ({
+    data,
+    inputSize = 'large',
+    required = true,
+    disabled = false,
+}) => (
+    <Form.Item
+        label={data.label}
+        name={data.name}
+        labelCol={{ span: 24 }}
+        hasFeedback
+        validateTrigger={['onChange', 'onBlur']}
+        rules={[
+            ({ getFieldValue }) => ({
+                validator(_, value) {
+                    if (value === undefined || value === null || value === '') {
+                        return Promise.resolve();
+                    }
+
+                    const numericValue = Number(value);
+
+                    if (numericValue < 0) {
+                        return Promise.reject(
+                            new Error(`${data.label} must be zero or greater`)
+                        );
+                    }
+
+                    if (!Number.isInteger(numericValue)) {
+                        return Promise.reject(
+                            new Error(`${data.label} must be a whole number`)
+                        );
+                    }
+
+                    return Promise.resolve();
+                }
+            }),
+            ...(required
+                ? [{ required: true, message: `Please input the ${data.label}` }]
+                : []),
+        ]}
+    >
+        <Input
+            placeholder={data.placeholder}
+            size={inputSize}
+            disabled={disabled}
+            onChange={() => {
+                data.onDataChange && data.onDataChange();
+            }}
+        />
+    </Form.Item>
+);
+
 /**
  * @description field for the account number
  * @param {*} inputSize the input size
