@@ -32,7 +32,7 @@ const TotalEnergyCard = ({ totalEnergyBranchData, userData }) => {
         <article className="dashboard__total-energy dashboard__banner--small">
             <div style={{ textAlign: "right", paddingRight: 20, paddingTop: 20, marginLeft: "auto" }}>
                 <Tooltip placement="top" style={{ textAlign: "right" }}
-                    overlayStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.TOTAL_ENERGY} >
+                    popupStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.TOTAL_ENERGY} >
                     <p>
                         <InformationIcon className="info-icon" style={{ color: "white" }} />
                     </p>

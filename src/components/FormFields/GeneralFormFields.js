@@ -14,7 +14,7 @@ const { RangePicker } = DatePicker;
  * @param {*} required either required or not
  * @returns html contente needed
  */
-export const NumberField = ({ data, inputSize = 'large', required = true, disabled=false}) => (
+export const NumberField = ({ data, inputSize = 'large', required = true, disabled = false }) => (
     <Form.Item
         label={data.label}
         name={data.name}
@@ -150,13 +150,28 @@ export const DateRangeField = ({ data, inputSize = 'large', required = true }) =
                 height: "auto",
                 width: "100%",
             }}
-            ranges={{
-                Today: [moment(), moment()],
-                Yesterday: [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Past Week': [moment().subtract(7, 'days'), moment()],
-                'Past Month': [moment().subtract(1, 'months'), moment()],
-                'Past Year': [moment().subtract(1, 'years'), moment()],
-            }}
+            presets={[
+                {
+                    label: 'Today',
+                    value: [moment(), moment()],
+                },
+                {
+                    label: 'Yesterday',
+                    value: [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                },
+                {
+                    label: 'Past Week',
+                    value: [moment().subtract(7, 'days'), moment()],
+                },
+                {
+                    label: 'Past Month',
+                    value: [moment().subtract(1, 'months'), moment()],
+                },
+                {
+                    label: 'Past Year',
+                    value: [moment().subtract(1, 'years'), moment()],
+                },
+            ]}
         />
     </Form.Item>
 );

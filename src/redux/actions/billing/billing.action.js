@@ -3,7 +3,7 @@ import axios from "axios";
 import EnvData from "../../../config/EnvData";
 import { fetchBillingLoading, fetchBillingSuccess } from "./actionCreators";
 import dataHttpServices from '../../../services/devices';
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import moment from "moment";
 
 

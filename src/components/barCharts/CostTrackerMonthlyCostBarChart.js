@@ -113,7 +113,7 @@ const CostTrackerMonthlyCostBarChart = ({ DieselData, utilityData, uiSettings })
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes:
         {
           gridLines: {
             color: '#f0f0f0',
@@ -137,8 +137,7 @@ const CostTrackerMonthlyCostBarChart = ({ DieselData, utilityData, uiSettings })
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
-      xAxes: [
+      xAxes:
         {
           gridLines: {
             drawTicks: false,
@@ -161,7 +160,6 @@ const CostTrackerMonthlyCostBarChart = ({ DieselData, utilityData, uiSettings })
             padding: isMediumScreen ? 10 : 25,
           },
         },
-      ],
     },
   };
 

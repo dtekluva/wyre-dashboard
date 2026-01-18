@@ -43,7 +43,7 @@ const EnergyConsumptionBarChart = ({
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes:
         {
           stacked: isChartStacked,
           display: true,
@@ -69,8 +69,7 @@ const EnergyConsumptionBarChart = ({
             fontColor: 'black',
           },
         },
-      ],
-      xAxes: [
+      xAxes:
         {
           stacked: isChartStacked,
           ticks: {
@@ -93,7 +92,6 @@ const EnergyConsumptionBarChart = ({
             fontColor: 'black',
           },
         },
-      ],
     },
   };
 

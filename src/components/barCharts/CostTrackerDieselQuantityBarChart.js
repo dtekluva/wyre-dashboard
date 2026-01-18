@@ -36,7 +36,7 @@ const CostTrackerDieselQuantityBarChart = ({ dieselQuantityData }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           gridLines: {
             color: '#f0f0f0',
@@ -60,8 +60,7 @@ const CostTrackerDieselQuantityBarChart = ({ dieselQuantityData }) => {
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
-      xAxes: [
+      xAxes:
         {
           gridLines: {
             drawTicks: false,
@@ -84,8 +83,7 @@ const CostTrackerDieselQuantityBarChart = ({ dieselQuantityData }) => {
             padding: isMediumScreen ? 10 : 25,
           },
         },
-      ],
-    },
+    }
   };
 
   const data = {

@@ -42,7 +42,7 @@ const BillingConsumptionKwhBarChart = ({
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           stacked: isChartStacked,
           display: true,
@@ -68,8 +68,7 @@ const BillingConsumptionKwhBarChart = ({
             fontColor: 'black',
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           stacked: isChartStacked,
           ticks: {
@@ -92,7 +91,6 @@ const BillingConsumptionKwhBarChart = ({
             fontColor: 'black',
           },
         },
-      ],
     },
   };
 

@@ -3,7 +3,7 @@ import HiddenInputLabel from '../smallComponents/HiddenInputLabel';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import { getAlertAndAlarm, setAlertAndAlarm } from '../redux/actions/alertsAndAlarm/alertsAndAlarm.action';
 import { connect } from 'react-redux';
-import { Controller, useForm } from 'react-hook-form/dist/index.ie11';
+import { Controller, useForm } from 'react-hook-form';
 import { Checkbox, Collapse, Form, notification } from 'antd';
 import { useEffect } from 'react';
 import BreadCrumb from '../components/BreadCrumb';
@@ -19,20 +19,20 @@ const breadCrumbRoutes = [
 const { Panel } = Collapse;
 
 function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, match }) {
-  const [alertsForm] = Form.useForm();
+
   const { setCurrentUrl, token, userId, userData } = useContext(CompleteDataContext);
   const [preloadedAlertsFormData, setPreloadedAlertsFormData] = useState({});
   const [generator_data, setGenerator_data] = useState([])
   const isDataReady = preloadedAlertsFormData && preloadedAlertsFormData
   const isOperator = userData.role_text === "OPERATOR";
-  
+
   useEffect(() => {
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
   }, [match, setCurrentUrl]);
 
-  const { register, handleSubmit, control, errors, reset } = useForm({
+  const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
     defaultValues: preloadedAlertsFormData,
   });
 
@@ -41,7 +41,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   useEffect(() => {
     getAlertAndAlarm();
   }, []);
-  
+
   useEffect(() => {
     if (alertsAndAlarms) {
       setPreloadedAlertsFormData(alertsAndAlarms?.alertsData?.data)
@@ -52,35 +52,35 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const openNotification = (type, title, desc) => {
     notification[type]({
       message: `${title}`,
-      description:`${desc}`,
-      duration : 6
+      description: `${desc}`,
+      duration: 6
     });
   };
 
-  const formatIntInputs = (e)=>{
+  const formatIntInputs = (e) => {
     let convertdataToInt = parseFloat(e.target.value)
     const value = isNaN(convertdataToInt) ? '' : convertdataToInt
     return value
   }
 
-  const setGenData = (id, dateString)=>{
-    if(dateString !== "Invalid date"){
-      let specGen = generator_data && generator_data.filter((data)=>{
+  const setGenData = (id, dateString) => {
+    if (dateString !== "Invalid date") {
+      let specGen = generator_data && generator_data.filter((data) => {
         return data.id === id
-    })
-    for(const key in specGen) {
+      })
+      for (const key in specGen) {
         const gottenData = specGen[key].next_maintenance_date = dateString
       }
-    let obj = Object.keys(generator_data).forEach((e)=>{
-      if(e===id){
-        generator_data[e]={
-          specGen
+      let obj = Object.keys(generator_data).forEach((e) => {
+        if (e === id) {
+          generator_data[e] = {
+            specGen
+          }
         }
-      }
-    })
-    return generator_data
+      })
+      return generator_data
+    }
   }
-}
 
   const defaultDate = (data) => {
     let date = data && data.next_maintenance_date
@@ -99,12 +99,12 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
     };
     const request = await setAlertAndAlarm(updatedAlertsFormData);
 
-      if (request.fullfilled) {
-        openNotification("success", "Success", "Your changes has been updated succesfully");
-      }else {
-        openNotification('error', "Error", 'Something un-expected occured, please try again.')
-      }
+    if (request.fullfilled) {
+      openNotification("success", "Success", "Your changes has been updated succesfully");
+    } else {
+      openNotification('error', "Error", 'Something un-expected occured, please try again.')
     }
+  }
 
   return (
     <>
@@ -264,9 +264,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           width="50"
                           name="highPowerFactor"
                           id="high-power-factor"
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
+
                           placeholder={preloadedAlertsFormData?.max_power_factor}
                           value={preloadedAlertsFormData?.max_power_factor}
                           onChange={(e) => {
@@ -274,6 +272,12 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setmax_power_factor(e.target.value)
                             preloadedAlertsFormData.max_power_factor = formatIntInputs(e)
                           }}
+                          {...register("amount", {
+                            pattern: {
+                              value: /^-?\d+\.?\d*$/,
+                              message: "Invalid number"
+                            }
+                          })}
                           autoFocus
                         />{' '}
                         or goes below{' '}
@@ -296,9 +300,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setmin_power_factor(e.target.value)
                             preloadedAlertsFormData.min_power_factor = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                       </p>
                       <p className="input-error-message">
@@ -382,9 +383,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setfrequency_precision(e.target.value)
                             preloadedAlertsFormData.frequency_precision = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                       </p>
                       <p className="input-error-message">
@@ -442,9 +440,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setmax_voltage(e.target.value)
                             preloadedAlertsFormData.max_voltage = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />{' '}
                         <span className="alerts-and-alarms-unit">volts</span> or
                         goes below{' '}
@@ -466,9 +461,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setmin_voltage(e.target.value)
                             preloadedAlertsFormData.min_voltage = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />{' '}
                         <span className="alerts-and-alarms-unit">volts</span>
                       </p>
@@ -560,9 +552,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setEnergy_usage_max(e.target.value)
                             preloadedAlertsFormData.energy_usage_max = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                         <span className="alerts-and-alarms-unit">kWh</span>
                       </p>
@@ -650,9 +639,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // reset_co2_value(e.target.value)
                             preloadedAlertsFormData.set_co2_value = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />
                         <span className="alerts-and-alarms-unit">tons</span>
                       </p>
@@ -735,9 +721,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             // setload_threshold_value(e.target.value)
                             preloadedAlertsFormData.load_threshold_value = formatIntInputs(e)
                           }}
-                          ref={register({
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
                         />{' '}
                         <span className="alerts-and-alarms-unit">kW</span>
                       </p>

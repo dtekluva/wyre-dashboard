@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+// import ChartDataLabels from 'chartjs-plugin-datalabels';
 import CompleteDataContext from '../../Context';
 import { convertDecimalTimeToNormal } from '../../helpers/genericHelpers';
 
@@ -129,7 +129,7 @@ const DashboardDoughnutChart = ({ data, uiSettings, sideBarData }) => {
       <Doughnut
         data={plottedData}
         options={options}
-        plugins={[ChartDataLabels]}
+        // plugins={[ChartDataLabels]}
       />
     </>
   );

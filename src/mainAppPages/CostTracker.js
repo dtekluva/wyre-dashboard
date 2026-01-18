@@ -135,7 +135,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.DIESEL_OVERVIEW}
           >
             <p>
@@ -164,7 +164,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.UTILITY_OVERVIEW}
           >
             <p>
@@ -188,7 +188,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.UTILITY_OVERVIEW}
           >
             <p>
@@ -213,7 +213,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.DIESEL_PURCHASED}
           >
             <p>
@@ -257,7 +257,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.UTILITY_PAYMENTS}
           >
             <p>
@@ -302,7 +302,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.IPP_PAYMENTS}
           >
             <p>
@@ -345,7 +345,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.BASELINE_TRACKER}
           >
             <p>
@@ -374,7 +374,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.MONTHLY_COST}
           >
             <p>

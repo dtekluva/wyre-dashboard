@@ -49,7 +49,7 @@ const ScorecardCarbonEmmission = ({ scorecardCarbonEmissionBranchData, uiSetting
         </h2>
         <div>
           <Tooltip placement='top' style={{ textAlign: 'justify' }}
-            overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.CARBON}>
+            popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.CARBON}>
             <p>
               <InformationIcon className="info-icon" />
             </p>

@@ -18,7 +18,7 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
     const { dates: dateStrings } = data ? data : { dates: [] };
     newData.dates = dateStrings;
     data && data.devices.forEach((deviceData, index) => {
-      const findName = sideBarData.branches[0].devices.find((side) => deviceData.name.endsWith(side.name) && side.is_source);
+      const findName = sideBarData.branches[0]?.devices.find((side) => deviceData?.name.endsWith(side?.name) && side?.is_source);
       if (findName) {
         newData[deviceData.name] = deviceData.daily_kwh;
       }
@@ -59,7 +59,7 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           stacked: true,
           display: true,
@@ -83,8 +83,7 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
             fontColor: 'black',
           },
         },
-      ],
-      xAxes: [
+      xAxes:
         {
           ticks: {
             fontFamily: 'Roboto',
@@ -105,7 +104,6 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
             fontColor: 'black',
           },
         },
-      ],
     },
   };
 

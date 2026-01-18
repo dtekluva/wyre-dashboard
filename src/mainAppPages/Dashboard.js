@@ -54,6 +54,7 @@ function Dashboard({
   fetchPowerFactor: fetchAllPowerFactor,
   fetchPAPR,
   dashboard,
+  powerFactor,
 }) {
   let {
     checkedItems,
@@ -64,8 +65,8 @@ function Dashboard({
     userDateRange,
     uiSettings,
   } = useContext(CompleteDataContext);
-  
-  
+
+
   const dashBoardInfo = useSelector((state) => state.dashboard);
   const branchId =
     sideDetails?.sideBarData?.branches &&
@@ -90,35 +91,48 @@ function Dashboard({
   }, [match, setCurrentUrl]);
 
   useEffect(() => {
-    if (Object.keys(sideDetails.sideBarData).length > 0) {
-      let allDevices = [];
-      sideDetails.sideBarData.branches.forEach((branch) => {
-        branch.devices.forEach((device) => {
-          allDevices.push(device.device_id);
+    if (!(powerFactor.allPowerFactor.length > 0)) {
+      if (Object.keys(sideDetails.sideBarData).length > 0) {
+        let allDevices = [];
+        sideDetails.sideBarData.branches.forEach((branch) => {
+          branch.devices.forEach((device) => {
+            allDevices.push(device.device_id);
+          });
         });
-      });
-      const start_date = moment().startOf("month").format("YYYY-MM-DD");
-      const end_date = moment().startOf("month").format("YYYY-MM-DD");
-      fetchAllPowerFactor(allDevices, { start_date, end_date });
+        const start_date = moment().startOf("month").format("YYYY-MM-DD");
+        const end_date = moment().startOf("month").format("YYYY-MM-DD");
+        fetchAllPowerFactor(allDevices, { start_date, end_date });
+      }
     }
-      fetchBlendedost(userDateRange);
-  }, [sideDetails.sideBarData, userDateRange]);
+
+  }, [sideDetails.sideBarData]);
+
 
   useEffect(() => {
-    if (!pageLoaded && isEmpty(dashBoardInfo.dashBoardData || {})) {
-      fetchDashBoardDataCard_1(userDateRange);
-      fetchDashBoardDataCard_2(userDateRange);
-      fetchDashBoardDataCard_3(userDateRange);
-      fetchPAPR(userDateRange)
+
+    fetchBlendedost(userDateRange);
+
+  }, [userDateRange]);
+
+  useEffect(() => {
+
+    if (!dashboard.fetchDashBoardCard_1_Loading && !dashboard.fetchDashBoardCard_2_Loading && !dashboard.fetchDashBoardCard_3_Loading) {
+      if (!pageLoaded && isEmpty(dashBoardInfo.dashBoardData || {})) {
+        fetchDashBoardDataCard_1(userDateRange);
+        fetchDashBoardDataCard_2(userDateRange);
+        fetchDashBoardDataCard_3(userDateRange);
+        fetchPAPR(userDateRange)
+      }
+
+      if (!isEmpty(dashBoardInfo.dashBoardData) > 0 && pageLoaded) {
+        fetchDashBoardDataCard_1(userDateRange);
+        fetchDashBoardDataCard_2(userDateRange);
+        fetchDashBoardDataCard_3(userDateRange);
+        fetchPAPR(userDateRange)
+      }
+      setPageLoaded(true);
     }
 
-    if (!isEmpty(dashBoardInfo.dashBoardData) > 0 && pageLoaded) {
-      fetchDashBoardDataCard_1(userDateRange);
-      fetchDashBoardDataCard_2(userDateRange);
-      fetchDashBoardDataCard_3(userDateRange);
-      fetchPAPR(userDateRange)
-    }
-    setPageLoaded(true);
   }, [userDateRange]);
 
   useEffect(() => {

@@ -46,7 +46,7 @@ const PeakToAverageRatio = ({ paprBranchData, uiSettings }) => {
         </h2>
         <div>
           <Tooltip placement='top' style={{ textAlign: 'justify' }}
-            overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.PEAK_RATIO}>
+            popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.PEAK_RATIO}>
             <p>
               <InformationIcon className="info-icon" />
             </p>
