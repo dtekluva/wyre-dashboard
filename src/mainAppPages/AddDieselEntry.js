@@ -11,7 +11,7 @@ import moment from 'moment';
 import BreadCrumb from '../components/BreadCrumb';
 import Loader from '../components/Loader';
 import { addFuelConsumptionData, addMonthlyFuelConsumptionData, fetchDieselDailyUsageData, fetchDieselMonthlyUsageData, fetchFuelConsumptionData, getBranchGeneratorsData } from '../redux/actions/constTracker/costTracker.action';
-import { DateField, NumberField, SelectField, SelectGenerator } from '../components/FormFields/GeneralFormFields';
+import { DateField, NumberField, NumberFieldAcceptZero, SelectField, SelectGenerator } from '../components/FormFields/GeneralFormFields';
 import { Option } from 'antd/lib/mentions';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import { Icon } from '@iconify/react/dist/iconify.js';
@@ -497,7 +497,7 @@ function AddDieselEntry({
                         {/* QUANTITY */}
                         <div className="cost-tracker-input-container">
                           <Form.Item>
-                            <NumberField data={data.quantity} />
+                            <NumberFieldAcceptZero data={data.quantity} />
                           </Form.Item>
                         </div>
                         {/* FUEL TYPE */}
