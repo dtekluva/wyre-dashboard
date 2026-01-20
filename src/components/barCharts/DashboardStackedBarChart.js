@@ -8,6 +8,22 @@ import {
   formatParametersDates,
 } from '../../helpers/genericHelpers';
 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend
+);
 
 const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
@@ -59,51 +75,48 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: 
-        {
-          stacked: true,
+      y: {
+        stacked: true,
+        display: true,
+        grid: {
+          color: '#f0f0f0',
+          drawBorder: false,
+        },
+        ticks: {
+          beginAtZero: true,
+          padding: 10,
+          maxTicksLimit: 6,
+        },
+        title: {
           display: true,
-          gridLines: {
-            color: '#f0f0f0',
-            drawBorder: false,
-            drawTicks: false,
-            zeroLineColor: '#f0f0f0',
+          text: 'Energy - Kilowatt (kW)/Hour',
+          padding: isMediumScreen ? 10 : 25,
+          font: {
+            size: isMediumScreen ? 14 : 18,
           },
-          ticks: {
-            beginAtZero: true,
-            fontFamily: 'Roboto',
-            padding: 10,
-            maxTicksLimit: 6,
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Energy - Kilowatt (kW)/Hour',
-            padding: isMediumScreen ? 10 : 25,
-            fontSize: isMediumScreen ? 14 : 18,
-            fontColor: 'black',
-          },
+          color: 'black',
         },
-      xAxes:
-        {
-          ticks: {
-            fontFamily: 'Roboto',
-            padding: 10,
-            maxTicksLimit: 10,
-          },
-          gridLines: {
-            drawTicks: false,
-            color: '#f0f0f0',
-            zeroLineColor: '#f0f0f0',
-          },
-          stacked: true,
-          scaleLabel: {
-            display: true,
-            labelString: 'Days of the month',
-            padding: isMediumScreen ? 10 : 45,
-            fontSize: isMediumScreen ? 14 : 18,
-            fontColor: 'black',
-          },
+      },
+      x: {
+        stacked: true,
+        grid: {
+          color: '#f0f0f0',
+          drawBorder: false,
         },
+        ticks: {
+          padding: 10,
+          maxTicksLimit: 10,
+        },
+        title: {
+          display: true,
+          text: 'Days of the month',
+          padding: isMediumScreen ? 10 : 45,
+          font: {
+            size: isMediumScreen ? 14 : 18,
+          },
+          color: 'black',
+        },
+      },
     },
   };
 
@@ -157,7 +170,7 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
 
   return (
     <>
-      <Bar redraw data={plottedData} options={options} />
+      <Bar data={plottedData} options={options} />
     </>
   );
 };
