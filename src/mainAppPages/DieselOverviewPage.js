@@ -9,7 +9,7 @@ import FuelUsageCard from "../components/FuelUsageCard";
 import OperationalEfficiencyCard from "../components/OperationalEfficiencyCard";
 import CostAnalysisCard from "../components/CostAnalysisCard";
 import BreadCrumb from "../components/BreadCrumb";
-import { DatePicker, message } from "antd";
+import { DatePicker } from "antd";
 import { connect } from "react-redux";
 import {
   fetchBranchGeneratorsStatusData,
@@ -136,32 +136,14 @@ const DieselOverviewPage = ({
   };
 
   return (
-    <>
+    <div className="diesel-overview-page">
       {/* Header controls */}
-      <div
-        className="no-print"
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "16px",
-        }}
-      >
+      <div className="diesel-overview-header no-print">
         <BreadCrumb routesArray={breadCrumbRoutes} />
         <button
           onClick={handleDownloadPDF}
           disabled={isDownloading}
-          style={{
-            // backgroundColor: "#5C12A7",
-            backgroundColor: "#5c3592",
-            color: "#fff",
-            padding: "8px 20px",
-            whiteSpace: "nowrap",
-            border: "none",
-            borderRadius: "6px",
-            cursor: isDownloading ? "not-allowed" : "pointer",
-            fontWeight: 500,
-          }}
+          className="diesel-download-btn"
         >
           {isDownloading ? "Downloading diesel usage..." : "Download Report"}
         </button>
@@ -170,12 +152,7 @@ const DieselOverviewPage = ({
       {/* Dashboard content */}
       <div
         ref={dashboardRef}
-        className="diesel"
-        style={{
-          padding: "30px",
-          backgroundColor: "#F2F2FA",
-          borderRadius: "16px",
-        }}
+        className="diesel diesel-overview-dashboard"
       >
         <h3
           className="no-print"
@@ -198,14 +175,7 @@ const DieselOverviewPage = ({
           loader={diesel}
         />
 
-        <div
-          className="no-print"
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            padding: "20px 0 15px 0",
-          }}
-        >
+        <div className="diesel-date-picker-wrap no-print">
           <DatePicker
             picker="month"
             value={dayjs(selectedDate)}
@@ -233,7 +203,7 @@ const DieselOverviewPage = ({
         </div>
 
         {/* Section 2 */}
-        <div className="diesel-grid2">
+        <div className="" style={{display: 'grid', gridTemplateColumns: '1fr', gap: '2rem', marginBottom: '2rem'}}>
           <div className="card">
             <FuelUsageBreakupCard
               genFuelUsageData={genFuelUsageData}
@@ -265,7 +235,7 @@ const DieselOverviewPage = ({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -12,7 +12,7 @@ const TotalEnergyUsed = ({ genTotalEnergyUsedData, loader }) => {
   }));
 
   return (
-    <div className="total-energy-card">
+    <div className="total-energy-card" style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
       <Spin spinning={loader}>
         <h3 className="card-title" style={{ textAlign: 'left' }}>Total energy used</h3>
 

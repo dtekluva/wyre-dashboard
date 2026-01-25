@@ -1185,7 +1185,6 @@ thead.ant-table-thead tr th {
 @media (min-width: 768px) {
   .header-nav-list__item {
     border-top: 0;
-    margin-right: 40px;
     padding: 0;
   }
 
@@ -1198,8 +1197,6 @@ thead.ant-table-thead tr th {
   .header-nav-list__item {
     border-top: #f0f0f0 1px solid;
     margin-right: 0;
-    padding: 10px 0;
-    padding-right: 30px;
   }
 
   .header-nav-list__item:first-of-type {
@@ -3797,16 +3794,12 @@ thead.ant-table-thead tr th {
 .header-nav-list__item--auth {
   border-top: #f0f0f0 1px solid;
   font-size: 1.4rem;
-  padding: 15px 0;
-  padding-left: 7px;
 }
 
 @media (min-width: 768px) {
   .header-nav-list__item--auth {
     border-top: 0;
     margin-right: 0;
-    padding: 10px 0;
-    padding-right: 30px;
   }
 }
 

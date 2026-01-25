@@ -196,8 +196,9 @@ function Header() {
         <nav
           className={isNavOpen ? 'header-nav' : 'header-nav h-hidden-1296-down'}
         >
-          <ul className="header-nav-list"
-           style={{whiteSpace: 'nowrap'}}
+          <ul
+            className="header-nav-list"
+            style={{ whiteSpace: "nowrap", display: "flex", alignItems: "center" }}
           >
             {userData.is_solar_customer === false ? (
               <>
