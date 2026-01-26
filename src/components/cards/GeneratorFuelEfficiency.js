@@ -7,7 +7,6 @@ import InformationIcon from '../../icons/InformationIcon';
 import { SCORE_CARD_TOOLTIP_MESSAGES } from "../toolTips/Score_Card_Tooltip_Messages";
 import ScoreCardDoughnutChart from "../pieCharts/ScoreCardDoughnutChart";
 import { calculatePercentage, daysInMonth, getBaselineEnergyColor } from "../../helpers/genericHelpers";
-import ScoreCardGenEfficiencyDoughnut from "../pieCharts/ScoreCardGenEfficiencyDoughnut";
 import ScoreCardFuelConsumptionDoughnut from "../pieCharts/ScoreCardFuelConsumptionDoughnut";
 
 
