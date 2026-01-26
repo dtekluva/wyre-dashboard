@@ -1230,3 +1230,73 @@
   font-size: 13px;
   margin-top: 2px;
 }
+
+// Revamped REPORT PAGE
+.report-card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  margin-top: 24px;
+  max-width: 480px;
+}
+
+.report-card h4 {
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.report-card input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.report-card button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.report-card button:disabled {
+  background: #c7d2fe;
+  cursor: not-allowed;
+}
+
+.hint {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #6b7280;
+}
+
+.report-type-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background: #eef2ff;
+}
+
+.tab-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
