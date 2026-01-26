@@ -224,7 +224,7 @@ const DieselOverviewPage = ({
               loader={diesel.branchGeneratorMonthlyEnergyLoading}
             />
           </div>
-          <div className="grid1-item card">
+          <div className="grid1-item card ">
             <GeneratorStatus2
               genStatusChartData={genStatusChartData}
               loader={diesel.genStatusChartLoading}
