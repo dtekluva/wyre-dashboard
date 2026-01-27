@@ -22,6 +22,7 @@ import { motion } from "framer-motion/dist/framer-motion"; // Node12-safe import
 import BreadCrumb from "../components/BreadCrumb";
 import { fetchBatterySystemData, fetchComponentsTableData, fetchConsumptionsData, fetchInverterGridsData, fetchPvProductionData, fetchWeatherReadingsData } from "../redux/actions/solar/solar.action";
 import { connect } from "react-redux";
+import dayjs from "dayjs";
 
 const breadCrumbRoutes = [
   { url: "/", name: "Home", id: 1 },
@@ -125,8 +126,8 @@ const EnergySummary = ({ tableContentsData }) => {
                       {period === "total"
                         ? "Total yield"
                         : period === "today"
-                        ? "Today yield"
-                        : "Monthly yield"}
+                        ? "Today's yield"
+                        : "Current Month's yield"}
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
@@ -152,10 +153,20 @@ const EnergySummary = ({ tableContentsData }) => {
 const FlowDiagram = ({ inverterData }) => {
   const { pv, battery, grid, load } = inverterData || {};
 
-  const gridStatus = inverterData?.grid?.status === "ON" ? "ON" : "OFF";
-  const solarStatus = inverterData?.pv?.kw > 0 ? "ON" : "OFF";
-  const statusColor = (status) =>
-    status === "ON" ? "#22c55e" : "#ef4444"; // green / red
+  const batteryKw = battery?.kw ?? 0;
+  const batteryStatus =
+    batteryKw > 0
+      ? "Discharging"
+      : batteryKw < 0
+        ? "Charging"
+        : "Idle";
+
+  const batteryStatusColor =
+    batteryStatus === "Discharging"
+      ? "#58B90A"
+      : batteryStatus === "Charging"
+        ? "#D7C6F3"
+        : "#9ca3af"; // gray for idle
 
   const production = pv?.kw ?? 0;
   const capacity = pv?.installed_capacity_kwp ?? 0;
@@ -195,6 +206,8 @@ const FlowDiagram = ({ inverterData }) => {
       value: `${(battery?.kw ?? 0).toFixed(2)} kW`,
       percentage: battery?.percentage ?? 0,
       direction: battery?.direction,
+      status: batteryStatus,
+      statusColor: batteryStatusColor,
     },
     grid: {
       x: 660,
@@ -348,22 +361,44 @@ const FlowDiagram = ({ inverterData }) => {
                   strokeLinecap="round"
                   opacity="0.6"
                 />
-              )}
+               )
+              }
               {key === "grid" && (
-                <circle
-                  cx={n.x + n.r - 6}
-                  cy={n.y - n.r + 6}
-                  r="6"
-                  fill={n.status === "ON" ? "#22c55e" : "#ef4444"}
-                  stroke="#fff"
-                  strokeWidth="1.5"
-                  style={{
-                    filter:
-                      n.status === "ON"
-                        ? "drop-shadow(0px 0px 6px #22c55e)"
-                        : "drop-shadow(0px 0px 6px #ef4444)",
-                  }}
-                />
+                <g
+                  transform={`translate(${n.x + n.r - 24}, ${n.y - n.r - 10})`}
+                >
+                  {/* Status background */}
+                  <rect
+                    x="0"
+                    y="0"
+                    rx="10"
+                    ry="10"
+                    width="40"
+                    height="18"
+                    fill={n.status === "ON" ? "#22c55e" : "#ef4444"}
+                    stroke="#fff"
+                    strokeWidth="1.5"
+                    style={{
+                      filter:
+                        n.status === "ON"
+                          ? "drop-shadow(0 0 6px #22c55e)"
+                          : "drop-shadow(0 0 6px #ef4444)",
+                    }}
+                  />
+
+                  {/* Status text */}
+                  <text
+                    x="20"
+                    y="13"
+                    textAnchor="middle"
+                    fontSize="10"
+                    fontWeight="700"
+                    fill="#ffffff"
+                    style={{ pointerEvents: "none" }}
+                  >
+                    {n.status}
+                  </text>
+                </g>
               )}
 
               {/* Use plain SVG <image> (stable across builds) */}
@@ -420,48 +455,24 @@ const FlowDiagram = ({ inverterData }) => {
                   <text x={n.x + labelOffsetX} y={n.y - 14} textAnchor={textAnchor} fontSize="12" fill="#6B7280">
                     {n.value}
                   </text>
+                  {key === "battery" && (
+                    <text
+                      x={n.x + labelOffsetX}
+                      y={n.y + 2}
+                      textAnchor={textAnchor}
+                      fontSize="11"
+                      fontWeight="600"
+                      fill={n.statusColor}
+                    >
+                      {n.status}
+                    </text>
+                  )}
                 </>
               )}
             </g>
           );
         })}
       </svg>
-
-      {/* Dynamic Legend */}
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 10, gap: 20 }}>
-
-        {/* GRID Legend */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div
-            style={{
-              width: 12,
-              height: 12,
-              backgroundColor: statusColor(gridStatus),
-              borderRadius: "50%",
-            }}
-          ></div>
-          <span style={{ fontSize: 12, fontWeight: 600 }}>
-            Grid: {gridStatus}
-          </span>
-        </div>
-
-        {/* SOLAR Legend */}
-        {/* <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div
-            style={{
-              width: 12,
-              height: 12,
-              backgroundColor: statusColor(solarStatus),
-              borderRadius: "50%",
-            }}
-          ></div>
-          <span style={{ fontSize: 12, fontWeight: 600 }}>
-            Solar: {solarStatus}
-          </span>
-        </div> */}
-
-      </div>
-
     </div>
   );
 };
@@ -478,26 +489,29 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
   const [consumptionChartContents, setConsumptionChartContents] = useState(null);
   const [pvProductionChartContents, setPvProductionChartContents] = useState(null);
   const [batteryChartContents, setBatteryChartContents] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const handleConsumptionDateChange = (date) => {
     if (!date) return;
-
     const jsDate = date.toDate();          // Moment → JS date
     const day = jsDate.getDate();
-
-    setSelectedDate(jsDate);
 
     fetchConsumptionsData(jsDate, day);
   };
 
   const handlePvDateChange = (date) => {
     if (!date) return;
-
     const jsDate = date.toDate();
     const day = jsDate.getDate();
 
     fetchPvProductionData(jsDate, day);
+  };
+
+  const handleBatteryDateChange = (date) => {
+    if (!date) return;
+    const jsDate = date.toDate();
+    const day = jsDate.getDate();
+
+    fetchBatterySystemData(jsDate, day);
   };
 
   useEffect(() => {
@@ -640,12 +654,15 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
         <Col span={24}>
           <Spin spinning={solar.consumptionChartLoading}>
             <Card className="custom-card">
-              <h3 className="card-label">Consumption</h3>
+              <h3 className="solarPage-cardLabel">Consumption</h3>
               <div className="chart-header">
                 <DatePicker
                   placeholder="Select period"
                   onChange={handleConsumptionDateChange}
                   style={{ borderRadius: 6, height: 40, marginRight: 10 }}
+                  disabledDate={(current) =>
+                    current && current.isAfter(dayjs(), "day")
+                  }
                   allowClear={false}
                 />
                 <Select className="custom-filter" value={parameters} onChange={setParameters} style={{ width: 150 }} suffixIcon={null}>
@@ -723,12 +740,15 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
         <Col span={24}>
           <Spin spinning={solar.pvProductionChartLoading}>
             <Card className="custom-card">
-              <h3 className="card-label">PV Production</h3>
+              <h3 className="solarPage-cardLabel">PV Production</h3>
               <div className="chart-header">
                 <DatePicker
                   placeholder="Select period"
                   onChange={handlePvDateChange}
                   style={{ borderRadius: 6, height: 40 }}
+                  disabledDate={(current) =>
+                    current && current.isAfter(dayjs(), "day")
+                  }
                   allowClear={false}
                 />
               </div>
@@ -757,7 +777,18 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
         <Col span={24}>
           <Spin spinning={solar.batteryChartLoading}>
             <Card className="custom-card">
-              <h3 className="card-label">Battery</h3>
+              <h3 className="solarPage-cardLabel">Battery</h3>
+              <div className="chart-header">
+                <DatePicker
+                  placeholder="Select period"
+                  onChange={handleBatteryDateChange}
+                  style={{ borderRadius: 6, height: 40 }}
+                  disabledDate={(current) =>
+                    current && current.isAfter(dayjs(), "day")
+                  }
+                  allowClear={false}
+                />
+              </div>
               <ResponsiveContainer width="100%" height={250}>
                 <AreaChart data={batteryChartData}>
                   <CartesianGrid strokeDasharray="3 3" />

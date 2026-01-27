@@ -86,46 +86,6 @@ const DieselOverviewPage = ({
     }
   }, [diesel]);
 
-  // const handleDownloadPDF = async () => {
-  //   try {
-  //     setIsDownloading(true);
-  //     message.loading({ content: "Downloading diesel usage...", key: "download" });
-
-  //     await new Promise((res) => setTimeout(res, 400));
-
-  //     const element = dashboardRef.current;
-  //     const canvas = await html2canvas(element, {
-  //       scale: 2,
-  //       useCORS: true,
-  //       ignoreElements: (el) => el.classList.contains("no-print"),
-  //     });
-
-  //     const imgData = canvas.toDataURL("image/png");
-  //     const pdf = new jsPDF("p", "mm", "a4");
-  //     const pageWidth = pdf.internal.pageSize.getWidth();
-  //     const imgProps = pdf.getImageProperties(imgData);
-  //     const pdfHeight = (imgProps.height * pageWidth) / imgProps.width;
-
-  //     const title = `${
-  //       frequency === "monthly" ? "Monthly" : "Daily"
-  //     } Diesel Usage for ${dayjs(selectedDate).format("MMMM YYYY")}`;
-
-  //     pdf.setFont("helvetica", "bold");
-  //     pdf.setFontSize(16);
-  //     pdf.text(title, pageWidth / 2, 15, { align: "center" });
-
-  //     pdf.addImage(imgData, "PNG", 0, 25, pageWidth, pdfHeight);
-  //     pdf.save(`Diesel_Usage_${dayjs(selectedDate).format("MMM_YYYY")}.pdf`);
-
-  //     message.success({ content: "Download complete!", key: "download", duration: 2 });
-  //   } catch (err) {
-  //     console.error("PDF generation failed:", err);
-  //     message.error({ content: "Failed to generate PDF", key: "download", duration: 2 });
-  //   } finally {
-  //     setIsDownloading(false);
-  //   }
-  // };
-
   const handleDownloadPDF = async () => {
     try {
       setIsDownloading(true);
@@ -203,7 +163,7 @@ const DieselOverviewPage = ({
             fontWeight: 500,
           }}
         >
-          {isDownloading ? "Downloading diesel usage..." : "Download PDF"}
+          {isDownloading ? "Downloading diesel usage..." : "Download Report"}
         </button>
       </div>
 
@@ -250,6 +210,9 @@ const DieselOverviewPage = ({
             picker="month"
             value={dayjs(selectedDate)}
             onChange={(value) => value && setSelectedDate(value.toDate())}
+            disabledDate={(current) =>
+              current && current.isAfter(dayjs(), "month")
+            }
           />
         </div>
 

@@ -279,7 +279,8 @@
 
 .header-cards {
   display: grid;
-  grid-template-columns: 2fr 0.8fr 1.5fr; /* generator biggest, emission smaller, price wider */
+  // grid-template-columns: 2fr 0.8fr 1.5fr; /* generator biggest, emission smaller, price wider */
+  grid-template-columns: 1fr 1fr 1fr; /* generator biggest, emission smaller, price wider */
   gap: 1rem;
   align-items: stretch;
 }
@@ -304,6 +305,12 @@
 
 .card-label {
   font-size: 0.95rem;
+  font-weight: 600;
+  color: 
+  #444;
+}
+.card-label-price {
+  font-size: 12px;
   font-weight: 600;
   color: #444;
 }
@@ -541,28 +548,6 @@
   font-weight: bold;
 }
 
-.legend {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 0.5rem;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  font-size: 0.9rem;
-  color: #374151;
-}
-
-.legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 0.4rem;
-}
-
 .donut-wrapper {
   display: flex;
   align-items: center; /* vertical centering */
@@ -631,7 +616,7 @@
 
 .diesel-grid2 {
   display: grid;
-  grid-template-columns: 1.7fr 1.3fr;
+  grid-template-columns: 1.7fr;
   gap: 1rem;
   margin-bottom: 2rem;
 }
@@ -888,7 +873,7 @@
   border-radius: 0 8px 8px 8px;
 }
 
-.card-label {
+.solarPage-cardLabel {
   position: absolute;
   top: -38px;     /* Moves it above the card edge */
   left: 0px;
@@ -906,16 +891,6 @@
   margin-bottom: 20px;
 }
 
-// .power-card {
-//   text-align: center;
-// }
-
-// .power-details {
-//   margin-top: 15px;
-//   font-size: 14px;
-//   color: #555;
-// }
-
 .power-card {
   text-align: center;
   background: #fafafa;
@@ -927,21 +902,6 @@
   font-size: 12px;
   color: #666;
   margin-bottom: 10px;
-}
-
-.power-details {
-  margin-top: -10px;
-  font-size: 14px;
-  color: #555;
-}
-
-.power-details .highlight {
-  color: #7B61FF;
-  font-weight: 600;
-}
-
-.power-details .muted {
-  color: #9CA3AF;
 }
 
 .flow-card {
