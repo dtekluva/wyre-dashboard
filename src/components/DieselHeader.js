@@ -7,7 +7,7 @@ const DieselHeader = ({ dieselPrice, genStatus, Co2, loader }) => {
     <div className="dashboard-header">
       <div className="header-cards">
         {/* Generator Info */}       
-          <div className="header-card generator-card">
+          <div className="header-card emission-card">
             <div className="gen-left">
               <span className="card-icon">
                 <img src="/electric-generator_2695268 1.png" alt="Logo" />

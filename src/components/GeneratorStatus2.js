@@ -29,7 +29,7 @@ const GeneratorStatus2 = ({ genStatusChartData, loader }) => {
             <div className="donut-wrapper">
               {/* Donut Chart */}
               <div className="donut-chart">
-                <ResponsiveContainer>
+                <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={runHoursData}
@@ -79,7 +79,7 @@ const GeneratorStatus2 = ({ genStatusChartData, loader }) => {
             <div className="donut-wrapper">
               {/* Donut Chart */}
               <div className="donut-chart">
-                <ResponsiveContainer>
+                <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={fuelUsedData}

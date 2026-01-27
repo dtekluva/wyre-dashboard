@@ -14,7 +14,7 @@ const TotalEnergyUsed = ({ genTotalEnergyUsedData, loader }) => {
   return (
     <div className="total-energy-card">
       <Spin spinning={loader}>
-        <h3 className="card-title" style={{ textAlign: 'left' }}>Total energy used</h3>
+        <h3 className="card-title total-energy-title">Total energy used</h3>
 
         <div className="chart-wrapper">
           <ResponsiveContainer width="100%" height="100%">

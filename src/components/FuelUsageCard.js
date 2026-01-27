@@ -56,7 +56,8 @@ const FuelUsageCard = ({ fetchFuelUsageData, fuelUsageData, loader }) => {
           </div>
         </div>
         <div className="card-body">
-          <ResponsiveContainer width="100%" height={300}>
+          <div className="diesel-chart-inner">
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={fuelUsageData?.data?.series}
               barCategoryGap="30%"
@@ -99,6 +100,7 @@ const FuelUsageCard = ({ fetchFuelUsageData, fuelUsageData, loader }) => {
               />
             </BarChart>
           </ResponsiveContainer>
+          </div>
         </div>
       </Spin>
     </div>

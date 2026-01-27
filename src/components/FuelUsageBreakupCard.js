@@ -136,7 +136,8 @@ const handleMonthlyView = () => {
           {chartData.length === 0 ? (
             <div className="fub-no-data">No data available</div>
           ) : (
-            <ResponsiveContainer width="100%" height={320}>
+            <div className="diesel-chart-inner">
+            <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 8, right: 12, left: 18, bottom: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e6e6f0" />
                 <XAxis
@@ -187,6 +188,7 @@ const handleMonthlyView = () => {
                 })}
               </LineChart>
             </ResponsiveContainer>
+            </div>
           )}
         </div>
       </Spin>
