@@ -203,7 +203,7 @@ const DieselOverviewPage = ({
         </div>
 
         {/* Section 2 */}
-        <div className="" style={{display: 'grid', gridTemplateColumns: '1fr', gap: '2rem', marginBottom: '2rem'}}>
+        <div className="diesel-grid2">
           <div className="card">
             <FuelUsageBreakupCard
               genFuelUsageData={genFuelUsageData}

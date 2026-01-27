@@ -363,7 +363,8 @@
   align-items: stretch;
   min-width: 0;
 
-  @media (min-width: 1400px) {
+  /* Medium screens: 2 cards in row, 3rd card spans full width below */
+  @media (min-width: 901px) and (max-width: 1200px) {
     grid-template-columns: 1fr 1fr;
 
     .price-card {
@@ -371,9 +372,13 @@
     }
   }
 
-  /* >1200px: all three side by side */
+  /* Large screens: all three side by side */
   @media (min-width: 1201px) {
     grid-template-columns: 1fr 1fr 1fr;
+
+    .price-card {
+      grid-column: auto;
+    }
   }
 }
 
@@ -507,16 +512,19 @@
 
 /* Header cards responsive (generator / emission / price) */
 @media (max-width: 899px) {
-  .generator-card,
-  .price-card {
+  .generator-card {
     grid-template-columns: 1fr;
     text-align: left;
   }
   .gen-center,
-  .gen-right,
-  .price-right {
+  .gen-right {
     text-align: left;
     align-items: flex-start;
+  }
+  
+  /* Price card always stays horizontal, just adjust text alignment */
+  .price-right {
+    text-align: left;
   }
 }
 
@@ -556,6 +564,12 @@
   width: 100%;
   height: 100%;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.total-energy-title {
+  text-align: left;
 }
 
 .chart-wrapper {
@@ -730,7 +744,7 @@
 .diesel-grid2 {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  gap: 2rem;
   margin-bottom: 2rem;
   min-width: 0;
 
