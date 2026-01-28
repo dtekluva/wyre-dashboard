@@ -1,12 +1,14 @@
-import React, { useContext } from 'react';
-import { Bar } from 'react-chartjs-2';
-import CompleteDataContext from '../../Context';
+import React, { useContext } from "react";
+import { Bar } from "react-chartjs-2";
+import CompleteDataContext from "../../Context";
 
-import { convertDecimalTimeToNormal, getLastArrayItems } from '../../helpers/genericHelpers';
+import {
+  convertDecimalTimeToNormal,
+  getLastArrayItems,
+} from "../../helpers/genericHelpers";
 
 const RunningTime = ({ runningTimeData, dataMessage }) => {
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
-
 
   const options = {
     legend: {
@@ -15,16 +17,18 @@ const RunningTime = ({ runningTimeData, dataMessage }) => {
 
     tooltips: {
       enabled: true,
-      mode: 'index',
+      mode: "index",
       callbacks: {
         title: function (tooltipItem, data) {
-          return data['labels'][tooltipItem[0]['index']];
+          return data["labels"][tooltipItem[0]["index"]];
         },
         label: function (tooltipItem, data) {
-          return convertDecimalTimeToNormal(data['datasets'][0]['data'][tooltipItem['index']]) ;
+          return convertDecimalTimeToNormal(
+            data["datasets"][0]["data"][tooltipItem["index"]]
+          );
         },
       },
-      footerFontStyle: 'normal',
+      footerFontStyle: "normal",
       footerMarginTop: 12,
     },
 
@@ -37,8 +41,8 @@ const RunningTime = ({ runningTimeData, dataMessage }) => {
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: 'Roboto',
-            fontColor: '#A3A3A3',
+            fontFamily: "Roboto",
+            fontColor: "#A3A3A3",
             maxTicksLimit: 6,
             fontSize: 10,
             padding: 0,
@@ -47,7 +51,7 @@ const RunningTime = ({ runningTimeData, dataMessage }) => {
             display: true,
             padding: 10,
             // labelString: 'Wastage',
-            fontColor: 'black',
+            fontColor: "black",
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
@@ -59,15 +63,15 @@ const RunningTime = ({ runningTimeData, dataMessage }) => {
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: 'Montserrat',
-            fontColor: '#A3A3A3',
+            fontFamily: "Montserrat",
+            fontColor: "#A3A3A3",
             maxTicksLimit: 10,
             padding: 0,
             fontSize: 12,
           },
           scaleLabel: {
             display: true,
-            fontColor: 'black',
+            fontColor: "black",
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
@@ -75,33 +79,33 @@ const RunningTime = ({ runningTimeData, dataMessage }) => {
     },
   };
 
-
   const chartValues = runningTimeData?.data;
   const chartlabels = runningTimeData?.label;
-
 
   const data = {
     labels: isMediumScreen
       ? chartlabels && getLastArrayItems(chartlabels, 7)
       : isLessThan1296
-        ? chartlabels && getLastArrayItems(chartlabels, 14)
-        : chartlabels,
+      ? chartlabels && getLastArrayItems(chartlabels, 14)
+      : chartlabels,
     datasets: [
       {
         maxBarThickness: 60,
         data: chartValues,
-        backgroundColor: '#6c00fa',
-        borderColor: '#6c00fa',
+        backgroundColor: "#5C3592",
+        borderColor: "#5C3592",
         borderWidth: 1,
       },
     ],
-
   };
 
   return (
     <div className="score-card-bar-chart-container">
       <div className="h-flex">
-        <div className="load-overview-running-time-header" style={{ display: 'flex' }}>
+        <div
+          className="load-overview-running-time-header"
+          style={{ display: "flex" }}
+        >
           <h2 className="score-card-heading">Running Time</h2>
         </div>
       </div>
