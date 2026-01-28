@@ -10,7 +10,6 @@ import {
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import { APIService } from "../../config/api/apiConfig";
-import axios from "axios";
 
 export default function AiChat() {
   const [isOpen, setIsOpen] = useState(true);
@@ -126,9 +125,7 @@ export default function AiChat() {
       const usablePageHeight = pageHeight - margin - titleHeight;
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
-      const aspectRatio = imgWidth / usablePageHeight;
       const pdfImgWidth = pageWidth - 2 * margin;
-      const pdfImgHeight = pdfImgWidth / aspectRatio;
       const pixelsPerMm = imgWidth / pdfImgWidth;
 
       pdf.setFontSize(20);
