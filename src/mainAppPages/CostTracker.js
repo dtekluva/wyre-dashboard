@@ -235,7 +235,7 @@ function CostTracker({
           setDieselPurchaseData={setDieselPurchaseData}
         />
         <Modal
-          visible={editDieselPurchaseModal}
+          open={editDieselPurchaseModal}
           onOk={() => setEditDieselPurchaseModal(false)}
           onCancel={() => setEditDieselPurchaseModal(false)}
           width={1000}
@@ -280,7 +280,7 @@ function CostTracker({
         />
 
         <Modal
-          visible={editUtilityPurchaseModal}
+          open={editUtilityPurchaseModal}
           onOk={() => setEditUtilityPurchaseModal(false)}
           onCancel={() => setEditUtilityPurchaseModal(false)}
           width={1000}
@@ -322,7 +322,7 @@ function CostTracker({
         />
 
         <Modal
-          visible={editIppPurchaseModal}
+          open={editIppPurchaseModal}
           onOk={() => setEditIppPurchaseModal(false)}
           onCancel={() => setEditIppPurchaseModal(false)}
           width={1000}

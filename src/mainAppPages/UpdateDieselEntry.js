@@ -83,10 +83,9 @@ function UpdateDieselEntry({ match, setModal, reloadTableLists, dieselEntryData,
     defaultBranch = branchId
   }
 
-  let generatorList
-  if (holdBranchGenerators) {
-    generatorList = holdBranchGenerators.flat()
-  }
+  const generatorList = Array.isArray(holdBranchGenerators)
+  ? holdBranchGenerators.flat()
+  : [];
 
   const onUsedTrackerSubmit = async ({ start_date, end_date, quantity, fuelType, generator_name }) => {
     if (!defaultBranch) {
@@ -196,12 +195,13 @@ function UpdateDieselEntry({ match, setModal, reloadTableLists, dieselEntryData,
                     hasFeedback
                     validateTrigger={["onChange", "onBlur"]}
                   >
-                    <Select placeholder="Select Generator">
-                      {generatorList.map((gen) => (
-                        <Option key={gen.device_id} value={gen.device_id}>
-                          {gen.name}
-                        </Option>
-                      ))}
+                    <Select placeholder="Select Generator" loading={!generatorList.length}>
+                      {generatorList.length > 0 &&
+                        generatorList.map((gen) => (
+                          <Option key={gen.device_id} value={gen.device_id}>
+                            {gen.name}
+                          </Option>
+                        ))}
                     </Select>
                   </Form.Item>
                 </div>
