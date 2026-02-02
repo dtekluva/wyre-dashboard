@@ -1077,15 +1077,24 @@ function Report() {
     message.loading({ content: "Generating PDF...", key: "pdfDownload" });
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Longer delay so charts (Chart.js) finish rendering on slower devices (e.g. iPad)
+      await new Promise((resolve) => setTimeout(resolve, 1200));
 
       const element = reportRef.current;
+
+      // Use lower scale on tablet/mobile to avoid Safari canvas size limits (~16MP)
+      const isTabletOrMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+      const isIOS = typeof navigator !== "undefined" && /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const scale = isIOS || isTabletOrMobile ? 1.5 : 2;
+
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale,
         useCORS: true,
         backgroundColor: "#fff",
         windowWidth: element.scrollWidth,
         windowHeight: element.scrollHeight,
+        logging: false,
+        imageTimeout: 15000,
       });
 
       const imgData = canvas.toDataURL("image/png");
