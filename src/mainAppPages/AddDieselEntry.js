@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import ColumnGroup from 'antd/lib/table/ColumnGroup';
 import Column from 'antd/lib/table/Column';
-import { notification, Form, Spin, DatePicker, Select, Table, Dropdown, Menu, Space, Popconfirm, Modal, Button } from 'antd';
+import { notification, Form, Spin, DatePicker, Table, Dropdown, Menu, Space, Popconfirm, Modal, Button } from 'antd';
 import { EditOutlined, DownOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { useSelector } from 'react-redux';
@@ -12,13 +12,13 @@ import BreadCrumb from '../components/BreadCrumb';
 import Loader from '../components/Loader';
 import { addFuelConsumptionData, addMonthlyFuelConsumptionData, fetchDieselDailyUsageData, fetchDieselMonthlyUsageData, fetchFuelConsumptionData, getBranchGeneratorsData } from '../redux/actions/constTracker/costTracker.action';
 import { DateField, NumberField, NumberFieldAcceptZero, SelectField, SelectGenerator } from '../components/FormFields/GeneralFormFields';
-import { Option } from 'antd/lib/mentions';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import UpdateDieselEntry from './UpdateDieselEntry';
 import UpdateMonthlyDieselEntry from './UpdateMonthlyDieselEntry';
+import { Select } from 'antd';
 
-
+const { Option } = Select;
 const { RangePicker } = DatePicker
 
 const breadCrumbRoutes = [
@@ -413,12 +413,12 @@ function AddDieselEntry({
               <Select
                 placeholder="Select Entry Type"
                 size="large"
-                style={{ width: 280 }}
+                // style={{ width: 280 }}
                 onChange={setEntryType}
                 value={entryType}
               >
-                <Option value="daily">Daily Entry</Option>
-                <Option value="monthly">Monthly Entry</Option>
+                <Select.Option value="daily">Daily Entry</Select.Option>
+                <Select.Option value="monthly">Monthly Entry</Select.Option>
               </Select>
             </div>
 
