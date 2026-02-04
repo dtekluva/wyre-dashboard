@@ -79,6 +79,24 @@ function AddDieselEntry({
   );
 
   const isOperator = userData.role_text === "OPERATOR";
+  
+  const disableFutureDates = (current) =>
+    current && current > moment().endOf("day");
+
+  /**
+   * Locks the range to the same month & year as the first selected date
+   */
+  const disableDifferentMonthYear = (current, selectedDates) => {
+    if (!selectedDates || !selectedDates[0]) return false;
+
+    const start = selectedDates[0];
+
+    return (
+      current.month() !== start.month() ||
+      current.year() !== start.year() ||
+      current > moment().endOf("day")
+    );
+  };
 
   const canEditRecord = (recordTime) => {
     if (!recordTime) return false;
@@ -460,6 +478,8 @@ function AddDieselEntry({
                               size="large"
                               style={{ width: "100%" }}
                               format="DD-MMM-YYYY"
+                              disabledDate={disableFutureDates}
+                              inputReadOnly
                               onChange={(date) => {
                                 if (date) {
                                   const currentTo = dailyForm.getFieldValue("to_date");
@@ -487,10 +507,12 @@ function AddDieselEntry({
                               size="large"
                               style={{ width: "100%" }}
                               format="DD-MMM-YYYY"
-                              disabledDate={(current) => {
-                                const fromDate = dailyForm.getFieldValue("from_date");
-                                return fromDate && current && current.isBefore(fromDate, "day");
-                              }}
+                              // disabledDate={(current) => {
+                              //   const fromDate = dailyForm.getFieldValue("from_date");
+                              //   return fromDate && current && current.isBefore(fromDate, "day");
+                              // }}
+                              disabledDate={disableFutureDates}
+                              inputReadOnly
                             />
                           </Form.Item>
                         </div>
@@ -584,6 +606,8 @@ function AddDieselEntry({
                               size="large"
                               style={{ width: "100%" }}
                               format="DD-MMM-YYYY"
+                              // disabledDate={disableFutureDates}
+                              inputReadOnly
                             />
                           </Form.Item>
                         </div>
