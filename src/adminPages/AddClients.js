@@ -1,5 +1,5 @@
-import React, { useEffect, useContext } from 'react';
-import { Button, DatePicker, Select, Upload } from 'antd';
+import { useEffect, useContext } from 'react';
+import { Button, Upload } from 'antd';
 import CompleteDataContext from '../Context';
 
 import { Input, Form } from 'antd';

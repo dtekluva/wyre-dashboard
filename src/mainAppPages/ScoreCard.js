@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState, useMemo } from "react";
+import { useEffect, useContext, useState, useMemo } from "react";
 import CompleteDataContext from "../Context";
 
 import { fetchPowerFactor } from "../redux/actions/powerFactor/powerFactor.action";

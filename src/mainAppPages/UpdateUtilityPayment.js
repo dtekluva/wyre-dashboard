@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { notification, Form, Spin } from 'antd';
 
 import CompleteDataContext from '../Context';
@@ -32,10 +32,10 @@ function UpdateUtilityPayment({ match, utilityPurchaseData, updatePrepaidUtility
   const [prePaidForm] = Form.useForm();
   const [postPaidForm] = Form.useForm();
   const [EOMBalanceForm] = Form.useForm();
-  const [badFileHeader, setBadFileHeader] = React.useState(false);
-  const [prePaidLoading] = React.useState(false);
-  const [postPaidLoading] = React.useState(false);
-  const [EOMFlowReadingLoading] = React.useState(false);
+  const [badFileHeader, setBadFileHeader] = useState(false);
+  const [prePaidLoading] = useState(false);
+  const [postPaidLoading] = useState(false);
+  const [EOMFlowReadingLoading] = useState(false);
 
   const { setCurrentUrl, organization, userId } = useContext(
     CompleteDataContext

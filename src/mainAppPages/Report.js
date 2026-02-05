@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Image, Card, Table, Select, Spin, Button, message } from "antd";
 import { useSelector } from "react-redux";
 import { fetchReportData } from "../report/reportApi";

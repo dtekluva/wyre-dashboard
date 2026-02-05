@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import Billing from '../mainAppPages/Billing';
@@ -25,7 +24,6 @@ import Sidebar from '../components/Sidebar';
 import TopBar from '../components/AppTopBar';
 import LoadOverview from '../mainAppPages/LoadOverview';
 import RevisedAppTopBar from '../components/RevisedAppTopBar';
-import Breakers from '../mainAppPages/Breakers';
 import SolarOverviewPage from '../mainAppPages/SolarOverviewPage';
 import DieselOverviewPage from '../mainAppPages/DieselOverviewPage';
 import AddBills from '../mainAppPages/AddBills';

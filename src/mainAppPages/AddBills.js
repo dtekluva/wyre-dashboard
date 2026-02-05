@@ -5,14 +5,12 @@ import { notification, Form, Spin, message } from 'antd';
 import CompleteDataContext from '../Context';
 
 import billingHttpServices from '../services/bills'
-import axios from 'axios'
 
 
 import BreadCrumb from '../components/BreadCrumb';
 import Loader from '../components/Loader';
 import { DateField, DateRangeField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
 import { SubmitButton } from '../components/FormFields/CostTrackerFields';
-import EnvData from '../config/EnvData';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 
 
@@ -173,34 +171,34 @@ function AddBills({ match }) {
       })
   };
 
-  const onUsedTrackerSubmit = ({ date, balance, flowMeterUpload }) => {
-    if (defaultBranch != null) {
-      setEOMFlowReadingLoading(true);
-      let formData = new FormData()
-      formData.append('branch', defaultBranch)
-      formData.append('quantity', balance)
-      formData.append('date', date.format('YYYY-MM-DD'))
-      formData.append('image', flowMeterUpload[0])
+  // const onUsedTrackerSubmit = ({ date, balance, flowMeterUpload }) => {
+  //   if (defaultBranch != null) {
+  //     setEOMFlowReadingLoading(true);
+  //     let formData = new FormData()
+  //     formData.append('branch', defaultBranch)
+  //     formData.append('quantity', balance)
+  //     formData.append('date', date.format('YYYY-MM-DD'))
+  //     formData.append('image', flowMeterUpload[0])
 
-      axios.post(`${EnvData.REACT_APP_API_URL}add_month_end_cost/${userId}/`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `bearer ${token}`,
-        }
-      }).then(res => {
-        setEOMFlowReadingLoading(false);
-        openNotificationWithIcon('success', 'Form submitted successfully');
-        EOMBalanceForm.resetFields()
-      }).catch(e => {
-        setEOMFlowReadingLoading(false);
-        openNotificationWithIcon('error', 'An error occured,Please try again!!!')
-        EOMBalanceForm.resetFields()
-      })
-    }
-    else {
-      NotAllowedNotification();
-    }
-  }
+  //     axios.post(`${EnvData.REACT_APP_API_URL}add_month_end_cost/${userId}/`, formData, {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //         Authorization: `bearer ${token}`,
+  //       }
+  //     }).then(res => {
+  //       setEOMFlowReadingLoading(false);
+  //       openNotificationWithIcon('success', 'Form submitted successfully');
+  //       EOMBalanceForm.resetFields()
+  //     }).catch(e => {
+  //       setEOMFlowReadingLoading(false);
+  //       openNotificationWithIcon('error', 'An error occured,Please try again!!!')
+  //       EOMBalanceForm.resetFields()
+  //     })
+  //   }
+  //   else {
+  //     NotAllowedNotification();
+  //   }
+  // }
 
   const onUtilityPaymentTrackerPreSubmit = ({
     amount,

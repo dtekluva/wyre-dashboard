@@ -3,7 +3,7 @@ import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const GeneratorStatus2 = ({ genStatusChartData, loader }) => {
-  const { total_fuel_liters, total_runtime, generators=[] } = genStatusChartData && genStatusChartData.data || {}
+  const { total_fuel_liters, total_runtime, generators=[] } = genStatusChartData?.data || {};
   const COLORS = ["#5C12A7", "#FCCC43","#52AC0B"];
   const runHoursData = generators.map((g) => ({
     name: g.name,

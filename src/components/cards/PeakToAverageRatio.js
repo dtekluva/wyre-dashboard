@@ -1,4 +1,4 @@
-import React, { useEffect, useState, } from "react";
+import { useEffect, useState } from "react";
 import { numberFormatter } from "../../helpers/numberFormatter";
 import UpArrowIcon from "../../icons/UpArrowIcon";
 

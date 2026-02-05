@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import CompleteDataContext from '../Context';
 import BreadCrumb from '../components/BreadCrumb';
 import TimeOfUseTable from '../components/tables/TimeOfUseTable';

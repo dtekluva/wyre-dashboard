@@ -6,8 +6,6 @@ import {
   fetchScoreCardSuccess,
   getBaselineEnergyLoading,
   getBaselineEnergySuccess,
-  getFuelConsumptionLoading,
-  getFuelConsumptionSuccess,
   getGeneratorFuelEfficiencyLoading,
   getGeneratorFuelEfficiencySuccess,
   getGeneratorSizeEfficiencyLoading,

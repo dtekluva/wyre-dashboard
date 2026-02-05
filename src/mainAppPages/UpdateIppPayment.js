@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { notification, Form, Spin } from 'antd';
 
 import CompleteDataContext from '../Context';

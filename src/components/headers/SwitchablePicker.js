@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
-import { DatePicker, Select, Space } from 'antd';
-import { changeSearchDateType, changeSearchDate } from '../../redux/actions/report/actionCreators';
+import { DatePicker, Space } from 'antd';
+import { changeSearchDate } from '../../redux/actions/report/actionCreators';
 
 const PickerWithType = ({ type, onChange, defaultData }) =>{
   return <DatePicker style={{height: 40}} defaultValue={defaultData} picker={type} onChange={onChange} />;

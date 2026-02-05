@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import moment from 'moment';
 import { Modal, Table, Dropdown, Popconfirm, Space, notification } from 'antd';
 import { EditOutlined, DownOutlined } from '@ant-design/icons';

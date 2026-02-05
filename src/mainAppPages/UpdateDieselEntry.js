@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { notification, Form, Spin, DatePicker, Select } from 'antd';
 import { connect } from 'react-redux';
 import CompleteDataContext from '../Context';
