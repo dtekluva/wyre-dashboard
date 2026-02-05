@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { numberFormatter } from './numberFormatter';
 
 /* --------------------------------------------------------------------
 /* Completely Generic Helpers ------------------------------------------
@@ -57,10 +56,8 @@ const checkIsGenStatus = (data) => {
 
 const daysInMonth = () => {
   const date = new Date();
-  const currentDate = date.getDate();
   const currentMonth = date.getMonth();
   const currentYear = date.getFullYear();
-  //const numberOfDaysInMonth = new Date(currentYear, currentMonth+1, 0).getDate();
   return new Date(currentYear, currentMonth + 1, 0).getDate();
 }
 

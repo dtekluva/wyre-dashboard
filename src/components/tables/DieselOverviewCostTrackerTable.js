@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { convertDecimalTimeToNormal } from '../../helpers/genericHelpers';
-import { Modal, Table, Typography, Dropdown, Popconfirm, Space, notification } from 'antd';
+import { Modal, Table, Dropdown, Popconfirm, Space, notification } from 'antd';
 import { EditOutlined, DownOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import UpdateDieselEntry from '../../mainAppPages/UpdateDieselEntry';
 import { numberFormatter } from '../../helpers/numberFormatter';
 import { deleteFuelConsumptionData } from '../../redux/actions/constTracker/costTracker.action';
 import { connect } from 'react-redux';
-import ColumnGroup from 'antd/lib/table/ColumnGroup';
 import Column from 'antd/lib/table/Column';
-
-const { Text } = Typography;
 
 const DieselOverviewCostTrackerTable = ({
   dieselOverviewData,

@@ -11,7 +11,7 @@ import axios from 'axios'
 import BreadCrumb from '../components/BreadCrumb';
 import Loader from '../components/Loader';
 import { DateField, DateRangeField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
-import { InputField, SubmitButton, FlowMeterUpload } from '../components/FormFields/CostTrackerFields';
+import { SubmitButton } from '../components/FormFields/CostTrackerFields';
 import EnvData from '../config/EnvData';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 
@@ -43,12 +43,11 @@ function AddBills({ match }) {
   const [ippPurchaseForm] = Form.useForm();
   const [postPaidForm] = Form.useForm();
   const [EOMBalanceForm] = Form.useForm();
-  const [badFileHeader, setBadFileHeader] = React.useState(false);
   const [purchaseLoading, setPurchaseLoading] = React.useState(false);
   const [prePaidLoading, setPrePaidLoading] = React.useState(false);
   const [ippPurchaseLoading, setIppPurchaseLoading] = React.useState(false);
   const [postPaidLoading, setPostPaidLoading] = React.useState(false);
-  const [EOMFlowReadingLoading, setEOMFlowReadingLoading] = React.useState(false);
+  const [, setEOMFlowReadingLoading] = React.useState(false);
 
   const { setCurrentUrl, token, userId, userData } = useContext(
     CompleteDataContext

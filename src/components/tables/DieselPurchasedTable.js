@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { deleteFuelPurchaseData } from '../../redux/actions/constTracker/costTracker.action';
 
 import { notification, Table, Typography, Popconfirm, Dropdown, Space, Menu } from 'antd';
-import { EditOutlined, DownOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { EditOutlined, DownOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import { sortArrayOfObjectByDate } from '../../helpers/genericHelpers';
 import { numberFormatter } from '../../helpers/numberFormatter';

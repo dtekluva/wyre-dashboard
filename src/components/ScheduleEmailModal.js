@@ -302,8 +302,6 @@ export const ScheduleEmailModal = () => {
 
   // STYLING ENDS HERE
 
-  const assignedDevicesForPersonalData = emailModalData && emailModalData.available_devices;
-  const assignedDevicesPersonalData = emailModalData && emailModalData.assigned_devices;
   // const personalDataAssignedDevices = (
   //   <Menu
   //     selectable

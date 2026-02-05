@@ -1,5 +1,4 @@
-import React, {useEffect, useState,} from "react";
-import { numberFormatter } from "../../helpers/numberFormatter";
+import React from "react";
 
 // Tooltips
 import { Tooltip } from 'antd';

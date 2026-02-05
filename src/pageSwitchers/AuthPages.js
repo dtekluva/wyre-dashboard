@@ -11,10 +11,7 @@ import ChangePassword from '../authPages/ChangePassword';
 import ResetPassword from '../authPages/ResetPassword';
 import Error from '../authPages/Error';
 
-import ScrollToTop from '../helpers/ScrollToTop';
-
 import AuthHeader from '../components/AuthHeader';
-import Footer from '../components/Footer';
 
 function AuthPages() {
 

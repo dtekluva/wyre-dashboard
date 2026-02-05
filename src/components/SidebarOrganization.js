@@ -9,7 +9,7 @@ import CompleteDataContext from '../Context';
 
 function SidebarOrganization({ orgData }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { checkedItems,checkedDevices, allDevices } = useContext(
+  const { allDevices } = useContext(
     CompleteDataContext
   );
 
@@ -26,7 +26,7 @@ function SidebarOrganization({ orgData }) {
         }): '';
         // allDevices.length =0
   
-        let deviceNameFilter = orgData.branches.forEach((branch)=> {
+        orgData.branches && orgData.branches.forEach((branch)=> {
         branch.devices.forEach((device)=>{
         allDevices.push({"name": device.name, "id":device.device_id})
         })

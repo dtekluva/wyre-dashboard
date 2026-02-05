@@ -1,16 +1,11 @@
 import React, { useContext } from 'react';
-import { Route, Routes, Redirect, Navigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import CompleteDataContext from '../Context';
 
-import Loader from "../components/Loader";
-
-import AddBills from '../mainAppPages/AddBills';
-import AddEquipment from '../mainAppPages/AddEquipment';
 import Billing from '../mainAppPages/Billing';
 import CostTracker from '../mainAppPages/CostTracker';
 import Dashboard from '../mainAppPages/Dashboard';
-import Messages from '../mainAppPages/Messages';
 import Report from '../mainAppPages/Report';
 import ScoreCard from '../mainAppPages/ScoreCard';
 import Error from '../mainAppPages/Error';
@@ -32,16 +27,13 @@ import Sidebar from '../components/Sidebar';
 import TopBar from '../components/AppTopBar';
 import LoadOverview from '../mainAppPages/LoadOverview';
 import RevisedAppTopBar from '../components/RevisedAppTopBar';
-import AddDieselEntry from '../mainAppPages/AddDieselEntry';
 import Breakers from '../mainAppPages/Breakers';
 import SolarOverviewPage from '../mainAppPages/SolarOverviewPage';
 import DieselOverviewPage from '../mainAppPages/DieselOverviewPage';
 // import Breakers from '../mainAppPages/Breakers';
 
 function MainAppPages() {
-  const { currentUrl, isAuthenticatedDataLoading, deviceData } = useContext(CompleteDataContext);
-
-  const isReportPageOpen = currentUrl.includes('report');
+  const { currentUrl } = useContext(CompleteDataContext);
 
   return (
     <div className="app">

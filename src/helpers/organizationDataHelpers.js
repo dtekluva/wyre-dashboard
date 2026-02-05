@@ -27,7 +27,6 @@ import {
   getNestedAvgDemandObjectKva,
   getNestedMaxDemandObjectKva,
   getNestedMinDemandObjectKVA,
-  sumOperatingTimeEnergyTotal,
 } from './genericHelpers';
 
 
@@ -48,7 +47,7 @@ const getOrganizationDailyKwh = (data) => {
       const allDevicesDailyKwh = Object.values(rest);
       const eachDeviceDailyKwh = eachBranch.daily_kwh
       organizationDailyKwh = eachDeviceDailyKwh
-      const branchDailyKwh = sumArrayOfArrays(allDevicesDailyKwh);
+      sumArrayOfArrays(allDevicesDailyKwh);
       // organizationDailyKwh.dates = dates;
       // organizationDailyKwh[eachBranch.name] = branchDailyKwh;
     });
@@ -56,7 +55,7 @@ const getOrganizationDailyKwh = (data) => {
   // Add total
   const { dates, ...rest } = organizationDailyKwh;
   const allBranchesDailyKwh = Object.values(rest);
-  const totalOrganizationDailyKwh = sumArrayOfArrays(allBranchesDailyKwh);
+  sumArrayOfArrays(allBranchesDailyKwh);
   // organizationDailyKwh[data.name] = totalOrganizationDailyKwh;
   return organizationDailyKwh;
 };

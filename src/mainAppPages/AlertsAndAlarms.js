@@ -1,5 +1,3 @@
-import moment from 'moment';
-import HiddenInputLabel from '../smallComponents/HiddenInputLabel';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import { getAlertAndAlarm, setAlertAndAlarm } from '../redux/actions/alertsAndAlarm/alertsAndAlarm.action';
 import { connect } from 'react-redux';
@@ -20,7 +18,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const [generator_data, setGenerator_data] = useState([]);
   const isOperator = userData.role_text === 'OPERATOR';
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: preloadedAlertsFormData,
   });
 
@@ -45,11 +43,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
 
   const openNotification = (type, title, desc) => {
     notification[type]({ message: title, description: desc, duration: 6 });
-  };
-
-  const formatIntInputs = (e) => {
-    const val = parseFloat(e.target.value);
-    return isNaN(val) ? '' : val;
   };
 
   const handleAlertsSubmit = async () => {

@@ -5,7 +5,7 @@ import { EditOutlined, DownOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import { sortArrayOfObjectByDate } from '../../helpers/genericHelpers';
 
-import { deleteIppPaymentData, deletePrepaidUtilityPaymentData } from '../../redux/actions/constTracker/costTracker.action';
+import { deleteIppPaymentData } from '../../redux/actions/constTracker/costTracker.action';
 import { connect } from 'react-redux';
 
 
@@ -74,7 +74,6 @@ const IppPurchasedTable = ({ data, userId, setEditIppPurchaseModal, setIppPurcha
     title: 'Options',
     width: '10%',
     render: (_, record) => {
-      const items = itemData(record);
       return (
         <Dropdown
           trigger={["click"]}

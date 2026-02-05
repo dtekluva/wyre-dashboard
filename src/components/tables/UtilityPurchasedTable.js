@@ -76,7 +76,6 @@ const UtilityPurchasedTable = ({ data, userId, role, setEditUtilityPurchaseModal
     title: 'Options',
     width: '10%',
     render: (_, record) => {
-      const items = itemData(record);
       return (
         <Dropdown
           trigger={["click"]}

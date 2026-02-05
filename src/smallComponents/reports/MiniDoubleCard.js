@@ -1,6 +1,5 @@
 import ReportWithRate from './ReportWithRate';
 
-import { roundToDecimalPLace } from '../../helpers/genericHelpers';
 
 const colorSelector = {
   paprScore: { backgroundColor: '#FFECF6', color: '#FF3DA1'}

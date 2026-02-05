@@ -1,8 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
 import CompleteDataContext from '../Context';
-import { CSVLink } from "react-csv";
-import { notification } from "antd"
-
 import {
   formatParametersDatetimes,
   formatParametersDates,
@@ -20,7 +17,6 @@ import Loader from '../components/Loader';
 import ExcelIcon from '../icons/ExcelIcon';
 import ExportToCsv from '../components/ExportToCsv';
 import { exportToExcel } from '../helpers/exportToFile';
-import jsPDF from "jspdf";
 import { connect, useSelector } from 'react-redux';
 import { fetchPowerDemandData } from '../redux/actions/parameters/parameter.action';
 import { devicesArray } from '../helpers/v2/organizationDataHelpers';
@@ -43,9 +39,7 @@ function PowerDemand({ match, fetchPowerDemandData }) {
     userDateRange,
     checkedBranchId,
     checkedDevicesId,
-    refinedRenderedData,
     setCurrentUrl,
-    isAuthenticatedDataLoading,
   } = useContext(CompleteDataContext);
 
   useEffect(() => {
@@ -191,9 +185,6 @@ function PowerDemand({ match, fetchPowerDemandData }) {
       { label: `Average ${powerDemandUnit}`, key: "avg" },
     ]
     XLSXHeaders = [["Index", "Date", "Time", "Source", `Minimum ${powerDemandUnit}`,
-      `Maximum ${powerDemandUnit}`, `Average ${powerDemandUnit}`]
-    ]
-    PDFHeaders = [["Index", "Date", "Time", "Source", `Minimum ${powerDemandUnit}`,
       `Maximum ${powerDemandUnit}`, `Average ${powerDemandUnit}`]
     ]
   }

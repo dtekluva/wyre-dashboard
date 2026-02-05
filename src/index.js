@@ -3,8 +3,6 @@ import { createRoot } from 'react-dom/client';
 
 import { Provider } from 'react-redux';
 
-import path from 'path-browserify';
-
 // import 'antd/dist/antd.css';
 import './css/custom-antd.css';
 import './css/style.css';

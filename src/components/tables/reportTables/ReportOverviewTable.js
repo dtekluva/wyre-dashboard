@@ -1,8 +1,6 @@
 import React from 'react';
 import { Table, Typography } from 'antd';
 
-import { numberFormatter } from '../../../helpers/numberFormatter';
-
 const { Text } = Typography;
 
 function ReportOverviewTable({ data }) {

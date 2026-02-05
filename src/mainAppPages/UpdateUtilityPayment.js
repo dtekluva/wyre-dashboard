@@ -33,9 +33,9 @@ function UpdateUtilityPayment({ match, utilityPurchaseData, updatePrepaidUtility
   const [postPaidForm] = Form.useForm();
   const [EOMBalanceForm] = Form.useForm();
   const [badFileHeader, setBadFileHeader] = React.useState(false);
-  const [prePaidLoading, setPrePaidLoading] = React.useState(false);
-  const [postPaidLoading, setPostPaidLoading] = React.useState(false);
-  const [EOMFlowReadingLoading, setEOMFlowReadingLoading] = React.useState(false);
+  const [prePaidLoading] = React.useState(false);
+  const [postPaidLoading] = React.useState(false);
+  const [EOMFlowReadingLoading] = React.useState(false);
 
   const { setCurrentUrl, organization, userId } = useContext(
     CompleteDataContext
