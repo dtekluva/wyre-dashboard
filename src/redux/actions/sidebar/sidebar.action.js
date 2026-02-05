@@ -6,13 +6,6 @@ export const fetchSideBar = () => async (dispatch) => {
   dispatch(fetchSideBarLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let token;
-  if (loggedUserJSON) {
-    const userToken = JSON.parse(loggedUserJSON);
-    if (userToken.access) {
-      token = userToken.access;
-    }
-  }
   const requestUrl = `side_bar_data`
   try {
     const response = await APIService.get(requestUrl);

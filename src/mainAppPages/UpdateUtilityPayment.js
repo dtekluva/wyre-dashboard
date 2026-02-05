@@ -96,7 +96,7 @@ function UpdateUtilityPayment({ match, utilityPurchaseData, updatePrepaidUtility
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match, userId]);
+  }, [match, userId, setCurrentUrl]);
 
   useEffect(() => {
     prePaidForm.setFieldsValue({
@@ -105,7 +105,7 @@ function UpdateUtilityPayment({ match, utilityPurchaseData, updatePrepaidUtility
       tariff: utilityPurchaseData.tariff,
       value: utilityPurchaseData.value
     })
-  }, [])
+  }, [utilityPurchaseData, prePaidForm])
 
   useEffect(() => {
     postPaidForm.setFieldsValue({
@@ -115,7 +115,7 @@ function UpdateUtilityPayment({ match, utilityPurchaseData, updatePrepaidUtility
       tariff: utilityPurchaseData.tariff,
       value: utilityPurchaseData.value
     })
-  }, [])
+  }, [utilityPurchaseData, postPaidForm])
 
 
   let defaultBranch;

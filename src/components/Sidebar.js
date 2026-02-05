@@ -36,7 +36,7 @@ function Sidebar({ fetchSideBar: fetchSideBarData }) {
     if (!sideBarData || !sideBarData.name) {
       fetchSideBarData();
     }
-  }, []);
+  }, [sideBarData, fetchSideBarData]);
 
   useEffect(() => {
     const loggedUserJSON = localStorage.getItem("loggedWyreUser");

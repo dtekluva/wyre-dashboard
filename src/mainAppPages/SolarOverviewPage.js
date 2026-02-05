@@ -522,7 +522,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
     fetchConsumptionsData(today, day);
     fetchPvProductionData(today, day);
     fetchBatterySystemData(today, day);
-  }, []);
+  }, [fetchWeatherReadingsData, fetchComponentsTableData, fetchInverterGridsData, fetchConsumptionsData, fetchPvProductionData, fetchBatterySystemData]);
 
   useEffect(() => {
     if (solar) {  

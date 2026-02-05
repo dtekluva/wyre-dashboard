@@ -62,7 +62,7 @@ function UpdateDieselEntry({ match, setModal, reloadTableLists, dieselEntryData,
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match, userId]);
+  }, [match, userId, setCurrentUrl]);
 
   useEffect(() => {
     if (dieselEntryData) {
@@ -75,7 +75,7 @@ function UpdateDieselEntry({ match, setModal, reloadTableLists, dieselEntryData,
         fuel_consumption_id: dieselEntryData.fuel_consumption_id
       })
     }
-  }, [dieselEntryData])
+  }, [dieselEntryData, dailyForm])
 
 
   let defaultBranch;

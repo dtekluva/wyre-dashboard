@@ -48,7 +48,7 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
 
   useEffect(() => {
     fetchEnergyConsumptionData(userDateRange)
-  }, []);
+  }, [fetchEnergyConsumptionData, userDateRange]);
 
   useEffect(() => {
       if (!pageLoaded && isEmpty(parametersData || {})) {
@@ -59,7 +59,7 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
         fetchEnergyConsumptionData(userDateRange);
       }
       setPageLoaded(true);
-  }, [userDateRange]);
+  }, [userDateRange, fetchEnergyConsumptionData, pageLoaded, parametersData]);
   
   useEffect(() => {
       if (pageLoaded && parametersData.fetchedEnergyConsumption) {
@@ -69,7 +69,7 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
         setEnergyConsumptionData(openDevicesArrayData)
       }
       setPageLoaded(true);
-  }, [parametersData.fetchedEnergyConsumption, checkedBranchId, checkedDevicesId.length]);
+  }, [parametersData.fetchedEnergyConsumption, checkedBranchId, checkedDevicesId.length, checkedDevicesId, pageLoaded]);
 
   const useEnergyConsumptionData = energyConsumptionData.map((deviceDetails) => {
     const { name, energy_consumption } = deviceDetails

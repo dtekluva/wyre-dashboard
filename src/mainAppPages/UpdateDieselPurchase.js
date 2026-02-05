@@ -95,7 +95,7 @@ function UpdateDieselPurchase({ match, dieselPurchaseData, updateFuelPurchaseDat
         price_per_litre: dieselPurchaseData.price_per_litre,
         date: moment(dieselPurchaseData.date)
     })
-  }, [dieselPurchaseData])
+  }, [dieselPurchaseData, dieslePurchaseForm])
 
   // const onAmountOrValueChange = (event) => {
   //   const { amount, value } = prePaidForm.getFieldsValue(true);

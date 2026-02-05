@@ -47,7 +47,7 @@ const FuelUsageBreakupCard = ({ genFuelUsageData, fetchGenFuelUsageData, diesel,
 
       return row;
     });
-  }, [genFuelUsageData, frequency]);
+  }, [genFuelUsageData, frequency, devices]);
 
   const palette = ["#5C12A7", "#FCCC43", "#52AC0B", "#FF6B6B"];
 

@@ -44,7 +44,7 @@ function NewAppTopBar() {
       timeTo: selectedDate[1],
     })
 
-  }, [selectedDate]);
+  }, [selectedDate, form]);
 
 
   const setDateValueOnSelect = (startDate, endDate) => {
