@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import CompleteDataContext from '../../Context';
 import { convertDecimalTimeToNormal } from '../../helpers/genericHelpers';

@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import CompleteDataContext from '../Context';
 import {
   formatParametersDatetimes,
@@ -92,7 +92,7 @@ function PowerDemand({ match, fetchPowerDemandData }) {
 
   let chartDemandValues, chartDates, chartDeviceNames, chartTooltipValues;
   let powerDemandUnit, powerDemandTableDataClone, arrayOfTableValues, formattedTableDataWithIndex;
-  let tableHeadings, csvHeaders, XLSXHeaders, PDFHeaders, arrayOfFormattedTableData, formattedTableData;
+  let tableHeadings, csvHeaders, XLSXHeaders, arrayOfFormattedTableData, formattedTableData;
   if (power_demand) {
 
     chartDemandValues =
@@ -250,12 +250,6 @@ function PowerDemand({ match, fetchPowerDemandData }) {
 const mapDispatchToProps = {
   fetchPowerDemandData
 };
-const mapStateToProps = (state) => ({
-  parameters: state.parametersReducer,
-  sideBar: state.sideBar,
-  powerFactor: state.powerFactor,
-  dashboard: state.dashboard,
-}
-);
+const mapStateToProps = () => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(PowerDemand);

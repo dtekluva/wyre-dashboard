@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import {
   LineChart,
@@ -165,7 +165,7 @@ const handleMonthlyView = () => {
                 {devices.map((device, i) => {
                   const colorKwh = palette[(i * 1 + 2) % palette.length];
                   return (
-                    <React.Fragment key={device.device_id || device.name}>
+                    <Fragment key={device.device_id || device.name}>
                       <Line
                         yAxisId="left"
                         type="monotone"
@@ -180,7 +180,7 @@ const handleMonthlyView = () => {
                         stroke="none"
                         dot={false}
                       />
-                    </React.Fragment>
+                    </Fragment>
                   );
                 })}
               </LineChart>

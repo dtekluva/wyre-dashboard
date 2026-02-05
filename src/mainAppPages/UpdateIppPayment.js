@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { notification, Form, Spin } from 'antd';
 
 import CompleteDataContext from '../Context';
@@ -145,7 +145,7 @@ function UpdateIppPayment({ match, ippPurchaseData, updateIppPaymentData:editIpp
 
           <h1 className="center-main-heading">Edit Payment Bills</h1>
           <section className="cost-tracker-form-section">
-          <Spin spinning={ippLoading}>
+          <Spin>
             <h2 className="form-section-heading">
               IPP Payment Tracker 
             </h2>

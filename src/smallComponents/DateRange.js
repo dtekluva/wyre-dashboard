@@ -1,18 +1,12 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import dayjs from 'dayjs';
 import moment from 'moment';
 import CompleteDataContext from '../Context';
 
-// import { useLocation } from 'react-router-dom';
-
-import dataHttpServices from '../services/devices';
 
 const DateRange = () => {
   const { selectedDateRange, userDateRange, organization } = useContext(CompleteDataContext)
   const scoreCardDate = organization.score_cards_date;
-
-  const defaultDateRange = dataHttpServices.endpointDateRange;
-  const defaultStartDate = defaultDateRange.split(' ');
 
   const dateRangeStyles = {
     color: '#646464',

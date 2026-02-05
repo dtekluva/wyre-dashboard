@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import CompleteDataContext from '../../Context';
 import { Table, notification, Typography, Dropdown, Popconfirm, Space, Menu } from 'antd';
 import { EditOutlined, DownOutlined } from '@ant-design/icons';
@@ -36,41 +36,6 @@ const UtilityPurchasedTable = ({ data, userId, role, setEditUtilityPurchaseModal
       openNotificationWithIcon('success', 'Utility purchase tracker');
     }
   };
-
-  const itemData = (record) => {
-    return [
-      {
-        key: '1',
-        label: (
-          <>
-            <EditOutlined />
-            <a target="_blank" onClick={(e) => {
-              e.preventDefault();
-              setEditUtilityPurchaseModal(true);
-              setUtilityPurchaseData(record)
-            }} rel="noopener noreferrer">
-              Edit Utility Purchase
-            </a>
-          </>
-
-        ),
-      },
-      {
-        key: '2',
-        label: (<> {
-          <>
-            <Icon icon="ant-design:delete-outlined" />
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
-              <a>Delete Utility Purchase</a>
-            </Popconfirm>
-          </>
-        }
-        </>
-
-        ),
-      }
-    ];
-  }
 
   const optionsColumn = () => ({
     title: 'Options',
@@ -191,7 +156,7 @@ const UtilityPurchasedTable = ({ data, userId, role, setEditUtilityPurchaseModal
         className='table-striped-rows utitily-overview-table'
         rowKey={(record) => record.id}
         scroll={isMediumScreen && { x: 600, y: 300 }}
-        summary={pageData => {
+        summary={() => {
 
           return (
             <>

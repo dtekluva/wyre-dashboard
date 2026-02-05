@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState } from "react";
 import { connect, useSelector } from "react-redux";
 
 import CompleteDataContext from "../Context";
@@ -407,7 +407,7 @@ function CostTracker({
         {DieselOverViewCharts}
         {UtilityOverViewCharts}
         {/* {IppOverViewCharts} */}
-        {userData && userData.client_type == "RESELLER"
+        {userData && userData.client_type === "RESELLER"
           ? IppOverViewCharts
           : ""}
       </section>
@@ -422,7 +422,7 @@ function CostTracker({
         {utilityPurchasedCharts}
       </section>
 
-      {userData && userData.client_type == "RESELLER" ? (
+      {userData && userData.client_type === "RESELLER" ? (
         <section className="cost-tracker-section">
           <h2 className="h-screen-reader-text">Quantity of IPP Payments</h2>
           {IppPurchasedCharts}

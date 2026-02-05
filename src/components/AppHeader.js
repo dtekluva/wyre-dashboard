@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CompleteDataContext from '../Context';
 
@@ -30,7 +30,6 @@ function Header() {
     setIsSidebarOpen,
     setUserData,
     organization,
-    currentUrl,
     userData,
     setEmailModalData,
   } = useContext(CompleteDataContext);
@@ -75,21 +74,6 @@ function Header() {
     setUserData(undefined);
     setEmailModalData(undefined)
   };
-
-  // const isOrganisationSapio =
-  //   organisationName && organisationName.includes('Sapio');
-
-  var restricted_devices = ["Sapio", "Durosinmi", "Alpha"];
-
-  const checkOrganizationHasAccess = ((organization) => {
-
-    // run the tests against every element in the array
-    if (organization) {
-      return restricted_devices.some(el => organization.includes(el));
-    }
-
-  });
-
 
   const renderComp = () => {
     switch (userData.client_type) {

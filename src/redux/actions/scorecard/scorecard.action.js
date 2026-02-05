@@ -6,8 +6,6 @@ import {
   fetchScoreCardSuccess,
   getBaselineEnergyLoading,
   getBaselineEnergySuccess,
-  getFuelConsumptionLoading,
-  getFuelConsumptionSuccess,
   getGeneratorFuelEfficiencyLoading,
   getGeneratorFuelEfficiencySuccess,
   getGeneratorSizeEfficiencyLoading,
@@ -28,14 +26,12 @@ export const fetchScoreCardData = (userDateRange) => async (dispatch) => {
   dispatch(fetchScoreCardLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
     token = userToken.access;
   }
@@ -59,14 +55,12 @@ export const fetchBaselineEnergyData = (userDateRange) => async (dispatch) => {
   dispatch(getBaselineEnergyLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let token;
   let branchId;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
     token = userToken.access;
   }
@@ -90,14 +84,12 @@ export const fetchPAPRData = (userDateRange) => async (dispatch) => {
   dispatch(getPAPRLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
     token = userToken.access;
   }
@@ -121,14 +113,12 @@ export const fetchScorecardCarbonEmissionData = (userDateRange) => async (dispat
   dispatch(getScorecardCarbonEmissionLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
     token = userToken.access;
   }
@@ -153,14 +143,12 @@ export const fetchGeneratorSizeEfficiencyData = (userDateRange) => async (dispat
   dispatch(getGeneratorSizeEfficiencyLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
     token = userToken.access;    
   }
@@ -184,14 +172,12 @@ export const fetchGeneratorFuelEfficiencyData = (userDateRange) => async (dispat
   dispatch(getGeneratorFuelEfficiencyLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
     token = userToken.access;    
   }
@@ -215,14 +201,12 @@ export const fetchScorecardOperatingTimeData = (userDateRange) => async (dispatc
   dispatch(getOperatingTimeDeviationLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;    
     token = userToken.access;
   }

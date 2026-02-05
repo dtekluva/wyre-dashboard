@@ -1,4 +1,3 @@
-import React from 'react'
 import { Table, Typography } from 'antd';
 import { numberFormatter } from '../../helpers/numberFormatter';
 

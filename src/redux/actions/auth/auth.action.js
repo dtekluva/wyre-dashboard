@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { logoutUser, getPermittedBranchesLoading, getPermittedBranchesSuccess, switchBranchLoading, switchBranchSuccess } from "./actionCreators";
 import EnvData from '../../../config/EnvData';
-import { jwtDecode } from 'jwt-decode';
 
 
 export const logoutUserFromRedux = () => async (dispatch) => {
@@ -28,7 +27,6 @@ export const changePassword = async (data) => {
   try {
     const requestUrl = EnvData.REACT_APP_API_URL + 'reset_password/';
     if (localStorage.loggedWyreUser) {
-      const user = JSON.parse(localStorage.loggedWyreUser);
       const response = await axios.post(requestUrl, data);
 
       return { fulfilled: true, message: response.data.message }
@@ -44,18 +42,15 @@ export const getPermittedBranches = () => async (dispatch) => {
   dispatch(getPermittedBranchesLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let token;
 
   if (loggedUserJSON) {
     try {
       const userToken = JSON.parse(loggedUserJSON);
       if (userToken.access) {
-        const user = jwtDecode(userToken.access);
-        userId = user.id;
         token = userToken.access;
       }
-    } catch (parseError) {
+    } catch (_parseError) {
       dispatch(getPermittedBranchesLoading(false));
       return;
     }
@@ -100,7 +95,7 @@ export const switchBranch = (branchId) => async (dispatch) => {
       if (userToken.access) {
         token = userToken.access;
       }
-    } catch (parseError) {
+    } catch (_parseError) {
       dispatch(switchBranchLoading(false));
       return;
     }

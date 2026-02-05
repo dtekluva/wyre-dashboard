@@ -75,7 +75,7 @@ const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings, pDeman
                         fontColor: 'black',
                         fontSize: isMediumScreen ? 14 : 18,
                     },
-                },
+                }
         },
     };
 

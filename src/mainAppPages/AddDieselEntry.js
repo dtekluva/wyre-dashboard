@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { notification, Form, Spin, DatePicker, Select, Table, Modal, Button } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
@@ -8,12 +8,11 @@ import CompleteDataContext from '../Context';
 import moment from 'moment'; 
 import BreadCrumb from '../components/BreadCrumb';
 import Loader from '../components/Loader';
-import { addFuelConsumptionData, addMonthlyFuelConsumptionData, fetchDieselDailyUsageData, fetchDieselMonthlyUsageData, fetchFuelConsumptionData, getBranchGeneratorsData } from '../redux/actions/constTracker/costTracker.action';
+import { addFuelConsumptionData, addMonthlyFuelConsumptionData, fetchDieselDailyUsageData, fetchDieselMonthlyUsageData, getBranchGeneratorsData } from '../redux/actions/constTracker/costTracker.action';
 import { NumberField, NumberFieldAcceptZero, SelectField } from '../components/FormFields/GeneralFormFields';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import UpdateDieselEntry from './UpdateDieselEntry';
 import UpdateMonthlyDieselEntry from './UpdateMonthlyDieselEntry';
-import { Select } from 'antd';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker
@@ -54,8 +53,6 @@ function AddDieselEntry({
   getBranchGeneratorsData,
   fetchDieselDailyUsageData,
   fetchDieselMonthlyUsageData,
-  fetchFuelConsumptionData: fetchFuelConsumptionInfo,
-  deleteFuelConsumptionData: deleteDieselEntry
 }) {
   const [entryType, setEntryType] = useState(null);
   const [dailyForm] = Form.useForm();
@@ -78,20 +75,6 @@ function AddDieselEntry({
   const disableFutureDates = (current) =>
     current && current > moment().endOf("day");
 
-  /**
-   * Locks the range to the same month & year as the first selected date
-   */
-  const disableDifferentMonthYear = (current, selectedDates) => {
-    if (!selectedDates || !selectedDates[0]) return false;
-
-    const start = selectedDates[0];
-
-    return (
-      current.month() !== start.month() ||
-      current.year() !== start.year() ||
-      current > moment().endOf("day")
-    );
-  };
 
   const canEditRecord = (recordTime) => {
     if (!recordTime) return false;
@@ -213,7 +196,7 @@ function AddDieselEntry({
     return moment(dateA).toDate() - moment(dateB).toDate();
   };
 
-  const fetchDailyFuelData = async (date) => {
+  const fetchDailyFuelData = async () => {
     setModalData(false)
     setModalOpener(true);
     setFuelDataLoading(true);
@@ -239,7 +222,7 @@ function AddDieselEntry({
     setFuelDataLoading(false);
   }
 
-  const fetchMonthlyFuelData = async (date) => {
+  const fetchMonthlyFuelData = async () => {
     setModalDataMonthly(false)
     setModalOpener(true);
     setFuelDataLoading(true);
@@ -665,7 +648,6 @@ const mapDispatchToProps = {
   addFuelConsumptionData,
   getBranchGeneratorsData,
   addMonthlyFuelConsumptionData,
-  fetchFuelConsumptionData,
   fetchDieselDailyUsageData,
   fetchDieselMonthlyUsageData
 };

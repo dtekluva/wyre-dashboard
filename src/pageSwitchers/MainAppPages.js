@@ -1,7 +1,4 @@
-import React, { useContext } from 'react';
-import { Route, Routes } from 'react-router-dom';
-
-import CompleteDataContext from "../Context";
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import Billing from '../mainAppPages/Billing';
 import CostTracker from '../mainAppPages/CostTracker';
@@ -27,14 +24,13 @@ import Sidebar from '../components/Sidebar';
 import TopBar from '../components/AppTopBar';
 import LoadOverview from '../mainAppPages/LoadOverview';
 import RevisedAppTopBar from '../components/RevisedAppTopBar';
-import Breakers from '../mainAppPages/Breakers';
 import SolarOverviewPage from '../mainAppPages/SolarOverviewPage';
 import DieselOverviewPage from '../mainAppPages/DieselOverviewPage';
-// import Breakers from '../mainAppPages/Breakers';
+import AddBills from '../mainAppPages/AddBills';
+import AddDieselEntry from '../mainAppPages/AddDieselEntry';
+import AddEquipment from '../mainAppPages/AddEquipment';
 
 function MainAppPages() {
-  const { currentUrl } = useContext(CompleteDataContext);
-
   return (
     <div className="app">
       <div className="sidebar-and-content">

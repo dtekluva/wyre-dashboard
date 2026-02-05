@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useMemo } from 'react';
+import { useEffect, useContext, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CompleteDataContext from '../Context';

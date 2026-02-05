@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Tag, DatePicker, TimePicker, Form, Modal, Space } from 'antd';
 import CompleteDataContext from '../Context';
 import moment from 'moment';
@@ -22,7 +22,6 @@ function NewAppTopBar() {
   const {
     setUserDateRange,
     setSelectedDateRange,
-    currentUrl
   } = useContext(CompleteDataContext);
 
 

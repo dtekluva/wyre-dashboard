@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Table, Input, InputNumber, Popconfirm, Form, Typography, Space, notification} from 'antd';
 import { mergeTheData } from '../../helpers/genericHelpers'
 import equipmentHttpServices from '../../services/equipment'

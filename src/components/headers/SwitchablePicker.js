@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
-import { DatePicker, Select, Space } from 'antd';
-import { changeSearchDateType, changeSearchDate } from '../../redux/actions/report/actionCreators';
+import { DatePicker, Space } from 'antd';
+import { changeSearchDate } from '../../redux/actions/report/actionCreators';
 
 const PickerWithType = ({ type, onChange, defaultData }) =>{
   return <DatePicker style={{height: 40}} defaultValue={defaultData} picker={type} onChange={onChange} />;
@@ -10,7 +10,7 @@ const PickerWithType = ({ type, onChange, defaultData }) =>{
 
 
 const SwitchablePicker = ()=> {
-  const [type, setType] = useState('month');
+  const [type] = useState('month');
   const dispatch = useDispatch();
 
 
@@ -29,7 +29,7 @@ const SwitchablePicker = ()=> {
         <Option value="monthly">Monthly</Option>
         <Option value="yearly">Yearly</Option>
       </Select> */}
-      <PickerWithType type={type} defaultData={defaultDataValue} onChange={(value, _) => onDateSelect(value, type) } />
+      <PickerWithType type={type} defaultData={defaultDataValue} onChange={(value) => onDateSelect(value)} />
     </Space>
   );
 };
