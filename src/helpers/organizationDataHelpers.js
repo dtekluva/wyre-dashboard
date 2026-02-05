@@ -71,7 +71,7 @@ const getOrganizationMonthlyUsage = (data) => {
   // Add data for each branch
   data.branches &&
     data.branches.forEach((eachBranch) => {
-      eachBranch.usage_hours.devices.map((device, index) => {
+      eachBranch.usage_hours.devices.forEach((device, index) => {
         organizationMonthlyUsage.devices.push(device);
         organizationMonthlyUsage.hours.push(eachBranch.usage_hours.hours[index]);
       })

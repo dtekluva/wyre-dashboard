@@ -59,7 +59,7 @@ function AddDieselEntry({
   const [monthlyForm] = Form.useForm();
   const [holdBranchGenerators, setHoldBranchGenerators] = useState([]);
 
-  const [modalOpener, setModalOpener] = useState(false);
+  const [, setModalOpener] = useState(false);
   const [modalData, setModalData] = useState(false);
   const [modalDataMonthly, setModalDataMonthly] = useState(false);
   const [fuelDataLoading, setFuelDataLoading] = useState(false);

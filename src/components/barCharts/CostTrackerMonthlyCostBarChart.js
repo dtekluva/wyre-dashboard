@@ -33,9 +33,7 @@ const CostTrackerMonthlyCostBarChart = ({ DieselData, utilityData, uiSettings })
     const amount = dData.price_per_litre
 
     if (Object.keys(formattedDataForDiesel).includes(dData.date)) {
-      [formattedDataForDiesel].map((d) => {
-        d[dData.date] += amount
-      })
+      formattedDataForDiesel[dData.date] += amount;
     }
     else {
       formattedDataForDiesel = { ...formattedDataForDiesel, [dates]: amount }
