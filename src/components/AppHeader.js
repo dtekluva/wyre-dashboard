@@ -6,7 +6,6 @@ import HeaderLink from '../smallComponents/HeaderLink';
 import HeaderIcon from '../smallComponents/HeaderIcon';
 import HeaderSublink from '../smallComponents/HeaderSublink';
 
-import Logo from '../icons/Logo';
 import Hamburger from '../icons/Hamburger';
 import VerticalDots from '../icons/VerticalDots';
 import MessageIcon from '../icons/MessageIcon';
@@ -20,12 +19,8 @@ import HeaderGroup1AndNav from './groups/HeaderGroup1AndNav';
 import ProfileIcon from '../icons/ProfileIcon';
 import OverviewIcon from '../icons/OverviewIcon';
 import PadlockIcon from '../icons/PadlockIcon';
-import SettingsIcon from '../icons/SettingsIcon';
 import LogoutIcon from '../icons/LogoutIcon';
-import { SCORE_CARD_EXCLUDE_CLIENTS, BESPOKE_ADD_LIST } from '../helpers/constants';
-import DropdownButton from 'antd/lib/dropdown/dropdown-button';
-import { Dropdown } from 'antd';
-import BranchSwitcher from './BranchSwitcher';
+import { BESPOKE_ADD_LIST } from '../helpers/constants';
 
 function Header() {
   const {
@@ -43,8 +38,6 @@ function Header() {
   const [isNavLinkDropdownOpen, setIsNavLinkDropdownOpen] = useState(false);
   const [isMobileAvatarMenuOpen, setIsMobileAvatarMenuOpen] = useState(false);
   const [isDesktopAvatarMenuOpen, setIsDesktopAvatarMenuOpen] = useState(false);
-
-  const isReportPageOpen = currentUrl.includes('report');
 
   const { image: avatarImage, name: organisationName } = organization;
   const isOperator = userData.role_text === "OPERATOR";
@@ -149,9 +142,6 @@ function Header() {
     }
   }
 
-
-  const doesUserHaveAccess =
-    organisationName && checkOrganizationHasAccess(organisationName);
 
   return (
     <header

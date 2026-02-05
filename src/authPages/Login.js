@@ -6,7 +6,6 @@ import { useForm, Controller } from 'react-hook-form';
 
 import CompleteDataContext from '../Context';
 import loginHttpServices from '../services/login';
-import dataHttpServices from '../services/devices';
 
 import HiddenInputLabel from '../smallComponents/HiddenInputLabel';
 import OutlinedInput from '../smallComponents/OutlinedInput';
@@ -14,14 +13,13 @@ import SocialCluster from '../smallComponents/SocialCluster';
 
 // import usePasswordToggle from '../smallComponents/usePasswordToggle'
 import { Input } from 'antd';
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
 
 
 function Login() {
   const [errorMessage, setErrorMessage] = useState(undefined);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const { setUserData } = useContext(CompleteDataContext);
+  useContext(CompleteDataContext);
   const location = useLocation();
   const query = new URLSearchParams(location.search);
 
@@ -55,7 +53,6 @@ function Login() {
       })
     }
   };
-  const onSubmitt = (data, e) => console.log('success', data, e);
   // const onError = (errors, e) => console.log('error', errors, e);
 
   const onError = (errors, e) => {

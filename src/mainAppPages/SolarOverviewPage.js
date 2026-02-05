@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Progress, Select, Tabs, Table, DatePicker, Spin } from "antd";
+import { Card, Row, Col, Select, Tabs, DatePicker, Spin } from "antd";
 import {
   AreaChart,
   Area,
@@ -248,7 +248,6 @@ const FlowDiagram = ({ inverterData }) => {
           const start = nodes[from];
           const end = nodes[to];
           const direction = start && start.direction;
-          const isOutgoing = direction === "OUT";
           const isIdle = direction === "IDLE";
           const isGridOff = start && start.status === "OFF";
 
@@ -481,7 +480,6 @@ const FlowDiagram = ({ inverterData }) => {
    Main SolarOverviewPage
    --------------------------- */
 const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTableData, fetchInverterGridsData, fetchConsumptionsData, fetchPvProductionData, fetchBatterySystemData }) => {
-  const [period, setPeriod] = useState("Select period");
   const [parameters, setParameters] = useState("Parameters");
   const [weatherContentsData, setWeatherContentsData] = useState(null);
   const [tableContentsData, setTableContentsData] = useState(null);

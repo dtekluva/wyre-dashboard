@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import { notification, Form, Spin, message } from 'antd';
+import { notification, Form, Spin } from 'antd';
 import moment from 'moment'
 
 import CompleteDataContext from '../Context';
@@ -7,8 +7,8 @@ import CompleteDataContext from '../Context';
 import billingHttpServices from '../services/bills'
 import axios from 'axios'
 
-import { DateField, DateRangeField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
-import { InputField, SubmitButton, FlowMeterUpload } from '../components/FormFields/CostTrackerFields';
+import { DateField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
+import { SubmitButton } from '../components/FormFields/CostTrackerFields';
 import EnvData from '../config/EnvData';
 import { updateFuelPurchaseData } from '../redux/actions/constTracker/costTracker.action';
 import { connect } from 'react-redux';
@@ -35,9 +35,9 @@ function UpdateDieselPurchase({ match, dieselPurchaseData, updateFuelPurchaseDat
   const [postPaidForm] = Form.useForm();
   const [EOMBalanceForm] = Form.useForm();
   const [purchaseLoading] = React.useState(false);
-  const [prePaidLoading, setPrePaidLoading] = React.useState(false);
-  const [postPaidLoading, setPostPaidLoading] = React.useState(false);
-  const [EOMFlowReadingLoading, setEOMFlowReadingLoading] = React.useState(false);
+  const [, setPrePaidLoading] = React.useState(false);
+  const [, setPostPaidLoading] = React.useState(false);
+  const [, setEOMFlowReadingLoading] = React.useState(false);
 
   const { setCurrentUrl, token, organization, userId } = useContext(
     CompleteDataContext

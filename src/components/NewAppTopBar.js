@@ -3,7 +3,6 @@ import { Tag, DatePicker, TimePicker, Form, Modal, Space } from 'antd';
 import CompleteDataContext from '../Context';
 import moment from 'moment';
 import dataHttpServices from '../services/devices';
-import BranchSwitcher from './BranchSwitcher';
 
 const { CheckableTag } = Tag;
 const { RangePicker } = DatePicker;
@@ -37,9 +36,6 @@ function NewAppTopBar() {
   const [componentText, setComponentText] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [form] = Form.useForm();
-
-
-  const isTopBarCostTrackerRightDisplayed = currentUrl.includes('cost-tracker');
 
   useEffect(() => {
     form.setFieldsValue({

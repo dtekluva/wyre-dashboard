@@ -17,11 +17,9 @@ const ReportTimeOfUse = ({ data, columnData }) => {
             size={'middle'}
             summary={pageData => {
 
-                let totalBlackOut = 0;
                 let totalHours = 0;
 
-                pageData.forEach(({ blackOut, hour }) => {
-                    totalBlackOut += blackOut;
+                pageData.forEach(({ hour }) => {
                     totalHours += hour;
                 });
                 return (

@@ -2,8 +2,6 @@ import * as React from 'react';
 import moment from 'moment';
 import { Button, DatePicker, Form, Input, Select } from "antd";
 import { validate2DecNo } from '../../helpers/genericHelpers';
-import { Option } from 'antd/lib/mentions';
-
 
 const { RangePicker } = DatePicker;
 

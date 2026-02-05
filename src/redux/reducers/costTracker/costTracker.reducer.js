@@ -1,5 +1,4 @@
 
-import { fetchCostTrackerBaselineLoading, fetchCostTrackerOverviewLoading, fetchDieselOverviewLoading, fetchIppOverviewLoading, fetchUtilityOverviewLoading } from '../../actions/constTracker/actionCreators';
 import costTrackerType from './costTracker.types';
 
 const INITIAL_STATE = {

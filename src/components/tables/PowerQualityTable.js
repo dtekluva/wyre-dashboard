@@ -98,7 +98,7 @@ class PowerQualityTable extends React.Component {
     const sortedData = sortByDateTime( this.props.powerQualityData);
     const data = sortedData.map((dataItem, key) => {
 
-      const { l1, l2, l3, neutral, frequency, power_factor } = dataItem
+      const { l1, l2, l3, frequency, power_factor } = dataItem
       
 
       return {

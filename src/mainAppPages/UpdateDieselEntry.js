@@ -5,7 +5,7 @@ import CompleteDataContext from '../Context';
 import moment from 'moment'
 
 import { updateFuelConsumptionData } from '../redux/actions/constTracker/costTracker.action';
-import { DateField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
+import { NumberField } from '../components/FormFields/GeneralFormFields';
 import { Option } from 'antd/lib/mentions';
 
 const openNotificationWithIcon = (type, formName) => {
@@ -34,7 +34,7 @@ function UpdateDieselEntry({ match, setModal, reloadTableLists, dieselEntryData,
   const [dailyForm] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { setCurrentUrl, organization, userId, branchId } = useContext(
+  const { setCurrentUrl, userId, branchId } = useContext(
     CompleteDataContext
     );
 

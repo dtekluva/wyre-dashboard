@@ -26,9 +26,7 @@ function LastReading({ match, fetchLastReadingData }) {
     // userDateRange,
     checkedBranchId,
     checkedDevicesId,
-    refinedRenderedData,
     setCurrentUrl,
-    isAuthenticatedDataLoading,
   } = useContext(CompleteDataContext);
 
   const singleDateToUse = moment().format("DD-MM-YYYY HH:mm");

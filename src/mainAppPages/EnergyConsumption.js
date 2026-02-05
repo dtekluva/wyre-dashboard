@@ -5,15 +5,12 @@ import CompleteDataContext from '../Context';
 
 import {
   formatParametersDatetimes,
-  formatParametersDates,
-  formatParametersTimes,
   formatParameterTableData,
   convertDateStringsToObjects,
 } from '../helpers/genericHelpers';
 import { numberFormatter } from "../helpers/numberFormatter"
 
 import BreadCrumb from '../components/BreadCrumb';
-import { sumOrganizationEnergyConsumptionValues } from "../helpers/organizationDataHelpers"
 import EnergyConsumptionBarChart from '../components/barCharts/EnergyConsumptionBarChart';
 import EnergyConsumptionTable from '../components/tables/EnergyConsumptionTable';
 import Loader from '../components/Loader';
@@ -22,7 +19,6 @@ import ExcelIcon from '../icons/ExcelIcon';
 import ExportToCsv from '../components/ExportToCsv';
 import { fetchEnergyConsumptionData } from '../redux/actions/parameters/parameter.action';
 import { connect, useSelector } from 'react-redux';
-import parametersReducer from '../redux/reducers/parameters/parameters.reducer';
 import { isEmpty } from '../helpers/authHelper';
 import { devicesArray } from '../helpers/v2/organizationDataHelpers';
 
@@ -90,7 +86,7 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
   }
   );
   let chartConsumptionValues, allDeviceNames, chartDates, energyConsumptionUnit;
-  let allDates, tableHeadings, formattedTableData, dataForEnergyConsumptionColumns;
+  let tableHeadings, formattedTableData, dataForEnergyConsumptionColumns;
   let deviceNames, energyConsumptionColumns, energyConsumptionValuesTableDataClone;
   let tableEnergyConsumptionValues, tableValues, csvHeaders;
 
@@ -190,9 +186,6 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
           [eachDevice.name]: eachDevice.value,
         };
       });
-
-    allDates =
-      useEnergyConsumptionData && useEnergyConsumptionData[0].dates;
 
     tableEnergyConsumptionValues =
       energyConsumptionValuesTableDataClone &&

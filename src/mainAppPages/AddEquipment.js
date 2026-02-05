@@ -74,21 +74,6 @@ const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   else{
     branchSelectorValue = null
   }
-  const branchSelector = (
-        <Select style={branchSelectorStyle} 
-        className="h-4-br" 
-        allowClear 
-        onSelect={(branch)=>{
-          branchSelectorValue =  branch
-        }}>
-        {branchname && branchname.map((branch)=>{
-        return <Option value={branch.id} key={branch.id}>
-                  {branch.name}
-              </Option>
-        })
-        }
-        </Select>
-  )
 
   const equipmentPurchaseDatePicker = (
     <DatePicker

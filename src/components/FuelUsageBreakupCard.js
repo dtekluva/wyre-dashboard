@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { connect } from "react-redux";
 import {
   LineChart,
@@ -10,7 +10,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { fetchGenFuelUsageData } from "../redux/actions/diesel/diesel.action";
-import { getMonthYear } from "../helpers/genericHelpers";
 import { Spin } from "antd";
 
 const FuelUsageBreakupCard = ({ genFuelUsageData, fetchGenFuelUsageData, diesel, loader }) => {
@@ -165,7 +164,6 @@ const handleMonthlyView = () => {
 
                 {devices.map((device, i) => {
                   const colorKwh = palette[(i * 1 + 2) % palette.length];
-                  const colorFuel = palette[(i * 2 + 1) % palette.length];
                   return (
                     <React.Fragment key={device.device_id || device.name}>
                       <Line

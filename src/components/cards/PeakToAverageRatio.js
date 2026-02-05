@@ -2,12 +2,10 @@ import React, { useEffect, useState, } from "react";
 import { numberFormatter } from "../../helpers/numberFormatter";
 
 // Tooltips
-import { message, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import InformationIcon from '../../icons/InformationIcon';
 import { SCORE_CARD_TOOLTIP_MESSAGES } from "../toolTips/Score_Card_Tooltip_Messages";
 import ScoreCardDoughnutChart from "../pieCharts/ScoreCardDoughnutChart";
-import { calculatePercentage, calculateRatio, daysInMonth, getBaselineEnergyColor, getPeakToAverageMessage } from "../../helpers/genericHelpers";
-import UpArrowIcon from "../../icons/UpArrowIcon";
 import { getOrganizationPeakToAveragePowerRatio } from "../../helpers/organizationDataHelpers";
 
 const PeakToAverageRatio = ({ paprBranchData, uiSettings }) => {

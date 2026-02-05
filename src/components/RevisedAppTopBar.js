@@ -56,8 +56,6 @@ function RevisedAppTopBar() {
     (page) => currentUrl.includes(page)
   );
 
-  const isDateTimePickerDisabled = currentUrl.includes('last-reading');
-
   const isPlottedUnitSelectorDisplayed = currentUrl.includes('power-quality');
 
   const isTopBarCostTrackerRightDisplayed = currentUrl.includes('cost-tracker') || currentUrl.includes('dashboard') ;
