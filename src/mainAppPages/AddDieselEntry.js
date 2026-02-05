@@ -13,8 +13,9 @@ import { NumberField, NumberFieldAcceptZero, SelectField } from '../components/F
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import UpdateDieselEntry from './UpdateDieselEntry';
 import UpdateMonthlyDieselEntry from './UpdateMonthlyDieselEntry';
+import { Select } from 'antd';
 
-
+const { Option } = Select;
 const { RangePicker } = DatePicker
 
 const breadCrumbRoutes = [
@@ -73,6 +74,24 @@ function AddDieselEntry({
   );
 
   const isOperator = userData.role_text === "OPERATOR";
+  
+  const disableFutureDates = (current) =>
+    current && current > moment().endOf("day");
+
+  /**
+   * Locks the range to the same month & year as the first selected date
+   */
+  const disableDifferentMonthYear = (current, selectedDates) => {
+    if (!selectedDates || !selectedDates[0]) return false;
+
+    const start = selectedDates[0];
+
+    return (
+      current.month() !== start.month() ||
+      current.year() !== start.year() ||
+      current > moment().endOf("day")
+    );
+  };
 
   const canEditRecord = (recordTime) => {
     if (!recordTime) return false;
@@ -405,12 +424,12 @@ function AddDieselEntry({
               <Select
                 placeholder="Select Entry Type"
                 size="large"
-                style={{ width: 280 }}
+                // style={{ width: 280 }}
                 onChange={setEntryType}
                 value={entryType}
               >
-                <Option value="daily">Daily Entry</Option>
-                <Option value="monthly">Monthly Entry</Option>
+                <Select.Option value="daily">Daily Entry</Select.Option>
+                <Select.Option value="monthly">Monthly Entry</Select.Option>
               </Select>
             </div>
 
@@ -452,6 +471,8 @@ function AddDieselEntry({
                               size="large"
                               style={{ width: "100%" }}
                               format="DD-MMM-YYYY"
+                              disabledDate={disableFutureDates}
+                              inputReadOnly
                               onChange={(date) => {
                                 if (date) {
                                   const currentTo = dailyForm.getFieldValue("to_date");
@@ -479,10 +500,12 @@ function AddDieselEntry({
                               size="large"
                               style={{ width: "100%" }}
                               format="DD-MMM-YYYY"
-                              disabledDate={(current) => {
-                                const fromDate = dailyForm.getFieldValue("from_date");
-                                return fromDate && current && current.isBefore(fromDate, "day");
-                              }}
+                              // disabledDate={(current) => {
+                              //   const fromDate = dailyForm.getFieldValue("from_date");
+                              //   return fromDate && current && current.isBefore(fromDate, "day");
+                              // }}
+                              disabledDate={disableFutureDates}
+                              inputReadOnly
                             />
                           </Form.Item>
                         </div>
@@ -576,6 +599,8 @@ function AddDieselEntry({
                               size="large"
                               style={{ width: "100%" }}
                               format="DD-MMM-YYYY"
+                              // disabledDate={disableFutureDates}
+                              inputReadOnly
                             />
                           </Form.Item>
                         </div>

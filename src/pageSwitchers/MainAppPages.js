@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import CompleteDataContext from '../Context';
+import CompleteDataContext from "../Context";
 
 import Billing from '../mainAppPages/Billing';
 import CostTracker from '../mainAppPages/CostTracker';
@@ -37,89 +37,97 @@ function MainAppPages() {
 
   return (
     <div className="app">
-      {/* <AppHeader /> */}
-
       <div className="sidebar-and-content">
         <Sidebar />
 
-        <main
-          className={
-            // isReportPageOpen ? 'main-container h-full-width' : 
-            'main-container'
-          }
-        >
-          <div className='old-top-bar-monitor'>
+        <main className="main-container">
+          <div className="old-top-bar-monitor">
             <TopBar />
           </div>
+
           <AppHeader />
-          <div className='newTopbar-monitor'>
-            {/* <AppHeader /> */}
+
+          <div className="newTopbar-monitor">
             <RevisedAppTopBar />
           </div>
+
           <ScrollToTop>
             <div className="page-content">
-              {/* {!isAuthenticatedDataLoading ? */}
               <Routes>
-                {/* <Route exact path="/"> */}
-                {/* <Redirect to="/dashboard" /> */}
-                {/* <Route path="/dashboard" element={<Dashboard to="/dashboard" replace />} /> */}
-                {/* </Route> */}
-                <Route path="/" element={<Dashboard to="/dashboard" replace />}/>
-                <Route path="/dashboard" element={<Dashboard to="/dashboard" replace />} />
-                <Route path="/breakers" element={<Breakers to="/breakers" replace />} />
-                <Route path="/billing" element={<Billing to="/billing" replace />} />
-                {/* <Route exact path="/log-in">
-                  <Route path="/" element={<Navigate to="/" replace />} />
-                </Route>
- 
-                <Route exact path="/cost-tracker" component={CostTracker} />
-                <Route path="/cost-tracker/add-bills" component={AddBills} />
-                <Route path="/cost-tracker/add-diesel-entry" component={AddDieselEntry} />
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+
+                <Route path="/billing" element={<Billing />} />
+
+                <Route path="/cost-tracker" element={<CostTracker />} />
+                <Route
+                  path="/cost-tracker/add-bills"
+                  element={<AddBills />}
+                />
+                <Route
+                  path="/cost-tracker/add-diesel-entry"
+                  element={<AddDieselEntry />}
+                />
                 <Route
                   path="/cost-tracker/add-equipment"
-                  component={AddEquipment}
+                  element={<AddEquipment />}
                 />
-                {/* <Route path="/messages" component={Messages} /> */}
+
                 <Route
                   path="/parameters/last-reading"
-                  element={<LastReading to="/parameters/last-reading" replace />}
+                  element={<LastReading />}
                 />
-                <Route exact path="/cost-tracker" element={<CostTracker to="/cost-tracker" />} />
-                <Route path="/parameters/time-of-use" element={<TimeOfUse to="/parameters/time-of-use" />} />
+                <Route
+                  path="/parameters/time-of-use"
+                  element={<TimeOfUse />}
+                />
                 <Route
                   path="/parameters/power-demand"
-                  element={<PowerDemand to="/parameters/power-demand" />}
+                  element={<PowerDemand />}
                 />
                 <Route
                   path="/parameters/power-quality"
-                  element={<PowerQuality to="/parameters/power-quality" />}
+                  element={<PowerQuality />}
                 />
                 <Route
                   path="/parameters/energy-consumption"
-                  element={<EnergyConsumption to="/parameters/energy-consumption" />}
+                  element={<EnergyConsumption />}
                 />
-                <Route path="/report" element={<Report to="/report" />} />
-                {/* <Route path="/breakers" component={Breakers} /> */}
-                <Route path="/score-card" element={<ScoreCard to="/score-card" />} />
-                <Route path="/client-profile" element={<ClientProfile to="/score-card" />} />
-                <Route path="/solar-overview" element={<SolarOverviewPage to="/score-card" />} />
-                {/* <Route path="/password" component={Dashboard} /> */}
-                <Route path="/password" element={<Password to="/password" />} />
-                <Route path="/load-overview" element={<LoadOverview to="/load-overview" />} />
-                <Route path="/alerts-and-alarms" element={<AlertsAndAlarms to="/alerts-and-alarms" />} />
-                <Route path="/diesel-overview" element={<DieselOverviewPage to="/diesel-overview" />} />
+
+                <Route path="/report" element={<Report />} />
+                <Route path="/score-card" element={<ScoreCard />} />
                 <Route
-                  exact
+                  path="/solar-overview"
+                  element={<SolarOverviewPage />}
+                />
+                <Route
+                  path="/diesel-overview"
+                  element={<DieselOverviewPage />}
+                />
+                <Route
+                  path="/client-profile"
+                  element={<ClientProfile />}
+                />
+                <Route path="/password" element={<Password />} />
+                <Route
+                  path="/load-overview"
+                  element={<LoadOverview />}
+                />
+                <Route
+                  path="/alerts-and-alarms"
+                  element={<AlertsAndAlarms />}
+                />
+                <Route
                   path="/branches"
-                  element={<BranchesDevicesAndUsers to="/branches" />}
+                  element={<BranchesDevicesAndUsers />}
                 />
                 <Route
                   path="/branches/user-form"
-                  element={<BranchesUserForm to="/branches/user-form" />}
+                  element={<BranchesUserForm />}
                 />
+
                 <Route path="*" element={<Error />} />
               </Routes>
-              {/* : <Loader />} */}
             </div>
           </ScrollToTop>
         </main>
