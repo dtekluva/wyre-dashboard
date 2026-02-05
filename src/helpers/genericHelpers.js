@@ -424,7 +424,7 @@ const allDeviceGenerators = (checkedItems, organization) => {
   let holdAllDevices = [];
   const checkedItemsArray = Object.keys(checkedItems);
 
-  checkedItemsArray.map((name) => {
+  checkedItemsArray.forEach((name) => {
     organization.branches.forEach((eachBranch) => {
       if (eachBranch.name === name) {
         holdAllDevices = [...holdAllDevices, ...eachBranch.devices];
@@ -436,6 +436,7 @@ const allDeviceGenerators = (checkedItems, organization) => {
             holdAllDevices.push(device);
             return false;
           }
+          return true;
         })
       }
     })
@@ -452,7 +453,7 @@ const allCheckedDeviceGenerators = (checkedItems, allDevice) => {
   if (!checkedItemsArray.length > 0) {
     return allDeviceMap;
   } else {
-    checkedItemsArray.map((name) => {
+    checkedItemsArray.forEach((name) => {
       allDeviceMap.forEach((eachData) => {
         if (eachData.branchName === name) {
           holdAllDevices = [...holdAllDevices, eachData];
@@ -472,24 +473,24 @@ const allCostTrackerBranchesBaseline = (checkedItems, allDevice) => {
   let holdAllDevices = [];
   const checkedItemsArray = Object.keys(checkedItems || {});
   if (!checkedItemsArray.length > 0) {
-    allDevice.map(([branchName, branchInfo]) => {
+    allDevice.forEach(([branchName, branchInfo]) => {
       const baselineDataValues = Object.values(branchInfo.baseline);
-      baselineDataValues.map((data) => {
+      baselineDataValues.forEach((data) => {
         holdAllDevices = [...holdAllDevices, ...data];
       })
     });
   } else {
-    checkedItemsArray.map((name) => {
-      allDevice.map(([branchName, branchInfo]) => {
+    checkedItemsArray.forEach((name) => {
+      allDevice.forEach(([branchName, branchInfo]) => {
         const baselineDataValues = Object.values(branchInfo.baseline);
         if (branchName === name) {
-          baselineDataValues.map((data) => {
+          baselineDataValues.forEach((data) => {
             holdAllDevices = [...holdAllDevices, ...data];
           })
         }
         else if (name.startsWith(branchName)
         ) {
-          Object.entries(branchInfo.baseline).map(([deviceName, value]) => {
+          Object.entries(branchInfo.baseline).forEach(([deviceName, value]) => {
 
             if (name.endsWith(deviceName)) {
               holdAllDevices.push(...value);
@@ -707,7 +708,7 @@ const modifyStatisTicDateWithTime = (date) => {
 const generateLoadCosumptionChartData = (isLoadData) => {
   let label = [];
   let data = []
-  isLoadData.map((device) => {
+  isLoadData.forEach((device) => {
     label.push(device.name);
     data.push(device.consumption);
   });
@@ -724,7 +725,7 @@ const generateLoadOverviewChartData = (isLoadData) => {
 
 
   if (isLoadData) {
-    isLoadData?.map((device) => {
+    isLoadData?.forEach((device) => {
       if (device.is_load) {
 
         initailData.push(device.dashboard.total_kwh.value);
@@ -732,7 +733,7 @@ const generateLoadOverviewChartData = (isLoadData) => {
 
     });
     const sumData = sumOfArrayElements(initailData);
-    isLoadData?.map((device) => {
+    isLoadData?.forEach((device) => {
       if (device.is_load) {
         const devicePercentage = calculatePercentageTwoDecimal(device.dashboard.total_kwh.value, sumData);
         label.push(device.name);
@@ -750,9 +751,9 @@ const generateMultipleBranchLoadOverviewChartData = (allBranch) => {
   let branchConsumptionKeyPair = {};
   let totalConsumptionUnit = 0;
 
-  allBranch.map((branch) => {
+  allBranch.forEach((branch) => {
     let totalBranchUsage = 0
-    branch.devices.map((device) => {
+    branch.devices.forEach((device) => {
       if (device.is_load) {
         totalBranchUsage += device.dashboard?.total_kwh?.value;
         totalConsumptionUnit += device.dashboard?.total_kwh?.value;
@@ -776,7 +777,7 @@ const generateMultipleBranchLoadOverviewChartData = (allBranch) => {
 const generateRunningTimeChartData = (branch) => {
   let label = [];
   let data = []
-  branch.map((device) => {
+  branch.forEach((device) => {
     label.push(device.name);
     data.push(device.device_runtime);
   });
@@ -785,7 +786,7 @@ const generateRunningTimeChartData = (branch) => {
 }
 const generateSumLoadConsumption = (branch) => {
   let initailData = [];
-  branch.map((device) => {
+  branch.forEach((device) => {
     initailData.push(device.consumption);
   });
   return sumOfArrayElements(initailData);
@@ -793,7 +794,7 @@ const generateSumLoadConsumption = (branch) => {
 
 const refineLoadOverviewData = (allDeviceData) => {
   let branchData = {};
-  allDeviceData.map((eachData) => {
+  allDeviceData.forEach((eachData) => {
     const branchName = eachData.branchName;
     if (eachData.is_load) {
       if (branchData[branchName]) {
@@ -808,7 +809,7 @@ const refineLoadOverviewData = (allDeviceData) => {
 
 const generateSumOfIsSource = (allDeviceData) => {
   let sum = 0;
-  allDeviceData.map((eachData) => {
+  allDeviceData.forEach((eachData) => {
     if (eachData.is_source) {
       sum += eachData.consumption;
     }
@@ -877,7 +878,7 @@ const combineSameMonthData = (dateArray) => {
   let forcastedData = {};
   let usedData = {};
   if (dateArray.length > 0) {
-    dateArray.map((data) => {
+    dateArray.forEach((data) => {
       if (forcastedData[data.date] != null) {
         forcastedData[data.date] = Number(data.forecast) + forcastedData[data.date];
       } else {
@@ -907,14 +908,15 @@ const convertDecimalTimeToNormal = (d) => {
   // const hours = Math.floor(decimalTimeString / 60);  
   // const minutes = decimalTimeString % 60;
   // return `${hours}:${minutes}`; 
-    var h = Math.floor(d);
+    const num = Number(d);
+    var h = Math.floor(num);
 
-    var m = (d - h) * 60;
+    var m = (num - h) * 60;
     // var m = Math.floor(d % 3600 / 60);
     // var s = Math.floor(d % 3600 % 60);
 
-    var hDisplay = h > 0 ? h + (h == 1 ? " hour " : " hours ") : "";
-    var mDisplay = m > 0 ? m.toFixed(0) + (m == 1 ? " min" : " mins") : "";
+    var hDisplay = h > 0 ? h + (h === 1 ? " hour " : " hours ") : "";
+    var mDisplay = m > 0 ? m.toFixed(0) + (m === 1 ? " min" : " mins") : "";
     // var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
     return hDisplay + mDisplay;
 }

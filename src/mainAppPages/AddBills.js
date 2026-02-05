@@ -40,12 +40,10 @@ function AddBills({ match }) {
   const [prePaidForm] = Form.useForm();
   const [ippPurchaseForm] = Form.useForm();
   const [postPaidForm] = Form.useForm();
-  const [EOMBalanceForm] = Form.useForm();
   const [purchaseLoading, setPurchaseLoading] = React.useState(false);
   const [prePaidLoading, setPrePaidLoading] = React.useState(false);
   const [ippPurchaseLoading, setIppPurchaseLoading] = React.useState(false);
   const [postPaidLoading, setPostPaidLoading] = React.useState(false);
-  const [, setEOMFlowReadingLoading] = React.useState(false);
 
   const { setCurrentUrl, token, userId, userData } = useContext(
     CompleteDataContext

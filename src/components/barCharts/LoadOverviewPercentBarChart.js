@@ -113,11 +113,9 @@ const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings, pDeman
                     style={{ backgroundColor: uiSettings.appPrimaryColor }}
                     type='primary'
                     pDemand={pDemand}
-                    onClick={() =>{
-                        return pDemand={pDemand}, 
-                        history('/load-overview')
-                    }
-                    }
+                    onClick={() => {
+                        history('/load-overview');
+                    }}
                     size='small'
                 >
                     View Details

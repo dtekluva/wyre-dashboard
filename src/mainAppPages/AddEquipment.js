@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
-import { DatePicker, notification, Select } from 'antd';
+import { DatePicker, notification } from 'antd';
 import CompleteDataContext from '../Context';
 
 import equipmentHttpServices from '../services/equipment';
