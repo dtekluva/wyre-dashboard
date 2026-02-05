@@ -14,10 +14,12 @@ import { Spin } from "antd";
 
 const FuelUsageBreakupCard = ({ genFuelUsageData, fetchGenFuelUsageData, diesel, loader }) => {
   const [frequency, setFrequency] = useState("daily");
-  const devices =
+  const devices = useMemo(() => 
     genFuelUsageData?.data && Array.isArray(genFuelUsageData.data)
       ? genFuelUsageData.data
-      : [];
+      : [],
+    [genFuelUsageData?.data]
+  );
 
   // Build chart data
   const chartData = useMemo(() => {
@@ -47,7 +49,7 @@ const FuelUsageBreakupCard = ({ genFuelUsageData, fetchGenFuelUsageData, diesel,
 
       return row;
     });
-  }, [genFuelUsageData, frequency]);
+  }, [devices]);
 
   const palette = ["#5C12A7", "#FCCC43", "#52AC0B", "#FF6B6B"];
 

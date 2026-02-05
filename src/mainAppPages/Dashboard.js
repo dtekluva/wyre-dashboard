@@ -99,14 +99,14 @@ function Dashboard({
       }
     }
 
-  }, [sideDetails.sideBarData]);
+  }, [sideDetails.sideBarData, powerFactor.allPowerFactor.length, fetchAllPowerFactor]);
 
 
   useEffect(() => {
 
     fetchBlendedost(userDateRange);
 
-  }, [userDateRange]);
+  }, [userDateRange, fetchBlendedost]);
 
   useEffect(() => {
 
@@ -127,7 +127,7 @@ function Dashboard({
       setPageLoaded(true);
     }
 
-  }, [userDateRange]);
+  }, [userDateRange, dashBoardInfo.dashBoardData, dashboard.fetchDashBoardCard_1_Loading, dashboard.fetchDashBoardCard_2_Loading, dashboard.fetchDashBoardCard_3_Loading, fetchDashBoardDataCard_1, fetchDashBoardDataCard_2, fetchDashBoardDataCard_3, fetchPAPR, pageLoaded]);
 
   useEffect(() => {
     if (Object.keys(dashboard.demandData).length > 0) {
@@ -158,6 +158,8 @@ function Dashboard({
     dashboard.dashBoardCard_1_Data,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
@@ -175,6 +177,8 @@ function Dashboard({
     dashboard.dashBoardCard_2_Data,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
@@ -192,6 +196,8 @@ function Dashboard({
     dashboard.dashBoardCard_3_Data,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   const pageRef = useRef();

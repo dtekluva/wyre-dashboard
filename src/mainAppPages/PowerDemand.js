@@ -50,7 +50,7 @@ function PowerDemand({ match, fetchPowerDemandData }) {
 
   useEffect(() => {
     fetchPowerDemandData(userDateRange)
-  }, []);
+  }, [fetchPowerDemandData, userDateRange]);
 
   useEffect(() => {
     if (!pageLoaded && isEmpty(parametersData || {})) {
@@ -61,7 +61,7 @@ function PowerDemand({ match, fetchPowerDemandData }) {
       fetchPowerDemandData(userDateRange);
     }
     setPageLoaded(true);
-  }, [userDateRange]);
+  }, [userDateRange, fetchPowerDemandData, pageLoaded, parametersData]);
 
   useEffect(() => {
     if (pageLoaded && parametersData.fetchedPowerDemand) {
@@ -71,7 +71,7 @@ function PowerDemand({ match, fetchPowerDemandData }) {
       setPowerDemandData(openDevicesArrayData)
     }
     setPageLoaded(true);
-  }, [parametersData.fetchedPowerDemand, checkedBranchId, checkedDevicesId.length]);
+  }, [parametersData.fetchedPowerDemand, checkedBranchId, checkedDevicesId.length, checkedDevicesId, pageLoaded]);
 
   const power_demand = powerDemandData.map((deviceDetails) => {
     const { name, power_demand } = deviceDetails

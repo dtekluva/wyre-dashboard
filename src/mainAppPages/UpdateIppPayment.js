@@ -92,7 +92,7 @@ function UpdateIppPayment({ match, ippPurchaseData, updateIppPaymentData:editIpp
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match, userId]);
+  }, [match, userId, setCurrentUrl]);
 
   useEffect(() => {
     ippForm.setFieldsValue({
@@ -101,7 +101,7 @@ function UpdateIppPayment({ match, ippPurchaseData, updateIppPaymentData:editIpp
       tariff: ippPurchaseData.tariff,
       value: ippPurchaseData.value
     })
-  }, [])
+  }, [ippPurchaseData, ippForm])
 
   let defaultBranch;
   if (organization.branches) {

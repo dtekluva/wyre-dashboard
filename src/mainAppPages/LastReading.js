@@ -39,7 +39,7 @@ function LastReading({ match, fetchLastReadingData }) {
 
   useEffect(() => {
     fetchLastReadingData(singleDateToUse)
-  }, []);
+  }, [fetchLastReadingData, singleDateToUse]);
   
   useEffect(() => {
     if (!pageLoaded && isEmpty(parametersData || {})) {
@@ -50,7 +50,7 @@ function LastReading({ match, fetchLastReadingData }) {
       fetchLastReadingData(singleDateToUse);
     }
     setPageLoaded(true);
-  }, [singleDateToUse]);
+  }, [singleDateToUse, fetchLastReadingData, pageLoaded, parametersData]);
 
   useEffect(() => {
     if (pageLoaded && parametersData.fetchedLastReading) {
@@ -60,7 +60,7 @@ function LastReading({ match, fetchLastReadingData }) {
       setLastReadingData(openDevicesArrayData)
     }
       setPageLoaded(true);
-  }, [parametersData.fetchedLastReading, checkedBranchId, checkedDevicesId.length]);
+  }, [parametersData.fetchedLastReading, checkedBranchId, checkedDevicesId.length, checkedDevicesId, pageLoaded]);
 
   // const { last_reading } = refinedRenderedData;
 

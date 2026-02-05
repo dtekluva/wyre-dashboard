@@ -188,7 +188,7 @@ const CompleteDataProvider = (props) => {
         setSelectedDevices(getDeviceType);
       }
     }
-  }, [checkedItems]);
+  }, [checkedItems, checkedBranches, checkedDevices, organization]);
 
   /*--------------------------------------------------------------------
 
@@ -233,7 +233,7 @@ const CompleteDataProvider = (props) => {
         setRefinedRenderedData(renderedDataArray);
       }
     }
-  }, [organization]);
+  }, [organization, checkedBranches, checkedDevices, checkedItems]);
   /*--------------------------------------------------------------------
 
     

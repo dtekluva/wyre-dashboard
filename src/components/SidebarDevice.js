@@ -35,7 +35,7 @@ function SidebarDevice({
   useEffect(() => {
     const hasNotDisplayUrl = window.location.pathname.includes('report');
     setIsDisplayNone(hasNotDisplayUrl);
-  }, [window.location.pathname])
+  }, [])
 
 
   const {

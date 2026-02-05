@@ -132,7 +132,7 @@ function ScoreCard({
       // );
       operatingTimeDeviationBranchData &&
         operatingTimeDeviationBranchData &&
-        operatingTimeDeviationBranchData.devices.map((data) => {
+        operatingTimeDeviationBranchData.devices.forEach((data) => {
           if (data.score_card.is_generator) {
             allGenOpTime.push(data);
           }
@@ -251,7 +251,7 @@ function ScoreCard({
       fetchScorecardOperatingTimeData(userDateRange);
     }
     setPageLoaded(true);
-  }, [userDateRange]);
+  }, [userDateRange, fetchBaselineEnergyData, fetchPAPRData, fetchScorecardCarbonEmissionData, fetchGeneratorSizeEfficiencyData, fetchGeneratorFuelEfficiencyData, fetchScorecardOperatingTimeData, pageLoaded, scoreCardInfo.scoreCardData]);
 
   useEffect(() => {
     if (pageLoaded && scorecard.baselineEnergyData) {
@@ -263,7 +263,7 @@ function ScoreCard({
       setBaselineEnergyBranchData(devicesArrayData);
     }
     setPageLoaded(true);
-  }, [scorecard.baselineEnergyData, checkedBranchId, checkedDevicesId.length]);
+  }, [scorecard.baselineEnergyData, checkedBranchId, checkedDevicesId.length, checkedDevicesId, pageLoaded]);
 
   useEffect(() => {
     if (pageLoaded && scorecard.paprData) {
@@ -275,7 +275,7 @@ function ScoreCard({
       setPaprBranchData(devicesArrayData);
     }
     setPageLoaded(true);
-  }, [scorecard.paprData, checkedBranchId, checkedDevicesId.length]);
+  }, [scorecard.paprData, checkedBranchId, checkedDevicesId.length, checkedDevicesId, pageLoaded]);
 
   // THE REDUCER STATE FOR THIS ENDPOINT FAILS SOMETIMES!
   useEffect(() => {
@@ -292,6 +292,8 @@ function ScoreCard({
     scorecard.scorecardCarbonEmissionData,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
@@ -308,6 +310,8 @@ function ScoreCard({
     scorecard.generatorSizeEfficiencyData,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
@@ -324,6 +328,8 @@ function ScoreCard({
     scorecard.generatorFuelEfficiencyData,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
@@ -340,6 +346,8 @@ function ScoreCard({
     scorecard.operatingTimeDeviationData,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
