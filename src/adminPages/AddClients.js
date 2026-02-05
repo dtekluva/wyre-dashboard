@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Button, DatePicker, Select, Upload } from 'antd';
 import CompleteDataContext from '../Context';
 
@@ -22,43 +22,13 @@ const { Option } = Select;
 const AddClients = ({ match }) => {
   const { setCurrentUrl } = useContext(CompleteDataContext);
 
-  const { register, handleSubmit, setValue, control, errors } = useForm();
+  const { setValue } = useForm();
 
   useEffect(() => {
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
   }, [match, setCurrentUrl]);
-
-  const dateAddedPicker = (
-    <DatePicker
-      format='DD-MM-YYYY'
-      className='generic-input'
-      id='equipment-purchase-date'
-      onChange={(e) => setValue('dateAdded', e.target.value, true)}
-    />
-  );
-
-  const activeStateSelector = (
-    <Select
-      className='cost-tracker-select h-4-br'
-      id='active-state'
-      defaultValue='true'
-      suffixIcon={<CaretDownFilled />}
-      onChange={(e) => setValue('activeState', e.target.value, true)}
-    >
-      <Option className='active-state-option' value='true'>
-        True
-      </Option>
-      <Option className='active-state-option' value='false'>
-        False
-      </Option>
-    </Select>
-  );
-
-  const onSubmit = ({ deviceCode, deviceType, activeState, dateAdded }) => {
-    console.log(deviceCode, deviceType, activeState, dateAdded);
-  };
 
   return (
     <>

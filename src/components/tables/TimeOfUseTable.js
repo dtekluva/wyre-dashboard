@@ -96,13 +96,6 @@ class TimeOfUseTable extends React.Component {
   render() {
     const data = this.props.timeOfUseData;
 
-    const arrayRemove = (arr,value)=>{
-        return arr.filter((element)=>{
-          return element !== value
-        })
-    }
-
-
     const { Column } = Table;
     return (
       <>

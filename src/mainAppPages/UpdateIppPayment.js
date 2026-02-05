@@ -1,17 +1,13 @@
 import React, { useEffect, useContext } from 'react';
-import { notification, Form, Spin, message } from 'antd';
+import { notification, Form, Spin } from 'antd';
 
 import CompleteDataContext from '../Context';
 import moment from 'moment'
 
-import { connect, Connect } from 'react-redux';
+import { connect } from 'react-redux';
 
-import billingHttpServices from '../services/bills'
-import axios from 'axios'
-
-import { DateField, DateRangeField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
-import { InputField, SubmitButton, FlowMeterUpload } from '../components/FormFields/CostTrackerFields';
-import EnvData from '../config/EnvData';
+import { DateField, NumberField } from '../components/FormFields/GeneralFormFields';
+import { SubmitButton } from '../components/FormFields/CostTrackerFields';
 import { updateIppPaymentData } from '../redux/actions/constTracker/costTracker.action';
 
 
@@ -32,10 +28,8 @@ const NotAllowedNotification = () => {
 
 function UpdateIppPayment({ match, ippPurchaseData, updateIppPaymentData:editIppPayment }) {
   const [ippForm] = Form.useForm();
-  const [badFileHeader, setBadFileHeader] = React.useState(false);
-  const [ippLoading, setIppLoading] = React.useState(false);
 
-  const { setCurrentUrl, token, organization, userId } = useContext(
+  const { setCurrentUrl, organization, userId } = useContext(
     CompleteDataContext
   );
 

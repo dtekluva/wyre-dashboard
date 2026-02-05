@@ -24,7 +24,6 @@ import Loader from "../components/Loader";
 import { Modal, Tooltip } from "antd";
 import InformationIcon from "../icons/InformationIcon";
 import { COST_TRACKER_TOOLTIP_MESSAGES } from "../components/toolTips/Cost_Tracker_Tooltip_Messages";
-import AddBills from "./AddBills";
 import UpdateDieselPurchase from "./UpdateDieselPurchase";
 import UpdateUtilityPayment from "./UpdateUtilityPayment";
 import IppPurchasedTable from "../components/tables/IppPurchasedTable";
@@ -46,7 +45,7 @@ function CostTracker({
   const [costTrackerOverviewData, setCostTrackerOverviewData] = useState([]);
   const [dieselOverviewData, setDieselOverviewData] = useState([]);
   const [utilityOverviewData, setUtilityOverviewData] = useState([]);
-  const [ippOverviewData, setIppOverviewData] = useState([]);
+  const [ippOverviewData] = useState([]);
   const [costTrackerBaselineData, setCostTrackerBaselineData] = useState([]);
   const [branchInfo, setBranchInfo] = useState(false);
   const [baseLineData, setBaseLineData] = useState(false);

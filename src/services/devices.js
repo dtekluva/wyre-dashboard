@@ -54,13 +54,11 @@ const getAllData = async () => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
-  let token;
 
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
-    token = userToken.access;
   }
   const baseUrl = `${baseUrlPrefix}/${userId}/${endpointDateRange}/${endpointDataTimeInterval}`;
   //const test =axios.get('https://backend.wyreng.com/api/v1/dashboard/6/01-12-2021%2000:00/01-04-2021%2000:00/hourly');

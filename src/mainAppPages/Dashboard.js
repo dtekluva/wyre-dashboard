@@ -60,17 +60,11 @@ function Dashboard({
     checkedItems,
     checkedBranchId,
     checkedDevicesId,
-    checkedBranches,
-    checkedDevices,
     userDateRange,
     uiSettings,
   } = useContext(CompleteDataContext);
 
-
   const dashBoardInfo = useSelector((state) => state.dashboard);
-  const branchId =
-    sideDetails?.sideBarData?.branches &&
-    sideDetails?.sideBarData?.branches[0]?.branch_id;
 
   const { setCurrentUrl, userData } = useContext(CompleteDataContext);
   const [totalEnergyBranchData, setTotalEnergyBranchData] = useState(null);

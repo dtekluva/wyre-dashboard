@@ -3,7 +3,7 @@ import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const TotalEnergyUsed = ({ genTotalEnergyUsedData, loader }) => {
-  const { status, total_energy, generators } = genTotalEnergyUsedData || {};
+  const { total_energy, generators } = genTotalEnergyUsedData || {};
 
   const colorData = ["#5C12A7", "#FCCC43"];
   const generatorsWithColor = generators?.map((generator, index) => ({

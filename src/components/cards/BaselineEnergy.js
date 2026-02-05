@@ -14,7 +14,6 @@ const BaselineEnergy = ({ baselineEnergyBranchData, uiSettings }) => {
     const [baselineEnergyData, setBaselineEnergyData] = useState({});
 
     useEffect(() => {
-        const baselineData = {baseline_energy: {}}
         baselineEnergyBranchData && baselineEnergyBranchData.devices && baselineEnergyBranchData.devices.forEach(data => {
           const score_card = data.score_card.baseline_energy;
           if (data.is_source) {

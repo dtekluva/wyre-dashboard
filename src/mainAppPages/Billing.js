@@ -12,7 +12,7 @@ import Loader from '../components/Loader';
 import PrintButtons from '../smallComponents/PrintButtons';
 import ThinArrowRight from '../icons/ThinArrowRight';
 
-import { allDeviceGenerators, formatParametersDatetimes } from '../helpers/genericHelpers';
+import { formatParametersDatetimes } from '../helpers/genericHelpers';
 import { getBillingRefinedOrganizationData, getBillingRefinedOrganizationDataWithChekBox } from '../helpers/organizationDataHelpers';
 
 import { fetchBillingData } from '../redux/actions/billing/billing.action';
@@ -102,7 +102,7 @@ function Billing({ match, fetchBillingData: fetchBillingDataFunc, billing }) {
     } = refindedBilling;
   
   
-  const { metrics, present_total, previous_total, usage } =
+  const { present_total, previous_total, usage } =
     overall_billing_totals || {};
 
   const devicePreviousBillsRows =

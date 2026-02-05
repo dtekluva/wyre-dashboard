@@ -7,9 +7,7 @@ import CompleteDataContext from "../Context";
 import BreadCrumb from "../components/BreadCrumb";
 
 import GenericReportTable from "../components/tables/reportTables/GenericReportTable";
-import ReportDailyConsumptionBar from "../components/barCharts/ReportDailyConsumptionBar";
 
-import StopWatch from "../icons/StopWatch";
 import Plug from "../icons/Plug";
 import ElectricSpark from "../icons/ElectricSpark";
 import CO2Icon from "../icons/CarbonFootPrint";
@@ -21,8 +19,6 @@ import SourceConsumptionPieChart from "../smallComponents/reports/SourceConsumpt
 import { calculateDemandMinMaxAvgValues } from "../helpers/genericHelpers";
 import {
   CostImplicationColumn,
-  DemandAndStatisticsColumn,
-  DemandAndStatisticsTwoColumn,
   FuelConsumption,
   GeneratorEfficiency,
   LoadImbalanceColumns,
@@ -39,11 +35,9 @@ import {
 } from "../redux/actions/report/report.action";
 import { fetchPAPR } from "../redux/actions/dashboard/dashboard.action";
 import EnergyConsumptionMultipleChart from "../components/barCharts/EnergyConsumptionMultipleChart";
-import { loadReportPage } from "../redux/actions/setting/actionCreators";
 import { isEmpty } from "../helpers/authHelper";
 import ReportTimeOfUse from "../components/tables/reportTables/ReportTimeOfUse";
 import { ConstImplicationSummary } from "../components/tables/reportTables/TablesSummaries";
-import { calculateRatio } from "../helpers/genericHelpers";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
@@ -81,8 +75,7 @@ function Report({
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [selectedYear, setSelectedYear] = useState(null);
   const report = useSelector((state) => state.report);
-  const [demandData, setDemandData] = useState({});
-  const sideBarData = useSelector((state) => state.sideBar.sideBarData);
+  const [, setDemandData] = useState({});
   const { setCurrentUrl, uiSettings } = useContext(CompleteDataContext);
 
   const PowerDemandColumnsList = PowerDemandColumns(
@@ -92,7 +85,6 @@ function Report({
     console.log("Generating PDFs");
 
     const input = document.getElementById("page");
-    const page = document.querySelector(".page-content");
 
     // window
     // .open("", "PRINT", "height=650,width=900,top=100,left=100")
@@ -232,10 +224,8 @@ function Report({
   }, [report.reportBaselineData]);
 
   const {
-    period_score,
     total_energy_consumption,
     power_demand,
-    papr,
     // baseline,
     carbon_emmissions,
     source_consumption,
@@ -244,8 +234,6 @@ function Report({
     fuel_consumption,
     generator_efficiency,
     cost_implication,
-    daily_consumption,
-    demand_statistic,
     energy_consumption,
   } = Object.values(reportPageData)[0] ? Object.values(reportPageData)[0] : {};
 

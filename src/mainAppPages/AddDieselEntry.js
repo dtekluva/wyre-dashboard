@@ -1,8 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
-import ColumnGroup from 'antd/lib/table/ColumnGroup';
-import Column from 'antd/lib/table/Column';
-import { notification, Form, Spin, DatePicker, Table, Dropdown, Menu, Space, Popconfirm, Modal, Button } from 'antd';
-import { EditOutlined, DownOutlined } from '@ant-design/icons';
+import { notification, Form, Spin, DatePicker, Select, Table, Modal, Button } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { useSelector } from 'react-redux';
 import CompleteDataContext from '../Context';
@@ -11,9 +9,8 @@ import moment from 'moment';
 import BreadCrumb from '../components/BreadCrumb';
 import Loader from '../components/Loader';
 import { addFuelConsumptionData, addMonthlyFuelConsumptionData, fetchDieselDailyUsageData, fetchDieselMonthlyUsageData, fetchFuelConsumptionData, getBranchGeneratorsData } from '../redux/actions/constTracker/costTracker.action';
-import { DateField, NumberField, NumberFieldAcceptZero, SelectField, SelectGenerator } from '../components/FormFields/GeneralFormFields';
+import { NumberField, NumberFieldAcceptZero, SelectField } from '../components/FormFields/GeneralFormFields';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
-import { Icon } from '@iconify/react/dist/iconify.js';
 import UpdateDieselEntry from './UpdateDieselEntry';
 import UpdateMonthlyDieselEntry from './UpdateMonthlyDieselEntry';
 import { Select } from 'antd';
@@ -68,13 +65,11 @@ function AddDieselEntry({
   const [modalOpener, setModalOpener] = useState(false);
   const [modalData, setModalData] = useState(false);
   const [modalDataMonthly, setModalDataMonthly] = useState(false);
-  const [flattenedModalData, setFlattenedModalData] = useState(false);
   const [fuelDataLoading, setFuelDataLoading] = useState(false);
   const [editDieselEntryModal, setEditDieselEntryModal] = useState(false)
   const [dieselEntryData, setDieselEntryData] = useState({})
-  const [dataSources, setDataSources] = useState({})
 
-  const { setCurrentUrl, userId, userData, branchId, organization } = useContext(
+  const { setCurrentUrl, userId, userData } = useContext(
     CompleteDataContext
   );
 
@@ -220,8 +215,6 @@ function AddDieselEntry({
 
   const fetchDailyFuelData = async (date) => {
     setModalData(false)
-    const year = moment(date).format('YYYY');
-    const month = moment(date).endOf('month').format('MM');
     setModalOpener(true);
     setFuelDataLoading(true);
     const fuelData = await fetchDieselDailyUsageData(); 

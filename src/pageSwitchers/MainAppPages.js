@@ -1,41 +1,39 @@
-import React, { useContext } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useContext } from 'react';
+import { Route, Routes } from 'react-router-dom';
 
 import CompleteDataContext from "../Context";
 
-import AddBills from "../mainAppPages/AddBills";
-import AddEquipment from "../mainAppPages/AddEquipment";
-import Billing from "../mainAppPages/Billing";
-import CostTracker from "../mainAppPages/CostTracker";
-import Dashboard from "../mainAppPages/Dashboard";
-import Report from "../mainAppPages/Report";
-import ScoreCard from "../mainAppPages/ScoreCard";
-import Error from "../mainAppPages/Error";
-import PowerQuality from "../mainAppPages/PowerQuality";
-import EnergyConsumption from "../mainAppPages/EnergyConsumption";
-import PowerDemand from "../mainAppPages/PowerDemand";
-import TimeOfUse from "../mainAppPages/TimeOfUse";
-import LastReading from "../mainAppPages/LastReading";
-import ClientProfile from "../mainAppPages/ClientProfile";
-import Password from "../mainAppPages/Password";
-import AlertsAndAlarms from "../mainAppPages/AlertsAndAlarms";
-import BranchesDevicesAndUsers from "../mainAppPages/BranchesDevicesAndUsers";
-import BranchesUserForm from "../mainAppPages/BranchesUserForm";
-import LoadOverview from "../mainAppPages/LoadOverview";
-import AddDieselEntry from "../mainAppPages/AddDieselEntry";
-import SolarOverviewPage from "../mainAppPages/SolarOverviewPage";
-import DieselOverviewPage from "../mainAppPages/DieselOverviewPage";
+import Billing from '../mainAppPages/Billing';
+import CostTracker from '../mainAppPages/CostTracker';
+import Dashboard from '../mainAppPages/Dashboard';
+import Report from '../mainAppPages/Report';
+import ScoreCard from '../mainAppPages/ScoreCard';
+import Error from '../mainAppPages/Error';
+import PowerQuality from '../mainAppPages/PowerQuality';
+import EnergyConsumption from '../mainAppPages/EnergyConsumption';
+import PowerDemand from '../mainAppPages/PowerDemand';
+import TimeOfUse from '../mainAppPages/TimeOfUse';
+import LastReading from '../mainAppPages/LastReading';
+import ClientProfile from '../mainAppPages/ClientProfile';
+import Password from '../mainAppPages/Password';
+import AlertsAndAlarms from '../mainAppPages/AlertsAndAlarms';
+import BranchesDevicesAndUsers from '../mainAppPages/BranchesDevicesAndUsers';
+import BranchesUserForm from '../mainAppPages/BranchesUserForm';
 
-import ScrollToTop from "../helpers/ScrollToTop";
-import Sidebar from "../components/Sidebar";
-import AppHeader from "../components/AppHeader";
-import TopBar from "../components/AppTopBar";
-import RevisedAppTopBar from "../components/RevisedAppTopBar";
+import ScrollToTop from '../helpers/ScrollToTop';
+
+import AppHeader from '../components/AppHeader';
+import Sidebar from '../components/Sidebar';
+import TopBar from '../components/AppTopBar';
+import LoadOverview from '../mainAppPages/LoadOverview';
+import RevisedAppTopBar from '../components/RevisedAppTopBar';
+import Breakers from '../mainAppPages/Breakers';
+import SolarOverviewPage from '../mainAppPages/SolarOverviewPage';
+import DieselOverviewPage from '../mainAppPages/DieselOverviewPage';
+// import Breakers from '../mainAppPages/Breakers';
 
 function MainAppPages() {
   const { currentUrl } = useContext(CompleteDataContext);
-
-  const isReportPageOpen = currentUrl?.includes("report");
 
   return (
     <div className="app">
