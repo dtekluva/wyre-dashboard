@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import moment from 'moment';
-import { Modal, Table, Dropdown, Popconfirm, Space, notification } from 'antd';
+import { Modal, Table, Dropdown, Popconfirm, Space, notification, Button } from 'antd';
 import { EditOutlined, DownOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import UpdateDieselEntry from '../../mainAppPages/UpdateDieselEntry';
@@ -181,9 +181,13 @@ console.log('dieselEntryData === ', dieselEntryData);
                   placement="topLeft"
                   menu={{ items: itemData(record) }}
                 >
-                  <a onClick={(e) => e.preventDefault()}>
+                  <Button
+                    type="link"
+                    onClick={(e) => e.preventDefault()}
+                    style={{ padding: 0, height: 'auto', lineHeight: 'inherit' }}
+                  >
                     More <DownOutlined />
-                  </a>
+                  </Button>
                 </Dropdown>
               )}
             />
