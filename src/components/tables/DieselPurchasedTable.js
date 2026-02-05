@@ -4,7 +4,7 @@ import CompleteDataContext from '../../Context';
 import { connect } from 'react-redux';
 import { deleteFuelPurchaseData } from '../../redux/actions/constTracker/costTracker.action';
 
-import { notification, Table, Typography, Popconfirm, Dropdown, Space, Menu } from 'antd';
+import { notification, Table, Typography, Popconfirm, Dropdown, Space, Menu, Button } from 'antd';
 import { EditOutlined, DownOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import { sortArrayOfObjectByDate } from '../../helpers/genericHelpers';
@@ -58,31 +58,39 @@ const DieselPurchasedTable = ({ data, userId, role, isLoading, setEditDieselPurc
               <Menu.Item onClick={() => {}}>
                 <Space size={4}>
                   <EditOutlined />{" "}
-                  <a
-                    target="_blank"
+                  <Button
+                    type="link"
                     onClick={(e) => {
-                      e.preventDefault();
+                      e.stopPropagation();
                       setEditDieselPurchaseModal(true);
                       setDieselPurchaseData(record);
                     }}
-                    rel="noopener noreferrer"
-                  >Edit Diesel Purchase</a>
+                    style={{ padding: 0, height: 'auto', lineHeight: 'inherit' }}
+                  >Edit Diesel Purchase</Button>
                 </Space>
               </Menu.Item>
               <Menu.Item onClick={() => {}} type="link">
                 <Space size={4}>
                   <Icon icon="ant-design:delete-outlined" />
                   <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
-                    <a>Delete Diesel Purchase</a>
+                    <Button
+                      type="link"
+                      style={{ padding: 0, height: 'auto', lineHeight: 'inherit' }}
+                    >Delete Diesel Purchase</Button>
                   </Popconfirm>
                 </Space>
               </Menu.Item>
             </Menu>
           }
         >
-          <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+          <Button
+            type="link"
+            className="ant-dropdown-link"
+            onClick={(e) => e.preventDefault()}
+            style={{ padding: 0, height: 'auto', lineHeight: 'inherit' }}
+          >
             More <DownOutlined />
-          </a>
+          </Button>
         </Dropdown>
       );
 
