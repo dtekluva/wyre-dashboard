@@ -98,7 +98,7 @@ function UpdateDieselPurchase({ match, dieselPurchaseData, updateFuelPurchaseDat
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match, userId]);
+  }, [match, setCurrentUrl]);
 
 
   let defaultBranch;

@@ -4,19 +4,16 @@
 // } from "./actionCreators";
 import { APIService } from "../../../config/api/apiConfig";
 import { jwtDecode } from 'jwt-decode';
-import { message } from "antd";
 import { getMonthYear } from "../../../helpers/genericHelpers";
 import { getWeatherReadingsLoading, getWeatherReadingsSuccess, getComponentsTableLoading, getComponentsTableSuccess, getInverterGridsLoading, getInverterGridsSuccess, getConsumptionChartLoading, getConsumptionChartSuccess, getPvProductionChartLoading, getPvProductionChartSuccess, getBatteryChartLoading, getBatteryChartSuccess } from "./actionCreators";
 
 export const fetchWeatherReadingsData = () => async (dispatch) => {
   dispatch(getWeatherReadingsLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const requestUrl = `solar/overview/${branchId}/`;
@@ -32,12 +29,10 @@ export const fetchWeatherReadingsData = () => async (dispatch) => {
 export const fetchComponentsTableData = () => async (dispatch) => {
   dispatch(getComponentsTableLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const requestUrl = `solar/yield/${branchId}/`;
@@ -53,12 +48,10 @@ export const fetchComponentsTableData = () => async (dispatch) => {
 export const fetchInverterGridsData = () => async (dispatch) => {
   dispatch(getInverterGridsLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const requestUrl = `solar/site-status/${branchId}/`;
@@ -75,12 +68,10 @@ export const fetchConsumptionsData = (date, day) => async (dispatch) => {
   dispatch(getConsumptionChartLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   const { month, year } = getMonthYear(date);
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const initUrl = `solar/${branchId}/consumption-hourly-plot/?month=${month}&year=${year}`
@@ -98,12 +89,10 @@ export const fetchPvProductionData = (date, day) => async (dispatch) => {
   dispatch(getPvProductionChartLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   const { month, year } = getMonthYear(date);
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const initUrl = `solar/${branchId}/pv-production-hourly-plot/?month=${month}&year=${year}`
@@ -121,12 +110,10 @@ export const fetchBatterySystemData = (date, day) => async (dispatch) => {
   dispatch(getBatteryChartLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   const { month, year } = getMonthYear(date);
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const initUrl = `solar/${branchId}/battery-backup-hourly-plot/?month=${month}&year=${year}`

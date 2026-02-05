@@ -1,11 +1,8 @@
 import React, { useEffect, useContext } from 'react';
-import { useForm } from 'react-hook-form';
 import { Button, DatePicker, Select, Upload } from 'antd';
 import CompleteDataContext from '../Context';
 
 import { Input, Form } from 'antd';
-
-import { CaretDownFilled } from '@ant-design/icons';
 
 import BreadCrumb from '../components/BreadCrumb';
 
@@ -17,12 +14,8 @@ const breadCrumbRoutes = [
   { url: '#', name: 'Add Clients', id: 4 },
 ];
 
-const { Option } = Select;
-
 const AddClients = ({ match }) => {
   const { setCurrentUrl } = useContext(CompleteDataContext);
-
-  const { setValue } = useForm();
 
   useEffect(() => {
     if (match && match.url) {

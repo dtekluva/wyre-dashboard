@@ -52,7 +52,6 @@ const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   }, [match, setCurrentUrl, token, userId]);
 
   const { Option } = Select
-  let branchname = sideBarData && sideBarData.branches
 
   const branchSelectorStyle = {
       width:'100%',

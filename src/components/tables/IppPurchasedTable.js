@@ -35,41 +35,6 @@ const IppPurchasedTable = ({ data, userId, setEditIppPurchaseModal, setIppPurcha
     }
   };
 
-  const itemData = (record) => {
-    return [
-      {
-        key: '1',
-        label: (
-          <>
-            <EditOutlined />
-            <a target="_blank" onClick={(e) => {
-              e.preventDefault();
-              setEditIppPurchaseModal(true);
-              setIppPurchaseData(record)
-            }} rel="noopener noreferrer">
-              Edit IPP Purchase
-            </a>
-          </>
-
-        ),
-      },
-      {
-        key: '2',
-        label: (<> {
-          <>
-            <Icon icon="ant-design:delete-outlined" />
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
-              <a>Delete IPP Purchase</a>
-            </Popconfirm>
-          </>
-        }
-        </>
-
-        ),
-      }
-    ];
-  }
-
   const optionsColumn = () => ({
     title: 'Options',
     width: '10%',
@@ -189,7 +154,7 @@ const IppPurchasedTable = ({ data, userId, setEditIppPurchaseModal, setIppPurcha
         className='table-striped-rows utitily-overview-table'
         rowKey={(record) => record.id}
         scroll={isMediumScreen && { x: 600, y: 300 }}
-        summary={pageData => {
+        summary={() => {
 
           return (
             <>

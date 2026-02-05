@@ -13,7 +13,6 @@ import { NumberField, NumberFieldAcceptZero, SelectField } from '../components/F
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import UpdateDieselEntry from './UpdateDieselEntry';
 import UpdateMonthlyDieselEntry from './UpdateMonthlyDieselEntry';
-import { Select } from 'antd';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker
@@ -54,8 +53,6 @@ function AddDieselEntry({
   getBranchGeneratorsData,
   fetchDieselDailyUsageData,
   fetchDieselMonthlyUsageData,
-  fetchFuelConsumptionData: fetchFuelConsumptionInfo,
-  deleteFuelConsumptionData: deleteDieselEntry
 }) {
   const [entryType, setEntryType] = useState(null);
   const [dailyForm] = Form.useForm();
@@ -213,7 +210,7 @@ function AddDieselEntry({
     return moment(dateA).toDate() - moment(dateB).toDate();
   };
 
-  const fetchDailyFuelData = async (date) => {
+  const fetchDailyFuelData = async () => {
     setModalData(false)
     setModalOpener(true);
     setFuelDataLoading(true);
@@ -239,7 +236,7 @@ function AddDieselEntry({
     setFuelDataLoading(false);
   }
 
-  const fetchMonthlyFuelData = async (date) => {
+  const fetchMonthlyFuelData = async () => {
     setModalDataMonthly(false)
     setModalOpener(true);
     setFuelDataLoading(true);
@@ -665,7 +662,6 @@ const mapDispatchToProps = {
   addFuelConsumptionData,
   getBranchGeneratorsData,
   addMonthlyFuelConsumptionData,
-  fetchFuelConsumptionData,
   fetchDieselDailyUsageData,
   fetchDieselMonthlyUsageData
 };

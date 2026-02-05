@@ -44,18 +44,15 @@ export const getPermittedBranches = () => async (dispatch) => {
   dispatch(getPermittedBranchesLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let token;
 
   if (loggedUserJSON) {
     try {
       const userToken = JSON.parse(loggedUserJSON);
       if (userToken.access) {
-        const user = jwtDecode(userToken.access);
-        userId = user.id;
         token = userToken.access;
       }
-    } catch (parseError) {
+    } catch (_parseError) {
       dispatch(getPermittedBranchesLoading(false));
       return;
     }
@@ -100,7 +97,7 @@ export const switchBranch = (branchId) => async (dispatch) => {
       if (userToken.access) {
         token = userToken.access;
       }
-    } catch (parseError) {
+    } catch (_parseError) {
       dispatch(switchBranchLoading(false));
       return;
     }
