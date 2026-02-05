@@ -1,4 +1,4 @@
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState, useCallback } from 'react';
 import { notification, Form, Spin, DatePicker, Select, Table, Modal, Button } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
@@ -121,13 +121,13 @@ function AddDieselEntry({
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match, userId]);
+  }, [match, userId, setCurrentUrl]);
 
   useEffect(() => {
     if (defaultBranch) {   
       getBranchGeneratorsData(defaultBranch)
     }
-  }, [defaultBranch]);
+  }, [defaultBranch, getBranchGeneratorsData]);
 
   useEffect(() => {
     if (costTracker?.fetchedListOfGenerators?.generators) {
@@ -196,7 +196,7 @@ function AddDieselEntry({
     return moment(dateA).toDate() - moment(dateB).toDate();
   };
 
-  const fetchDailyFuelData = async () => {
+  const fetchDailyFuelData = useCallback(async () => {
     setModalData(false)
     setModalOpener(true);
     setFuelDataLoading(true);
@@ -220,9 +220,9 @@ function AddDieselEntry({
       setModalData(sortedData.slice(0, 10));
     }
     setFuelDataLoading(false);
-  }
+  }, [fetchDieselDailyUsageData]);
 
-  const fetchMonthlyFuelData = async () => {
+  const fetchMonthlyFuelData = useCallback(async () => {
     setModalDataMonthly(false)
     setModalOpener(true);
     setFuelDataLoading(true);
@@ -244,12 +244,12 @@ function AddDieselEntry({
       setModalDataMonthly(sortedData.slice(0, 10));
     }
     setFuelDataLoading(false);
-  }
+  }, [fetchDieselMonthlyUsageData]);
 
   useEffect(() => {
     fetchDailyFuelData()
     fetchMonthlyFuelData()
-  }, []);
+  }, [fetchDailyFuelData, fetchMonthlyFuelData]);
 
   const dailyConsumptionColumn = [
     {

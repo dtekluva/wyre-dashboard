@@ -60,7 +60,7 @@ const DieselOverviewPage = ({
     fetchBranchGeneratorsStatusData();
     fetchDieselPriceData();
     fetchCoEmissionData();
-  }, []);
+  }, [fetchBranchGeneratorsStatusData, fetchDieselPriceData, fetchCoEmissionData]);
 
   useEffect(() => {
     if (!selectedDate) return;
@@ -70,7 +70,7 @@ const DieselOverviewPage = ({
     fetchFuelUsageData(selectedDate);
     fetchGenMetricsData(selectedDate);
     fetchCostMetricsData(selectedDate);
-  }, [selectedDate]);
+  }, [selectedDate, fetchGenTotalEnergyUsedData, fetchGenStatusChartData, fetchGenFuelUsageData, fetchFuelUsageData, fetchGenMetricsData, fetchCostMetricsData]);
 
   useEffect(() => {
     if (diesel) {

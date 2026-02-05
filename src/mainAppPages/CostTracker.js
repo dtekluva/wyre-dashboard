@@ -78,7 +78,7 @@ function CostTracker({
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, []);
+  }, [match, setCurrentUrl]);
 
   useEffect(() => {
     if (branchId) {     
@@ -87,7 +87,7 @@ function CostTracker({
       getUtilityOverviewData(branchId);
       getCostTrackerBaselineData(branchId);
     }
-  }, [branchId]);
+  }, [branchId, getCostTrackerOverviewData, getDieselOverviewData, getUtilityOverviewData, getCostTrackerBaselineData]);
 
   useEffect(() => {
     setCostTrackerOverviewData(costTracker.costTrackerOverviewData);

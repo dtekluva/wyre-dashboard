@@ -57,7 +57,7 @@ function Billing({ match, fetchBillingData: fetchBillingDataFunc, billing }) {
       // fetch the power factors here
     }
     setPageLoaded(true);
-  }, [userDateRange]);
+  }, [userDateRange, billing.billingData, fetchBillingDataFunc, pageLoaded]);
 
 
 
@@ -91,7 +91,7 @@ function Billing({ match, fetchBillingData: fetchBillingDataFunc, billing }) {
           setRefinedBilling(getBillingRenderedData(renderedDataArray));
         }
       }
-    }, [checkedItems, billing.billingData]);
+    }, [checkedItems, billing.billingData, billing.constructor, checkedBranches, checkedDevices]);
 
     const {
       billing_consumption_kwh,

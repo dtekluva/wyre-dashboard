@@ -5,7 +5,6 @@ import { APIService } from "../../../config/api/apiConfig";
 export const fetchSideBar = () => async (dispatch) => {
   dispatch(fetchSideBarLoading());
 
-  const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   const requestUrl = `side_bar_data`
   try {
     const response = await APIService.get(requestUrl);
