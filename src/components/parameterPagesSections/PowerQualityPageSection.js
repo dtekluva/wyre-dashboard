@@ -16,14 +16,13 @@ import PowerQualityTable from '../tables/PowerQualityTable';
 import ExcelIcon from '../../icons/ExcelIcon';
 import ExportToCsv from '../ExportToCsv';
 
-function PowerQualityPageSection({ pqData }) {
+function PowerQualityPageSection({ key, pqData }) {
   // Obtain selected unit from context API
   const { powerQualityUnit } = useContext(CompleteDataContext);
   // Remove stuff in parenthesis then covert string to snake case
   const formattedPowerQualityName = toSnakeCase(
     powerQualityUnit.replace(/\s*\(.*?\)\s*/g, '')
   );
-
   // Pick out data based on selection in UI
   const plottedData = pqData && pqData[formattedPowerQualityName];
   const dateObjects = pqData && convertDateStringsToObjects(pqData.dates);
@@ -91,7 +90,7 @@ function PowerQualityPageSection({ pqData }) {
   return (
     <section className='parameter-section'>
       <h2 className='parameter-section__heading'>
-        {pqData && pqData.deviceName}
+        {pqData && pqData.name}
       </h2>
 
       <article className='power-quality-line-container'>

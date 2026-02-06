@@ -3,6 +3,7 @@ import axios from "axios";
 import jwtDecode from "jwt-decode";
 import EnvData from "../../../config/EnvData";
 import { fetchSideBarLoading, fetchSideBarSuccess } from "./actionCreators";
+import { APIService } from "../../../config/api/apiConfig";
 
 
 export const fetchSideBar = () => async (dispatch) => {
@@ -17,15 +18,9 @@ export const fetchSideBar = () => async (dispatch) => {
     userId = user.id;
     token = userToken.access;
   }
+  const requestUrl = `side_bar_data`
   try {
-    const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}side_bar_data/${userId}`, {
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-    );
+    const response = await APIService.get(requestUrl);
     dispatch(fetchSideBarSuccess(response.data.authenticatedData));
     dispatch(fetchSideBarLoading(false))
   } catch (error) {

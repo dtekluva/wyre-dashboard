@@ -75,7 +75,7 @@ function LastReading({ match, fetchLastReadingData }) {
   const lastReadingSections =
     last_reading &&
     last_reading.map((eachDevice) => (
-      <LastReadingPageSection key={eachDevice.deviceName} lrData={eachDevice} />
+      <LastReadingPageSection key={eachDevice.name} lrData={eachDevice} />
     ));
   
    if (!lastReadingData.length > 0) {

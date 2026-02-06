@@ -25,11 +25,11 @@ function LoadOverviewDataTable({ device, index, pDemand }) {
           </p>
           <hr />
           <p>
-            Maximum Demand: {pDemand.min}kW
+            Maximum Demand: {pDemand.max}kW
           </p>
           <hr />
           <p>
-            Minimum Demand: {pDemand.max}kW
+            Minimum Demand: {pDemand.min}kW
           </p>
           <hr />
           <p>

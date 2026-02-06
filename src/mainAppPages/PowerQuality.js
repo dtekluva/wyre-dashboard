@@ -66,12 +66,12 @@ function PowerQuality({ match, fetchPowerQualityData }) {
     const {active_power, current, dates:{dates}, frequency, power_factor, power_factor123, reactive_power, voltage} = power_quality
     return {name, active_power, current, dates, frequency, power_factor, power_factor123, reactive_power, voltage}
   })
-
+  
   const powerQualitySections =
     power_quality &&
     power_quality.map((eachDevice) => (
       <PowerQualityPageSection
-        key={eachDevice.deviceName}
+        key={eachDevice.name}
         pqData={eachDevice}
       />
     ));

@@ -33,9 +33,10 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
   } = useContext(CompleteDataContext);
   const [allCheckedOrSelectedDevice, setAllCheckedOrSelectedDevice] = useState({})
   const [sideDetails, setSideDetails] = useState([])
-  const [pDemandDetails, setPDemandDetails] = useState({})
-  const [demandInTable, setDemandInTable] = useState({})
+  const [pDemandDetails, setPDemandDetails] = useState([])
+  const [demandInTable, setDemandInTable] = useState([])
   const [allIsLoadDeviceData, setAllisLoadDeviceData] = useState(false);
+  
   useEffect(() => {
     if (match && match.url) {
       setCurrentUrl(match.url);
@@ -57,8 +58,8 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
   }, [sideBar.sideBarData]);
 
   useEffect(() => {
-    if (dashboard.demandData.devices_demands) {
-      const useDemand = dashboard.demandData.devices_demands.map(demand => demand)
+    if (dashboard.demandData[0]?.devices_demands) {
+      const useDemand = dashboard.demandData[0]?.devices_demands.map(demand => demand)
       setPDemandDetails(useDemand)
     }
   }, [dashboard.demandData]);
@@ -72,9 +73,8 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
     }   
   }, [dashboard.loadOverviewData]);
 
-
   useEffect( () => {
-    if (sideDetails && Object.keys(pDemandDetails).length > 0) {
+    if (sideDetails && pDemandDetails.length > 0) {
       const renderTableData = sideDetails.map(data => pDemandDetails.find(demand => demand.device_name === data.name))
       setDemandInTable(renderTableData)
     }
@@ -90,7 +90,7 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
   );
 
 
-  if (!dashboard.loadOverviewData || Object.keys(demandInTable).length === 0) {
+  if (!dashboard.loadOverviewData || demandInTable.length === 0) {
     return <Loader />;
   }
 
@@ -100,7 +100,7 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
       {
-        Object.keys(demandInTable).length > 0 && allIsLoadDeviceData && allIsLoadDeviceData.length > 0 ? allIsLoadDeviceData.map((branch) =>
+        demandInTable.length > 0 && allIsLoadDeviceData && allIsLoadDeviceData.length > 0 ? allIsLoadDeviceData.map((branch) =>
         (<div key={branch[0].branchName}>
           <article className='score-card-row-3'>
             <h2> {sideBar?.sideBarData?.branches[0]?.name} </h2>
