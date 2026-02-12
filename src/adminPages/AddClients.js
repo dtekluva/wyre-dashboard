@@ -6,7 +6,7 @@ import { Input, Form } from 'antd';
 
 import BreadCrumb from '../components/BreadCrumb';
 
-
+// create breadcrum routes
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },
   { url: '/view-clients', name: 'Manage', id: 2 },
