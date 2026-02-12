@@ -126,8 +126,8 @@ function Dashboard({
       }
       setPageLoaded(true);
     }
-
-  }, [userDateRange, dashBoardInfo.dashBoardData, dashboard.fetchDashBoardCard_1_Loading, dashboard.fetchDashBoardCard_2_Loading, dashboard.fetchDashBoardCard_3_Loading, fetchDashBoardDataCard_1, fetchDashBoardDataCard_2, fetchDashBoardDataCard_3, fetchPAPR, pageLoaded]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userDateRange, dashBoardInfo.dashBoardData, fetchDashBoardDataCard_1, fetchDashBoardDataCard_2, fetchDashBoardDataCard_3, fetchPAPR, pageLoaded]);
 
   useEffect(() => {
     if (Object.keys(dashboard.demandData).length > 0) {
