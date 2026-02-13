@@ -32,19 +32,20 @@ function LastReading({ match, fetchLastReadingData }) {
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match?.url]);
+  }, [match, setCurrentUrl]);
 
   useEffect(() => {
     fetchLastReadingData(singleDateToUse);
   }, [fetchLastReadingData, singleDateToUse]);
 
+  const fetchedLastReading = parametersData?.fetchedLastReading;
   useEffect(() => {
-    if (parametersData?.fetchedLastReading) {
-      const devicesArrayData = devicesArray(parametersData.fetchedLastReading, checkedBranchId, checkedDevicesId);
+    if (fetchedLastReading) {
+      const devicesArrayData = devicesArray(fetchedLastReading, checkedBranchId, checkedDevicesId);
       const openDevicesArrayData = devicesArrayData?.devices ?? [];
       setLastReadingData(openDevicesArrayData);
     }
-  }, [parametersData?.fetchedLastReading, checkedBranchId, checkedDevicesId?.join?.() ?? '']);
+  }, [fetchedLastReading, checkedBranchId, checkedDevicesId]);
 
   // const { last_reading } = refinedRenderedData;
 

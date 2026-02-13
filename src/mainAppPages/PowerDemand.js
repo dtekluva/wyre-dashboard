@@ -31,7 +31,6 @@ const breadCrumbRoutes = [
 
 function PowerDemand({ match, fetchPowerDemandData }) {
   const [powerDemandData, setPowerDemandData] = useState([]);
-  const [pageLoaded, setPageLoaded] = useState(false);
   const parametersData = useSelector((state) => state.parametersReducer);
 
   const {
@@ -45,19 +44,20 @@ function PowerDemand({ match, fetchPowerDemandData }) {
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match?.url]);
+  }, [match, setCurrentUrl]);
 
   useEffect(() => {
     fetchPowerDemandData(userDateRange);
   }, [fetchPowerDemandData, userDateRange]);
 
+  const fetchedPowerDemand = parametersData?.fetchedPowerDemand;
   useEffect(() => {
-    if (parametersData?.fetchedPowerDemand) {
-      const devicesArrayData = devicesArray(parametersData.fetchedPowerDemand.authenticatedData, checkedBranchId, checkedDevicesId);
+    if (fetchedPowerDemand) {
+      const devicesArrayData = devicesArray(fetchedPowerDemand.authenticatedData, checkedBranchId, checkedDevicesId);
       const openDevicesArrayData = devicesArrayData?.devices ?? [];
       setPowerDemandData(openDevicesArrayData);
     }
-  }, [parametersData?.fetchedPowerDemand, checkedBranchId, checkedDevicesId?.join?.() ?? '']);
+  }, [fetchedPowerDemand, checkedBranchId, checkedDevicesId]);
 
   const power_demand = powerDemandData.map((deviceDetails) => {
     const { name, power_demand } = deviceDetails

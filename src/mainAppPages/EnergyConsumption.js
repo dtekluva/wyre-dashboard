@@ -29,7 +29,6 @@ const breadCrumbRoutes = [
 
 function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
   const [energyConsumptionData, setEnergyConsumptionData] = useState([]);
-  const [pageLoaded, setPageLoaded] = useState(false);
   const {
     userDateRange,
     checkedBranchId,
@@ -43,19 +42,20 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match?.url]);
+  }, [match, setCurrentUrl]);
 
   useEffect(() => {
     fetchEnergyConsumptionData(userDateRange);
   }, [fetchEnergyConsumptionData, userDateRange]);
 
+  const fetchedEnergyConsumption = parametersData?.fetchedEnergyConsumption;
   useEffect(() => {
-    if (parametersData?.fetchedEnergyConsumption) {
-      const devicesArrayData = devicesArray(parametersData.fetchedEnergyConsumption, checkedBranchId, checkedDevicesId);
+    if (fetchedEnergyConsumption) {
+      const devicesArrayData = devicesArray(fetchedEnergyConsumption, checkedBranchId, checkedDevicesId);
       const openDevicesArrayData = devicesArrayData?.devices ?? [];
       setEnergyConsumptionData(openDevicesArrayData);
     }
-  }, [parametersData?.fetchedEnergyConsumption, checkedBranchId, checkedDevicesId?.join?.() ?? '']);
+  }, [fetchedEnergyConsumption, checkedBranchId, checkedDevicesId]);
 
   const useEnergyConsumptionData = energyConsumptionData.map((deviceDetails) => {
     const { name, energy_consumption } = deviceDetails
