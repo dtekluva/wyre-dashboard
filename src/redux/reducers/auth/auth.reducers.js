@@ -1,6 +1,12 @@
 import authTypes from './auth.types';
 
 const INITIAL_STATE = {
+    resetPasswordLoading: false,
+    resetPasswordData: null,
+
+    confirmResetPasswordLoading: false,
+    confirmResetPasswordData: null,
+
     fetchBillingLoading: false,
     billingData: {},
 
@@ -19,6 +25,28 @@ const reducer = (state = INITIAL_STATE, action) => {
                 fetchBillingLoading: action.payload,
             };
             
+        case authTypes.RESET_PASSWORD_LOADING:
+            return {
+                ...state,
+                resetPasswordLoading: action.payload,
+            };
+        case authTypes.RESET_PASSWORD_SUCCESS:
+            return {
+                ...state,
+                resetPasswordData: action.payload,
+            };
+
+        case authTypes.CONFIRM_RESET_PASSWORD_LOADING:
+            return {
+                ...state,
+                confirmResetPasswordLoading: action.payload,
+            };
+        case authTypes.CONFIRM_RESET_PASSWORD_SUCCESS:
+            return {
+                ...state,
+                confirmResetPasswordData: action.payload,
+            };
+
         case authTypes.GET_PERMITTED_BRANCHES_LOADING:
             return {
                 ...state,

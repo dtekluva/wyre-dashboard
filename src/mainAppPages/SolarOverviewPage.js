@@ -104,6 +104,30 @@ const EnergySummary = ({ tableContentsData }) => {
     grid: "Grid",
   };
 
+  // Dynamic content labels per tab (battery labels will be updated when backend adds target fields)
+  const contentLabels = {
+    generation: {
+      total: "Total Yield",
+      today: "Today's yield",
+      monthly: "Current Month's yield",
+    },
+    battery: {
+      total: "Total",
+      today: "Today",
+      monthly: "Current Month",
+    },
+    load: {
+      total: "Consumption",
+      today: "Today's Energy",
+      monthly: "Current Month",
+    },
+    grid: {
+      total: "Import",
+      today: "Today's Energy",
+      monthly: "Current Month",
+    },
+  };
+
   const formatValue = (val) => (val ? Number(val).toLocaleString() : "0");
 
   return (
@@ -114,6 +138,7 @@ const EnergySummary = ({ tableContentsData }) => {
             <div className="energy-tab-content" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
               {["total", "today", "monthly"].map((period) => {
                 const item = tableContentsData[key]?.[period] || {};
+                const label = contentLabels[key]?.[period] ?? period;
                 return (
                   <div
                     key={period}
@@ -123,11 +148,7 @@ const EnergySummary = ({ tableContentsData }) => {
                     }}
                   >
                     <div style={{ fontSize: "14px", fontWeight: 500, color: "#333" }}>
-                      {period === "total"
-                        ? "Total yield"
-                        : period === "today"
-                        ? "Today's yield"
-                        : "Current Month's yield"}
+                      {label}
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>

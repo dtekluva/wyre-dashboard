@@ -107,6 +107,8 @@ const ScoreCardBarChart = ({
         },
         ticks: {
           maxTicksLimit: 10,
+          maxRotation: 45,
+          minRotation: 45,
           font: {
             size: 12,
             family: 'Montserrat',

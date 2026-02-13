@@ -8,6 +8,7 @@ import Login from '../authPages/Login';
 import SignUp from '../authPages/SignUp';
 import ChangePassword from '../authPages/ChangePassword';
 import ResetPassword from '../authPages/ResetPassword';
+import ConfirmResetPassword from '../authPages/ConfirmResetPassword';
 import Error from '../authPages/Error';
 
 import AuthHeader from '../components/AuthHeader';
@@ -29,6 +30,7 @@ function AuthPages() {
             <Route path='/sign-up' element={<SignUp to="/sign-up" /> } />
             <Route path='/change-password' element={<ChangePassword to="/change-password" /> } />
             <Route path='/reset-password' element={<ResetPassword to="/reset-password" /> } />
+            <Route path='/confirm-reset-password' element={<ConfirmResetPassword to="/confirm-reset-password" /> } />
             <Route path="*" element={<Error />} />
           </Routes>
         {/* </ScrollToTop> */}

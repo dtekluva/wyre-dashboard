@@ -67,6 +67,8 @@ const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings, pDeman
                         fontFamily: 'Montserrat',
                         fontColor: '#A3A3A3',
                         maxTicksLimit: 10,
+                        maxRotation: 45,
+                        minRotation: 45,
                         padding: 0,
                         fontSize: 12,
                     },

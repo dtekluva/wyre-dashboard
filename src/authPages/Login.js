@@ -153,7 +153,7 @@ function Login() {
 
           <div className='forgot-password-wrapper'>
             <Link className='forgot-password' to='/reset-password'>
-              Forgot Password?
+              {/* Forgot Password? */}
             </Link>
           </div>
 

@@ -8,7 +8,6 @@ import Loader from '../components/Loader';
 import { fetchLastReadingData } from '../redux/actions/parameters/parameter.action';
 import { devicesArray } from '../helpers/v2/organizationDataHelpers';
 import { connect, useSelector } from 'react-redux';
-import { isEmpty } from '../helpers/authHelper';
 import moment from "moment";
 
 const breadCrumbRoutes = [
@@ -19,11 +18,9 @@ const breadCrumbRoutes = [
 
 function LastReading({ match, fetchLastReadingData }) {
   const [lastReadingData, setLastReadingData] = useState([]);
-  const [pageLoaded, setPageLoaded] = useState(false);
   const parametersData = useSelector((state) => state.parametersReducer);
 
   const {
-    // userDateRange,
     checkedBranchId,
     checkedDevicesId,
     setCurrentUrl,
@@ -38,29 +35,17 @@ function LastReading({ match, fetchLastReadingData }) {
   }, [match, setCurrentUrl]);
 
   useEffect(() => {
-    fetchLastReadingData(singleDateToUse)
+    fetchLastReadingData(singleDateToUse);
   }, [fetchLastReadingData, singleDateToUse]);
-  
-  useEffect(() => {
-    if (!pageLoaded && isEmpty(parametersData || {})) {
-      fetchLastReadingData(singleDateToUse);
-    }
 
-    if (!isEmpty(parametersData) > 0 && pageLoaded) {
-      fetchLastReadingData(singleDateToUse);
-    }
-    setPageLoaded(true);
-  }, [singleDateToUse, fetchLastReadingData, pageLoaded, parametersData]);
-
+  const fetchedLastReading = parametersData?.fetchedLastReading;
   useEffect(() => {
-    if (pageLoaded && parametersData.fetchedLastReading) {
-      let openDevicesArrayData
-      const devicesArrayData = devicesArray(parametersData.fetchedLastReading, checkedBranchId, checkedDevicesId);
-      openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
-      setLastReadingData(openDevicesArrayData)
+    if (fetchedLastReading) {
+      const devicesArrayData = devicesArray(fetchedLastReading, checkedBranchId, checkedDevicesId);
+      const openDevicesArrayData = devicesArrayData?.devices ?? [];
+      setLastReadingData(openDevicesArrayData);
     }
-      setPageLoaded(true);
-  }, [parametersData.fetchedLastReading, checkedBranchId, checkedDevicesId.length, checkedDevicesId, pageLoaded]);
+  }, [fetchedLastReading, checkedBranchId, checkedDevicesId]);
 
   // const { last_reading } = refinedRenderedData;
 

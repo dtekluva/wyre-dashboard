@@ -19,7 +19,6 @@ import ExcelIcon from '../icons/ExcelIcon';
 import ExportToCsv from '../components/ExportToCsv';
 import { fetchEnergyConsumptionData } from '../redux/actions/parameters/parameter.action';
 import { connect, useSelector } from 'react-redux';
-import { isEmpty } from '../helpers/authHelper';
 import { devicesArray } from '../helpers/v2/organizationDataHelpers';
 
 const breadCrumbRoutes = [
@@ -30,7 +29,6 @@ const breadCrumbRoutes = [
 
 function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
   const [energyConsumptionData, setEnergyConsumptionData] = useState([]);
-  const [pageLoaded, setPageLoaded] = useState(false);
   const {
     userDateRange,
     checkedBranchId,
@@ -47,29 +45,17 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
   }, [match, setCurrentUrl]);
 
   useEffect(() => {
-    fetchEnergyConsumptionData(userDateRange)
+    fetchEnergyConsumptionData(userDateRange);
   }, [fetchEnergyConsumptionData, userDateRange]);
 
+  const fetchedEnergyConsumption = parametersData?.fetchedEnergyConsumption;
   useEffect(() => {
-      if (!pageLoaded && isEmpty(parametersData || {})) {
-        fetchEnergyConsumptionData(userDateRange);
-      }
-  
-      if (!isEmpty(parametersData) > 0 && pageLoaded) {
-        fetchEnergyConsumptionData(userDateRange);
-      }
-      setPageLoaded(true);
-  }, [userDateRange, fetchEnergyConsumptionData, pageLoaded, parametersData]);
-  
-  useEffect(() => {
-      if (pageLoaded && parametersData.fetchedEnergyConsumption) {
-        let openDevicesArrayData
-        const devicesArrayData = devicesArray(parametersData.fetchedEnergyConsumption, checkedBranchId, checkedDevicesId);
-        openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
-        setEnergyConsumptionData(openDevicesArrayData)
-      }
-      setPageLoaded(true);
-  }, [parametersData.fetchedEnergyConsumption, checkedBranchId, checkedDevicesId.length, checkedDevicesId, pageLoaded]);
+    if (fetchedEnergyConsumption) {
+      const devicesArrayData = devicesArray(fetchedEnergyConsumption, checkedBranchId, checkedDevicesId);
+      const openDevicesArrayData = devicesArrayData?.devices ?? [];
+      setEnergyConsumptionData(openDevicesArrayData);
+    }
+  }, [fetchedEnergyConsumption, checkedBranchId, checkedDevicesId]);
 
   const useEnergyConsumptionData = energyConsumptionData.map((deviceDetails) => {
     const { name, energy_consumption } = deviceDetails

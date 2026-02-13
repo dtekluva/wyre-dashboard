@@ -174,6 +174,8 @@ const PowerQualityLineChart = ({ data, dates, powerQualityUnit }) => {
             : isLessThan1296
               ? 7
               : 9,
+          maxRotation: 45,
+          minRotation: 45,
         },
         title: {
           display: true,

@@ -154,6 +154,8 @@ const EnergyConsumptionMultipleChart = ({ energyData = [], uiSettings }) => {
         },
         ticks: {
           maxTicksLimit: 10,
+          maxRotation: 45,
+          minRotation: 45,
           color: "#A3A3A3",
           padding: 10,
           font: {

@@ -111,6 +111,8 @@ const EnergyConsumptionBarChart = ({
         ticks: {
           padding: 10,
           maxTicksLimit: 10,
+          maxRotation: 45,
+          minRotation: 45,
           color: '#A3A3A3',
           font: {
             size: 10,
