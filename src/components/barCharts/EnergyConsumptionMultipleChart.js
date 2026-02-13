@@ -1,51 +1,109 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import CompleteDataContext from '../../Context';
+import { useContext, useEffect, useMemo, useState } from "react";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+import CompleteDataContext from "../../Context";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Tooltip,
+  Legend
+);
 
 const EnergyConsumptionMultipleChart = ({ energyData = [], uiSettings }) => {
-
   const { isMediumScreen } = useContext(CompleteDataContext);
-  const [forcastedData, setForcastedData] = useState(false);
-  const [usedData, setUsedData] = useState(false);
-  const { appPrimaryColor } = uiSettings;
+  const { appPrimaryColor } = uiSettings || {};
 
-  const combineSameData = (dateArray) => {
-    let forcastedData = {};
-    let usedData = {};
-    if (dateArray.length > 0) {
-      dateArray.map((data) => {
-        if (forcastedData[data.date] != null) {
-          forcastedData[data.date] = Number(data.forecast) + forcastedData[data.date];
-        } else {
-          forcastedData[data.date] = Number(data.forecast);
-        }
-        if (usedData[data.date] != null) {
-          usedData[data.date] = usedData[data.date] + Number(data.used);
-        } else {
-          usedData[data.date] = Number(data.used);
-        }
+  const [forecastedData, setForecastedData] = useState({});
+  const [usedData, setUsedData] = useState({});
 
-      })
-    }
-    return { forcastedData, usedData };
-  }
-  const sort = (data) => data.sort((a, b) => new Date(a.date) - new Date(b.date));
-  const convertToOjectAndSort = (obj, name) => {
-    const data = Object.entries(obj).map(([key, value]) => ({ date: key, [name]: value.toFixed(2) }));
+  const combineSameData = (dataArray = []) => {
+    const forecasted = {};
+    const used = {};
 
-    const sortedData = sort(data);
-    const mapped = sortedData.map(item => ({ [item.date]: Number(item[name]).toFixed(2) }));
-    return Object.assign({}, ...mapped);
-  }
+    dataArray.forEach((item) => {
+      if (!item?.date) return;
+
+      forecasted[item.date] =
+        (forecasted[item.date] || 0) + Number(item.forecast || 0);
+
+      used[item.date] =
+        (used[item.date] || 0) + Number(item.used || 0);
+    });
+
+    return { forecasted, used };
+  };
+
+  const sortByDate = (obj = {}) =>
+    Object.entries(obj)
+      .map(([date, value]) => ({ date, value }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
   useEffect(() => {
-    const { forcastedData: forcast, usedData: used } = combineSameData(energyData);
-    setForcastedData(forcast);
+    const { forecasted, used } = combineSameData(energyData);
+    setForecastedData(forecasted);
     setUsedData(used);
-
   }, [energyData]);
 
+  const labels = useMemo(
+    () => sortByDate(usedData).map((i) => i.date),
+    [usedData]
+  );
+
+  const usedValues = useMemo(
+    () => sortByDate(usedData).map((i) => Number(i.value.toFixed(2))),
+    [usedData]
+  );
+
+  const forecastedValues = useMemo(
+    () =>
+      sortByDate(forecastedData).map((i) =>
+        Number(i.value.toFixed(2))
+      ),
+    [forecastedData]
+  );
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        type: "line",
+        label: "Forecasted",
+        data: forecastedValues,
+        borderColor: "#FFC205",
+        backgroundColor: "#FFC205",
+        borderWidth: 3,
+        tension: 0,
+        fill: false,
+        pointRadius: 3,
+      },
+      {
+        type: "bar",
+        label: "Consumption (Kw)",
+        data: usedValues,
+        backgroundColor: appPrimaryColor || "#4f46e5",
+        borderColor: appPrimaryColor || "#4f46e5",
+        borderWidth: 1,
+        maxBarThickness: 60,
+      },
+    ],
+  };
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
     layout: {
       padding: {
         left: isMediumScreen ? 5 : 25,
@@ -54,93 +112,66 @@ const EnergyConsumptionMultipleChart = ({ energyData = [], uiSettings }) => {
         bottom: isMediumScreen ? 10 : 25,
       },
     },
-    legend: {
-      display: false,
+    plugins: {
+      legend: {
+        display: false,
+        position: "top",
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false,
+      },
+      datalabels: {
+        display: false, // 👈 THIS removes inner labels
+      },
     },
-    maintainAspectRatio: false,
     scales: {
-      yAxes: [
-        {
-          gridLines: {
-            color: '#f0f0f0',
-            drawBorder: false,
-            drawTicks: false,
-            zeroLineColor: '#f0f0f0',
-          },
-          ticks: {
-            beginAtZero: true,
-            fontFamily: 'Roboto',
-            fontColor: '#A3A3A3',
-            maxTicksLimit: 6,
-            fontSize: 10,
-            padding: 10,
-          },
-          scaleLabel: {
-            display: true,
-            padding: 10,
-            labelString: `Consumption (Kw)`,
-            fontColor: 'black',
-            fontSize: isMediumScreen ? 14 : 18,
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: "#f0f0f0",
+          drawBorder: false,
+        },
+        ticks: {
+          maxTicksLimit: 6,
+          color: "#A3A3A3",
+          padding: 10,
+          font: {
+            size: 10,
           },
         },
-      ],
-      xAxes: [
-        {
-          gridLines: {
-            drawTicks: false,
-            color: '#f0f0f0',
-            zeroLineColor: '#f0f0f0',
-          },
-          ticks: {
-            beginAtZero: true,
-            fontFamily: 'Roboto',
-            fontColor: '#A3A3A3',
-            maxTicksLimit: 10,
-            padding: 10,
-            fontSize: 10,
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Months of the Year',
-            fontColor: 'black',
-            fontSize: isMediumScreen ? 14 : 18,
-            padding: isMediumScreen ? 10 : 25,
+        title: {
+          display: true,
+          text: "Consumption (Kw)",
+          font: {
+            size: isMediumScreen ? 14 : 18,
           },
         },
-      ],
+      },
+      x: {
+        grid: {
+          color: "#f0f0f0",
+        },
+        ticks: {
+          maxTicksLimit: 10,
+          color: "#A3A3A3",
+          padding: 10,
+          font: {
+            size: 10,
+          },
+        },
+        title: {
+          display: true,
+          text: "Months of the Year",
+          font: {
+            size: isMediumScreen ? 14 : 18,
+          },
+        },
+      },
     },
   };
 
-  const data = {
-    labels: Object.keys(convertToOjectAndSort(usedData, 'used')),
-    datasets: [
-      {
-        type: 'line',
-        label: `Forecasted`,
-        data: Object.values(convertToOjectAndSort(forcastedData, 'forcasted')),
-        backgroundColor: '#FFC205',
-        borderColor: '#FFC205',
-        borderWidth: 3,
-        fill: false,
-        tension: 0
-      },
-      {
-        type: 'bar',
-        label: `Consumption (Kw)`,
-        maxBarThickness: 60,
-        data: Object.values(convertToOjectAndSort(usedData, 'used')),
-        backgroundColor: appPrimaryColor,
-        borderColor: appPrimaryColor,
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  return (
-    <>
-      <Bar redraw data={data} options={options} />
-    </>
-  );
+  return <Bar data={data} options={options} />;
 };
 
 export default EnergyConsumptionMultipleChart;

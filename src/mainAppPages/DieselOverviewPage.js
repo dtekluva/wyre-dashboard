@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import DieselHeader from "../components/DieselHeader";
@@ -9,7 +9,7 @@ import FuelUsageCard from "../components/FuelUsageCard";
 import OperationalEfficiencyCard from "../components/OperationalEfficiencyCard";
 import CostAnalysisCard from "../components/CostAnalysisCard";
 import BreadCrumb from "../components/BreadCrumb";
-import { DatePicker, message } from "antd";
+import { DatePicker } from "antd";
 import { connect } from "react-redux";
 import {
   fetchBranchGeneratorsStatusData,
@@ -52,7 +52,7 @@ const DieselOverviewPage = ({
   const [costAnalysisData, setCostAnalysisData] = useState(null);
 
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [frequency, setFrequency] = useState("daily");
+  const [frequency] = useState("daily");
   const [isDownloading, setIsDownloading] = useState(false);
   const dashboardRef = useRef(null);
 
@@ -60,7 +60,7 @@ const DieselOverviewPage = ({
     fetchBranchGeneratorsStatusData();
     fetchDieselPriceData();
     fetchCoEmissionData();
-  }, []);
+  }, [fetchBranchGeneratorsStatusData, fetchDieselPriceData, fetchCoEmissionData]);
 
   useEffect(() => {
     if (!selectedDate) return;
@@ -70,7 +70,7 @@ const DieselOverviewPage = ({
     fetchFuelUsageData(selectedDate);
     fetchGenMetricsData(selectedDate);
     fetchCostMetricsData(selectedDate);
-  }, [selectedDate]);
+  }, [selectedDate, fetchGenTotalEnergyUsedData, fetchGenStatusChartData, fetchGenFuelUsageData, fetchFuelUsageData, fetchGenMetricsData, fetchCostMetricsData]);
 
   useEffect(() => {
     if (diesel) {

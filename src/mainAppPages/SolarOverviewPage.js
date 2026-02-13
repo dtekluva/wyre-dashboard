@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Progress, Select, Tabs, Table, DatePicker, Spin } from "antd";
+import { useEffect, useState } from "react";
+import { Card, Row, Col, Select, Tabs, DatePicker, Spin } from "antd";
 import {
   AreaChart,
   Area,
@@ -18,7 +18,7 @@ import gridImg from "../assets/icons/grid.png";
 import usageImg from "../assets/icons/usage.png";
 import locationLogo from "../assets/icons/locationIcon.png";
 import sunLogo from "../assets/icons/sunIcon.png";
-import { motion } from "framer-motion/dist/framer-motion"; // Node12-safe import
+import { motion } from "framer-motion"; // Node12-safe import
 import BreadCrumb from "../components/BreadCrumb";
 import { fetchBatterySystemData, fetchComponentsTableData, fetchConsumptionsData, fetchInverterGridsData, fetchPvProductionData, fetchWeatherReadingsData } from "../redux/actions/solar/solar.action";
 import { connect } from "react-redux";
@@ -248,7 +248,6 @@ const FlowDiagram = ({ inverterData }) => {
           const start = nodes[from];
           const end = nodes[to];
           const direction = start && start.direction;
-          const isOutgoing = direction === "OUT";
           const isIdle = direction === "IDLE";
           const isGridOff = start && start.status === "OFF";
 
@@ -481,7 +480,6 @@ const FlowDiagram = ({ inverterData }) => {
    Main SolarOverviewPage
    --------------------------- */
 const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTableData, fetchInverterGridsData, fetchConsumptionsData, fetchPvProductionData, fetchBatterySystemData }) => {
-  const [period, setPeriod] = useState("Select period");
   const [parameters, setParameters] = useState("Parameters");
   const [weatherContentsData, setWeatherContentsData] = useState(null);
   const [tableContentsData, setTableContentsData] = useState(null);
@@ -524,7 +522,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
     fetchConsumptionsData(today, day);
     fetchPvProductionData(today, day);
     fetchBatterySystemData(today, day);
-  }, []);
+  }, [fetchWeatherReadingsData, fetchComponentsTableData, fetchInverterGridsData, fetchConsumptionsData, fetchPvProductionData, fetchBatterySystemData]);
 
   useEffect(() => {
     if (solar) {  

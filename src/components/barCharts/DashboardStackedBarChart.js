@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Bar } from 'react-chartjs-2';
 import CompleteDataContext from '../../Context';
 
@@ -8,38 +8,49 @@ import {
   formatParametersDates,
 } from '../../helpers/genericHelpers';
 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend
+);
 
 const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
 
-  const newData = {}
+  const newData = {};
 
   if (data && sideBarData) {
-    const { dates: dateStrings } = data ? data : { dates: [] };
+    const { dates: dateStrings } = data ?? { dates: [] };
     newData.dates = dateStrings;
-    data && data.devices.forEach((deviceData, index) => {
-      const findName = sideBarData.branches[0].devices.find((side) => deviceData.name.endsWith(side.name) && side.is_source);
+
+    data.devices.forEach((deviceData) => {
+      const findName = sideBarData.branches[0]?.devices.find(
+        (side) =>
+          deviceData?.name.endsWith(side?.name) && side?.is_source
+      );
+
       if (findName) {
         newData[deviceData.name] = deviceData.daily_kwh;
       }
-    })
+    });
   }
 
+  /* ================= OPTIONS ================= */
   const options = {
-    tooltips: {
-      enabled: true,
-      mode: 'index',
-      callbacks: {
-        title: function (tooltipItem, data) {
-          return data['labels'][tooltipItem[0]['index']];
-        },
-        label: function (tooltipItem, data) {
-          return Number(tooltipItem.value).toFixed(2) || 0;
-        },
-      },
-      footerFontStyle: 'normal',
-      footerMarginTop: 12,
-    },
+    responsive: true,
+    maintainAspectRatio: false,
+
     layout: {
       padding: {
         left: isMediumScreen ? 5 : 25,
@@ -48,77 +59,95 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
         bottom: isMediumScreen ? 10 : 25,
       },
     },
-    legend: {
-      display: true,
-      labels: {
-        boxWidth: isMediumScreen ? 13 : 16,
-        fontSize: isMediumScreen ? 14 : 16,
-        fontColor: 'black',
-        padding: isLessThan1296 ? 10 : 25,
+
+    scales: {
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        grid: {
+          color: '#f0f0f0',
+          drawBorder: false,
+        },
+        ticks: {
+          padding: 10,
+          maxTicksLimit: 6,
+        },
+        title: {
+          display: true,
+          text: 'Energy - Kilowatt (kW)/Hour',
+          padding: isMediumScreen ? 10 : 25,
+          font: {
+            size: isMediumScreen ? 14 : 18,
+          },
+          color: 'black',
+        },
+      },
+
+      x: {
+        stacked: true,
+        grid: {
+          color: '#f0f0f0',
+          drawBorder: false,
+        },
+        ticks: {
+          padding: 10,
+          maxTicksLimit: 10,
+          maxRotation: 45,   // ✅ DATE SLANT
+          minRotation: 45,
+          autoSkip: true,
+        },
+        title: {
+          display: true,
+          text: 'Days of the month',
+          padding: isMediumScreen ? 10 : 45,
+          font: {
+            size: isMediumScreen ? 14 : 18,
+          },
+          color: 'black',
+        },
       },
     },
-    maintainAspectRatio: false,
-    scales: {
-      yAxes: [
-        {
-          stacked: true,
-          display: true,
-          gridLines: {
-            color: '#f0f0f0',
-            drawBorder: false,
-            drawTicks: false,
-            zeroLineColor: '#f0f0f0',
-          },
-          ticks: {
-            beginAtZero: true,
-            fontFamily: 'Roboto',
-            padding: 10,
-            maxTicksLimit: 6,
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Energy - Kilowatt (kW)/Hour',
-            padding: isMediumScreen ? 10 : 25,
-            fontSize: isMediumScreen ? 14 : 18,
-            fontColor: 'black',
+
+    plugins: {
+      /* ✅ LEGEND (v3 syntax) */
+      legend: {
+        display: true,
+        position: 'top',
+        labels: {
+          boxWidth: 14,           // ✅ reduced width
+          boxHeight: 12,
+          padding: 8,             // ✅ reduced spacing
+          color: 'black',
+          font: {
+            size: isMediumScreen ? 12 : 14,
           },
         },
-      ],
-      xAxes: [
-        {
-          ticks: {
-            fontFamily: 'Roboto',
-            padding: 10,
-            maxTicksLimit: 10,
-          },
-          gridLines: {
-            drawTicks: false,
-            color: '#f0f0f0',
-            zeroLineColor: '#f0f0f0',
-          },
-          stacked: true,
-          scaleLabel: {
-            display: true,
-            labelString: 'Days of the month',
-            padding: isMediumScreen ? 10 : 45,
-            fontSize: isMediumScreen ? 14 : 18,
-            fontColor: 'black',
-          },
+      },
+
+      /* ✅ TOOLTIP (v3 syntax) */
+      tooltip: {
+        enabled: true,
+        mode: 'index',
+        callbacks: {
+          title: (items) => items[0]?.label,
+          label: (item) =>
+            `${Number(item.raw).toFixed(2) || 0}`,
         },
-      ],
+      },
+      datalabels: {
+        display: false,
+      },
+
     },
   };
 
-  // ensure total(organization data) is removed from initial render
-  // if (data) {
-  //   delete data[organization];
-  // }
+  /* ================= DATA ================= */
+  const { dates: dateStrings, ...values } = newData ?? { dates: [] };
 
-  // Destructure data conditionally
-  const { dates: dateStrings, ...values } = newData ? newData : { dates: [] };
-
-  const dateObjects = dateStrings && convertDateStringsToObjects(dateStrings);
-  const formattedDates = dateObjects && formatParametersDates(dateObjects);
+  const dateObjects =
+    dateStrings && convertDateStringsToObjects(dateStrings);
+  const formattedDates =
+    dateObjects && formatParametersDates(dateObjects);
 
   const dataNames = Object.keys(values);
   const dataValues = Object.values(values);
@@ -136,17 +165,14 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
     '#FFE11A',
   ];
 
-  const plottedDataSet = dataNames.map((_, index) => {
-    return {
-      maxBarThickness: 50,
-      label: dataNames[index],
-      // Pick data for last week if screen is a medium screen or less
-      data: isMediumScreen
-        ? getLastArrayItems(dataValues[index])
-        : dataValues[index],
-      backgroundColor: colorsArray[index],
-    };
-  });
+  const plottedDataSet = dataNames.map((_, index) => ({
+    maxBarThickness: 50,
+    label: dataNames[index],
+    data: isMediumScreen
+      ? getLastArrayItems(dataValues[index])
+      : dataValues[index],
+    backgroundColor: colorsArray[index],
+  }));
 
   const plottedData = {
     labels: isMediumScreen
@@ -157,11 +183,7 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
     datasets: plottedDataSet,
   };
 
-  return (
-    <>
-      <Bar redraw data={plottedData} options={options} />
-    </>
-  );
+  return <Bar data={plottedData} options={options} />;
 };
 
 export default DashboardStackedBarChart;

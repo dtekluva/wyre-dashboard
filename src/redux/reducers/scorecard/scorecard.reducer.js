@@ -1,5 +1,4 @@
 
-import { fetchScoreCardUiLoading } from '../../actions/scorecard/actionCreators';
 import scoreCardType from './scorecard.types';
 
 const INITIAL_STATE = {

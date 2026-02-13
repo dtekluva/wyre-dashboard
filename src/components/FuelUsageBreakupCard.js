@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import {
   LineChart,
@@ -10,15 +10,16 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { fetchGenFuelUsageData } from "../redux/actions/diesel/diesel.action";
-import { getMonthYear } from "../helpers/genericHelpers";
 import { Spin } from "antd";
 
 const FuelUsageBreakupCard = ({ genFuelUsageData, fetchGenFuelUsageData, diesel, loader }) => {
   const [frequency, setFrequency] = useState("daily");
-  const devices =
+  const devices = useMemo(() => 
     genFuelUsageData?.data && Array.isArray(genFuelUsageData.data)
       ? genFuelUsageData.data
-      : [];
+      : [],
+    [genFuelUsageData?.data]
+  );
 
   // Build chart data
   const chartData = useMemo(() => {
@@ -48,7 +49,7 @@ const FuelUsageBreakupCard = ({ genFuelUsageData, fetchGenFuelUsageData, diesel,
 
       return row;
     });
-  }, [genFuelUsageData, frequency]);
+  }, [devices]);
 
   const palette = ["#5C12A7", "#FCCC43", "#52AC0B", "#FF6B6B"];
 
@@ -165,9 +166,8 @@ const handleMonthlyView = () => {
 
                 {devices.map((device, i) => {
                   const colorKwh = palette[(i * 1 + 2) % palette.length];
-                  const colorFuel = palette[(i * 2 + 1) % palette.length];
                   return (
-                    <React.Fragment key={device.device_id || device.name}>
+                    <Fragment key={device.device_id || device.name}>
                       <Line
                         yAxisId="left"
                         type="monotone"
@@ -182,7 +182,7 @@ const handleMonthlyView = () => {
                         stroke="none"
                         dot={false}
                       />
-                    </React.Fragment>
+                    </Fragment>
                   );
                 })}
               </LineChart>

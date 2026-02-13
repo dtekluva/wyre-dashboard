@@ -1,17 +1,13 @@
-import React, { useEffect, useContext } from 'react';
-import { notification, Form, Spin, message } from 'antd';
+import { useEffect, useContext } from 'react';
+import { notification, Form, Spin } from 'antd';
 
 import CompleteDataContext from '../Context';
 import moment from 'moment'
 
-import { connect, Connect } from 'react-redux';
+import { connect } from 'react-redux';
 
-import billingHttpServices from '../services/bills'
-import axios from 'axios'
-
-import { DateField, DateRangeField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
-import { InputField, SubmitButton, FlowMeterUpload } from '../components/FormFields/CostTrackerFields';
-import EnvData from '../config/EnvData';
+import { DateField, NumberField } from '../components/FormFields/GeneralFormFields';
+import { SubmitButton } from '../components/FormFields/CostTrackerFields';
 import { updateIppPaymentData } from '../redux/actions/constTracker/costTracker.action';
 
 
@@ -32,10 +28,8 @@ const NotAllowedNotification = () => {
 
 function UpdateIppPayment({ match, ippPurchaseData, updateIppPaymentData:editIppPayment }) {
   const [ippForm] = Form.useForm();
-  const [badFileHeader, setBadFileHeader] = React.useState(false);
-  const [ippLoading, setIppLoading] = React.useState(false);
 
-  const { setCurrentUrl, token, organization, userId } = useContext(
+  const { setCurrentUrl, organization, userId } = useContext(
     CompleteDataContext
   );
 
@@ -98,7 +92,7 @@ function UpdateIppPayment({ match, ippPurchaseData, updateIppPaymentData:editIpp
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match, userId]);
+  }, [match, userId, setCurrentUrl]);
 
   useEffect(() => {
     ippForm.setFieldsValue({
@@ -107,7 +101,7 @@ function UpdateIppPayment({ match, ippPurchaseData, updateIppPaymentData:editIpp
       tariff: ippPurchaseData.tariff,
       value: ippPurchaseData.value
     })
-  }, [])
+  }, [ippPurchaseData, ippForm])
 
   let defaultBranch;
   if (organization.branches) {
@@ -151,7 +145,7 @@ function UpdateIppPayment({ match, ippPurchaseData, updateIppPaymentData:editIpp
 
           <h1 className="center-main-heading">Edit Payment Bills</h1>
           <section className="cost-tracker-form-section">
-          <Spin spinning={ippLoading}>
+          <Spin>
             <h2 className="form-section-heading">
               IPP Payment Tracker 
             </h2>

@@ -52,7 +52,7 @@ const CostTrackerConsumptionGroupedBarChart = ({ consumptionData }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           display: true,
           gridLines: {
@@ -77,8 +77,7 @@ const CostTrackerConsumptionGroupedBarChart = ({ consumptionData }) => {
             fontColor: 'black',
           },
         },
-      ],
-      xAxes: [
+      xAxes:
         {
           ticks: {
             fontFamily: 'Roboto',
@@ -100,7 +99,6 @@ const CostTrackerConsumptionGroupedBarChart = ({ consumptionData }) => {
             fontColor: 'black',
           },
         },
-      ],
     },
   };
 

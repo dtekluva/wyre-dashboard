@@ -46,7 +46,7 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
   useEffect(() => {
     fetchLoadOverviewData(userDateRange)
     fetchPAPR(userDateRange)
-  }, [userDateRange]);
+  }, [userDateRange, fetchLoadOverviewData, fetchPAPR]);
 
   useEffect(() => {
     if (sideBar.sideBarData.branches) {
@@ -78,7 +78,7 @@ function LoadOverview({ match, fetchLoadOverviewData, dashboard, sideBar, fetchP
       const renderTableData = sideDetails.map(data => pDemandDetails.find(demand => demand.device_name === data.name))
       setDemandInTable(renderTableData)
     }
-  }, [sideDetails && pDemandDetails])
+  }, [sideDetails, pDemandDetails])
 
   const TotalCard = ({ title, data }) => (
     <div className='load-overview-total-card'>

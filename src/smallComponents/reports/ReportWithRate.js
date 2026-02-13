@@ -1,4 +1,3 @@
-import { Rate } from 'antd';
 import { numberFormatter } from '../../helpers/numberFormatter';
 
 const ReportWithRate = ({ header, color, icon, value, rate, unit }) => {

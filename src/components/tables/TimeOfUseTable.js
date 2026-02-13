@@ -1,7 +1,8 @@
 import React from 'react';
 import { Table, Input, Button, Space } from 'antd';
-import Highlighter from 'react-highlight-words';
+// import Highlighter from '../Highlighter';
 import { SearchOutlined } from '@ant-design/icons';
+import Highlighter from '../Highlighter';
 
 class TimeOfUseTable extends React.Component {
   state = {
@@ -94,13 +95,6 @@ class TimeOfUseTable extends React.Component {
 
   render() {
     const data = this.props.timeOfUseData;
-
-    const arrayRemove = (arr,value)=>{
-        return arr.filter((element)=>{
-          return element !== value
-        })
-    }
-
 
     const { Column } = Table;
     return (

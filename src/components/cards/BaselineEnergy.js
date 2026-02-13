@@ -1,4 +1,4 @@
-import React, {useEffect, useState,} from "react";
+import { useEffect, useState } from "react";
 import { numberFormatter } from "../../helpers/numberFormatter";
 
 // Tooltips
@@ -14,7 +14,6 @@ const BaselineEnergy = ({ baselineEnergyBranchData, uiSettings }) => {
     const [baselineEnergyData, setBaselineEnergyData] = useState({});
 
     useEffect(() => {
-        const baselineData = {baseline_energy: {}}
         baselineEnergyBranchData && baselineEnergyBranchData.devices && baselineEnergyBranchData.devices.forEach(data => {
           const score_card = data.score_card.baseline_energy;
           if (data.is_source) {
@@ -34,7 +33,7 @@ const BaselineEnergy = ({ baselineEnergyBranchData, uiSettings }) => {
               </h2>
               <div>
                 <Tooltip placement='top' style={{ textAlign: 'justify' }}
-                  overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.BASE_ENERGY}>
+                  popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.BASE_ENERGY}>
                   <p>
                     <InformationIcon className="info-icon" />
                   </p>

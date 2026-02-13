@@ -1,4 +1,4 @@
-import React, {useEffect, useState,} from "react";
+import { useEffect, useState } from "react";
 import { numberFormatter } from "../../helpers/numberFormatter";
 
 // Tooltips
@@ -6,8 +6,7 @@ import { Tooltip } from 'antd';
 import InformationIcon from '../../icons/InformationIcon';
 import { SCORE_CARD_TOOLTIP_MESSAGES } from "../toolTips/Score_Card_Tooltip_Messages";
 import ScoreCardDoughnutChart from "../pieCharts/ScoreCardDoughnutChart";
-import { calculatePercentage, calculateRatio, daysInMonth, getBaselineEnergyColor, getPeakToAverageMessage } from "../../helpers/genericHelpers";
-import UpArrowIcon from "../../icons/UpArrowIcon";
+import { calculatePercentage, daysInMonth, getBaselineEnergyColor } from "../../helpers/genericHelpers";
 import EcoFriendlyIcon from "../../icons/EcoFriendlyIcon";
 import { getOrganizationScoreCardCarbonEmissions } from "../../helpers/organizationDataHelpers";
 
@@ -16,7 +15,6 @@ const ScorecardCarbonEmmission = ({ scorecardCarbonEmissionBranchData, uiSetting
 
     useEffect(() => {
       if(scorecardCarbonEmissionBranchData){
-        const paprPageData = {peak_to_avg_power_ratio: {}}
         scorecardCarbonEmissionBranchData && scorecardCarbonEmissionBranchData.devices && scorecardCarbonEmissionBranchData.devices.forEach(data => {
           const score_card = data.score_card.score_card_carbon_emissions;
           if (data.is_source) {
@@ -49,7 +47,7 @@ const ScorecardCarbonEmmission = ({ scorecardCarbonEmissionBranchData, uiSetting
         </h2>
         <div>
           <Tooltip placement='top' style={{ textAlign: 'justify' }}
-            overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.CARBON}>
+            popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.CARBON}>
             <p>
               <InformationIcon className="info-icon" />
             </p>

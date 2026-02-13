@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import { useContext } from 'react'
 import { Bar } from 'react-chartjs-2';
 import CompleteDataContext from '../../Context';
 
@@ -6,20 +6,6 @@ import CompleteDataContext from '../../Context';
 const ComparisonBarChart = ({comparisonData}) => {
     const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
     const {diesel_estimate,diesel_purchase} = comparisonData
-
-    
-  const colorsArray = [
-    '#FF3DA1',
-    '#00C7E6',
-    '#6C00FA',
-    '#82ca9d',
-    '#ff9b3d',
-    '#360259',
-    '#0371b5',
-    '#D90000',
-    '#757575',
-    '#FFE11A',
-  ];
 
   const options = {
     layout: {
@@ -41,7 +27,7 @@ const ComparisonBarChart = ({comparisonData}) => {
     },
     // maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           display: true,
           gridLines: {
@@ -66,8 +52,7 @@ const ComparisonBarChart = ({comparisonData}) => {
             fontColor: 'black',
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           ticks: {
             fontFamily: 'Roboto',
@@ -89,7 +74,6 @@ const ComparisonBarChart = ({comparisonData}) => {
             fontColor: 'black',
           },
         },
-      ],
     },
   };
 

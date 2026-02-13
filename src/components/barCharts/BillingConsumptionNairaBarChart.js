@@ -21,7 +21,7 @@ const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           gridLines: {
             color: '#f0f0f0',
@@ -45,8 +45,7 @@ const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
-      xAxes: [
+      xAxes:
         {
           gridLines: {
             drawTicks: false,
@@ -69,7 +68,6 @@ const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
             padding: isMediumScreen ? 10 : 25,
           },
         },
-      ],
     },
   };
 

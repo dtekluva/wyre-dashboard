@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
-import { DatePicker, notification, Select } from 'antd';
+import { DatePicker, notification } from 'antd';
 import CompleteDataContext from '../Context';
 
 import equipmentHttpServices from '../services/equipment';
@@ -51,17 +51,6 @@ const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [match, setCurrentUrl, token, userId]);
 
-  const { Option } = Select
-  let branchname = sideBarData && sideBarData.branches
-
-  const branchSelectorStyle = {
-      width:'100%',
-      borderRadius: '4px',
-      display:'block',
-      color: '#595959',
-      fontSize: '1.4rem',
-      height: '40px',
-  }
 
   let branchSelectorValue;
 
@@ -74,21 +63,6 @@ const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   else{
     branchSelectorValue = null
   }
-  const branchSelector = (
-        <Select style={branchSelectorStyle} 
-        className="h-4-br" 
-        allowClear 
-        onSelect={(branch)=>{
-          branchSelectorValue =  branch
-        }}>
-        {branchname && branchname.map((branch)=>{
-        return <Option value={branch.id} key={branch.id}>
-                  {branch.name}
-              </Option>
-        })
-        }
-        </Select>
-  )
 
   const equipmentPurchaseDatePicker = (
     <DatePicker

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { connect, useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import CompleteDataContext from "../Context"
@@ -25,7 +25,7 @@ const CircleSwitchIcon = () => (
 function Sidebar({ fetchSideBar: fetchSideBarData }) {
   const sidebarRef = useRef(null)
   const [panelOpen, setPanelOpen] = useState(false)
-  const { isSidebarOpen, currentUrl } = useContext(CompleteDataContext)
+  const { isSidebarOpen } = useContext(CompleteDataContext)
   const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   // const { permittedBranches } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -36,7 +36,7 @@ function Sidebar({ fetchSideBar: fetchSideBarData }) {
     if (!sideBarData || !sideBarData.name) {
       fetchSideBarData();
     }
-  }, []);
+  }, [sideBarData, fetchSideBarData]);
 
   useEffect(() => {
     const loggedUserJSON = localStorage.getItem("loggedWyreUser");

@@ -19,19 +19,16 @@ import {
     getOperationalEfficiencySuccess
 } from "./actionCreators";
 import { APIService } from "../../../config/api/apiConfig";
-import jwtDecode from "jwt-decode";
-import { message } from "antd";
+import { jwtDecode } from 'jwt-decode';
 import { getMonthYear } from "../../../helpers/genericHelpers";
 
 export const fetchBranchGeneratorsStatusData = () => async (dispatch) => {
   dispatch(getGeneratorsStatusLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const requestUrl = `branch/${branchId}/generators-status/`;
@@ -48,12 +45,10 @@ export const fetchCoEmissionData = (date) => async (dispatch) => {
   dispatch(getCo2EmissionLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   const { month, year } = getMonthYear(date);
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const requestUrl = `branch/${branchId}/generators-co2/?month=${month}&year=${year}`;
@@ -69,12 +64,10 @@ export const fetchCoEmissionData = (date) => async (dispatch) => {
 export const fetchDieselPriceData = () => async (dispatch) => {
   dispatch(getDieselPriceLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const requestUrl = `branch/${branchId}/diesel-price/`;
@@ -91,12 +84,10 @@ export const fetchGenTotalEnergyUsedData = (date) => async (dispatch) => {
   dispatch(getGeneratorMonthlyEnergyLoading());
   const { month, year } = getMonthYear(date);
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const requestUrl = `branch/${branchId}/generators-monthly-energy/?month=${month}&year=${year}`;
@@ -113,12 +104,10 @@ export const fetchGenStatusChartData = (date) => async (dispatch) => {
   dispatch(getGenStatusChartLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   const { month, year } = getMonthYear(date);
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const requestUrl = `branch/${branchId}/generator-runtime-fuel-usage/?month=${month}&year=${year}`;
@@ -135,12 +124,10 @@ export const fetchGenFuelUsageData = (date, frequency) => async (dispatch) => {
   dispatch(getGenFuelUsageLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   const { month, year } = getMonthYear(date);
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const initUrl = `branch/${branchId}/generator-energy-fuel-series/?month=${month}&year=${year}`
@@ -158,12 +145,10 @@ export const fetchFuelUsageData = (date, frequency) => async (dispatch) => {
   dispatch(getFuelUsageLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   const { month, year } = getMonthYear(date);
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const initUrl = `branch/${branchId}/fuel-usage-series/?month=${month}&year=${year}`
@@ -181,12 +166,10 @@ export const fetchGenMetricsData = (date) => async (dispatch) => {
   dispatch(getOperationalEfficiencyLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   const { month, year } = getMonthYear(date);
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const requestUrl = `branch/${branchId}/generator-metrics/?month=${month}&year=${year}`;
@@ -203,12 +186,10 @@ export const fetchCostMetricsData = (date) => async (dispatch) => {
   dispatch(getCostAnalysisLoading());
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   const { month, year } = getMonthYear(date);
-  let userId;
   let branchId;
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
   }
   const requestUrl = `branch/${branchId}/cost-metrics/?month=${month}&year=${year}`;

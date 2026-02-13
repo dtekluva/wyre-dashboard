@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Select } from 'antd';
 import { useSelector } from 'react-redux';
@@ -55,8 +55,6 @@ function RevisedAppTopBar() {
   const isPageWithSwitchableSelector = pageWithSwitchablePicker.some(
     (page) => currentUrl.includes(page)
   );
-
-  const isDateTimePickerDisabled = currentUrl.includes('last-reading');
 
   const isPlottedUnitSelectorDisplayed = currentUrl.includes('power-quality');
 
@@ -143,12 +141,12 @@ function RevisedAppTopBar() {
 
     {/* Cost Tracker Buttons */}
     {sideBarData.branches?.length === 1 && (
-      <div
-        className={
-          isTopBarCostTrackerRightDisplayed
-            ? 'top-bar__right'
-            : 'top-bar__right h-hide'
-        }
+  <div
+    className={
+      isTopBarCostTrackerRightDisplayed
+        ? 'top-bar__right h-hide'
+        : 'top-bar__right'
+    }
       >
         <Link className="top-bar-right__button" to="/cost-tracker/add-bills">
           Add Bills

@@ -236,7 +236,7 @@ function ClientProfile({ match }) {
                   type="text"
                   name="clientName"
                   id="client-name"
-                  ref={registerClientDetails}
+                  // ref={registerClientDetails}
                   required
                   autoFocus
                 />
@@ -255,14 +255,14 @@ function ClientProfile({ match }) {
                   inputMode="decimal"
                   name="phoneNumber"
                   id="phone-number"
-                  ref={registerClientDetails({
-                    required: true,
-                    pattern: /^-?\d+\.?\d*$/,
-                  })}
+                  // ref={registerClientDetails({
+                  //   required: true,
+                  //   pattern: /^-?\d+\.?\d*$/,
+                  // })}
                   required
                 />
                 <p className="input-error-message">
-                  {errorsClientDetails.phoneNumber && 'Please enter a number'}
+                  {errorsClientDetails?.phoneNumber && 'Please enter a number'}
                 </p>
               </div>
 
@@ -278,7 +278,7 @@ function ClientProfile({ match }) {
                   type="email"
                   name="emailAddress"
                   id="email-address"
-                  ref={registerClientDetails}
+                  // ref={registerClientDetails}
                   required
                 />
               </div>
@@ -317,11 +317,11 @@ function ClientProfile({ match }) {
                     required: true,
                   }}
                   help={
-                    errorsClientDetails.customerType && 'Please select a value'
+                    errorsClientDetails?.customerType && 'Please select a value'
                   }
                 />
                 <p className="input-error-message">
-                  {errorsClientDetails.customerType && 'Please select a value'}
+                  {errorsClientDetails?.customerType && 'Please select a value'}
                 </p>
               </div>
 
@@ -425,12 +425,12 @@ function ClientProfile({ match }) {
                     required: true,
                   }}
                   help={
-                    errorsSiteDetails.siteOperatingHours &&
+                    errorsSiteDetails?.siteOperatingHours &&
                     'Please enter a time range'
                   }
                 />
                 <p className="input-error-message">
-                  {errorsSiteDetails.siteOperatingHours &&
+                  {errorsSiteDetails?.siteOperatingHours &&
                     'Please enter a time range'}
                 </p>
               </div>
@@ -483,10 +483,10 @@ function ClientProfile({ match }) {
                   rules={{
                     required: true,
                   }}
-                  help={errorsDevice.sourceType && 'Please select a value'}
+                  help={errorsDevice?.sourceType && 'Please select a value'}
                 />
                 <p className="input-error-message">
-                  {errorsDevice.sourceType && 'Please select a value'}
+                  {errorsDevice?.sourceType && 'Please select a value'}
                 </p>
               </div>
 
@@ -523,14 +523,14 @@ function ClientProfile({ match }) {
                     required: true,
                   }}
                   validateStatus={
-                    errorsDevice.nextMaintDate && 'Please enter a date'
+                    errorsDevice?.nextMaintDate && 'Please enter a date'
                       ? 'error'
                       : ''
                   }
-                  help={errorsDevice.nextMaintDate && 'Please enter a date'}
+                  help={errorsDevice?.nextMaintDate && 'Please enter a date'}
                 />
                 <p className="input-error-message">
-                  {errorsDevice.nextMaintDate && 'Please enter a date'}
+                  {errorsDevice?.nextMaintDate && 'Please enter a date'}
                 </p>
               </div>
 
@@ -549,10 +549,10 @@ function ClientProfile({ match }) {
                   rules={{
                     required: true,
                   }}
-                  help={errorsDevice.deviceType && 'Please select a value'}
+                  help={errorsDevice?.deviceType && 'Please select a value'}
                 />
                 <p className="input-error-message">
-                  {errorsDevice.deviceType && 'Please select a value'}
+                  {errorsDevice?.deviceType && 'Please select a value'}
                 </p>
               </div>
             </div>

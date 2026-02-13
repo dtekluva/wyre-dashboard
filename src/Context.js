@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from 'react';
-import jwt from 'jwt-decode';
 
 import { useMediaQuery } from 'react-responsive';
 
@@ -14,7 +13,7 @@ import {
 
 import { getRenderedData } from './helpers/renderedDataHelpers';
 import { allDeviceGenerators } from './helpers/genericHelpers';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 // create context
 const CompleteDataContext = React.createContext();
@@ -189,7 +188,7 @@ const CompleteDataProvider = (props) => {
         setSelectedDevices(getDeviceType);
       }
     }
-  }, [checkedItems]);
+  }, [checkedItems, checkedBranches, checkedDevices, organization]);
 
   /*--------------------------------------------------------------------
 
@@ -234,7 +233,7 @@ const CompleteDataProvider = (props) => {
         setRefinedRenderedData(renderedDataArray);
       }
     }
-  }, [organization]);
+  }, [organization, checkedBranches, checkedDevices, checkedItems]);
   /*--------------------------------------------------------------------
 
     
