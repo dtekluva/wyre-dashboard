@@ -17,22 +17,16 @@ function ConfirmResetPassword() {
   const { confirmResetPasswordLoading: loading } = useSelector((state) => state.auth);
   const [errorMessage, setErrorMessage] = useState(null);
   const [success, setSuccess] = useState(false);
-  const { register, handleSubmit } = useForm({
-    defaultValues: { token: tokenFromUrl },
-  });
+  const { register, handleSubmit } = useForm();
 
-  const onSubmit = async ({ token, new_password, confirm_password }) => {
+  const onSubmit = async ({ new_password, confirm_password }) => {
     setErrorMessage(null);
-    if (!token?.trim()) {
-      setErrorMessage('Reset token is required.');
-      return;
-    }
     if (new_password !== confirm_password) {
       setErrorMessage('New password and confirm password do not match.');
       return;
     }
     const result = await dispatch(
-      confirmResetPasswordAction({ token: token.trim(), new_password })
+      confirmResetPasswordAction({ token: tokenFromUrl, new_password })
     );
     if (result?.fulfilled) {
       setSuccess(true);
@@ -58,6 +52,23 @@ function ConfirmResetPassword() {
     );
   }
 
+  if (!tokenFromUrl) {
+    return (
+      <div className='auth-page-container'>
+        <div className='signup-login-contact-form'>
+          <h1 className='signup-login-heading first-heading--auth'>Invalid or Expired Link</h1>
+          <p className='reset-password-note'>
+            This link is invalid or expired. Please request a new password reset using the link below.
+          </p>
+          <Link className='signup-login-contact-button' to='/reset-password' style={{ display: 'inline-block', textAlign: 'center', textDecoration: 'none' }}>
+            Reset password
+          </Link>
+        </div>
+        <SocialCluster />
+      </div>
+    );
+  }
+
   return (
     <div className='auth-page-container'>
       <Spin spinning={loading}>
@@ -69,23 +80,7 @@ function ConfirmResetPassword() {
           <h1 className='signup-login-heading first-heading--auth'>Set New Password</h1>
 
           <p className='reset-password-note'>
-            Enter the reset token from your email and your new password below.
-          </p>
-
-          <p className='outlined-input-container'>
-            <HiddenInputLabel htmlFor='confirm-reset-token' labelText='Reset token' />
-            <OutlinedInput
-              className='signup-login-contact-input'
-              type='text'
-              name='token'
-              id='confirm-reset-token'
-              placeholder='Paste token from email (or use link with ?token=...)'
-              autoComplete='one-time-code'
-              required={true}
-              autoFocus={!tokenFromUrl}
-              register={register('token').ref}
-              {...register('token', { required: true })}
-            />
+            Enter your new password below.
           </p>
 
           <p className='outlined-input-container'>
@@ -98,7 +93,7 @@ function ConfirmResetPassword() {
               placeholder='New password'
               autoComplete='new-password'
               required={true}
-              autoFocus={!!tokenFromUrl}
+              autoFocus={true}
               register={register('new_password').ref}
               {...register('new_password', { required: true })}
             />
