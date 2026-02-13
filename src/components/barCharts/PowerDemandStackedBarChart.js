@@ -108,6 +108,8 @@ const PowerDemandStackedBarChart = ({
           font: { family: 'Roboto' },
           padding: 10,
           maxTicksLimit: 10,
+          maxRotation: 45,
+          minRotation: 45,
         },
         title: {
           display: true,

@@ -8,6 +8,24 @@ export const logoutUser = (payload = true) => ({
     payload,
 });
 
+export const resetPasswordLoading = (payload = true) => ({
+    type: authTypes.RESET_PASSWORD_LOADING,
+    payload,
+});
+export const resetPasswordSuccess = (payload) => ({
+    type: authTypes.RESET_PASSWORD_SUCCESS,
+    payload,
+});
+
+export const confirmResetPasswordLoading = (payload = true) => ({
+    type: authTypes.CONFIRM_RESET_PASSWORD_LOADING,
+    payload,
+});
+export const confirmResetPasswordSuccess = (payload) => ({
+    type: authTypes.CONFIRM_RESET_PASSWORD_SUCCESS,
+    payload,
+});
+
 export const getPermittedBranchesLoading = (payload = true) => ({
     type: authTypes.GET_PERMITTED_BRANCHES_LOADING,
     payload,

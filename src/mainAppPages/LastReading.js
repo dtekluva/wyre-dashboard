@@ -8,7 +8,6 @@ import Loader from '../components/Loader';
 import { fetchLastReadingData } from '../redux/actions/parameters/parameter.action';
 import { devicesArray } from '../helpers/v2/organizationDataHelpers';
 import { connect, useSelector } from 'react-redux';
-import { isEmpty } from '../helpers/authHelper';
 import moment from "moment";
 
 const breadCrumbRoutes = [
@@ -19,11 +18,9 @@ const breadCrumbRoutes = [
 
 function LastReading({ match, fetchLastReadingData }) {
   const [lastReadingData, setLastReadingData] = useState([]);
-  const [pageLoaded, setPageLoaded] = useState(false);
   const parametersData = useSelector((state) => state.parametersReducer);
 
   const {
-    // userDateRange,
     checkedBranchId,
     checkedDevicesId,
     setCurrentUrl,
@@ -35,32 +32,19 @@ function LastReading({ match, fetchLastReadingData }) {
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match, setCurrentUrl]);
+  }, [match?.url]);
 
   useEffect(() => {
-    fetchLastReadingData(singleDateToUse)
+    fetchLastReadingData(singleDateToUse);
   }, [fetchLastReadingData, singleDateToUse]);
-  
-  useEffect(() => {
-    if (!pageLoaded && isEmpty(parametersData || {})) {
-      fetchLastReadingData(singleDateToUse);
-    }
-
-    if (!isEmpty(parametersData) > 0 && pageLoaded) {
-      fetchLastReadingData(singleDateToUse);
-    }
-    setPageLoaded(true);
-  }, [singleDateToUse, fetchLastReadingData, pageLoaded, parametersData]);
 
   useEffect(() => {
-    if (pageLoaded && parametersData.fetchedLastReading) {
-      let openDevicesArrayData
+    if (parametersData?.fetchedLastReading) {
       const devicesArrayData = devicesArray(parametersData.fetchedLastReading, checkedBranchId, checkedDevicesId);
-      openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
-      setLastReadingData(openDevicesArrayData)
+      const openDevicesArrayData = devicesArrayData?.devices ?? [];
+      setLastReadingData(openDevicesArrayData);
     }
-      setPageLoaded(true);
-  }, [parametersData.fetchedLastReading, checkedBranchId, checkedDevicesId.length, checkedDevicesId, pageLoaded]);
+  }, [parametersData?.fetchedLastReading, checkedBranchId, checkedDevicesId?.join?.() ?? '']);
 
   // const { last_reading } = refinedRenderedData;
 

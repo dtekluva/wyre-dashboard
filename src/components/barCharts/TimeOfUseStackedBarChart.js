@@ -61,6 +61,8 @@ const TimeOfUseStackedBarChart = ({
             fontFamily: 'Roboto',
             padding: 10,
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
           },
           gridLines: {
             drawTicks: false,

@@ -68,6 +68,8 @@ const VerticalBar = ({ data: rawData }) => {
             fontFamily: 'Roboto',
             fontColor: '#A3A3A3',
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
             padding: 10,
             fontSize: 10,
           },

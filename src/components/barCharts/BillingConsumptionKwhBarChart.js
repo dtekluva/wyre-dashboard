@@ -77,6 +77,8 @@ const BillingConsumptionKwhBarChart = ({
             fontColor: '#A3A3A3',
             padding: 10,
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
           },
           gridLines: {
             drawTicks: false,

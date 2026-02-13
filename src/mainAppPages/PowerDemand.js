@@ -20,7 +20,6 @@ import { exportToExcel } from '../helpers/exportToFile';
 import { connect, useSelector } from 'react-redux';
 import { fetchPowerDemandData } from '../redux/actions/parameters/parameter.action';
 import { devicesArray } from '../helpers/v2/organizationDataHelpers';
-import { isEmpty } from '../helpers/authHelper';
 import dayjs from 'dayjs';
 
 
@@ -46,32 +45,19 @@ function PowerDemand({ match, fetchPowerDemandData }) {
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match, setCurrentUrl]);
+  }, [match?.url]);
 
   useEffect(() => {
-    fetchPowerDemandData(userDateRange)
+    fetchPowerDemandData(userDateRange);
   }, [fetchPowerDemandData, userDateRange]);
 
   useEffect(() => {
-    if (!pageLoaded && isEmpty(parametersData || {})) {
-      fetchPowerDemandData(userDateRange);
-    }
-
-    if (!isEmpty(parametersData) > 0 && pageLoaded) {
-      fetchPowerDemandData(userDateRange);
-    }
-    setPageLoaded(true);
-  }, [userDateRange, fetchPowerDemandData, pageLoaded, parametersData]);
-
-  useEffect(() => {
-    if (pageLoaded && parametersData.fetchedPowerDemand) {
-      let openDevicesArrayData
+    if (parametersData?.fetchedPowerDemand) {
       const devicesArrayData = devicesArray(parametersData.fetchedPowerDemand.authenticatedData, checkedBranchId, checkedDevicesId);
-      openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
-      setPowerDemandData(openDevicesArrayData)
+      const openDevicesArrayData = devicesArrayData?.devices ?? [];
+      setPowerDemandData(openDevicesArrayData);
     }
-    setPageLoaded(true);
-  }, [parametersData.fetchedPowerDemand, checkedBranchId, checkedDevicesId.length, checkedDevicesId, pageLoaded]);
+  }, [parametersData?.fetchedPowerDemand, checkedBranchId, checkedDevicesId?.join?.() ?? '']);
 
   const power_demand = powerDemandData.map((deviceDetails) => {
     const { name, power_demand } = deviceDetails

@@ -71,23 +71,23 @@ function MainAppPages() {
 
                 <Route
                   path="/parameters/last-reading"
-                  element={<LastReading />}
+                  element={<LastReading match={{ url: '/parameters/last-reading', path: '/parameters/last-reading' }} />}
                 />
                 <Route
                   path="/parameters/time-of-use"
-                  element={<TimeOfUse />}
+                  element={<TimeOfUse match={{ url: '/parameters/time-of-use', path: '/parameters/time-of-use' }} />}
                 />
                 <Route
                   path="/parameters/power-demand"
-                  element={<PowerDemand />}
+                  element={<PowerDemand match={{ url: '/parameters/power-demand', path: '/parameters/power-demand' }} />}
                 />
                 <Route
                   path="/parameters/power-quality"
-                  element={<PowerQuality />}
+                  element={<PowerQuality match={{ url: '/parameters/power-quality', path: '/parameters/power-quality' }} />}
                 />
                 <Route
                   path="/parameters/energy-consumption"
-                  element={<EnergyConsumption />}
+                  element={<EnergyConsumption match={{ url: '/parameters/energy-consumption', path: '/parameters/energy-consumption' }} />}
                 />
 
                 <Route path="/report" element={<Report />} />

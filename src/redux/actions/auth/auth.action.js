@@ -1,11 +1,53 @@
 import axios from 'axios';
 import { logoutUser, getPermittedBranchesLoading, getPermittedBranchesSuccess, switchBranchLoading, switchBranchSuccess } from "./actionCreators";
 import EnvData from '../../../config/EnvData';
+import { resetPasswordLoading, resetPasswordSuccess, confirmResetPasswordLoading, confirmResetPasswordSuccess } from './actionCreators';
 
 
 export const logoutUserFromRedux = () => async (dispatch) => {
   dispatch(logoutUser());
 };
+
+export const resetPasswordAction = (data) => async (dispatch) => {
+  dispatch(resetPasswordLoading(true));
+  try {
+    const requestUrl = EnvData.REACT_APP_API_URL + 'accounts/reset_password/';
+    const config = {};
+    const loggedUserJSON = localStorage.getItem('loggedWyreUser');
+    if (loggedUserJSON) {
+      try {
+        const userToken = JSON.parse(loggedUserJSON);
+        if (userToken.access) {
+          config.headers = { Authorization: `Bearer ${userToken.access}` };
+        }
+      } catch (_) {}
+    }
+    const response = await axios.post(requestUrl, data, config);
+    dispatch(resetPasswordSuccess(response.data.message));
+    dispatch(resetPasswordLoading(false));
+    return { fulfilled: true, message: response.data.message };
+  } catch (error) {
+    dispatch(resetPasswordLoading(false));
+    const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Request failed';
+    return { fulfilled: false, message };
+  }
+};
+
+export const confirmResetPasswordAction = (data) => async (dispatch) => {
+  dispatch(confirmResetPasswordLoading(true));
+  try {
+    const requestUrl = EnvData.REACT_APP_API_URL + 'accounts/confirm_reset_password/';
+    const response = await axios.post(requestUrl, data);
+    dispatch(confirmResetPasswordSuccess(response.data.message));
+    dispatch(confirmResetPasswordLoading(false));
+    return { fulfilled: true, message: response.data.message };
+  } catch (error) {
+    dispatch(confirmResetPasswordLoading(false));
+    const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Request failed';
+    return { fulfilled: false, message };
+  }
+};
+
 export const getNewRefreshToken = async () => {
   try {
     const requestUrl = EnvData.REACT_APP_API_BASE_URL + 'token/refresh/';
