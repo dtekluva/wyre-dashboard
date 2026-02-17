@@ -70,6 +70,16 @@
 .signup-login-contact-error-message {
   font-size: 1.4rem;
   color: $red;
+  line-height: 1.5;
+  margin: 16px auto 20px;
+  max-width: 350px;
+  padding: 0 8px;
+  text-align: center;
+
+  @include media('>medium') {
+    max-width: 408px;
+    margin: 20px auto 24px;
+  }
 }
 
 .forgot-password-wrapper {
