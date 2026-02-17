@@ -43,7 +43,11 @@ function ConfirmResetPassword() {
         <div className='signup-login-contact-form'>
           <h1 className='signup-login-heading first-heading--auth'>Password Reset</h1>
           <p className='reset-password-note'>Your password has been reset successfully. You can now log in with your new password.</p>
-          <Link className='signup-login-contact-button' to='/log-in' style={{ display: 'inline-block', textAlign: 'center', textDecoration: 'none' }}>
+          <Link
+            className='signup-login-contact-button'
+            to='/log-in'
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', maxWidth: '350px', margin: '0 auto', textDecoration: 'none' }}
+          >
             Log in
           </Link>
         </div>
@@ -60,7 +64,11 @@ function ConfirmResetPassword() {
           <p className='reset-password-note'>
             This link is invalid or expired. Please request a new password reset using the link below.
           </p>
-          <Link className='signup-login-contact-button' to='/reset-password' style={{ display: 'inline-block', textAlign: 'center', textDecoration: 'none' }}>
+          <Link
+            className='signup-login-contact-button'
+            to='/reset-password'
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', maxWidth: '350px', margin: '0 auto', textDecoration: 'none' }}
+          >
             Reset password
           </Link>
         </div>
