@@ -1,10 +1,9 @@
-import moment from 'moment';
 import HiddenInputLabel from '../smallComponents/HiddenInputLabel';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import { getAlertAndAlarm, setAlertAndAlarm } from '../redux/actions/alertsAndAlarm/alertsAndAlarm.action';
 import { connect } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
-import { Checkbox, Collapse, Form, notification, Spin } from 'antd';
+import { Checkbox, notification, Spin } from 'antd';
 import { useEffect } from 'react';
 import BreadCrumb from '../components/BreadCrumb';
 import { useState } from 'react';
@@ -16,15 +15,11 @@ const breadCrumbRoutes = [
   { url: '/alerts-and-alarms', name: 'Alerts and Alarms', id: 2 },
 ];
 
-const { Panel } = Collapse;
-
 function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, match }) {
-  const [alertsForm] = Form.useForm();
-  const { setCurrentUrl, token, userId, userData } = useContext(CompleteDataContext);
+  const { setCurrentUrl, userData } = useContext(CompleteDataContext);
   const [preloadedAlertsFormData, setPreloadedAlertsFormData] = useState({});
   const [generator_data, setGenerator_data] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isDataReady = preloadedAlertsFormData && preloadedAlertsFormData;
   const isOperator = userData.role_text === "OPERATOR";
   const fetchAlertsDataLoading = alertsAndAlarms?.fetchAlertsDataLoading ?? false;
   const isFormBusy = fetchAlertsDataLoading || isSubmitting;
@@ -43,7 +38,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   // Get all alerts
   useEffect(() => {
     getAlertAndAlarm();
-  }, []);
+  }, [getAlertAndAlarm]);
   
   useEffect(() => {
     if (alertsAndAlarms?.alertsData) {
@@ -67,35 +62,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
     let convertdataToInt = parseFloat(e.target.value)
     const value = isNaN(convertdataToInt) ? '' : convertdataToInt
     return value
-  }
-
-  const setGenData = (id, dateString)=>{
-    if(dateString !== "Invalid date"){
-      let specGen = generator_data && generator_data.filter((data)=>{
-        return data.id === id
-    })
-    for(const key in specGen) {
-        const gottenData = specGen[key].next_maintenance_date = dateString
-      }
-    let obj = Object.keys(generator_data).forEach((e)=>{
-      if(e===id){
-        generator_data[e]={
-          specGen
-        }
-      }
-    })
-    return generator_data
-  }
-}
-
-  const defaultDate = (data) => {
-    let date = data && data.next_maintenance_date
-    if (date === null) {
-      return;
-    }
-    else {
-      return moment(date, 'YYYY-MM-DD')
-    }
   }
 
   const handleAlertsSubmit = async () => {
@@ -867,7 +833,8 @@ render={({ field }) => (
                 </div>
               </li> */}
 
-                {/* {generator_data.length > 0 && 
+                {/* Generator maintenance datepicker: if uncommenting, add moment import, setGenData/defaultDate helpers, DatePicker from antd.
+                {generator_data.length > 0 && 
                  <li className="alerts-and-alarms-list-item">
                  <div className="alerts-and-alarms-question-container">
                    {' '}
