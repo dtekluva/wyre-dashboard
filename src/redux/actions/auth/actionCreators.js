@@ -26,6 +26,15 @@ export const confirmResetPasswordSuccess = (payload) => ({
     payload,
 });
 
+export const validateResetTokenLoading = (payload = true) => ({
+    type: authTypes.VALIDATE_RESET_TOKEN_LOADING,
+    payload,
+});
+export const validateResetTokenSuccess = (payload) => ({
+    type: authTypes.VALIDATE_RESET_TOKEN_SUCCESS,
+    payload,
+});
+
 export const getPermittedBranchesLoading = (payload = true) => ({
     type: authTypes.GET_PERMITTED_BRANCHES_LOADING,
     payload,

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useForm } from 'react-hook-form';
-import { Spin, notification } from 'antd';
+import { useForm, Controller } from 'react-hook-form';
+import { Spin, notification, Input } from 'antd';
 
-import { confirmResetPasswordAction } from '../redux/actions/auth/auth.action';
+import { confirmResetPasswordAction, validateResetTokenAction } from '../redux/actions/auth/auth.action';
+import { validateResetTokenSuccess } from '../redux/actions/auth/actionCreators';
 import HiddenInputLabel from '../smallComponents/HiddenInputLabel';
-import OutlinedInput from '../smallComponents/OutlinedInput';
 import SocialCluster from '../smallComponents/SocialCluster';
 
 function ConfirmResetPassword() {
@@ -14,10 +14,26 @@ function ConfirmResetPassword() {
   const tokenFromUrl = searchParams.get('token') || '';
 
   const dispatch = useDispatch();
-  const { confirmResetPasswordLoading: loading } = useSelector((state) => state.auth);
+  const {
+    confirmResetPasswordLoading: loading,
+    validateResetTokenLoading: validatingToken,
+    resetTokenValidation: tokenValidation,
+  } = useSelector((state) => state.auth);
   const [errorMessage, setErrorMessage] = useState(null);
   const [success, setSuccess] = useState(false);
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, control } = useForm();
+
+  useEffect(() => {
+    if (tokenFromUrl) {
+      dispatch(validateResetTokenAction(tokenFromUrl));
+    } else {
+      dispatch(validateResetTokenSuccess({ validatedToken: '', valid: false, reason: 'missing' }));
+    }
+  }, [tokenFromUrl, dispatch]);
+
+  const tokenValid = tokenValidation?.validatedToken === tokenFromUrl && tokenValidation?.valid === true;
+  const showInvalidLink = !tokenFromUrl || !tokenValid;
+  const invalidReasonText = tokenValidation?.reason === 'expired' ? 'This link has expired or has already been used.' : 'This link is invalid or expired.';
 
   const onSubmit = async ({ new_password, confirm_password }) => {
     setErrorMessage(null);
@@ -56,13 +72,27 @@ function ConfirmResetPassword() {
     );
   }
 
-  if (!tokenFromUrl) {
+  if (tokenFromUrl && (validatingToken || !tokenValidation)) {
+    return (
+      <div className='auth-page-container'>
+        <div className='signup-login-contact-form'>
+          <Spin spinning={true}>
+            <h1 className='signup-login-heading first-heading--auth'>Checking link…</h1>
+            <p className='reset-password-note'>Verifying your reset link…</p>
+          </Spin>
+        </div>
+        <SocialCluster />
+      </div>
+    );
+  }
+
+  if (showInvalidLink && !validatingToken) {
     return (
       <div className='auth-page-container'>
         <div className='signup-login-contact-form'>
           <h1 className='signup-login-heading first-heading--auth'>Invalid or Expired Link</h1>
           <p className='reset-password-note'>
-            This link is invalid or expired. Please request a new password reset using the link below.
+            {invalidReasonText} Please request a new password reset using the link below.
           </p>
           <Link
             className='signup-login-contact-button'
@@ -88,37 +118,48 @@ function ConfirmResetPassword() {
           <h1 className='signup-login-heading first-heading--auth'>Set New Password</h1>
 
           <p className='reset-password-note'>
-            Enter your new password below.
+            Enter your new password below. Use the eye icon to show and compare your entries.
           </p>
 
           <p className='outlined-input-container'>
             <HiddenInputLabel htmlFor='new-password' labelText='New password' />
-            <OutlinedInput
-              className='signup-login-contact-input'
-              type='password'
+            <Controller
+              control={control}
               name='new_password'
-              id='new-password'
-              placeholder='New password'
-              autoComplete='new-password'
-              required={true}
-              autoFocus={true}
-              register={register('new_password').ref}
-              {...register('new_password', { required: true })}
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Input.Password
+                  className='signup-login-contact-input outlined-input'
+                  id='new-password'
+                  placeholder='New password'
+                  autoComplete='new-password'
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                  ref={ref}
+                />
+              )}
             />
           </p>
 
           <p className='outlined-input-container'>
             <HiddenInputLabel htmlFor='confirm-password' labelText='Confirm password' />
-            <OutlinedInput
-              className='signup-login-contact-input'
-              type='password'
+            <Controller
+              control={control}
               name='confirm_password'
-              id='confirm-password'
-              placeholder='Confirm new password'
-              autoComplete='new-password'
-              required={true}
-              register={register('confirm_password').ref}
-              {...register('confirm_password', { required: true })}
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Input.Password
+                  className='signup-login-contact-input outlined-input'
+                  id='confirm-password'
+                  placeholder='Confirm new password'
+                  autoComplete='new-password'
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  value={value}
+                  ref={ref}
+                />
+              )}
             />
           </p>
 

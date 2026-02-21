@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { logoutUser, getPermittedBranchesLoading, getPermittedBranchesSuccess, switchBranchLoading, switchBranchSuccess } from "./actionCreators";
 import EnvData from '../../../config/EnvData';
-import { resetPasswordLoading, resetPasswordSuccess, confirmResetPasswordLoading, confirmResetPasswordSuccess } from './actionCreators';
+import { resetPasswordLoading, resetPasswordSuccess, confirmResetPasswordLoading, confirmResetPasswordSuccess, validateResetTokenLoading, validateResetTokenSuccess } from './actionCreators';
 
 
 export const logoutUserFromRedux = () => async (dispatch) => {
@@ -45,6 +45,30 @@ export const confirmResetPasswordAction = (data) => async (dispatch) => {
     dispatch(confirmResetPasswordLoading(false));
     const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Request failed';
     return { fulfilled: false, message };
+  }
+};
+
+export const validateResetTokenAction = (token) => async (dispatch) => {
+  if (!token?.trim()) {
+    dispatch(validateResetTokenSuccess({ validatedToken: '', valid: false, reason: 'missing' }));
+    return;
+  }
+  dispatch(validateResetTokenLoading(true));
+  try {
+    const requestUrl = EnvData.REACT_APP_API_URL + 'validate_reset_token/?token=' + encodeURIComponent(token.trim());
+    const response = await axios.get(requestUrl);
+    const { valid, reason } = response.data || {};
+    dispatch(validateResetTokenSuccess({
+      validatedToken: token.trim(),
+      valid: !!valid,
+      reason: reason || (valid ? null : 'invalid'),
+    }));
+  } catch (error) {
+    dispatch(validateResetTokenSuccess({
+      validatedToken: token.trim(),
+      valid: false,
+      reason: error.response?.data?.reason || 'invalid',
+    }));
   }
 };
 
