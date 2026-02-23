@@ -7,6 +7,9 @@ const INITIAL_STATE = {
     confirmResetPasswordLoading: false,
     confirmResetPasswordData: null,
 
+    validateResetTokenLoading: false,
+    resetTokenValidation: null,
+
     fetchBillingLoading: false,
     billingData: {},
 
@@ -45,6 +48,18 @@ const reducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 confirmResetPasswordData: action.payload,
+            };
+
+        case authTypes.VALIDATE_RESET_TOKEN_LOADING:
+            return {
+                ...state,
+                validateResetTokenLoading: action.payload,
+            };
+        case authTypes.VALIDATE_RESET_TOKEN_SUCCESS:
+            return {
+                ...state,
+                resetTokenValidation: action.payload,
+                validateResetTokenLoading: false,
             };
 
         case authTypes.GET_PERMITTED_BRANCHES_LOADING:
