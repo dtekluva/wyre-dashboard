@@ -21,7 +21,7 @@ function ConfirmResetPassword() {
   } = useSelector((state) => state.auth);
   const [errorMessage, setErrorMessage] = useState(null);
   const [success, setSuccess] = useState(false);
-  const { register, handleSubmit, control } = useForm();
+  const { handleSubmit, control } = useForm();
 
   useEffect(() => {
     if (tokenFromUrl) {
