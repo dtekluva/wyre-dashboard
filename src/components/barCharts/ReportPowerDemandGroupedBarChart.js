@@ -31,7 +31,7 @@ const ReportPowerDemandGroupedBarChart = ({ data }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           stacked: false,
           display: true,
@@ -57,8 +57,7 @@ const ReportPowerDemandGroupedBarChart = ({ data }) => {
             fontColor: 'black',
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           stacked: false,
           ticks: {
@@ -67,6 +66,8 @@ const ReportPowerDemandGroupedBarChart = ({ data }) => {
             fontColor: '#A3A3A3',
             padding: 10,
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
           },
           gridLines: {
             drawTicks: false,
@@ -80,7 +81,6 @@ const ReportPowerDemandGroupedBarChart = ({ data }) => {
             fontColor: 'black',
           },
         },
-      ],
     },
   };
 

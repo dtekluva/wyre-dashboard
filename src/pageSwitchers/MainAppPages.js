@@ -1,16 +1,8 @@
-import React, { useContext } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-import CompleteDataContext from '../Context';
-
-import Loader from "../components/Loader";
-
-import AddBills from '../mainAppPages/AddBills';
-import AddEquipment from '../mainAppPages/AddEquipment';
 import Billing from '../mainAppPages/Billing';
 import CostTracker from '../mainAppPages/CostTracker';
 import Dashboard from '../mainAppPages/Dashboard';
-import Messages from '../mainAppPages/Messages';
 import Report from '../mainAppPages/Report';
 import ScoreCard from '../mainAppPages/ScoreCard';
 import Error from '../mainAppPages/Error';
@@ -32,98 +24,106 @@ import Sidebar from '../components/Sidebar';
 import TopBar from '../components/AppTopBar';
 import LoadOverview from '../mainAppPages/LoadOverview';
 import RevisedAppTopBar from '../components/RevisedAppTopBar';
-import AddDieselEntry from '../mainAppPages/AddDieselEntry';
-import Breakers from '../mainAppPages/Breakers';
 import SolarOverviewPage from '../mainAppPages/SolarOverviewPage';
 import DieselOverviewPage from '../mainAppPages/DieselOverviewPage';
-// import Breakers from '../mainAppPages/Breakers';
+import AddBills from '../mainAppPages/AddBills';
+import AddDieselEntry from '../mainAppPages/AddDieselEntry';
+import AddEquipment from '../mainAppPages/AddEquipment';
 
 function MainAppPages() {
-  const { currentUrl, isAuthenticatedDataLoading, deviceData } = useContext(CompleteDataContext);
-
-  const isReportPageOpen = currentUrl.includes('report');
-
   return (
     <div className="app">
-      {/* <AppHeader /> */}
-
       <div className="sidebar-and-content">
         <Sidebar />
 
-        <main
-          className={
-            // isReportPageOpen ? 'main-container h-full-width' : 
-            'main-container'
-          }
-        >
-          <div className='old-top-bar-monitor'>
+        <main className="main-container">
+          <div className="old-top-bar-monitor">
             <TopBar />
           </div>
+
           <AppHeader />
-          <div className='newTopbar-monitor'>
-            {/* <AppHeader /> */}
+
+          <div className="newTopbar-monitor">
             <RevisedAppTopBar />
           </div>
+
           <ScrollToTop>
             <div className="page-content">
-              {/* {!isAuthenticatedDataLoading ? */}
-              <Switch>
-                <Route exact path="/">
-                  <Redirect to="/dashboard" />
-                </Route>
-                <Route path="/dashboard" component={Dashboard} />
-                {/* <Route path="/breakers" component={Breakers} /> */}
-                <Route exact path="/log-in">
-                  <Redirect to="/" />
-                </Route>
-                <Route path="/billing" component={Billing} />
-                <Route exact path="/cost-tracker" component={CostTracker} />
-                <Route path="/cost-tracker/add-bills" component={AddBills} />
-                <Route path="/cost-tracker/add-diesel-entry" component={AddDieselEntry} />
+              <Routes>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+
+                <Route path="/billing" element={<Billing />} />
+
+                <Route path="/cost-tracker" element={<CostTracker />} />
+                <Route
+                  path="/cost-tracker/add-bills"
+                  element={<AddBills />}
+                />
+                <Route
+                  path="/cost-tracker/add-diesel-entry"
+                  element={<AddDieselEntry />}
+                />
                 <Route
                   path="/cost-tracker/add-equipment"
-                  component={AddEquipment}
+                  element={<AddEquipment />}
                 />
-                {/* <Route path="/messages" component={Messages} /> */}
+
                 <Route
                   path="/parameters/last-reading"
-                  component={LastReading}
+                  element={<LastReading match={{ url: '/parameters/last-reading', path: '/parameters/last-reading' }} />}
                 />
-                <Route path="/parameters/time-of-use" component={TimeOfUse} />
+                <Route
+                  path="/parameters/time-of-use"
+                  element={<TimeOfUse match={{ url: '/parameters/time-of-use', path: '/parameters/time-of-use' }} />}
+                />
                 <Route
                   path="/parameters/power-demand"
-                  component={PowerDemand}
+                  element={<PowerDemand match={{ url: '/parameters/power-demand', path: '/parameters/power-demand' }} />}
                 />
                 <Route
                   path="/parameters/power-quality"
-                  component={PowerQuality}
+                  element={<PowerQuality match={{ url: '/parameters/power-quality', path: '/parameters/power-quality' }} />}
                 />
                 <Route
                   path="/parameters/energy-consumption"
-                  component={EnergyConsumption}
+                  element={<EnergyConsumption match={{ url: '/parameters/energy-consumption', path: '/parameters/energy-consumption' }} />}
                 />
-                <Route path="/report" component={Report} />
-                {/* <Route path="/breakers" component={Breakers} /> */}
-                <Route path="/score-card" component={ScoreCard} />
-                <Route path="/solar-overview" component={SolarOverviewPage} />
-                <Route path="/client-profile" component={ClientProfile} />
-                {/* <Route path="/password" component={Dashboard} /> */}
-                <Route path="/password" component={Password} />
-                <Route path="/load-overview" component={LoadOverview} />
-                <Route path="/alerts-and-alarms" component={AlertsAndAlarms} />
-                <Route path="/diesel-overview" component={DieselOverviewPage} />
+
+                <Route path="/report" element={<Report />} />
+                <Route path="/score-card" element={<ScoreCard />} />
                 <Route
-                  exact
+                  path="/solar-overview"
+                  element={<SolarOverviewPage />}
+                />
+                <Route
+                  path="/diesel-overview"
+                  element={<DieselOverviewPage />}
+                />
+                <Route
+                  path="/client-profile"
+                  element={<ClientProfile />}
+                />
+                <Route path="/password" element={<Password />} />
+                <Route
+                  path="/load-overview"
+                  element={<LoadOverview />}
+                />
+                <Route
+                  path="/alerts-and-alarms"
+                  element={<AlertsAndAlarms />}
+                />
+                <Route
                   path="/branches"
-                  component={BranchesDevicesAndUsers}
+                  element={<BranchesDevicesAndUsers />}
                 />
                 <Route
                   path="/branches/user-form"
-                  component={BranchesUserForm}
+                  element={<BranchesUserForm />}
                 />
-                <Route component={Error} />
-              </Switch>
-              {/* : <Loader />} */}
+
+                <Route path="*" element={<Error />} />
+              </Routes>
             </div>
           </ScrollToTop>
         </main>

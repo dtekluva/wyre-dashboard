@@ -1,14 +1,14 @@
-import React, { useEffect, useState, } from "react";
+import { useEffect, useState } from "react";
 import { numberFormatter } from "../../helpers/numberFormatter";
+import UpArrowIcon from "../../icons/UpArrowIcon";
 
 // Tooltips
-import { message, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import InformationIcon from '../../icons/InformationIcon';
 import { SCORE_CARD_TOOLTIP_MESSAGES } from "../toolTips/Score_Card_Tooltip_Messages";
 import ScoreCardDoughnutChart from "../pieCharts/ScoreCardDoughnutChart";
-import { calculatePercentage, calculateRatio, daysInMonth, getBaselineEnergyColor, getPeakToAverageMessage } from "../../helpers/genericHelpers";
-import UpArrowIcon from "../../icons/UpArrowIcon";
 import { getOrganizationPeakToAveragePowerRatio } from "../../helpers/organizationDataHelpers";
+import { calculateRatio, getPeakToAverageMessage } from "../../helpers/genericHelpers";
 
 const PeakToAverageRatio = ({ paprBranchData, uiSettings }) => {
   const [paprData, setPaprData] = useState(null);
@@ -46,7 +46,7 @@ const PeakToAverageRatio = ({ paprBranchData, uiSettings }) => {
         </h2>
         <div>
           <Tooltip placement='top' style={{ textAlign: 'justify' }}
-            overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.PEAK_RATIO}>
+            popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.PEAK_RATIO}>
             <p>
               <InformationIcon className="info-icon" />
             </p>

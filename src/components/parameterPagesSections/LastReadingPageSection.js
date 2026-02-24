@@ -9,7 +9,7 @@ import TotalDemandTable from '../tables/lastReadingsTables/TotalDemandTable';
 
 import ExcelIcon from '../../icons/ExcelIcon';
 import ExportToCsv from '../ExportToCsv';
-import { convertDateStringsToObjects, flexibleDateStringsObjects } from '../../helpers/genericHelpers';
+import { flexibleDateStringsObjects } from '../../helpers/genericHelpers';
 
 function LastReadingPageSections({ lrData }) {
   const dateObjects = flexibleDateStringsObjects(lrData.date);

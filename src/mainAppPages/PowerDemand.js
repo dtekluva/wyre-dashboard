@@ -1,8 +1,5 @@
-import React, { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import CompleteDataContext from '../Context';
-import { CSVLink } from "react-csv";
-import { notification } from "antd"
-
 import {
   formatParametersDatetimes,
   formatParametersDates,
@@ -20,11 +17,9 @@ import Loader from '../components/Loader';
 import ExcelIcon from '../icons/ExcelIcon';
 import ExportToCsv from '../components/ExportToCsv';
 import { exportToExcel } from '../helpers/exportToFile';
-import jsPDF from "jspdf";
 import { connect, useSelector } from 'react-redux';
 import { fetchPowerDemandData } from '../redux/actions/parameters/parameter.action';
 import { devicesArray } from '../helpers/v2/organizationDataHelpers';
-import { isEmpty } from '../helpers/authHelper';
 import dayjs from 'dayjs';
 
 
@@ -36,16 +31,13 @@ const breadCrumbRoutes = [
 
 function PowerDemand({ match, fetchPowerDemandData }) {
   const [powerDemandData, setPowerDemandData] = useState([]);
-  const [pageLoaded, setPageLoaded] = useState(false);
   const parametersData = useSelector((state) => state.parametersReducer);
 
   const {
     userDateRange,
     checkedBranchId,
     checkedDevicesId,
-    refinedRenderedData,
     setCurrentUrl,
-    isAuthenticatedDataLoading,
   } = useContext(CompleteDataContext);
 
   useEffect(() => {
@@ -55,29 +47,17 @@ function PowerDemand({ match, fetchPowerDemandData }) {
   }, [match, setCurrentUrl]);
 
   useEffect(() => {
-    fetchPowerDemandData(userDateRange)
-  }, []);
+    fetchPowerDemandData(userDateRange);
+  }, [fetchPowerDemandData, userDateRange]);
 
+  const fetchedPowerDemand = parametersData?.fetchedPowerDemand;
   useEffect(() => {
-    if (!pageLoaded && isEmpty(parametersData || {})) {
-      fetchPowerDemandData(userDateRange);
+    if (fetchedPowerDemand) {
+      const devicesArrayData = devicesArray(fetchedPowerDemand.authenticatedData, checkedBranchId, checkedDevicesId);
+      const openDevicesArrayData = devicesArrayData?.devices ?? [];
+      setPowerDemandData(openDevicesArrayData);
     }
-
-    if (!isEmpty(parametersData) > 0 && pageLoaded) {
-      fetchPowerDemandData(userDateRange);
-    }
-    setPageLoaded(true);
-  }, [userDateRange]);
-
-  useEffect(() => {
-    if (pageLoaded && parametersData.fetchedPowerDemand) {
-      let openDevicesArrayData
-      const devicesArrayData = devicesArray(parametersData.fetchedPowerDemand.authenticatedData, checkedBranchId, checkedDevicesId);
-      openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
-      setPowerDemandData(openDevicesArrayData)
-    }
-    setPageLoaded(true);
-  }, [parametersData.fetchedPowerDemand, checkedBranchId, checkedDevicesId.length]);
+  }, [fetchedPowerDemand, checkedBranchId, checkedDevicesId]);
 
   const power_demand = powerDemandData.map((deviceDetails) => {
     const { name, power_demand } = deviceDetails
@@ -98,7 +78,7 @@ function PowerDemand({ match, fetchPowerDemandData }) {
 
   let chartDemandValues, chartDates, chartDeviceNames, chartTooltipValues;
   let powerDemandUnit, powerDemandTableDataClone, arrayOfTableValues, formattedTableDataWithIndex;
-  let tableHeadings, csvHeaders, XLSXHeaders, PDFHeaders, arrayOfFormattedTableData, formattedTableData;
+  let tableHeadings, csvHeaders, XLSXHeaders, arrayOfFormattedTableData, formattedTableData;
   if (power_demand) {
 
     chartDemandValues =
@@ -193,9 +173,6 @@ function PowerDemand({ match, fetchPowerDemandData }) {
     XLSXHeaders = [["Index", "Date", "Time", "Source", `Minimum ${powerDemandUnit}`,
       `Maximum ${powerDemandUnit}`, `Average ${powerDemandUnit}`]
     ]
-    PDFHeaders = [["Index", "Date", "Time", "Source", `Minimum ${powerDemandUnit}`,
-      `Maximum ${powerDemandUnit}`, `Average ${powerDemandUnit}`]
-    ]
   }
 
   if (!power_demand || power_demand.length  === 0) {
@@ -259,12 +236,6 @@ function PowerDemand({ match, fetchPowerDemandData }) {
 const mapDispatchToProps = {
   fetchPowerDemandData
 };
-const mapStateToProps = (state) => ({
-  parameters: state.parametersReducer,
-  sideBar: state.sideBar,
-  powerFactor: state.powerFactor,
-  dashboard: state.dashboard,
-}
-);
+const mapStateToProps = () => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(PowerDemand);

@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Tag, DatePicker, TimePicker, Form, Modal, Space } from 'antd';
 import CompleteDataContext from '../Context';
 import moment from 'moment';
 import dataHttpServices from '../services/devices';
-import BranchSwitcher from './BranchSwitcher';
 
 const { CheckableTag } = Tag;
 const { RangePicker } = DatePicker;
@@ -23,7 +22,6 @@ function NewAppTopBar() {
   const {
     setUserDateRange,
     setSelectedDateRange,
-    currentUrl
   } = useContext(CompleteDataContext);
 
 
@@ -38,9 +36,6 @@ function NewAppTopBar() {
   const [openModal, setOpenModal] = useState(false);
   const [form] = Form.useForm();
 
-
-  const isTopBarCostTrackerRightDisplayed = currentUrl.includes('cost-tracker');
-
   useEffect(() => {
     form.setFieldsValue({
       from: selectedDate[0],
@@ -49,7 +44,7 @@ function NewAppTopBar() {
       timeTo: selectedDate[1],
     })
 
-  }, [selectedDate]);
+  }, [selectedDate, form]);
 
 
   const setDateValueOnSelect = (startDate, endDate) => {
@@ -219,7 +214,7 @@ function NewAppTopBar() {
     }
 
     const currentTime = moment().startOf('day');
-    
+
     setSelectedDate(setDateValueOnSelect(moment(date).set({
       hour: currentTime.get('hour'),
       minute: currentTime.get('minute'),
@@ -407,6 +402,7 @@ function NewAppTopBar() {
           })}
         </div>
         <Form
+          form={form}
           layout="vertical"
           hideRequiredMark
           initialValues={{

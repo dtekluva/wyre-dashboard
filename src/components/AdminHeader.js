@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CompleteDataContext from '../Context';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
 
 import HeaderLink from '../smallComponents/HeaderLink';
@@ -40,7 +40,7 @@ function Header() {
 
   const dispatch = useDispatch();
 
-  const history = useHistory();
+  const history = useNavigate();
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -76,7 +76,7 @@ function Header() {
 
 
     // Go home
-    history.push('/');
+    history('/');
 
     window.href = '/';
     // Refresh page

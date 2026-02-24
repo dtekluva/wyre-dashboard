@@ -1300,3 +1300,36 @@
   color: #ffffff;
   border-color: #2563eb;
 }
+
+/* 🔥 HARD RESET for AntD v6 Select */
+.ant-select {
+  box-sizing: border-box;
+}
+
+.ant-select-single.ant-select-outlined {
+  height: 40px;
+  width: auto;
+}
+
+.ant-select-single.ant-select-outlined .ant-select-selector {
+  height: 100%;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+}
+
+/* ✅ THIS fixes the placeholder alignment */
+.ant-select-single.ant-select-outlined
+.ant-select-selection-placeholder {
+  line-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+/* Optional: selected value alignment */
+.ant-select-single.ant-select-outlined
+.ant-select-selection-item {
+  line-height: 40px;
+  display: flex;
+  align-items: center;
+}

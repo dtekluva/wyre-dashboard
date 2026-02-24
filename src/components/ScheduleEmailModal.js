@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Modal, Row, Col, Menu, Checkbox, Input, Alert, notification } from 'antd';
 import axios from 'axios';
 
@@ -302,8 +302,6 @@ export const ScheduleEmailModal = () => {
 
   // STYLING ENDS HERE
 
-  const assignedDevicesForPersonalData = emailModalData && emailModalData.available_devices;
-  const assignedDevicesPersonalData = emailModalData && emailModalData.assigned_devices;
   // const personalDataAssignedDevices = (
   //   <Menu
   //     selectable

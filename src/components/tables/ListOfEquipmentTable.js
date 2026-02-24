@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useContext} from 'react';
-import { Table, Input, InputNumber, Popconfirm, Form, Typography, Space, notification} from 'antd';
+import { useState, useEffect, useContext } from 'react';
+import { Table, Input, InputNumber, Popconfirm, Form, Typography, Space, notification, Button} from 'antd';
 import { mergeTheData } from '../../helpers/genericHelpers'
 import equipmentHttpServices from '../../services/equipment'
 import CompleteDataContext from '../../Context';
@@ -59,9 +59,9 @@ const ListOfEquipmentTable = ({listOfEquipmentData}) => {
     const mapKeyToEachData = mergedData.map(element => {
         let branchIds = element.id
         const formattedData  = element.equipments.map((data)=>{ 
-          let addBranchId = Object.assign(data, {branch_id:branchIds})
+          Object.assign(data, {branch_id:branchIds})
         //Added key value to each object using their IDs. because this is what the edit() func uses to differentiate them. 
-          let addKey = Object.assign(data,{key:data.id}) 
+          Object.assign(data,{key:data.id}) 
           return data
         })
         return formattedData
@@ -182,17 +182,25 @@ const ListOfEquipmentTable = ({listOfEquipmentData}) => {
         const editable = isEditing(record);
         return editable ? (
           <span>
-            <a
-              href="javascript:;"
+            <Button
+              type="link"
               onClick={() => save(record.key)}
               style={{
                 marginRight: 8,
+                padding: 0,
+                height: 'auto',
+                lineHeight: 'inherit'
               }}
             >
               Save
-            </a>
+            </Button>
             <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
+              <Button
+                type="link"
+                style={{ padding: 0, height: 'auto', lineHeight: 'inherit' }}
+              >
+                Cancel
+              </Button>
             </Popconfirm>
           </span>
         ) : (

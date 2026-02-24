@@ -33,8 +33,8 @@ function MonthlyReport({ setReportContext }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const history = useHistory();
-    const location = useLocation();
+    // const history = useHistory();
+    // const location = useLocation();
     const sideBar = useSelector((state) => state.sideBar);
 
     // Get previous month and year

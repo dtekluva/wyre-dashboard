@@ -5,7 +5,7 @@ import { CaretDownFilled } from '@ant-design/icons';
 function AddUserForm() {
     // modal form 
     const { Option } = Select;
-    const { register, handleSubmit, setValue, control, errors } = useForm();
+    const { handleSubmit, setValue, control, errors } = useForm();
     const branchSelector = (
         <Select
             className='cost-tracker-select h-4-br'

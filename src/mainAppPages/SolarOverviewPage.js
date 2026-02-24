@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Progress, Select, Tabs, Table, DatePicker, Spin } from "antd";
+import { useEffect, useState } from "react";
+import { Card, Row, Col, Select, Tabs, DatePicker, Spin } from "antd";
 import {
   AreaChart,
   Area,
@@ -18,7 +18,7 @@ import gridImg from "../assets/icons/grid.png";
 import usageImg from "../assets/icons/usage.png";
 import locationLogo from "../assets/icons/locationIcon.png";
 import sunLogo from "../assets/icons/sunIcon.png";
-import { motion } from "framer-motion/dist/framer-motion"; // Node12-safe import
+import { motion } from "framer-motion"; // Node12-safe import
 import BreadCrumb from "../components/BreadCrumb";
 import { fetchBatterySystemData, fetchComponentsTableData, fetchConsumptionsData, fetchInverterGridsData, fetchPvProductionData, fetchWeatherReadingsData } from "../redux/actions/solar/solar.action";
 import { connect } from "react-redux";
@@ -104,6 +104,30 @@ const EnergySummary = ({ tableContentsData }) => {
     grid: "Grid",
   };
 
+  // Dynamic content labels per tab (battery labels will be updated when backend adds target fields)
+  const contentLabels = {
+    generation: {
+      total: "Total Yield",
+      today: "Today's yield",
+      monthly: "Current Month's yield",
+    },
+    battery: {
+      total: "Total",
+      today: "Today",
+      monthly: "Current Month",
+    },
+    load: {
+      total: "Consumption",
+      today: "Today's Energy",
+      monthly: "Current Month",
+    },
+    grid: {
+      total: "Import",
+      today: "Today's Energy",
+      monthly: "Current Month",
+    },
+  };
+
   const formatValue = (val) => (val ? Number(val).toLocaleString() : "0");
 
   return (
@@ -114,6 +138,7 @@ const EnergySummary = ({ tableContentsData }) => {
             <div className="energy-tab-content" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
               {["total", "today", "monthly"].map((period) => {
                 const item = tableContentsData[key]?.[period] || {};
+                const label = contentLabels[key]?.[period] ?? period;
                 return (
                   <div
                     key={period}
@@ -123,11 +148,7 @@ const EnergySummary = ({ tableContentsData }) => {
                     }}
                   >
                     <div style={{ fontSize: "14px", fontWeight: 500, color: "#333" }}>
-                      {period === "total"
-                        ? "Total yield"
-                        : period === "today"
-                        ? "Today's yield"
-                        : "Current Month's yield"}
+                      {label}
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
@@ -248,7 +269,6 @@ const FlowDiagram = ({ inverterData }) => {
           const start = nodes[from];
           const end = nodes[to];
           const direction = start && start.direction;
-          const isOutgoing = direction === "OUT";
           const isIdle = direction === "IDLE";
           const isGridOff = start && start.status === "OFF";
 
@@ -481,7 +501,6 @@ const FlowDiagram = ({ inverterData }) => {
    Main SolarOverviewPage
    --------------------------- */
 const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTableData, fetchInverterGridsData, fetchConsumptionsData, fetchPvProductionData, fetchBatterySystemData }) => {
-  const [period, setPeriod] = useState("Select period");
   const [parameters, setParameters] = useState("Parameters");
   const [weatherContentsData, setWeatherContentsData] = useState(null);
   const [tableContentsData, setTableContentsData] = useState(null);
@@ -524,7 +543,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
     fetchConsumptionsData(today, day);
     fetchPvProductionData(today, day);
     fetchBatterySystemData(today, day);
-  }, []);
+  }, [fetchWeatherReadingsData, fetchComponentsTableData, fetchInverterGridsData, fetchConsumptionsData, fetchPvProductionData, fetchBatterySystemData]);
 
   useEffect(() => {
     if (solar) {  

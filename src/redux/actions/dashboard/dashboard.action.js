@@ -15,7 +15,7 @@ import {
 } from "./actionCreators";
 import dataHttpServices from '../../../services/devices';
 import moment from 'moment';
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import { APIService } from "../../../config/api/apiConfig";
 
 
@@ -24,14 +24,12 @@ export const fetchDashBoardData = (userDateRange) => async (dispatch) => {
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
   let userId;
-  let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
     userId = user.id;
-    branchId = user.branch_id;
     token = userToken.access;
   }
   try {
@@ -54,16 +52,12 @@ export const fetchDashBoardDataCard_1 = (userDateRange) => async (dispatch) => {
   dispatch(fetchDashBoardCard_1_Loading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
-  let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
-    token = userToken.access;
   }
   const requestUrl = `dashboard/total_energy/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`;
   try {
@@ -79,16 +73,12 @@ export const fetchDashBoardDataCard_2 = (userDateRange) => async (dispatch) => {
   dispatch(fetchDashBoardCard_2_Loading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
-  let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
-    token = userToken.access;
   }
   const requestUrl = `dashboard/device_usage/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`
   try {
@@ -104,16 +94,12 @@ export const fetchDashBoardDataCard_3 = (userDateRange) => async (dispatch) => {
   dispatch(fetchDashBoardCard_3_Loading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
-  let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
-    token = userToken.access;
   }
   const requestUrl = `dashboard/daily_consumption/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`
   try {
@@ -129,16 +115,12 @@ export const fetchLoadOverviewData = (userDateRange) => async (dispatch) => {
   dispatch(fetchLoadOverview_Loading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
-  let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
-    token = userToken.access;
   }
   const requestUrl = `dashboard/load_overview/${branchId}/${dateToUse}/${dataHttpServices.endpointDataTimeInterval}`
   try {
@@ -154,14 +136,12 @@ export const fetchBlendedCostData = (branch_id, userDateRange) => async (dispatc
   dispatch(fetchBlendedCostEnergyLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
   let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    // userId = user.id;
     branchId = user.branch_id;
     token = userToken.access;
   }
@@ -185,16 +165,12 @@ export const fetchPAPR = (userDateRange) => async (dispatch) => {
   dispatch(fetchDemandLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
   let branchId;
-  let token;
   const dateToUse = userDateRange && userDateRange.length > 0 ? `${moment(userDateRange[0]).format('DD-MM-YYYY HH:mm') + '/' + moment(userDateRange[1]).format('DD-MM-YYYY HH:mm')}` : dataHttpServices.endpointDateRange
   if (loggedUserJSON) {
     const userToken = JSON.parse(loggedUserJSON);
     const user = jwtDecode(userToken.access)
-    userId = user.id;
     branchId = user.branch_id;
-    token = userToken.access;
   }
   const requestUrl = `branch_demand/${branchId}/${dateToUse}`;
   try {

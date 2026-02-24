@@ -15,7 +15,7 @@ const TotalEnergyCard = ({ totalEnergyBranchData, userData }) => {
         const totalData = {total_kwh: {}, solar_hours: {}}
         totalEnergyBranchData && totalEnergyBranchData.devices && totalEnergyBranchData.devices.forEach(data => {
             const dashboard = data.dashboard;
-            if (data.is_source && data.source_tag=='AGGREGATORY') {
+            if (data.is_source && data.source_tag==='AGGREGATORY') {
               totalData.total_kwh.value =
                 dashboard.total_kwh.value + (totalData.total_kwh.value || 0);
               totalData.total_kwh.unit = dashboard.total_kwh.unit;
@@ -32,7 +32,7 @@ const TotalEnergyCard = ({ totalEnergyBranchData, userData }) => {
         <article className="dashboard__total-energy dashboard__banner--small">
             <div style={{ textAlign: "right", paddingRight: 20, paddingTop: 20, marginLeft: "auto" }}>
                 <Tooltip placement="top" style={{ textAlign: "right" }}
-                    overlayStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.TOTAL_ENERGY} >
+                    popupStyle={{ whiteSpace: "pre-line" }} title={DASHBOARD_TOOLTIP_MESSAGES.TOTAL_ENERGY} >
                     <p>
                         <InformationIcon className="info-icon" style={{ color: "white" }} />
                     </p>

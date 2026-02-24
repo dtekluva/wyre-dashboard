@@ -1,5 +1,4 @@
 import { Spin } from "antd";
-import React from "react";
 
 const CostAnalysisCard = ({ costAnalysisData, loader }) => {
 
@@ -15,7 +14,7 @@ const CostAnalysisCard = ({ costAnalysisData, loader }) => {
         </div>
 
         <div className="cost-row">
-          <div className="cost-label">Blended cost (kWh)</div>
+          <div className="cost-label">Diesel Cost per kWh</div>
           <div className="divider" />
           <div className="cost-value purple">₦ {(costAnalysisData?.data?.blended_cost.value)?.toLocaleString()}</div>
         </div>

@@ -1,15 +1,12 @@
-import React, { useEffect, useContext } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Button, DatePicker, Select, Upload } from 'antd';
+import { useEffect, useContext } from 'react';
+import { Button, Upload } from 'antd';
 import CompleteDataContext from '../Context';
 
 import { Input, Form } from 'antd';
 
-import { CaretDownFilled } from '@ant-design/icons';
-
 import BreadCrumb from '../components/BreadCrumb';
 
-
+// create breadcrum routes with names
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },
   { url: '/view-clients', name: 'Manage', id: 2 },
@@ -17,48 +14,14 @@ const breadCrumbRoutes = [
   { url: '#', name: 'Add Clients', id: 4 },
 ];
 
-const { Option } = Select;
-
 const AddClients = ({ match }) => {
   const { setCurrentUrl } = useContext(CompleteDataContext);
-
-  const { register, handleSubmit, setValue, control, errors } = useForm();
 
   useEffect(() => {
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
   }, [match, setCurrentUrl]);
-
-  const dateAddedPicker = (
-    <DatePicker
-      format='DD-MM-YYYY'
-      className='generic-input'
-      id='equipment-purchase-date'
-      onChange={(e) => setValue('dateAdded', e.target.value, true)}
-    />
-  );
-
-  const activeStateSelector = (
-    <Select
-      className='cost-tracker-select h-4-br'
-      id='active-state'
-      defaultValue='true'
-      suffixIcon={<CaretDownFilled />}
-      onChange={(e) => setValue('activeState', e.target.value, true)}
-    >
-      <Option className='active-state-option' value='true'>
-        True
-      </Option>
-      <Option className='active-state-option' value='false'>
-        False
-      </Option>
-    </Select>
-  );
-
-  const onSubmit = ({ deviceCode, deviceType, activeState, dateAdded }) => {
-    console.log(deviceCode, deviceType, activeState, dateAdded);
-  };
 
   return (
     <>

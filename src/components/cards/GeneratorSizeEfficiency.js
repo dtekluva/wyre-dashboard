@@ -1,32 +1,12 @@
-import React, {useEffect, useState,} from "react";
-import { numberFormatter } from "../../helpers/numberFormatter";
+import React from "react";
 
 // Tooltips
 import { Tooltip } from 'antd';
 import InformationIcon from '../../icons/InformationIcon';
 import { SCORE_CARD_TOOLTIP_MESSAGES } from "../toolTips/Score_Card_Tooltip_Messages";
-import ScoreCardDoughnutChart from "../pieCharts/ScoreCardDoughnutChart";
-import { calculatePercentage, daysInMonth, getBaselineEnergyColor } from "../../helpers/genericHelpers";
 import ScoreCardGenEfficiencyDoughnut from "../pieCharts/ScoreCardGenEfficiencyDoughnut";
 
-
-
 const GeneratorSizeEfficiency = ({ generatorSizeEfficiencyData, uiSettings }) => {
-    const [baselineEnergyData, setBaselineEnergyData] = useState({});
-
-    // useEffect(() => {
-    //     const baselineData = {baseline_energy: {}}
-    //     baselineEnergyBranchData && baselineEnergyBranchData.devices && baselineEnergyBranchData.devices.forEach(data => {
-    //       const score_card = data.score_card.baseline_energy;
-    //         console.log('Gen-Size-Efficiency  ==> ', score_card);
-    //       if (data.is_source) {
-    //         setBaselineEnergyData(score_card)
-    //         }
-    //     });
-    // }, [baselineEnergyBranchData]);
-
-    const date = new Date();
-
     let generatorSizeEffficiencyData, generatorSizeEffficiencyDoughnuts;
 
     generatorSizeEffficiencyData =
@@ -54,7 +34,7 @@ const GeneratorSizeEfficiency = ({ generatorSizeEfficiencyData, uiSettings }) =>
             <div className='doughnut-card-heading'>
               <h2 className='score-card-heading'>Generator Size Efficiency</h2>
               <Tooltip placement='top' style={{ textAlign: 'justify' }}
-                overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.SIZE_EFFICIENCY}>
+                popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.SIZE_EFFICIENCY}>
                 <p>
                   <InformationIcon className="info-icon" />
                 </p>

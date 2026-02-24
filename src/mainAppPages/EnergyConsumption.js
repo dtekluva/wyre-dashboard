@@ -1,19 +1,16 @@
-import React, { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState } from 'react';
 
 
 import CompleteDataContext from '../Context';
 
 import {
   formatParametersDatetimes,
-  formatParametersDates,
-  formatParametersTimes,
   formatParameterTableData,
   convertDateStringsToObjects,
 } from '../helpers/genericHelpers';
 import { numberFormatter } from "../helpers/numberFormatter"
 
 import BreadCrumb from '../components/BreadCrumb';
-import { sumOrganizationEnergyConsumptionValues } from "../helpers/organizationDataHelpers"
 import EnergyConsumptionBarChart from '../components/barCharts/EnergyConsumptionBarChart';
 import EnergyConsumptionTable from '../components/tables/EnergyConsumptionTable';
 import Loader from '../components/Loader';
@@ -22,8 +19,6 @@ import ExcelIcon from '../icons/ExcelIcon';
 import ExportToCsv from '../components/ExportToCsv';
 import { fetchEnergyConsumptionData } from '../redux/actions/parameters/parameter.action';
 import { connect, useSelector } from 'react-redux';
-import parametersReducer from '../redux/reducers/parameters/parameters.reducer';
-import { isEmpty } from '../helpers/authHelper';
 import { devicesArray } from '../helpers/v2/organizationDataHelpers';
 
 const breadCrumbRoutes = [
@@ -34,7 +29,6 @@ const breadCrumbRoutes = [
 
 function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
   const [energyConsumptionData, setEnergyConsumptionData] = useState([]);
-  const [pageLoaded, setPageLoaded] = useState(false);
   const {
     userDateRange,
     checkedBranchId,
@@ -51,29 +45,17 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
   }, [match, setCurrentUrl]);
 
   useEffect(() => {
-    fetchEnergyConsumptionData(userDateRange)
-  }, []);
+    fetchEnergyConsumptionData(userDateRange);
+  }, [fetchEnergyConsumptionData, userDateRange]);
 
+  const fetchedEnergyConsumption = parametersData?.fetchedEnergyConsumption;
   useEffect(() => {
-      if (!pageLoaded && isEmpty(parametersData || {})) {
-        fetchEnergyConsumptionData(userDateRange);
-      }
-  
-      if (!isEmpty(parametersData) > 0 && pageLoaded) {
-        fetchEnergyConsumptionData(userDateRange);
-      }
-      setPageLoaded(true);
-  }, [userDateRange]);
-  
-  useEffect(() => {
-      if (pageLoaded && parametersData.fetchedEnergyConsumption) {
-        let openDevicesArrayData
-        const devicesArrayData = devicesArray(parametersData.fetchedEnergyConsumption, checkedBranchId, checkedDevicesId);
-        openDevicesArrayData = devicesArrayData && devicesArrayData.devices.map(eachDevice => eachDevice)
-        setEnergyConsumptionData(openDevicesArrayData)
-      }
-      setPageLoaded(true);
-  }, [parametersData.fetchedEnergyConsumption, checkedBranchId, checkedDevicesId.length]);
+    if (fetchedEnergyConsumption) {
+      const devicesArrayData = devicesArray(fetchedEnergyConsumption, checkedBranchId, checkedDevicesId);
+      const openDevicesArrayData = devicesArrayData?.devices ?? [];
+      setEnergyConsumptionData(openDevicesArrayData);
+    }
+  }, [fetchedEnergyConsumption, checkedBranchId, checkedDevicesId]);
 
   const useEnergyConsumptionData = energyConsumptionData.map((deviceDetails) => {
     const { name, energy_consumption } = deviceDetails
@@ -90,7 +72,7 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
   }
   );
   let chartConsumptionValues, allDeviceNames, chartDates, energyConsumptionUnit;
-  let allDates, tableHeadings, formattedTableData, dataForEnergyConsumptionColumns;
+  let tableHeadings, formattedTableData, dataForEnergyConsumptionColumns;
   let deviceNames, energyConsumptionColumns, energyConsumptionValuesTableDataClone;
   let tableEnergyConsumptionValues, tableValues, csvHeaders;
 
@@ -190,9 +172,6 @@ function EnergyConsumption({ match, fetchEnergyConsumptionData }) {
           [eachDevice.name]: eachDevice.value,
         };
       });
-
-    allDates =
-      useEnergyConsumptionData && useEnergyConsumptionData[0].dates;
 
     tableEnergyConsumptionValues =
       energyConsumptionValuesTableDataClone &&
