@@ -48,15 +48,10 @@
 .plotted-unit-selector,
 .time-interval-selector {
   width: 100%;
+  min-width: 180px;
 
   @include media('>=medium') {
     max-width: 230px;
-  }
-}
-
-.plotted-unit-selector {
-  @include media('>=medium') {
-    min-width: 180px;
   }
 }
 

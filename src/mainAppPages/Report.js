@@ -1130,13 +1130,13 @@ function Report() {
         }}
       >
         <Select
-          style={{ width: 200 }}
-          value={selectedDate.month}
-          onChange={handleMonthChange}
-          placeholder="Select Month"
+          style={{ width: 120 }}
+          value={selectedDate.year}
+          onChange={handleYearChange}
+          placeholder="Select Year"
           disabled={isLoadingNewReport}
         >
-          {monthOptions.map((option) => (
+          {yearOptions.map((option) => (
             <Option
               key={option.value}
               value={option.value}
@@ -1146,15 +1146,14 @@ function Report() {
             </Option>
           ))}
         </Select>
-
         <Select
-          style={{ width: 120 }}
-          value={selectedDate.year}
-          onChange={handleYearChange}
-          placeholder="Select Year"
+          style={{ width: 200 }}
+          value={selectedDate.month}
+          onChange={handleMonthChange}
+          placeholder="Select Month"
           disabled={isLoadingNewReport}
         >
-          {yearOptions.map((option) => (
+          {monthOptions.map((option) => (
             <Option
               key={option.value}
               value={option.value}
