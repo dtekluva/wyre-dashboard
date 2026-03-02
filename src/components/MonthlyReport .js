@@ -1141,23 +1141,15 @@ function MonthlyReport({ setReportContext }) {
 
     return (
         <div className="report-page">
-            <div
-                style={{
-                    padding: "20px",
-                    display: "flex",
-                    gap: "20px",
-                    float: "right",
-                    alignItems: "center",
-                }}
-            >
+            <div className="monthly-report__selects">
                 <Select
-                    style={{ width: 200 }}
-                    value={selectedDate.month}
-                    onChange={handleMonthChange}
-                    placeholder="Select Month"
+                    style={{ width: 120 }}
+                    value={selectedDate.year}
+                    onChange={handleYearChange}
+                    placeholder="Select Year"
                     disabled={isLoadingNewReport}
                 >
-                    {monthOptions.map((option) => (
+                    {yearOptions.map((option) => (
                         <Option
                             key={option.value}
                             value={option.value}
@@ -1167,15 +1159,14 @@ function MonthlyReport({ setReportContext }) {
                         </Option>
                     ))}
                 </Select>
-
                 <Select
-                    style={{ width: 120 }}
-                    value={selectedDate.year}
-                    onChange={handleYearChange}
-                    placeholder="Select Year"
+                    style={{ width: 200 }}
+                    value={selectedDate.month}
+                    onChange={handleMonthChange}
+                    placeholder="Select Month"
                     disabled={isLoadingNewReport}
                 >
-                    {yearOptions.map((option) => (
+                    {monthOptions.map((option) => (
                         <Option
                             key={option.value}
                             value={option.value}

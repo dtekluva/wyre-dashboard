@@ -48,6 +48,17 @@
   }
 }
 
+/* Modal: ensure content and body are clickable (fix calendar/date picker not responding) */
+.ant-modal-content,
+.ant-modal-body {
+  pointer-events: auto !important;
+}
+
+.ant-modal-body .ant-picker,
+.ant-modal-body .ant-picker-dropdown {
+  pointer-events: auto !important;
+}
+
 /*--------------------------------------------------------------
 # Checkbox
 --------------------------------------------------------------*/
@@ -96,14 +107,109 @@
 }
 
 /*--------------------------------------------------------------
-# Select Box
+# Select Box – consistent width, readable labels, centered arrow
 --------------------------------------------------------------*/
 
-.ant-select-selector {
-  min-height: 40px;
-  align-items: center;
+/* Root: prevent shrinking so labels stay visible; form items override below */
+.ant-select {
+  min-width: 180px;
+  display: inline-block;
+  outline: none;
+  box-sizing: border-box;
 }
 
+/* Single Select root: explicit height so arrow top: 50% is correct */
+.ant-select.ant-select-single {
+  min-height: 40px;
+  position: relative;
+}
+
+/* Form Selects: use full width of the form column, no min-width squeeze */
+.ant-form-item .ant-select {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: block !important;
+}
+
+/* Single border only – no double ring on focus */
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Trigger: fixed height, flex layout, room for arrow on the right */
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 0 32px 0 11px !important;
+  display: flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+/* Selection area: take remaining space, ellipsis if needed, vertically + horizontally centered in slot */
+.ant-select-selection-item,
+.ant-select-selection-placeholder {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  line-height: 1.5 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  width: 100%;
+}
+
+/* Dropdown arrow (v-sign): perfectly centered vertically; right-aligned */
+.ant-select-arrow {
+  position: absolute !important;
+  top: 50% !important;
+  right: 11px !important;
+  left: auto !important;
+  width: 12px !important;
+  height: 12px !important;
+  margin: 0 !important;
+  transform: translateY(-50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+}
+
+.ant-select-arrow .anticon,
+.ant-select-arrow .anticon svg {
+  display: block !important;
+  vertical-align: middle !important;
+}
+
+/* If arrow/suffix is rendered inside selector (antd variant), center it */
+.ant-select-selector .ant-select-suffix,
+.ant-select-selector .ant-select-arrow {
+  align-self: center !important;
+  flex-shrink: 0 !important;
+}
+
+/* Large size (e.g. form SelectField) – same layout */
+.ant-select-single.ant-select-lg:not(.ant-select-customize-input) .ant-select-selector {
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 0 32px 0 11px !important;
+}
+
+/* Neutralize antd's height-driving ::after so our height wins */
+.ant-select-single .ant-select-selector::after,
+.ant-select-single .ant-select-selector .ant-select-selection-item::after,
+.ant-select-single .ant-select-selector .ant-select-selection-placeholder::after {
+  line-height: 0 !important;
+  height: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Border radius helpers */
 .h-8-br {
   .ant-select-selector {
     border-radius: 8px !important;
@@ -113,6 +219,21 @@
   .ant-select-selector {
     border-radius: 4px !important;
   }
+}
+
+/* Context: cost-tracker and client forms – Select fills container */
+.cost-tracker-input-container .ant-select,
+.add-bills-section .ant-select,
+.client-info-select {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Topbar Selects (time interval, plotted unit) – full width but never shrinked */
+.plotted-unit-selector,
+.time-interval-selector {
+  width: 100% !important;
+  min-width: 180px !important;
 }
 
 /*--------------------------------------------------------------
