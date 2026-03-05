@@ -58,18 +58,24 @@ const DieselHeader = ({ dieselPrice, genStatus, Co2, loader }) => {
               <img width={40} src="/i-gun.png" alt="Logo" />
             </span>
           </div>
-          <div className="price-center">
-            <p className="card-label-price">Price / Litre</p>
-            <p className="card-label-price">Diesel efficiency</p>
-            <p className="card-label-price">Cost (Estimated monthly)</p>
+          <div className="price-rows">
+            <Spin spinning={loader.dieselPriceLoading}>
+              <div className="price-rows-inner">
+                <div className="price-row">
+                  <span className="card-label-price">Price / Litre</span>
+                  <span className="card-value highlight">₦ {(dieselPrice.diesel_price_per_litre)?.toLocaleString()}</span>
+                </div>
+                <div className="price-row">
+                  <span className="card-label-price">Diesel efficiency</span>
+                  <span className="card-value green">{(dieselPrice.diesel_efficiency)?.toLocaleString()} kWh/L</span>
+                </div>
+                <div className="price-row">
+                  <span className="card-label-price">Cost (Estimated monthly)</span>
+                  <span className="card-value highlight">₦ {(dieselPrice.month_estimated_cost)?.toLocaleString()}</span>
+                </div>
+              </div>
+            </Spin>
           </div>
-          <Spin spinning={loader.dieselPriceLoading}>
-            <div className="price-right">
-              <p className="card-value highlight">₦ {(dieselPrice.diesel_price_per_litre)?.toLocaleString()}</p>
-              <p className="card-value green">{(dieselPrice.diesel_efficiency)?.toLocaleString()} kWh/L</p>
-              <p className="card-value highlight">₦ {(dieselPrice.month_estimated_cost)?.toLocaleString()}</p>
-            </div>
-          </Spin>
         </div>
         {/* </Spin> */}
       </div>

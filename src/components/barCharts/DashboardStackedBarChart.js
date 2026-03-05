@@ -56,7 +56,7 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
         left: isMediumScreen ? 5 : 25,
         right: isMediumScreen ? 20 : 50,
         top: isMediumScreen ? 20 : 25,
-        bottom: isMediumScreen ? 10 : 25,
+        bottom: isMediumScreen ? 35 : 25,
       },
     },
 
@@ -99,11 +99,12 @@ const DashboardStackedBarChart = ({ data, uiSettings, sideBarData }) => {
         title: {
           display: true,
           text: 'Days of the month',
-          padding: isMediumScreen ? 10 : 45,
+          padding: isMediumScreen ? { top: 15, bottom: 0 } : 45,
           font: {
             size: isMediumScreen ? 14 : 18,
           },
           color: 'black',
+          align: 'center',
         },
       },
     },

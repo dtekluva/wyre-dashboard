@@ -24,7 +24,6 @@ const DieselOverviewCostTrackerTable = ({
   const [dieselEntryData, setDieselEntryData] = useState({});
 
   const isOperator = role === 'OPERATOR';
-console.log('dieselEntryData === ', dieselEntryData);
 
   const openNotificationWithIcon = (type, formName) => {
     notification[type]({
@@ -136,13 +135,14 @@ console.log('dieselEntryData === ', dieselEntryData);
   ];
 
   return (
-    <div>
+    <div className="diesel-overview-table-wrapper">
       <Table
         columns={columns}
         dataSource={dieselOverviewData}
         loading={isLoading}
-        rowKey="id"
+        rowKey={(record, index) => record.month ?? record.id ?? record.key ?? index}
         pagination={{ pageSize: 6 }}
+        scroll={{ x: 'max-content' }}
       />
 
       <Modal

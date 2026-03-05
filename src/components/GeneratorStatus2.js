@@ -127,6 +127,7 @@ const GeneratorStatus2 = ({ genStatusChartData, loader }) => {
 
         {/* Legends for Gen1 & Gen2 */}
         <div
+          className="generator-status-footer-legend"
           style={{
             marginTop: "12px",
             display: "flex",

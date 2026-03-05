@@ -1,0 +1,856 @@
+/*--------------------------------------------------------------
+# Mobile responsive overrides for main app pages
+# Breakpoints: small 544px, medium 768px, large 1012px
+--------------------------------------------------------------*/
+
+// Page layout: prevent overflow and add safe padding on small screens
+.page-content {
+  @include media('<medium') {
+    padding-left: $small-gutter;
+    padding-right: $small-gutter;
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.main-container {
+  @include media('<medium') {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+}
+
+// Breadcrumb + print row: wrap and smaller gaps on mobile
+.breadcrumb-and-print-buttons {
+  @include media('<medium') {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Billing page
+// ---------------------------------------------------------------------------
+.billing-bill-tables {
+  @include media('<medium') {
+    margin-top: 20px;
+    flex-direction: column;
+  }
+}
+
+.billing-bill-table-container {
+  @include media('<medium') {
+    width: 100%;
+    margin-bottom: 16px;
+    padding-bottom: 24px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.billing-bill-table {
+  @include media('<544px') {
+    min-width: 380px; // allow horizontal scroll but slightly smaller than 500px
+    font-size: 1.2rem;
+
+    th,
+    td {
+      padding: 10px 12px;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.billing-table-caption {
+  @include media('<medium') {
+    padding: 20px 16px 10px;
+    font-size: 1.6rem;
+  }
+}
+
+.billing-bar-container {
+  @include media('<medium') {
+    height: 380px;
+    margin-top: 20px;
+  }
+
+  @include media('<544px') {
+    height: 320px;
+  }
+}
+
+.usage-and-metrics-tables {
+  @include media('<medium') {
+    margin-bottom: 20px;
+  }
+}
+
+.billing-metrics-table {
+  @include media('<medium') {
+    margin-top: 20px;
+    padding: 16px 12px 24px;
+
+    td {
+      font-size: 1.4rem;
+      padding: 10px 12px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Parameters: Energy Consumption, Power Quality, Time of Use, etc.
+// ---------------------------------------------------------------------------
+.parameters-stacked-bar-container,
+.power-quality-line-container,
+.cost-tracker-chart-wrapper {
+  @include media('<medium') {
+    height: 380px;
+    margin-top: 20px;
+  }
+
+  @include media('<544px') {
+    height: 300px;
+  }
+}
+
+.energy-consumption-middle-cards-container {
+  @include media('<medium') {
+    margin-top: 20px;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.energy-consumption-middle-card {
+  @include media('<medium') {
+    width: 100%;
+    margin-top: 0;
+    padding: 14px 12px;
+  }
+}
+
+.energy-consumption-middle-card-heading {
+  @include media('<544px') {
+    font-size: 1.6rem;
+  }
+}
+
+.energy-consumption-middle-card-body {
+  @include media('<544px') {
+    font-size: 1.4rem;
+  }
+}
+
+.power-demand-table-wrapper,
+.energy-consumption-table-wrapper,
+.time-of-use-table-wrapper,
+.last-reading-table-wrapper,
+.equipment-table-wrapper {
+  @include media('<medium') {
+    margin-left: -#{$small-gutter};
+    margin-right: -#{$small-gutter};
+    padding-left: $small-gutter;
+    padding-right: $small-gutter;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+// Table-with-header (shared): comfortable padding on mobile
+.table-with-header-container {
+  @include media('<medium') {
+    margin-top: 20px;
+    padding: 16px 12px 24px;
+  }
+}
+
+.table-header {
+  @include media('<medium') {
+    padding: 0 0 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+}
+
+.table-header__heading {
+  @include media('<medium') {
+    font-size: 1.8rem;
+    text-align: left;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Report page: date range stacks on small screens
+// ---------------------------------------------------------------------------
+.report-page__date-range {
+  @include media('<544px') {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.report-page__date-input {
+  @include media('<medium') {
+    max-width: 100%;
+  }
+}
+
+.report-page__controls {
+  @include media('<medium') {
+    padding: $small-gutter;
+  }
+}
+
+.report-page__subtitle {
+  @include media('<544px') {
+    font-size: 1.3rem;
+    text-align: left;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Cost Tracker
+// ---------------------------------------------------------------------------
+.cost-tracker-forms-content-wrapper {
+  @include media('<medium') {
+    padding: 12px;
+  }
+}
+
+.cost-tracker-form-section {
+  @include media('<medium') {
+    margin-top: 40px;
+
+    &:first-of-type {
+      margin-top: 24px;
+    }
+  }
+}
+
+.cost-tracker-form-inputs-wrapper {
+  @include media('<1086px') {
+    display: block;
+  }
+}
+
+.cost-tracker-input-container {
+  @include media('<medium') {
+    padding: 0;
+    margin-top: 20px;
+  }
+}
+
+.cost-tracker-branch-name {
+  @include media('<medium') {
+    font-size: 1.8rem;
+    padding: 20px 10px 10px;
+  }
+}
+
+.flow-meter-upload-file .ant-upload-list-text {
+  @include media('<medium') {
+    max-width: 100%;
+  }
+}
+
+// Diesel Overview table (Cost Tracker page): horizontal scroll on mobile
+.diesel-overview-table-wrapper {
+  @include media('<medium') {
+    margin-left: -#{$small-gutter};
+    margin-right: -#{$small-gutter};
+    padding-left: $small-gutter;
+    padding-right: $small-gutter;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Alerts and Alarms
+// ---------------------------------------------------------------------------
+.alerts-and-alarms-form-section-heading,
+.alerts-and-alarms-list,
+.alert-and-alarms-button-container {
+  @include media('<medium') {
+    padding: 0 16px;
+  }
+
+  @include media('<544px') {
+    padding: 0 12px;
+  }
+}
+
+// Ensure list numbers (1., 2., 3.…) are visible on mobile – markers need space
+.alerts-and-alarms-list {
+  @include media('<medium') {
+    padding-left: 2.5em;
+    padding-right: 16px;
+  }
+
+  @include media('<544px') {
+    padding-left: 2.5em;
+    padding-right: 12px;
+  }
+}
+
+.alerts-and-alarms-form-section-heading {
+  @include media('<medium') {
+    padding-top: 24px;
+    font-size: 1.6rem;
+  }
+}
+
+.alerts-and-alarms-question-container {
+  @include media('<544px') {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+.alerts-and-alarms-question {
+  @include media('<medium') {
+    margin-right: 16px;
+    font-size: 1.4rem;
+  }
+
+  @include media('<544px') {
+    margin-right: 0;
+  }
+}
+
+.alerts-and-alarms-input {
+  @include media('<544px') {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.alert-and-alarms-button-container {
+  @include media('<medium') {
+    padding-bottom: 20px;
+    margin-top: 20px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Last Reading
+// ---------------------------------------------------------------------------
+.last-reading-table-container {
+  @include media('<medium') {
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+}
+
+.last-reading-table-total-and-history {
+  @include media('<544px') {
+    padding: 16px 12px 0;
+  }
+}
+
+.last-reading-table-total {
+  @include media('<544px') {
+    font-size: 1.6rem;
+  }
+}
+
+.last-reading-date {
+  @include media('<medium') {
+    padding: 0 12px;
+    font-size: 1.2rem;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Load Overview
+// ---------------------------------------------------------------------------
+.load-overview-total-cards-container {
+  @include media('<544px') {
+    .load-overview-total-card {
+      width: 100%;
+      min-height: 8rem;
+    }
+  }
+}
+
+.load-overviews-table-data {
+  @include media('<medium') {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+
+    p,
+    h3 {
+      margin-left: 1rem;
+    }
+  }
+}
+
+.load-overviews-row-table-data {
+  @include media('<medium') {
+    row-gap: 16px;
+  }
+}
+
+.load-overview-card-data__header p {
+  @include media('<544px') {
+    font-size: 1.4rem;
+    margin-left: 1rem;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Diesel Overview page
+// ---------------------------------------------------------------------------
+.diesel {
+  @include media('<medium') {
+    padding: 16px !important;
+    border-radius: 12px;
+    overflow-x: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  @include media('<544px') {
+    padding: 12px !important;
+  }
+}
+
+// Diesel header: breadcrumb + download button row
+.diesel-page-header {
+  @include media('<medium') {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px !important;
+  }
+}
+
+.diesel h3 {
+  @include media('<medium') {
+    font-size: 1.6rem;
+    margin-bottom: 16px;
+  }
+
+  @include media('<544px') {
+    font-size: 1.4rem;
+  }
+}
+
+.diesel .dashboard-header {
+  @include media('<medium') {
+    margin-bottom: 8px;
+  }
+}
+
+.diesel .header-cards {
+  @include media('<medium') {
+    gap: 12px;
+  }
+}
+
+// Date picker row
+.diesel .no-print:nth-of-type(2) {
+  @include media('<medium') {
+    padding: 12px 0 10px 0 !important;
+  }
+}
+
+// Grid 1: Total energy + Generator Status cards
+.diesel-grid1 {
+  @include media('<medium') {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  @include media('<544px') {
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+}
+
+.diesel-grid1 .grid1-item,
+.diesel-grid1 .card {
+  @include media('<medium') {
+    min-width: 0;
+    overflow: hidden;
+  }
+}
+
+.diesel-grid1 .grid1-item.card,
+.diesel-grid1 .card {
+  @include media('<medium') {
+    padding: 16px;
+  }
+
+  @include media('<544px') {
+    padding: 12px;
+  }
+}
+
+.diesel h3.card-title,
+.diesel .card-title {
+  @include media('<medium') {
+    font-size: 1.4rem;
+  }
+
+  @include media('<544px') {
+    font-size: 1.3rem;
+  }
+}
+
+// Total energy card: chart + legend
+.total-energy-card {
+  @include media('<medium') {
+    padding: 16px;
+  }
+
+  @include media('<544px') {
+    padding: 12px;
+  }
+}
+
+.total-energy-card .chart-wrapper {
+  @include media('<medium') {
+    max-width: 160px;
+  }
+
+  @include media('<544px') {
+    max-width: 140px;
+  }
+}
+
+.total-energy-card .center-label .total {
+  @include media('<medium') {
+    font-size: 22px;
+  }
+
+  @include media('<544px') {
+    font-size: 20px;
+  }
+}
+
+.total-energy-card .center-label .label,
+.total-energy-card .center-label .unit {
+  @include media('<544px') {
+    font-size: 12px;
+  }
+}
+
+.total-energy-card .legend {
+  @include media('<medium') {
+    margin-top: 10px;
+    gap: 4px;
+  }
+}
+
+.total-energy-card .legend-item {
+  @include media('<medium') {
+    font-size: 12px;
+  }
+
+  @include media('<544px') {
+    font-size: 11px;
+  }
+}
+
+.total-energy-card .legend-text {
+  @include media('<544px') {
+    word-break: break-word;
+  }
+}
+
+// Generator Status card: donut charts
+.grid-2 {
+  @include media('<medium') {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @include media('<544px') {
+    gap: 16px;
+  }
+}
+
+.grid-2 .status-item {
+  @include media('<medium') {
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+  }
+}
+
+.donut-wrapper {
+  @include media('<medium') {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  @include media('<544px') {
+    gap: 10px;
+  }
+}
+
+.donut-wrapper .donut-chart {
+  @include media('<medium') {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+  }
+
+  @include media('<544px') {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+.donut-labels {
+  @include media('<medium') {
+    align-items: center;
+    width: 100%;
+  }
+}
+
+.donut-total {
+  @include media('<medium') {
+    margin-right: 0;
+    margin-top: 10px;
+    font-size: 1.3rem;
+  }
+
+  @include media('<544px') {
+    font-size: 1.2rem;
+  }
+}
+
+.label-text {
+  @include media('<medium') {
+    font-size: 1.3rem;
+  }
+
+  @include media('<544px') {
+    font-size: 1.2rem;
+  }
+}
+
+// Generator Status footer legend (Gen names) - prevent cramped layout on mobile
+.generator-status-footer-legend {
+  @include media('<medium') {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 16px;
+    margin-top: 10px;
+  }
+
+  @include media('<544px') {
+    gap: 8px 12px;
+    margin-top: 8px;
+  }
+}
+
+.generator-status-footer-legend > div {
+  @include media('<medium') {
+    flex-shrink: 0;
+  }
+}
+
+.generator-status-footer-legend span:last-child {
+  @include media('<medium') {
+    font-size: 1.2rem;
+  }
+
+  @include media('<544px') {
+    font-size: 1.1rem;
+  }
+}
+
+// Diesel grids 2 & 3
+.diesel-grid2,
+.diesel-grid3 {
+  @include media('<medium') {
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  @include media('<544px') {
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Client Information / Branches User Form
+// ---------------------------------------------------------------------------
+.client-info-forms-content-wrapper {
+  @include media('<medium') {
+    padding: 12px 16px 40px;
+  }
+}
+
+.client-info-form {
+  @include media('<medium') {
+    margin-top: 40px;
+  }
+}
+
+.client-info-input-container {
+  @include media('<1086px') {
+    margin-right: 0;
+    max-width: 100%;
+  }
+}
+
+// Branches user form uses same pattern as client-information (max-width 31.75%)
+// Ensure full width on mobile is already from no media = block layout
+
+// ---------------------------------------------------------------------------
+// Dashboard (extra mobile tweaks)
+// ---------------------------------------------------------------------------
+.dashboard-row-1 {
+  @include media('<1200px') {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.dashboard-row-1b {
+  @include media('<1200px') {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.dashboard__banner--small,
+.dashboard__banner--smallb,
+.dashboard__demand-banner,
+.dashboard__cost-emissions-banner {
+  @include media('<medium') {
+    margin-top: 16px;
+  }
+}
+
+.dashboard__total-energy-amount {
+  @include media('<medium') {
+    margin-top: 16px;
+  }
+}
+
+.dashboard-bar-container {
+  @include media('<medium') {
+    height: 420px;
+    margin-top: 20px;
+  }
+
+  @include media('<544px') {
+    height: 380px;
+  }
+}
+
+.dashboard-pie-container {
+  @include media('<medium') {
+    height: 400px;
+    margin-top: 20px;
+    overflow: visible;
+  }
+
+  @include media('<544px') {
+    height: 360px;
+  }
+}
+
+.dashboard-row-3 {
+  @include media('<1200px') {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.dashboard-pie-container,
+.dashboard-today-and-yesterday {
+  @include media('<1200px') {
+    width: 100%;
+    min-height: 320px;
+  }
+}
+
+.today-usage__value,
+.yesterday-usage__value {
+  @include media('<544px') {
+    font-size: 3.2rem;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Score Card (additional mobile tweaks)
+// -------------------------------------------------------------------------------
+.score-card-row-1__item {
+  @include media('<1123px') {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+}
+
+.score-card-heading {
+  @include media('<544px') {
+    font-size: 1.4rem;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Password page
+// ---------------------------------------------------------------------------
+// Password page uses max-width 1000px; ensure padding on small screens
+// (handled by page-content padding above)
+
+// ---------------------------------------------------------------------------
+// Add Equipment
+// ---------------------------------------------------------------------------
+.equipment-table-container {
+  @include media('<medium') {
+    margin-top: 20px;
+  }
+}
+
+.equipment-table-container__heading {
+  @include media('<medium') {
+    padding: 8px 12px 16px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Generic: ensure images and embeds don’t overflow
+// -------------------------------------------------------------------------------
+.page-content img,
+.page-content iframe,
+.report-page__preview iframe {
+  @include media('<medium') {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+.report-page__preview {
+  @include media('<medium') {
+    margin-left: -#{$small-gutter};
+    margin-right: -#{$small-gutter};
+    border-radius: 0;
+  }
+}
+
+.report-page__preview iframe {
+  @include media('<medium') {
+    height: auto;
+    min-height: 400px;
+  }
+}

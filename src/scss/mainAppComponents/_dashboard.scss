@@ -172,10 +172,18 @@
 
 .dashboard-bar-container {
   border-radius: $medium-border;
+  display: flex;
+  flex-direction: column;
 
   @include media('>=medium') {
     height: 500px;
   }
+}
+
+.dashboard-bar-chart-wrapper {
+  flex: 1;
+  min-height: 0;
+  position: relative;
 }
 
 .dashboard-row-3 {
@@ -384,21 +392,35 @@
 /* === Price Card Layout === */
 .price-card {
   display: grid;
-  grid-template-columns: auto 1fr auto; /* icon, labels, values */
-  align-items: center;
+  grid-template-columns: auto 1fr; /* icon, label-value rows */
+  align-items: start;
   gap: 1rem;
 }
 
-.price-center {
+.price-rows {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.price-right {
+.price-rows-inner {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.price-row .card-label-price {
+  flex-shrink: 0;
+}
+
+.price-row .card-value {
   text-align: right;
 }
 
@@ -419,10 +441,15 @@
     text-align: left;
   }
   .gen-center,
-  .gen-right,
-  .price-right {
+  .gen-right {
     text-align: left;
     align-items: flex-start;
+  }
+  .price-card {
+    grid-template-columns: auto 1fr; /* keep icon + rows side by side */
+  }
+  .price-row .card-value {
+    text-align: right;
   }
 }
 

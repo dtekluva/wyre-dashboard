@@ -159,20 +159,6 @@ function TopBar() {
         </div>
          : null
         }
-      <div
-        className={
-          isTopBarUserBranchesRightDisplayed
-            ? 'top-bar__right'
-            : 'top-bar__right h-hide'
-        }
-      >
-        <Link
-          className='top-bar-right__button h-extra-padding'
-          to='/client-profile'
-        >
-          Edit Client
-        </Link>
-      </div>
     </div>
   );
 }

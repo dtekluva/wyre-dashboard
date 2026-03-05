@@ -127,6 +127,15 @@
   }
 }
 
+.diesel-overview-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  .ant-table-wrapper {
+    min-width: 0;
+  }
+}
+
 .flow-meter-upload-file {
   .ant-btn-icon-only {
     margin-top: 0px !important

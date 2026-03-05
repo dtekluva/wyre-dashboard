@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import DieselHeader from "../components/DieselHeader";
@@ -86,7 +86,7 @@ const DieselOverviewPage = ({
     }
   }, [diesel]);
 
-  const handleDownloadPDF = async () => {
+  const handleDownloadPDF = useCallback(async () => {
     try {
       setIsDownloading(true);
       await new Promise((res) => setTimeout(res, 300));
@@ -133,13 +133,20 @@ const DieselOverviewPage = ({
     } finally {
       setIsDownloading(false);
     }
-  };
+  }, [frequency, selectedDate]);
+
+  useEffect(() => {
+    const handleDieselDownloadEvent = () => handleDownloadPDF();
+    window.addEventListener("diesel-download-pdf", handleDieselDownloadEvent);
+    return () =>
+      window.removeEventListener("diesel-download-pdf", handleDieselDownloadEvent);
+  }, [handleDownloadPDF]);
 
   return (
     <>
-      {/* Header controls */}
+      {/* Header controls - Download Report is in top bar */}
       <div
-        className="no-print"
+        className="no-print diesel-page-header"
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -148,23 +155,6 @@ const DieselOverviewPage = ({
         }}
       >
         <BreadCrumb routesArray={breadCrumbRoutes} />
-        <button
-          onClick={handleDownloadPDF}
-          disabled={isDownloading}
-          style={{
-            // backgroundColor: "#5C12A7",
-            backgroundColor: "#5c3592",
-            color: "#fff",
-            padding: "8px 20px",
-            whiteSpace: "nowrap",
-            border: "none",
-            borderRadius: "6px",
-            cursor: isDownloading ? "not-allowed" : "pointer",
-            fontWeight: 500,
-          }}
-        >
-          {isDownloading ? "Downloading diesel usage..." : "Download Report"}
-        </button>
       </div>
 
       {/* Dashboard content */}

@@ -1,5 +1,7 @@
+import { useContext } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import CompleteDataContext from '../Context';
 import Billing from '../mainAppPages/Billing';
 import CostTracker from '../mainAppPages/CostTracker';
 import Dashboard from '../mainAppPages/Dashboard';
@@ -31,8 +33,21 @@ import AddDieselEntry from '../mainAppPages/AddDieselEntry';
 import AddEquipment from '../mainAppPages/AddEquipment';
 
 function MainAppPages() {
+  const { isSidebarOpen, setIsSidebarOpen } = useContext(CompleteDataContext);
+
   return (
     <div className="app">
+      {/* Mobile sidebar backdrop - closes sidebar when tapped */}
+      {isSidebarOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={() => setIsSidebarOpen(false)}
+          onKeyDown={(e) => e.key === 'Escape' && setIsSidebarOpen(false)}
+          role="button"
+          tabIndex={0}
+          aria-label="Close menu"
+        />
+      )}
       <div className="sidebar-and-content">
         <Sidebar />
 

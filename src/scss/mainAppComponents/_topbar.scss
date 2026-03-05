@@ -6,6 +6,16 @@
   width: 100%;
   @extend %gutters;
 
+  @include media('<medium') {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 16px;
+    padding-top: 12px;
+  }
+
   @include media('>=medium') {
     display: flex;
     justify-content: space-between;
@@ -13,12 +23,6 @@
     overflow: auto;
     padding-bottom: 12px;
     padding-top: 10px;
-  }
-
-  &.h-hidden-medium-down {
-    @include media('<medium') {
-      display: none;
-    }
   }
 }
 
@@ -31,6 +35,20 @@
     min-height: 44px;
     min-width: 291px;
     overflow: auto;
+  }
+}
+
+.top-bar__right {
+  @include media('<medium') {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @include media('>=medium') {
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -68,11 +86,19 @@
   font-weight: $bold;
   padding: 12px 13px;
   text-align: center;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
 
   @include media('<medium') {
-    display: block;
-    margin-top: 30px;
-    width: 100%;
+    margin-top: 0;
+    margin-right: 8px;
+    margin-bottom: 0;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
   }
 
   @include media('>=medium') {
@@ -84,12 +110,10 @@
   }
 
   @include media('>=medium', '<888px') {
-    display: block;
-    margin: 0 auto 7px;
-    text-align: center;
+    margin: 0 8px 0 0;
 
     &:last-of-type {
-      margin-bottom: 0;
+      margin-right: 0;
     }
   }
 

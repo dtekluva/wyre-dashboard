@@ -19,7 +19,6 @@ function RevisedAppTopBar() {
   const pathname = location.pathname || '';
 
   const {
-    isSidebarOpen,
     setPowerQualityUnit,
     setParametersDataTimeInterval,
     userData
@@ -61,6 +60,7 @@ function RevisedAppTopBar() {
   const isPlottedUnitSelectorDisplayed = pathname.includes('power-quality');
 
   const isTopBarCostTrackerRightDisplayed = pathname.includes('cost-tracker') || pathname.includes('dashboard');
+  const isDieselOverviewPage = pathname.includes('diesel-overview');
 
   const isTopBarUserBranchesRightDisplayed =
     pathname.includes('branches') && !pathname.includes('user-form');
@@ -74,9 +74,13 @@ function RevisedAppTopBar() {
     setPowerQualityUnit(unit);
   };
 
+  const handleDieselDownload = () => {
+    window.dispatchEvent(new CustomEvent('diesel-download-pdf'));
+  };
+
   return userData.is_solar_customer ? null
   : (
-  <div className={isSidebarOpen ? 'top-bar' : 'top-bar h-hidden-medium-down'}>
+  <div className="top-bar">
     <div className="top-bar__left">
 
       {/* Date/Time Picker */}
@@ -165,18 +169,19 @@ function RevisedAppTopBar() {
       </div>
     )}
 
-    {/* Edit Client Button */}
-    <div
-      className={
-        isTopBarUserBranchesRightDisplayed
-          ? 'top-bar__right'
-          : 'top-bar__right h-hide'
-      }
-    >
-      <Link className="top-bar-right__button h-extra-padding" to="/client-profile">
-        Edit Client
-      </Link>
-    </div>
+    {/* Download Report - Diesel Overview */}
+    {isDieselOverviewPage && (
+      <div className="top-bar__right top-bar__download">
+        <button
+          type="button"
+          className="top-bar-right__button"
+          onClick={handleDieselDownload}
+        >
+          Download Report
+        </button>
+      </div>
+    )}
+
   </div>
 );
 
