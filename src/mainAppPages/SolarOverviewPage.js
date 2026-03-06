@@ -263,8 +263,8 @@ const FlowDiagram = ({ inverterData }) => {
   ];
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <svg width="100%" height="320" viewBox="0 0 600 320" preserveAspectRatio="xMidYMid meet">
+    <div className="flow-diagram-wrapper" style={{ textAlign: "center" }}>
+      <svg width="100%" height="320" viewBox="-200 0 1000 320" preserveAspectRatio="xMidYMid meet">
         {connectors.map(({ from, to, color, side, offset }, idx) => {
           const start = nodes[from];
           const end = nodes[to];
@@ -588,9 +588,9 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
       <div className="breadcrumb-and-print-buttons">
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
-      {/* Top row: Left gauge card (span=11) + Right flow card (span=13) */}
+      {/* Top row: Left gauge card + Right flow card – stacked on mobile, side-by-side on desktop */}
       <Row gutter={16}>
-        <Col span={13}>
+        <Col xs={24} sm={24} md={24} lg={13}>
           <Spin spinning={solar.weatherReadingsLoading}>
             <Card className="left-card">
               <div className="left-card-header">
@@ -650,7 +650,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
             </Card>
           </Spin>
         </Col>
-        <Col span={11}>
+        <Col xs={24} sm={24} md={24} lg={11}>
           <Spin spinning={solar.componentsTableLoading}>
             <Card className="summary-card">
               <EnergySummary tableContentsData={tableContentsData} />

@@ -24,6 +24,11 @@
     padding-bottom: 12px;
     padding-top: 10px;
   }
+
+  // iPad Mini/Air: keep top bar content on one line
+  @include media('>=medium', '<900px') {
+    flex-wrap: nowrap;
+  }
 }
 
 .top-bar__left {
@@ -35,6 +40,12 @@
     min-height: 44px;
     min-width: 291px;
     overflow: auto;
+  }
+
+  // iPad Mini/Air: allow left to shrink so right buttons fit on one line
+  @include media('>=medium', '<900px') {
+    min-width: 0;
+    flex-shrink: 1;
   }
 }
 
@@ -49,6 +60,12 @@
   @include media('>=medium') {
     display: flex;
     align-items: center;
+  }
+
+  // iPad Mini/Air: keep action buttons on one line
+  @include media('>=medium', '<900px') {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
   }
 }
 
@@ -109,8 +126,12 @@
     }
   }
 
-  @include media('>=medium', '<888px') {
-    margin: 0 8px 0 0;
+  @include media('>=medium', '<900px') {
+    margin: 0 6px 0 0;
+    padding: 10px 10px;
+    font-size: 1.1rem;
+    white-space: nowrap;
+    flex-shrink: 0;
 
     &:last-of-type {
       margin-right: 0;

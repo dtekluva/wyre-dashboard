@@ -303,9 +303,19 @@
 
 .alerts-and-alarms-question-container {
   @include media('<544px') {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
-    gap: 8px;
+    gap: 12px;
+
+    // Question/label takes remaining space; checkbox stays beside
+    > *:first-child {
+      flex: 1;
+      min-width: 0;
+    }
+
+    > *:last-child {
+      flex-shrink: 0;
+    }
   }
 }
 
@@ -398,6 +408,46 @@
   @include media('<544px') {
     font-size: 1.4rem;
     margin-left: 1rem;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Solar Overview – stack Sunshine + EnergySummary on iPad (md), side-by-side on lg+
+// Add spacing between circle-gauge and summary card when stacked (mobile, iPad)
+// ---------------------------------------------------------------------------
+.solar-overview .left-card {
+  @include media('<large') {
+    margin-bottom: 20px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Solar Overview – FlowDiagram full display on mobile
+// ---------------------------------------------------------------------------
+.solar-overview .svg-row {
+  @include media('<medium') {
+    margin-left: -#{$small-gutter};
+    margin-right: -#{$small-gutter};
+  }
+}
+
+.solar-overview .animation-card,
+.solar-overview .animation-card .ant-card-body {
+  @include media('<medium') {
+    overflow-x: auto !important;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.solar-overview .flow-diagram-wrapper {
+  @include media('<medium') {
+    min-width: 600px;
+    padding: 0 #{$small-gutter};
+
+    svg {
+      min-height: 280px;
+    }
   }
 }
 

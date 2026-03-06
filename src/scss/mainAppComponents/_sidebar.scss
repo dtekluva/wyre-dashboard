@@ -39,6 +39,24 @@
     color: $white;
     transition: transform 0.25s ease-out;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+
+    // Ensure all sidebar text and icons are white on mobile
+    .sidebar-org__details span,
+    .sidebar-branch__details,
+    .sidebar-device__details,
+    .sidebar-branch__checkbox,
+    .sidebar-device__checkbox,
+    .ant-checkbox-wrapper {
+      color: $white !important;
+    }
+
+    // Icons (chevron, plus/minus) – white on mobile
+    .sidebar-org__button svg,
+    .sidebar-branch__button svg,
+    .h-white-fill-medium-up,
+    .h-white-fill-medium-up path {
+      fill: $white !important;
+    }
   }
 
   &.sidebar--closed {
