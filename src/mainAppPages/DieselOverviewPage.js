@@ -53,7 +53,6 @@ const DieselOverviewPage = ({
 
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [frequency] = useState("daily");
-  const [isDownloading, setIsDownloading] = useState(false);
   const dashboardRef = useRef(null);
 
   useEffect(() => {
@@ -88,7 +87,6 @@ const DieselOverviewPage = ({
 
   const handleDownloadPDF = useCallback(async () => {
     try {
-      setIsDownloading(true);
       await new Promise((res) => setTimeout(res, 300));
 
       const element = dashboardRef.current;
@@ -130,8 +128,6 @@ const DieselOverviewPage = ({
       pdf.save(`Diesel_Usage_${dayjs(selectedDate).format("MMM_YYYY")}.pdf`);
     } catch (err) {
       console.error("PDF generation failed:", err);
-    } finally {
-      setIsDownloading(false);
     }
   }, [frequency, selectedDate]);
 

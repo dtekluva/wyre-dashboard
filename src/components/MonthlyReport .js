@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Image, Card, Table, Select, Spin, Button, message } from "antd";
-import { useHistory, useLocation } from "react-router-dom";
+import { Image, Card, Table, Select, Spin } from "antd";
 import { useSelector } from "react-redux";
 import { fetchReportData } from "../report/reportApi";
 import fallbackData from "../report/newreport.json";
@@ -12,9 +11,6 @@ import "../report/report.css";
 
 import { Doughnut } from "react-chartjs-2";
 import { Bar } from "react-chartjs-2";
-import Chart from "chart.js";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 
 const logoSrc = "/ReportIcons/Wyre-logo.png";
 const tilderSrc = "/ReportIcons/tilder.png";
@@ -99,9 +95,6 @@ function MonthlyReport({ setReportContext }) {
     // Add ref for the report content
     const reportRef = useRef(null);
 
-    // Add downloading state
-    const [downloading, setDownloading] = useState(false);
-
     useEffect(() => {
         if (!branchId || !month || !year) return;
 
@@ -114,7 +107,7 @@ function MonthlyReport({ setReportContext }) {
                 year,
             });
         }
-    }, [branchId, month, year]);
+    }, [branchId, month, year, setReportContext]);
 
     useEffect(() => {
         let isMounted = true;
@@ -1085,58 +1078,6 @@ function MonthlyReport({ setReportContext }) {
                 display: false,
             },
         },
-    };
-
-    const handleDownloadPdf = async () => {
-        if (!reportRef.current) return;
-
-        setDownloading(true);
-        message.loading({ content: "Generating PDF...", key: "pdfDownload" });
-
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-
-            const element = reportRef.current;
-            const canvas = await html2canvas(element, {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: "#fff",
-                windowWidth: element.scrollWidth,
-                windowHeight: element.scrollHeight,
-            });
-
-            const imgData = canvas.toDataURL("image/png");
-
-            // Convert px to mm
-            const pxToMm = 0.264583;
-            const pdfWidth = canvas.width * pxToMm;
-            const pdfHeight = canvas.height * pxToMm;
-
-            // Create a PDF with the exact size of the report
-            const pdf = new jsPDF({
-                orientation: pdfWidth > pdfHeight ? "landscape" : "portrait",
-                unit: "mm",
-                format: [pdfWidth, pdfHeight],
-            });
-
-            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-
-            const branchName = reportData?.branch_name || "branch";
-            const month = reportData?.month || "";
-            const year = reportData?.year || new Date().getFullYear();
-            const filename = `${branchName}_${month}_energy_report_${year}.pdf`;
-
-            pdf.save(filename);
-            message.success({
-                content: "PDF downloaded successfully!",
-                key: "pdfDownload",
-            });
-        } catch (error) {
-            console.error("Error generating PDF:", error);
-            message.error({ content: "Failed to generate PDF", key: "pdfDownload" });
-        } finally {
-            setDownloading(false);
-        }
     };
 
     return (

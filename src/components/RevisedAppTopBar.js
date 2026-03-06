@@ -62,9 +62,6 @@ function RevisedAppTopBar() {
   const isTopBarCostTrackerRightDisplayed = pathname.includes('cost-tracker') || pathname.includes('dashboard');
   const isDieselOverviewPage = pathname.includes('diesel-overview');
 
-  const isTopBarUserBranchesRightDisplayed =
-    pathname.includes('branches') && !pathname.includes('user-form');
-
   const handleIntervalChange = (interval) => {
     setParametersDataTimeInterval(interval);
     dataHttpServices.setEndpointDataTimeInterval(interval);

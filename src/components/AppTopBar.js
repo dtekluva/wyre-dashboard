@@ -50,10 +50,6 @@ function TopBar() {
 
   const isTopBarCostTrackerRightDisplayed = currentUrl.includes('cost-tracker') || currentUrl.includes('dashboard');
 
-
-  const isTopBarUserBranchesRightDisplayed =
-    currentUrl.includes('branches') && !currentUrl.includes('user-form');
-
   const handleIntervalChange = (interval) => {
     setParametersDataTimeInterval(interval);
     dataHttpServices.setEndpointDataTimeInterval(interval);
