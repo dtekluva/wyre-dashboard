@@ -1,10 +1,9 @@
-import moment from 'moment';
 import HiddenInputLabel from '../smallComponents/HiddenInputLabel';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
 import { getAlertAndAlarm, setAlertAndAlarm } from '../redux/actions/alertsAndAlarm/alertsAndAlarm.action';
 import { connect } from 'react-redux';
-import { Controller, useForm } from 'react-hook-form/dist/index.ie11';
-import { Checkbox, Collapse, Form, notification } from 'antd';
+import { Controller, useForm } from 'react-hook-form';
+import { Checkbox, notification, Spin } from 'antd';
 import { useEffect } from 'react';
 import BreadCrumb from '../components/BreadCrumb';
 import { useState } from 'react';
@@ -16,15 +15,14 @@ const breadCrumbRoutes = [
   { url: '/alerts-and-alarms', name: 'Alerts and Alarms', id: 2 },
 ];
 
-const { Panel } = Collapse;
-
 function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, match }) {
-  const [alertsForm] = Form.useForm();
-  const { setCurrentUrl, token, userId, userData } = useContext(CompleteDataContext);
+  const { setCurrentUrl, userData } = useContext(CompleteDataContext);
   const [preloadedAlertsFormData, setPreloadedAlertsFormData] = useState({});
-  const [generator_data, setGenerator_data] = useState([])
-  const isDataReady = preloadedAlertsFormData && preloadedAlertsFormData
+  const [generator_data, setGenerator_data] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isOperator = userData.role_text === "OPERATOR";
+  const fetchAlertsDataLoading = alertsAndAlarms?.fetchAlertsDataLoading ?? false;
+  const isFormBusy = fetchAlertsDataLoading || isSubmitting;
   
   useEffect(() => {
     if (match && match.url) {
@@ -32,7 +30,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
     }
   }, [match, setCurrentUrl]);
 
-  const { register, handleSubmit, control, errors, reset } = useForm({
+  const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
     defaultValues: preloadedAlertsFormData,
   });
 
@@ -40,14 +38,17 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   // Get all alerts
   useEffect(() => {
     getAlertAndAlarm();
-  }, []);
+  }, [getAlertAndAlarm]);
   
   useEffect(() => {
-    if (alertsAndAlarms) {
-      setPreloadedAlertsFormData(alertsAndAlarms?.alertsData?.data)
-      setGenerator_data(alertsAndAlarms?.alertsData?.generator_data)
+    if (alertsAndAlarms?.alertsData) {
+      const data = alertsAndAlarms.alertsData.data || {};
+      const genData = alertsAndAlarms.alertsData.generator_data || [];
+      setPreloadedAlertsFormData(data);
+      setGenerator_data(genData);
+      reset(data);
     }
-  }, [alertsAndAlarms]);
+  }, [alertsAndAlarms, reset]);
 
   const openNotification = (type, title, desc) => {
     notification[type]({
@@ -63,48 +64,24 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
     return value
   }
 
-  const setGenData = (id, dateString)=>{
-    if(dateString !== "Invalid date"){
-      let specGen = generator_data && generator_data.filter((data)=>{
-        return data.id === id
-    })
-    for(const key in specGen) {
-        const gottenData = specGen[key].next_maintenance_date = dateString
-      }
-    let obj = Object.keys(generator_data).forEach((e)=>{
-      if(e===id){
-        generator_data[e]={
-          specGen
-        }
-      }
-    })
-    return generator_data
-  }
-}
-
-  const defaultDate = (data) => {
-    let date = data && data.next_maintenance_date
-    if (date === null) {
-      return;
-    }
-    else {
-      return moment(date, 'YYYY-MM-DD')
-    }
-  }
-
   const handleAlertsSubmit = async () => {
-    const updatedAlertsFormData = {
-      'data': preloadedAlertsFormData,
-      'generator_data': generator_data
-    };
-    const request = await setAlertAndAlarm(updatedAlertsFormData);
-
+    setIsSubmitting(true);
+    try {
+      const updatedAlertsFormData = {
+        'data': preloadedAlertsFormData,
+        'generator_data': generator_data
+      };
+      const request = await setAlertAndAlarm(updatedAlertsFormData);
       if (request.fullfilled) {
-        openNotification("success", "Success", "Your changes has been updated succesfully");
-      }else {
-        openNotification('error', "Error", 'Something un-expected occured, please try again.')
+        openNotification("success", "Success", "Your changes have been updated successfully");
+        getAlertAndAlarm();
+      } else {
+        openNotification('error', "Error", 'Something unexpected occurred, please try again.');
       }
+    } finally {
+      setIsSubmitting(false);
     }
+  };
 
   return (
     <>
@@ -120,9 +97,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
           <form
             action="#"
             className="alerts-and-alarms-form"
-            onSubmit={handleAlertsSubmit}
+            onSubmit={handleSubmit(handleAlertsSubmit)}
           >
-            <fieldset className="alerts-and-alarms-form-inputs-wrapper">
+            <Spin
+              spinning={isFormBusy}
+              tip={fetchAlertsDataLoading ? 'Loading alerts...' : 'Saving updates...'}
+            >
+            <fieldset className="alerts-and-alarms-form-inputs-wrapper" disabled={isFormBusy}>
               <legend className="alerts-and-alarms-form-section-heading">
                 Standard Alerts on Anomalies
               </legend>
@@ -166,12 +147,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           name="dailyDieselUsageChecked"
                           defaultValue={preloadedAlertsFormData?.daily_energy_usage_alerts}
                           control={control}
-                          render={(props) => (
+                          render={({ field }) => (
                             <Checkbox
                               onChange={(e) => {
-                                props.onChange(e.target.checked);
-                                preloadedAlertsFormData.daily_energy_usage_alerts =
-                                  e.target.checked;
+                                const checked = e.target.checked;
+                                field.onChange(checked);
+                                preloadedAlertsFormData.daily_energy_usage_alerts = checked;
+                                setPreloadedAlertsFormData(prev => ({ ...prev, daily_energy_usage_alerts: checked }));
                               }}
                               checked={preloadedAlertsFormData?.daily_energy_usage_alerts}
                               className="daily-diesel-usage-checkbox alerts-and-alarms-checkbox"
@@ -200,12 +182,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           name="weeklyDieselUsageChecked"
                           defaultValue={preloadedAlertsFormData?.weekly_energy_usage_alerts}
                           control={control}
-                          render={(props) => (
+                          render={({ field }) => (
                             <Checkbox
                               onChange={(e) => {
-                                props.onChange(e.target.checked);
-                                preloadedAlertsFormData.weekly_energy_usage_alerts =
-                                  e.target.checked;
+                                const checked = e.target.checked;
+                                field.onChange(checked);
+                                preloadedAlertsFormData.weekly_energy_usage_alerts = checked;
+                                setPreloadedAlertsFormData(prev => ({ ...prev, weekly_energy_usage_alerts: checked }));
                               }}
                               checked={preloadedAlertsFormData?.weekly_energy_usage_alerts}
                               className="weekly-diesel-usage-checkbox alerts-and-alarms-checkbox"
@@ -231,15 +214,46 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                       name="solarBatterySocChecked"
                       defaultValue={preloadedAlertsFormData?.daily_battery_soc_alerts}
                       control={control}
-                      render={(props) => (
+                      render={({ field }) => (
                         <Checkbox
                           onChange={(e) => {
-                            props.onChange(e.target.checked)
-                            preloadedAlertsFormData.daily_battery_soc_alerts = e.target.checked
+                            const checked = e.target.checked;
+                            field.onChange(checked);
+                            preloadedAlertsFormData.daily_battery_soc_alerts = checked;
+                            setPreloadedAlertsFormData(prev => ({ ...prev, daily_battery_soc_alerts: checked }));
                           }}
                           checked={preloadedAlertsFormData?.daily_battery_soc_alerts}
                           className="solar-battery-soc-checkbox alerts-and-alarms-checkbox"
                           id="solar-battery-soc-checkbox"
+                        />
+                      )}
+                    />
+                  </div>
+                </li>
+                <li className="alerts-and-alarms-list-item">
+                  <div className="alerts-and-alarms-question-container">
+                    {' '}
+                    <label
+                      htmlFor="daily-unfavorable-weather-checkbox"
+                      className="alerts-and-alarms-question"
+                    >
+                      Daily Unfavourable Weather Alerts
+                    </label>{' '}
+                    <Controller
+                      name="dailyUnfavorableWeatherChecked"
+                      defaultValue={preloadedAlertsFormData?.daily_unfavorable_weather_alerts}
+                      control={control}
+                      render={({ field }) => (
+                        <Checkbox
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            field.onChange(checked);
+                            preloadedAlertsFormData.daily_unfavorable_weather_alerts = checked;
+                            setPreloadedAlertsFormData(prev => ({ ...prev, daily_unfavorable_weather_alerts: checked }));
+                          }}
+                          checked={preloadedAlertsFormData?.daily_unfavorable_weather_alerts}
+                          className="daily-unfavorable-weather-checkbox alerts-and-alarms-checkbox"
+                          id="daily-unfavorable-weather-checkbox"
                         />
                       )}
                     />
@@ -264,15 +278,15 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           width="50"
                           name="highPowerFactor"
                           id="high-power-factor"
-                          ref={register({
+                          ref={register('highPowerFactor', {
                             pattern: /^-?\d+\.?\d*$/,
                           })}
                           placeholder={preloadedAlertsFormData?.max_power_factor}
-                          value={preloadedAlertsFormData?.max_power_factor}
+                          value={preloadedAlertsFormData?.max_power_factor ?? ''}
                           onChange={(e) => {
-                            e.preventDefault()
-                            // setmax_power_factor(e.target.value)
-                            preloadedAlertsFormData.max_power_factor = formatIntInputs(e)
+                            const val = formatIntInputs(e);
+                            preloadedAlertsFormData.max_power_factor = val;
+                            setPreloadedAlertsFormData(prev => ({ ...prev, max_power_factor: val }));
                           }}
                           autoFocus
                         />{' '}
@@ -290,13 +304,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           name="lowPowerFactor"
                           id="low-power-factor"
                           placeholder={preloadedAlertsFormData?.min_power_factor}
-                          value={preloadedAlertsFormData?.min_power_factor}
+                          value={preloadedAlertsFormData?.min_power_factor ?? ''}
                           onChange={(e) => {
-                            e.preventDefault()
-                            // setmin_power_factor(e.target.value)
-                            preloadedAlertsFormData.min_power_factor = formatIntInputs(e)
+                            const val = formatIntInputs(e);
+                            preloadedAlertsFormData.min_power_factor = val;
+                            setPreloadedAlertsFormData(prev => ({ ...prev, min_power_factor: val }));
                           }}
-                          ref={register({
+                          ref={register('lowPowerFactor', {
                             pattern: /^-?\d+\.?\d*$/,
                           })}
                         />
@@ -316,12 +330,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                         name="powerFactorChecked"
                         defaultValue={preloadedAlertsFormData?.power_factor_alerts}
                         control={control}
-                        render={(props) => (
+                        render={({ field }) => (
                           <Checkbox
                             onChange={(e) => {
-                              props.onChange(e.target.checked)
-                              // setpower_factor_alerts(e.target.checked)
-                              preloadedAlertsFormData.power_factor_alerts = e.target.checked
+                              const checked = e.target.checked;
+                              field.onChange(checked);
+                              preloadedAlertsFormData.power_factor_alerts = checked;
+                              setPreloadedAlertsFormData(prev => ({ ...prev, power_factor_alerts: checked }));
                             }}
                             checked={preloadedAlertsFormData?.power_factor_alerts}
                             className="power-factor-checkbox alerts-and-alarms-checkbox"
@@ -346,12 +361,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                       name="loadBalanceIssuesChecked"
                       defaultValue={preloadedAlertsFormData?.load_balance_alerts}
                       control={control}
-                      render={(props) => (
+render={({ field }) => (
                         <Checkbox
                           onChange={(e) => {
-                            props.onChange(e.target.checked)
-                            // setload_balance_alerts(e.target.checked)
-                            preloadedAlertsFormData.load_balance_alerts = e.target.checked
+                            const checked = e.target.checked;
+                            field.onChange(checked);
+                            preloadedAlertsFormData.load_balance_alerts = checked;
+                            setPreloadedAlertsFormData(prev => ({ ...prev, load_balance_alerts: checked }));
                           }}
                           checked={preloadedAlertsFormData?.load_balance_alerts}
                           className="load-balance-issues-checkbox alerts-and-alarms-checkbox"
@@ -377,12 +393,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           name="frequencyVariance"
                           id="frequency-variance-factor"
                           placeholder={preloadedAlertsFormData?.frequency_precision}
-                          value={preloadedAlertsFormData?.frequency_precision}
+                          value={preloadedAlertsFormData?.frequency_precision ?? ''}
                           onChange={(e) => {
-                            // setfrequency_precision(e.target.value)
-                            preloadedAlertsFormData.frequency_precision = formatIntInputs(e)
+                            const val = formatIntInputs(e);
+                            preloadedAlertsFormData.frequency_precision = val;
+                            setPreloadedAlertsFormData(prev => ({ ...prev, frequency_precision: val }));
                           }}
-                          ref={register({
+                          ref={register('frequencyVariance', {
                             pattern: /^-?\d+\.?\d*$/,
                           })}
                         />
@@ -402,12 +419,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                         name="frequencyVarianceChecked"
                         defaultValue={preloadedAlertsFormData?.frequency_alerts}
                         control={control}
-                        render={(props) => (
+                        render={({ field }) => (
                           <Checkbox
                             onChange={(e) => {
-                              props.onChange(e.target.checked)
-                              // setFrequency_alerts(e.target.checked)
-                              preloadedAlertsFormData.frequency_alerts = e.target.checked
+                              const checked = e.target.checked;
+                              field.onChange(checked);
+                              preloadedAlertsFormData.frequency_alerts = checked;
+                              setPreloadedAlertsFormData(prev => ({ ...prev, frequency_alerts: checked }));
                             }}
                             checked={preloadedAlertsFormData?.frequency_alerts}
                             className="frequency-variance-checkbox alerts-and-alarms-checkbox"
@@ -437,12 +455,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           name="highVoltage"
                           id="high-voltage"
                           placeholder={preloadedAlertsFormData?.max_voltage}
-                          value={preloadedAlertsFormData?.max_voltage}
+                          value={preloadedAlertsFormData?.max_voltage ?? ''}
                           onChange={(e) => {
-                            // setmax_voltage(e.target.value)
-                            preloadedAlertsFormData.max_voltage = formatIntInputs(e)
+                            const val = formatIntInputs(e);
+                            preloadedAlertsFormData.max_voltage = val;
+                            setPreloadedAlertsFormData(prev => ({ ...prev, max_voltage: val }));
                           }}
-                          ref={register({
+                          ref={register('highVoltage', {
                             pattern: /^-?\d+\.?\d*$/,
                           })}
                         />{' '}
@@ -461,12 +480,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           name="lowVoltage"
                           id="low-voltage"
                           placeholder={preloadedAlertsFormData?.min_voltage}
-                          value={preloadedAlertsFormData?.min_voltage}
+                          value={preloadedAlertsFormData?.min_voltage ?? ''}
                           onChange={(e) => {
-                            // setmin_voltage(e.target.value)
-                            preloadedAlertsFormData.min_voltage = formatIntInputs(e)
+                            const val = formatIntInputs(e);
+                            preloadedAlertsFormData.min_voltage = val;
+                            setPreloadedAlertsFormData(prev => ({ ...prev, min_voltage: val }));
                           }}
-                          ref={register({
+                          ref={register('lowVoltage', {
                             pattern: /^-?\d+\.?\d*$/,
                           })}
                         />{' '}
@@ -488,12 +508,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                         name="voltageChecked"
                         defaultValue={preloadedAlertsFormData?.voltage_alerts}
                         control={control}
-                        render={(props) => (
+                        render={({ field }) => (
                           <Checkbox
                             onChange={(e) => {
-                              props.onChange(e.target.checked)
-                              // setvoltage_alerts(e.target.checked)
-                              preloadedAlertsFormData.voltage_alerts = e.target.checked
+                              const checked = e.target.checked;
+                              field.onChange(checked);
+                              preloadedAlertsFormData.voltage_alerts = checked;
+                              setPreloadedAlertsFormData(prev => ({ ...prev, voltage_alerts: checked }));
                             }}
                             checked={preloadedAlertsFormData?.voltage_alerts}
                             className="voltage-checkbox alerts-and-alarms-checkbox"
@@ -507,7 +528,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
               </ol>
             </fieldset>
 
-            <fieldset className="alerts-and-alarms-form-inputs-wrapper h-second">
+            <fieldset className="alerts-and-alarms-form-inputs-wrapper h-second" disabled={isFormBusy}>
               <legend className="alerts-and-alarms-form-section-heading">
                 Customised Alerts on Selected Events
               </legend>
@@ -523,12 +544,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                         name="estimatedbaselineChecked"
                         defaultValue={preloadedAlertsFormData?.baseline_alerts}
                         control={control}
-                        render={(props) => (
+                        render={({ field }) => (
                           <Checkbox
                             onChange={(e) => {
-                              props.onChange(e.target.checked)
-                              // setbaseline_alerts(e.target.checked)
-                              preloadedAlertsFormData.baseline_alerts = e.target.checked
+                              const checked = e.target.checked;
+                              field.onChange(checked);
+                              preloadedAlertsFormData.baseline_alerts = checked;
+                              setPreloadedAlertsFormData(prev => ({ ...prev, baseline_alerts: checked }));
                             }}
                             checked={preloadedAlertsFormData?.baseline_alerts}
                             className="estimated-baseline-checkbox alerts-and-alarms-checkbox"
@@ -544,7 +566,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                   <div className="alerts-and-alarms-question-container">
                     <div>
                       <p className="alerts-and-alarms-question">
-                        <label htmlFor="set-baseline">
+                        <label htmlFor="energy-usage-max">
                           {' '}
                           When set energy target is reached
                         </label>{' '}
@@ -552,23 +574,24 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           className="alerts-and-alarms-input"
                           type="text"
                           inputMode="decimal"
-                          name="set-baseline"
-                          id="set-baseline"
+                          name="energyUsageMax"
+                          id="energy-usage-max"
                           placeholder={preloadedAlertsFormData?.energy_usage_max}
-                          value={preloadedAlertsFormData?.energy_usage_max}
+                          value={preloadedAlertsFormData?.energy_usage_max ?? ''}
                           onChange={(e) => {
-                            // setEnergy_usage_max(e.target.value)
-                            preloadedAlertsFormData.energy_usage_max = formatIntInputs(e)
+                            const val = formatIntInputs(e);
+                            preloadedAlertsFormData.energy_usage_max = val;
+                            setPreloadedAlertsFormData(prev => ({ ...prev, energy_usage_max: val }));
                           }}
-                          ref={register({
+                          ref={register('energyUsageMax', {
                             pattern: /^-?\d+\.?\d*$/,
                           })}
                         />
                         <span className="alerts-and-alarms-unit">kWh</span>
                       </p>
                       <p className="input-error-message">
-                        {errors.frequencyVariance &&
-                          'Frequency variance must be a number'}
+                        {errors.energyUsageMax &&
+                          'Energy target must be a number'}
                       </p>
                     </div>
 
@@ -581,12 +604,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                         name="frequencyVarianceChecked"
                         defaultValue={preloadedAlertsFormData?.energy_usage_alerts}
                         control={control}
-                        render={(props) => (
+                        render={({ field }) => (
                           <Checkbox
                             onChange={(e) => {
-                              props.onChange(e.target.checked)
-                              // setEnergy_usage_alerts(e.target.checked)
-                              preloadedAlertsFormData.energy_usage_alerts = e.target.checked
+                              const checked = e.target.checked;
+                              field.onChange(checked);
+                              preloadedAlertsFormData.energy_usage_alerts = checked;
+                              setPreloadedAlertsFormData(prev => ({ ...prev, energy_usage_alerts: checked }));
                             }}
                             checked={preloadedAlertsFormData?.energy_usage_alerts}
                             className="set-baseline-checkbox alerts-and-alarms-checkbox"
@@ -612,12 +636,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                         name="eliminatedCo2Checked"
                         defaultValue={preloadedAlertsFormData?.emitted_co2_alerts}
                         control={control}
-                        render={(props) => (
+                        render={({ field }) => (
                           <Checkbox
                             onChange={(e) => {
-                              props.onChange(e.target.checked)
-                              // setemitted_co2_alerts(e.target.checked)
-                              preloadedAlertsFormData.emitted_co2_alerts = e.target.checked
+                              const checked = e.target.checked;
+                              field.onChange(checked);
+                              preloadedAlertsFormData.emitted_co2_alerts = checked;
+                              setPreloadedAlertsFormData(prev => ({ ...prev, emitted_co2_alerts: checked }));
                             }}
                             checked={preloadedAlertsFormData?.emitted_co2_alerts}
                             className="eliminated-co2-checkbox alerts-and-alarms-checkbox"
@@ -634,7 +659,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                   <div className="alerts-and-alarms-question-container">
                     <div>
                       <p className="alerts-and-alarms-question">
-                        <label htmlFor="set-baseline">
+                        <label htmlFor="set-co2-value">
                           {' '}
                           When set CO<sub>2</sub> is reached
                         </label>{' '}
@@ -642,23 +667,24 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           className="alerts-and-alarms-input"
                           type="text"
                           inputMode="decimal"
-                          name="set-baseline"
-                          id="set-baseline"
+                          name="setCo2Value"
+                          id="set-co2-value"
                           placeholder={preloadedAlertsFormData?.set_co2_value}
-                          value={preloadedAlertsFormData?.set_co2_value}
+                          value={preloadedAlertsFormData?.set_co2_value ?? ''}
                           onChange={(e) => {
-                            // reset_co2_value(e.target.value)
-                            preloadedAlertsFormData.set_co2_value = formatIntInputs(e)
+                            const val = formatIntInputs(e);
+                            preloadedAlertsFormData.set_co2_value = val;
+                            setPreloadedAlertsFormData(prev => ({ ...prev, set_co2_value: val }));
                           }}
-                          ref={register({
+                          ref={register('setCo2Value', {
                             pattern: /^-?\d+\.?\d*$/,
                           })}
                         />
                         <span className="alerts-and-alarms-unit">tons</span>
                       </p>
                       <p className="input-error-message">
-                        {errors.frequencyVariance &&
-                          'Frequency variance must be a number'}
+                        {errors.setCo2Value &&
+                          'CO2 value must be a number'}
                       </p>
                     </div>
 
@@ -671,12 +697,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                         name="setCo2Checked"
                         defaultValue={preloadedAlertsFormData?.set_co2_alerts}
                         control={control}
-                        render={(props) => (
+                        render={({ field }) => (
                           <Checkbox
                             onChange={(e) => {
-                              props.onChange(e.target.checked)
-                              // setSet_co2_alerts(e.target.checked)
-                              preloadedAlertsFormData.set_co2_alerts = e.target.checked
+                              const checked = e.target.checked;
+                              field.onChange(checked);
+                              preloadedAlertsFormData.set_co2_alerts = checked;
+                              setPreloadedAlertsFormData(prev => ({ ...prev, set_co2_alerts: checked }));
                             }}
                             checked={preloadedAlertsFormData?.set_co2_alerts}
                             className="set-co2-checkbox alerts-and-alarms-checkbox"
@@ -702,12 +729,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                         name="generatorOnChecked"
                         defaultValue={preloadedAlertsFormData?.operating_time_alerts}
                         control={control}
-                        render={(props) => (
+                        render={({ field }) => (
                           <Checkbox
                             onChange={(e) => {
-                              props.onChange(e.target.checked)
-                              // setoperating_time_alerts(e.target.checked)
-                              preloadedAlertsFormData.operating_time_alerts = e.target.checked
+                              const checked = e.target.checked;
+                              field.onChange(checked);
+                              preloadedAlertsFormData.operating_time_alerts = checked;
+                              setPreloadedAlertsFormData(prev => ({ ...prev, operating_time_alerts: checked }));
                             }}
                             checked={preloadedAlertsFormData?.operating_time_alerts}
                             className="generator-on-checkbox alerts-and-alarms-checkbox"
@@ -731,11 +759,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           name="loadExcess"
                           id="load-excess"
                           placeholder={preloadedAlertsFormData?.load_threshold_value}
+                          value={preloadedAlertsFormData?.load_threshold_value ?? ''}
                           onChange={(e) => {
-                            // setload_threshold_value(e.target.value)
-                            preloadedAlertsFormData.load_threshold_value = formatIntInputs(e)
+                            const val = formatIntInputs(e);
+                            preloadedAlertsFormData.load_threshold_value = val;
+                            setPreloadedAlertsFormData(prev => ({ ...prev, load_threshold_value: val }));
                           }}
-                          ref={register({
+                          ref={register('loadExcess', {
                             pattern: /^-?\d+\.?\d*$/,
                           })}
                         />{' '}
@@ -757,12 +787,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                         name="loadExcessChecked"
                         defaultValue={preloadedAlertsFormData?.load_alerts}
                         control={control}
-                        render={(props) => (
+                        render={({ field }) => (
                           <Checkbox
                             onChange={(e) => {
-                              props.onChange(e.target.checked)
-                              // setload_alerts(e.target.checked)
-                              preloadedAlertsFormData.load_alerts = e.target.checked
+                              const checked = e.target.checked;
+                              field.onChange(checked);
+                              preloadedAlertsFormData.load_alerts = checked;
+                              setPreloadedAlertsFormData(prev => ({ ...prev, load_alerts: checked }));
                             }}
                             checked={preloadedAlertsFormData?.load_alerts}
                             className="load-excess-checkbox alerts-and-alarms-checkbox"
@@ -802,7 +833,8 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                 </div>
               </li> */}
 
-                {/* {generator_data.length > 0 && 
+                {/* Generator maintenance datepicker: if uncommenting, add moment import, setGenData/defaultDate helpers, DatePicker from antd.
+                {generator_data.length > 0 && 
                  <li className="alerts-and-alarms-list-item">
                  <div className="alerts-and-alarms-question-container">
                    {' '}
@@ -874,11 +906,14 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
               <div style={{ marginBottom: '5%', marginLeft: '10%' }}>
                 <button
                   type="submit"
-                  className="generic-submit-button alert-and-alarms-button" >
-                  Save Updates
+                  className="generic-submit-button alert-and-alarms-button"
+                  disabled={isFormBusy}
+                >
+                  {isSubmitting ? 'Saving...' : fetchAlertsDataLoading ? 'Loading...' : 'Save Updates'}
                 </button>
               </div>
             </fieldset>
+            </Spin>
 
           </form>
         </div>

@@ -57,7 +57,7 @@ export default function BranchSwitcher({ open, setOpen }) {
     activeBranchId = loggedUser.branchId;
   }
 
-  const branches = permittedBranches?.branches || [];
+  const branches = useMemo(() => permittedBranches?.branches || [], [permittedBranches]);
 
   // display-only cleanup
   const clean = (name) => name.replace(/^polaris\s*/i, "").trim();

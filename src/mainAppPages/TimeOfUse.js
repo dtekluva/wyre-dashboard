@@ -1,15 +1,6 @@
-import React, { useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import CompleteDataContext from '../Context';
-
-import {
-  formatParametersDatetimes,
-  formatParametersDates,
-  formatParameterTableData,
-  convertDateStringsToObjects,
-} from '../helpers/genericHelpers';
-
 import BreadCrumb from '../components/BreadCrumb';
-import TimeOfUseStackedBarChart from '../components/barCharts/TimeOfUseStackedBarChart';
 import TimeOfUseTable from '../components/tables/TimeOfUseTable';
 import Loader from '../components/Loader';
 
@@ -25,10 +16,9 @@ const breadCrumbRoutes = [
 
 function TimeOfUse({ match }) {
   const {
-    refinedRenderedData,
     setCurrentUrl,
-    isAuthenticatedDataLoading,
-    organization
+    organization,
+    isAuthenticatedDataLoading
   } = useContext(CompleteDataContext);
 
   useEffect(() => {
@@ -37,55 +27,6 @@ function TimeOfUse({ match }) {
     }
   }, [match, setCurrentUrl]);
 
-  const { time_of_use_chart, time_of_use_table } = refinedRenderedData;
-
-  const chartTimeValues =
-    time_of_use_chart &&
-    time_of_use_chart.map((eachDevice) => eachDevice.values);
-
-  const chartDeviceNames =
-    time_of_use_chart &&
-    time_of_use_chart.map((eachDevice) => eachDevice.deviceName);
-
-  const chartDates =
-    time_of_use_chart && formatParametersDatetimes(time_of_use_chart[0].dates);
-
-  // Convert datestrings to date objects
-  const timeOfUseTableDataWithDateObjects =
-    time_of_use_table &&
-    time_of_use_table.map((eachBranch) => {
-      const { dates } = eachBranch;
-      // const dateObjects = convertDateStringsToObjects(dates.dates || dates);
-      // const branchWithDateObjects = { ...eachBranch, dates: dateObjects };
-      // return branchWithDateObjects;
-    });
-
-  const tableHeadings = Object.keys({
-    branchName: '',
-    date: '',
-    // ...(timeOfUseTableDataWithDateObjects
-    //   ? timeOfUseTableDataWithDateObjects[0].values
-    //   : []),
-  });
-
-  const arrayOfTableValues =
-    timeOfUseTableDataWithDateObjects &&
-    timeOfUseTableDataWithDateObjects.map((eachBranch) => {
-      return Object.values({
-        // branchName: [eachBranch.branchName],
-        // date: formatParametersDates(eachBranch.dates),
-        // ...eachBranch.values,
-      });
-    });
-
-  const arrayOfFormattedTableData =
-    arrayOfTableValues &&
-    arrayOfTableValues.map((eachBranchTableValues) =>
-      formatParameterTableData(tableHeadings, eachBranchTableValues)
-    );
-
-  const csvTitles = organization.branches && organization.branches[0].time_of_use_table.titles
-  // console.log(csvTitles)
   const csvHeaders = [
     // organization.branches && organization.branches.map((data)=>[{ label: data && data.time_of_use_table.titles, key: data && data.time_of_use_table.titles }])
     { label: "post_datetime", key: "post_datetime" },

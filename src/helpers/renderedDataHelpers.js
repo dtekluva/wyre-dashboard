@@ -11,7 +11,6 @@ import {
   getMaxDemandObjectKVA,
   getAvgDemandObjectKVA,
   combineArrayData,
-  sumOperatingTimeEnergyTotal,
 } from './genericHelpers';
 
 
@@ -153,52 +152,6 @@ const getSelectionGeneratorSizeEfficiencyArray = (data) => {
     selectedEfficienciesSet.add(item.name);
     return !duplicate;
   });
-};
-
-// Change Over Lags
-const getSelectionChangeOverLags = (data) => {
-  // Get Units First
-  const changeOverLagUnits = data
-    .map((eachSelection) => eachSelection.change_over_lags.units)
-    .filter(Boolean)[0];
-
-  // Get Data
-  const allSelectionsChangeOverLagData = data
-    .map((eachSelection) => eachSelection.change_over_lags.data)
-    .filter(Boolean)
-    .flat();
-
-  // Group data by date
-  const groupedSelectionChangeOverLags = allSelectionsChangeOverLagData.reduce(
-    function (acc, curr) {
-      acc[curr.date] = acc[curr.date] || [];
-      acc[curr.date].push(curr);
-      return acc;
-    },
-    Object.create(null)
-  );
-
-  const selectionChangeOverLagsData = [];
-
-  // Add up values at each date, without adding up(or concatenating) the dates
-  for (const date in groupedSelectionChangeOverLags) {
-    const summedChangeOverLag = groupedSelectionChangeOverLags[date].reduce(
-      (acc, curr) => {
-        for (const prop in curr) {
-          if (acc.hasOwnProperty(prop) && prop !== 'date' && prop !== 'id')
-            acc[prop] += curr[prop];
-          else acc[prop] = curr[prop];
-        }
-        return acc;
-      },
-      {}
-    );
-
-    // Push summed values to change over lags array
-    selectionChangeOverLagsData.push(summedChangeOverLag);
-  }
-
-  return { data: selectionChangeOverLagsData, units: changeOverLagUnits };
 };
 
 // Operating Time

@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState } from "react";
 import { connect, useSelector } from "react-redux";
 
 import CompleteDataContext from "../Context";
@@ -24,7 +24,6 @@ import Loader from "../components/Loader";
 import { Modal, Tooltip } from "antd";
 import InformationIcon from "../icons/InformationIcon";
 import { COST_TRACKER_TOOLTIP_MESSAGES } from "../components/toolTips/Cost_Tracker_Tooltip_Messages";
-import AddBills from "./AddBills";
 import UpdateDieselPurchase from "./UpdateDieselPurchase";
 import UpdateUtilityPayment from "./UpdateUtilityPayment";
 import IppPurchasedTable from "../components/tables/IppPurchasedTable";
@@ -46,7 +45,7 @@ function CostTracker({
   const [costTrackerOverviewData, setCostTrackerOverviewData] = useState([]);
   const [dieselOverviewData, setDieselOverviewData] = useState([]);
   const [utilityOverviewData, setUtilityOverviewData] = useState([]);
-  const [ippOverviewData, setIppOverviewData] = useState([]);
+  const [ippOverviewData] = useState([]);
   const [costTrackerBaselineData, setCostTrackerBaselineData] = useState([]);
   const [branchInfo, setBranchInfo] = useState(false);
   const [baseLineData, setBaseLineData] = useState(false);
@@ -79,7 +78,7 @@ function CostTracker({
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, []);
+  }, [match, setCurrentUrl]);
 
   useEffect(() => {
     if (branchId) {     
@@ -88,7 +87,7 @@ function CostTracker({
       getUtilityOverviewData(branchId);
       getCostTrackerBaselineData(branchId);
     }
-  }, [branchId]);
+  }, [branchId, getCostTrackerOverviewData, getDieselOverviewData, getUtilityOverviewData, getCostTrackerBaselineData]);
 
   useEffect(() => {
     setCostTrackerOverviewData(costTracker.costTrackerOverviewData);
@@ -135,7 +134,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.DIESEL_OVERVIEW}
           >
             <p>
@@ -164,7 +163,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.UTILITY_OVERVIEW}
           >
             <p>
@@ -188,7 +187,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.UTILITY_OVERVIEW}
           >
             <p>
@@ -213,7 +212,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.DIESEL_PURCHASED}
           >
             <p>
@@ -235,7 +234,7 @@ function CostTracker({
           setDieselPurchaseData={setDieselPurchaseData}
         />
         <Modal
-          visible={editDieselPurchaseModal}
+          open={editDieselPurchaseModal}
           onOk={() => setEditDieselPurchaseModal(false)}
           onCancel={() => setEditDieselPurchaseModal(false)}
           width={1000}
@@ -257,7 +256,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.UTILITY_PAYMENTS}
           >
             <p>
@@ -280,7 +279,7 @@ function CostTracker({
         />
 
         <Modal
-          visible={editUtilityPurchaseModal}
+          open={editUtilityPurchaseModal}
           onOk={() => setEditUtilityPurchaseModal(false)}
           onCancel={() => setEditUtilityPurchaseModal(false)}
           width={1000}
@@ -302,7 +301,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.IPP_PAYMENTS}
           >
             <p>
@@ -322,7 +321,7 @@ function CostTracker({
         />
 
         <Modal
-          visible={editIppPurchaseModal}
+          open={editIppPurchaseModal}
           onOk={() => setEditIppPurchaseModal(false)}
           onCancel={() => setEditIppPurchaseModal(false)}
           width={1000}
@@ -345,7 +344,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.BASELINE_TRACKER}
           >
             <p>
@@ -374,7 +373,7 @@ function CostTracker({
           <Tooltip
             placement="top"
             style={{ textAlign: "right" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: "pre-line" }}
             title={COST_TRACKER_TOOLTIP_MESSAGES.MONTHLY_COST}
           >
             <p>
@@ -408,7 +407,7 @@ function CostTracker({
         {DieselOverViewCharts}
         {UtilityOverViewCharts}
         {/* {IppOverViewCharts} */}
-        {userData && userData.client_type == "RESELLER"
+        {userData && userData.client_type === "RESELLER"
           ? IppOverViewCharts
           : ""}
       </section>
@@ -423,7 +422,7 @@ function CostTracker({
         {utilityPurchasedCharts}
       </section>
 
-      {userData && userData.client_type == "RESELLER" ? (
+      {userData && userData.client_type === "RESELLER" ? (
         <section className="cost-tracker-section">
           <h2 className="h-screen-reader-text">Quantity of IPP Payments</h2>
           {IppPurchasedCharts}

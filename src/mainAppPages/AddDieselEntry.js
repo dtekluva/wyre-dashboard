@@ -1,8 +1,6 @@
-import React, { useEffect, useContext, useState } from 'react';
-import ColumnGroup from 'antd/lib/table/ColumnGroup';
-import Column from 'antd/lib/table/Column';
-import { notification, Form, Spin, DatePicker, Select, Table, Dropdown, Menu, Space, Popconfirm, Modal, Button } from 'antd';
-import { EditOutlined, DownOutlined } from '@ant-design/icons';
+import { useEffect, useContext, useState, useCallback } from 'react';
+import { notification, Form, Spin, DatePicker, Select, Table, Modal, Button } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { useSelector } from 'react-redux';
 import CompleteDataContext from '../Context';
@@ -10,15 +8,13 @@ import CompleteDataContext from '../Context';
 import moment from 'moment'; 
 import BreadCrumb from '../components/BreadCrumb';
 import Loader from '../components/Loader';
-import { addFuelConsumptionData, addMonthlyFuelConsumptionData, fetchDieselDailyUsageData, fetchDieselMonthlyUsageData, fetchFuelConsumptionData, getBranchGeneratorsData } from '../redux/actions/constTracker/costTracker.action';
-import { DateField, NumberField, NumberFieldAcceptZero, SelectField, SelectGenerator } from '../components/FormFields/GeneralFormFields';
-import { Option } from 'antd/lib/mentions';
+import { addFuelConsumptionData, addMonthlyFuelConsumptionData, fetchDieselDailyUsageData, fetchDieselMonthlyUsageData, getBranchGeneratorsData } from '../redux/actions/constTracker/costTracker.action';
+import { NumberField, NumberFieldAcceptZero, SelectField } from '../components/FormFields/GeneralFormFields';
 import UnAuthorizeResponse from './UnAuthorizeResponse';
-import { Icon } from '@iconify/react/dist/iconify.js';
 import UpdateDieselEntry from './UpdateDieselEntry';
 import UpdateMonthlyDieselEntry from './UpdateMonthlyDieselEntry';
 
-
+const { Option } = Select;
 const { RangePicker } = DatePicker
 
 const breadCrumbRoutes = [
@@ -57,24 +53,20 @@ function AddDieselEntry({
   getBranchGeneratorsData,
   fetchDieselDailyUsageData,
   fetchDieselMonthlyUsageData,
-  fetchFuelConsumptionData: fetchFuelConsumptionInfo,
-  deleteFuelConsumptionData: deleteDieselEntry
 }) {
   const [entryType, setEntryType] = useState(null);
   const [dailyForm] = Form.useForm();
   const [monthlyForm] = Form.useForm();
   const [holdBranchGenerators, setHoldBranchGenerators] = useState([]);
 
-  const [modalOpener, setModalOpener] = useState(false);
+  const [, setModalOpener] = useState(false);
   const [modalData, setModalData] = useState(false);
   const [modalDataMonthly, setModalDataMonthly] = useState(false);
-  const [flattenedModalData, setFlattenedModalData] = useState(false);
   const [fuelDataLoading, setFuelDataLoading] = useState(false);
   const [editDieselEntryModal, setEditDieselEntryModal] = useState(false)
   const [dieselEntryData, setDieselEntryData] = useState({})
-  const [dataSources, setDataSources] = useState({})
 
-  const { setCurrentUrl, userId, userData, branchId, organization } = useContext(
+  const { setCurrentUrl, userId, userData } = useContext(
     CompleteDataContext
   );
 
@@ -83,20 +75,6 @@ function AddDieselEntry({
   const disableFutureDates = (current) =>
     current && current > moment().endOf("day");
 
-  /**
-   * Locks the range to the same month & year as the first selected date
-   */
-  const disableDifferentMonthYear = (current, selectedDates) => {
-    if (!selectedDates || !selectedDates[0]) return false;
-
-    const start = selectedDates[0];
-
-    return (
-      current.month() !== start.month() ||
-      current.year() !== start.year() ||
-      current > moment().endOf("day")
-    );
-  };
 
   const canEditRecord = (recordTime) => {
     if (!recordTime) return false;
@@ -143,13 +121,13 @@ function AddDieselEntry({
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match, userId]);
+  }, [match, userId, setCurrentUrl]);
 
   useEffect(() => {
     if (defaultBranch) {   
       getBranchGeneratorsData(defaultBranch)
     }
-  }, [defaultBranch]);
+  }, [defaultBranch, getBranchGeneratorsData]);
 
   useEffect(() => {
     if (costTracker?.fetchedListOfGenerators?.generators) {
@@ -218,10 +196,8 @@ function AddDieselEntry({
     return moment(dateA).toDate() - moment(dateB).toDate();
   };
 
-  const fetchDailyFuelData = async (date) => {
+  const fetchDailyFuelData = useCallback(async () => {
     setModalData(false)
-    const year = moment(date).format('YYYY');
-    const month = moment(date).endOf('month').format('MM');
     setModalOpener(true);
     setFuelDataLoading(true);
     const fuelData = await fetchDieselDailyUsageData(); 
@@ -244,9 +220,9 @@ function AddDieselEntry({
       setModalData(sortedData.slice(0, 10));
     }
     setFuelDataLoading(false);
-  }
+  }, [fetchDieselDailyUsageData]);
 
-  const fetchMonthlyFuelData = async (date) => {
+  const fetchMonthlyFuelData = useCallback(async () => {
     setModalDataMonthly(false)
     setModalOpener(true);
     setFuelDataLoading(true);
@@ -268,12 +244,12 @@ function AddDieselEntry({
       setModalDataMonthly(sortedData.slice(0, 10));
     }
     setFuelDataLoading(false);
-  }
+  }, [fetchDieselMonthlyUsageData]);
 
   useEffect(() => {
     fetchDailyFuelData()
     fetchMonthlyFuelData()
-  }, []);
+  }, [fetchDailyFuelData, fetchMonthlyFuelData]);
 
   const dailyConsumptionColumn = [
     {
@@ -431,12 +407,12 @@ function AddDieselEntry({
               <Select
                 placeholder="Select Entry Type"
                 size="large"
-                style={{ width: 280 }}
+                // style={{ width: 280 }}
                 onChange={setEntryType}
                 value={entryType}
               >
-                <Option value="daily">Daily Entry</Option>
-                <Option value="monthly">Monthly Entry</Option>
+                <Select.Option value="daily">Daily Entry</Select.Option>
+                <Select.Option value="monthly">Monthly Entry</Select.Option>
               </Select>
             </div>
 
@@ -672,7 +648,6 @@ const mapDispatchToProps = {
   addFuelConsumptionData,
   getBranchGeneratorsData,
   addMonthlyFuelConsumptionData,
-  fetchFuelConsumptionData,
   fetchDieselDailyUsageData,
   fetchDieselMonthlyUsageData
 };

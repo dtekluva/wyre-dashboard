@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useDispatch } from 'react-redux'
 import { Checkbox } from 'antd';
 
@@ -14,9 +14,7 @@ import { setSelectedSideBar } from '../redux/actions/sidebar/actionCreators';
 import {
   toCamelCase,
   cloneObject,
-  getModifiedBranchLevelData,
 } from '../helpers/genericHelpers';
-import { getRefinedBranchData } from '../helpers/branchDataHelpers';
 import { connect } from 'react-redux';
 
 function SidebarBranch({ branchData }) {
@@ -26,12 +24,9 @@ function SidebarBranch({ branchData }) {
   const dispatch = useDispatch();
 
   const {
-    renderedDataObjects,
-    setRenderedDataObjects,
     checkedItems,
     setCheckedItems,
     checkedBranches,
-    checkedBranchId,
     setCheckedBranches,
     setCheckedBranchId,
     checkedDevices,

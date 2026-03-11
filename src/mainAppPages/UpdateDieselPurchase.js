@@ -1,15 +1,11 @@
-import React, { useEffect, useContext } from 'react';
-import { notification, Form, Spin, message } from 'antd';
+import { useEffect, useContext, useState } from 'react';
+import { notification, Form, Spin } from 'antd';
 import moment from 'moment'
 
 import CompleteDataContext from '../Context';
 
-import billingHttpServices from '../services/bills'
-import axios from 'axios'
-
-import { DateField, DateRangeField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
-import { InputField, SubmitButton, FlowMeterUpload } from '../components/FormFields/CostTrackerFields';
-import EnvData from '../config/EnvData';
+import { DateField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
+import { SubmitButton } from '../components/FormFields/CostTrackerFields';
 import { updateFuelPurchaseData } from '../redux/actions/constTracker/costTracker.action';
 import { connect } from 'react-redux';
 
@@ -21,25 +17,12 @@ const openNotificationWithIcon = (type, formName) => {
   });
 };
 
-const NotAllowedNotification = () => {
-  notification.error({
-    message: 'Request Error',
-    description: 'NOT ALLOWED',
-    duration: 5
-  })
-}
 
 function UpdateDieselPurchase({ match, dieselPurchaseData, updateFuelPurchaseData: editDieselPayment }) {
   const [dieslePurchaseForm] = Form.useForm();
-  const [prePaidForm] = Form.useForm();
-  const [postPaidForm] = Form.useForm();
-  const [EOMBalanceForm] = Form.useForm();
-  const [purchaseLoading] = React.useState(false);
-  const [prePaidLoading, setPrePaidLoading] = React.useState(false);
-  const [postPaidLoading, setPostPaidLoading] = React.useState(false);
-  const [EOMFlowReadingLoading, setEOMFlowReadingLoading] = React.useState(false);
+  const [purchaseLoading] = useState(false);
 
-  const { setCurrentUrl, token, organization, userId } = useContext(
+  const { setCurrentUrl, organization, userId } = useContext(
     CompleteDataContext
   );
 
@@ -98,7 +81,7 @@ function UpdateDieselPurchase({ match, dieselPurchaseData, updateFuelPurchaseDat
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match, userId]);
+  }, [match, setCurrentUrl]);
 
 
   let defaultBranch;
@@ -112,20 +95,20 @@ function UpdateDieselPurchase({ match, dieselPurchaseData, updateFuelPurchaseDat
         price_per_litre: dieselPurchaseData.price_per_litre,
         date: moment(dieselPurchaseData.date)
     })
-  }, [dieselPurchaseData])
+  }, [dieselPurchaseData, dieslePurchaseForm])
 
-  const onAmountOrValueChange = (event) => {
-    const { amount, value } = prePaidForm.getFieldsValue(true);
-    let newTariff = Number(amount / value || 0)?.toFixed(2) || 0;
-    newTariff = isFinite(newTariff) ? newTariff : 0;
-    prePaidForm.setFieldsValue({ tariff: newTariff })
-  }
-  const onPostpaidAmountOrValueChange = (event) => {
-    const { amount, value } = postPaidForm.getFieldsValue(true);
-    let newTariff = Number(amount / value || 0)?.toFixed(2) || 0;
-    newTariff = isFinite(newTariff) ? newTariff : 0;
-    postPaidForm.setFieldsValue({ tariff: newTariff })
-  }
+  // const onAmountOrValueChange = (event) => {
+  //   const { amount, value } = prePaidForm.getFieldsValue(true);
+  //   let newTariff = Number(amount / value || 0)?.toFixed(2) || 0;
+  //   newTariff = isFinite(newTariff) ? newTariff : 0;
+  //   prePaidForm.setFieldsValue({ tariff: newTariff })
+  // }
+  // const onPostpaidAmountOrValueChange = (event) => {
+  //   const { amount, value } = postPaidForm.getFieldsValue(true);
+  //   let newTariff = Number(amount / value || 0)?.toFixed(2) || 0;
+  //   newTariff = isFinite(newTariff) ? newTariff : 0;
+  //   postPaidForm.setFieldsValue({ tariff: newTariff })
+  // }
 
   const onPurchaseTrackerSubmit = async ({quantity, price_per_litre, date, fuelType}) => {
     const id = dieselPurchaseData.id
@@ -148,112 +131,112 @@ function UpdateDieselPurchase({ match, dieselPurchaseData, updateFuelPurchaseDat
       return dieslePurchaseForm.resetFields();
   };
 
-  const onUsedTrackerSubmit = ({ date, balance, flowMeterUpload }) => {
-    if (defaultBranch != null) {
-      setEOMFlowReadingLoading(true);
-      let formData = new FormData()
-      formData.append('branch', defaultBranch)
-      formData.append('quantity', balance)
-      formData.append('date', date.format('YYYY-MM-DD'))
-      formData.append('image', flowMeterUpload[0])
+  // const onUsedTrackerSubmit = ({ date, balance, flowMeterUpload }) => {
+  //   if (defaultBranch != null) {
+  //     setEOMFlowReadingLoading(true);
+  //     let formData = new FormData()
+  //     formData.append('branch', defaultBranch)
+  //     formData.append('quantity', balance)
+  //     formData.append('date', date.format('YYYY-MM-DD'))
+  //     formData.append('image', flowMeterUpload[0])
 
-      axios.post(`${EnvData.REACT_APP_API_URL}add_month_end_cost/${userId}/`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `bearer ${token}`,
-        }
-      }).then(res => {
-        setEOMFlowReadingLoading(false);
-        openNotificationWithIcon('success', 'Form submitted successfully');
-        EOMBalanceForm.resetFields()
-      }).catch(e => {
-        setEOMFlowReadingLoading(false);
-        openNotificationWithIcon('error', 'An error occured,Please try again!!!')
-        EOMBalanceForm.resetFields()
-      })
-    }
-    else {
-      NotAllowedNotification();
-    }
-  }
+  //     axios.post(`${EnvData.REACT_APP_API_URL}add_month_end_cost/${userId}/`, formData, {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //         Authorization: `bearer ${token}`,
+  //       }
+  //     }).then(res => {
+  //       setEOMFlowReadingLoading(false);
+  //       openNotificationWithIcon('success', 'Form submitted successfully');
+  //       EOMBalanceForm.resetFields()
+  //     }).catch(e => {
+  //       setEOMFlowReadingLoading(false);
+  //       openNotificationWithIcon('error', 'An error occured,Please try again!!!')
+  //       EOMBalanceForm.resetFields()
+  //     })
+  //   }
+  //   else {
+  //     NotAllowedNotification();
+  //   }
+  // }
 
-  const onUtilityPaymentTrackerPreSubmit = ({
-    amount,
-    date,
-    tariff,
-    value,
-  }) => {
-    if (defaultBranch != null) {
-      setPrePaidLoading(true);
-      const prePaidData = {
-        branch: defaultBranch,
-        value,
-        amount,
-        tariff,
-        date: date.format('YYYY-MM-DD')
-      }
-      billingHttpServices
-        .addCostPrePaid(prePaidData, token, userId)
-        .then(() => {
-          setPrePaidLoading(false);
-          prePaidForm.resetFields()
-          openNotificationWithIcon('success', 'pre-paid utility payment tracker');
-        })
-        .catch(err => {
-          setPrePaidLoading(false);
-          console.log(err.response)
-          alert(err.response, 'Please try again!!!')
-        })
-    }
-    else {
-      NotAllowedNotification();
-    }
-  };
+  // const onUtilityPaymentTrackerPreSubmit = ({
+  //   amount,
+  //   date,
+  //   tariff,
+  //   value,
+  // }) => {
+  //   if (defaultBranch != null) {
+  //     setPrePaidLoading(true);
+  //     const prePaidData = {
+  //       branch: defaultBranch,
+  //       value,
+  //       amount,
+  //       tariff,
+  //       date: date.format('YYYY-MM-DD')
+  //     }
+  //     billingHttpServices
+  //       .addCostPrePaid(prePaidData, token, userId)
+  //       .then(() => {
+  //         setPrePaidLoading(false);
+  //         prePaidForm.resetFields()
+  //         openNotificationWithIcon('success', 'pre-paid utility payment tracker');
+  //       })
+  //       .catch(err => {
+  //         setPrePaidLoading(false);
+  //         console.log(err.response)
+  //         alert(err.response, 'Please try again!!!')
+  //       })
+  //   }
+  //   else {
+  //     NotAllowedNotification();
+  //   }
+  // };
 
-  const onUtilityPaymentTrackerPostSubmit = ({
-    amount,
-    date,
-    tariff,
-    value,
-  }) => {
+  // const onUtilityPaymentTrackerPostSubmit = ({
+  //   amount,
+  //   date,
+  //   tariff,
+  //   value,
+  // }) => {
 
-    const convertDate = (dateObjects) => {
-      let formatObject = dateObjects.map((eachDateObject) => {
-        return eachDateObject.format('YYYY-MM-DD')
-      })
-      return formatObject
-    }
+  //   const convertDate = (dateObjects) => {
+  //     let formatObject = dateObjects.map((eachDateObject) => {
+  //       return eachDateObject.format('YYYY-MM-DD')
+  //     })
+  //     return formatObject
+  //   }
 
-    let FormattedDate = convertDate(date);
+  //   let FormattedDate = convertDate(date);
 
-    if (defaultBranch != null) {
-      setPostPaidLoading(true);
-      const postPaidData = {
-        branch: defaultBranch,
-        value,
-        amount,
-        tariff,
-        date: FormattedDate[0],
-        end_date: FormattedDate[1]
-      }
+  //   if (defaultBranch != null) {
+  //     setPostPaidLoading(true);
+  //     const postPaidData = {
+  //       branch: defaultBranch,
+  //       value,
+  //       amount,
+  //       tariff,
+  //       date: FormattedDate[0],
+  //       end_date: FormattedDate[1]
+  //     }
 
-      billingHttpServices
-        .addCostPostPaid(postPaidData, token, userId)
-        .then(() => {
-          setPostPaidLoading(false);
-          // reset the form fields
-          postPaidForm.resetFields();
-          openNotificationWithIcon('success', 'post-paid utility payment tracker');
-        })
-        .catch(error => {
-          setPostPaidLoading(false);
-          openNotificationWithIcon('error', 'An error occured,Please try again!!!')
-        })
-    }
-    else {
-      NotAllowedNotification();
-    }
-  };
+  //     billingHttpServices
+  //       .addCostPostPaid(postPaidData, token, userId)
+  //       .then(() => {
+  //         setPostPaidLoading(false);
+  //         // reset the form fields
+  //         postPaidForm.resetFields();
+  //         openNotificationWithIcon('success', 'post-paid utility payment tracker');
+  //       })
+  //       .catch(error => {
+  //         setPostPaidLoading(false);
+  //         openNotificationWithIcon('error', 'An error occured,Please try again!!!')
+  //       })
+  //   }
+  //   else {
+  //     NotAllowedNotification();
+  //   }
+  // };
 
   return (
     <>

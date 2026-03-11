@@ -1,25 +1,46 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Line } from 'react-chartjs-2';
 import CompleteDataContext from '../../Context';
 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+/* ---------- register chart.js modules ---------- */
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend
+);
+
+/* ---------- vertical hover line plugin (v4-safe) ---------- */
 const VerticalLinePlugin = {
   id: 'verticalLineAcrossDataPoints',
-  afterDatasetsDraw: function (chart) {
-    if (chart.tooltip._active && chart.tooltip._active.length) {
-      var activePoint = chart.tooltip._active[0],
-        ctx = chart.ctx,
-        y_axis = chart.scales['y-axis-0'],
-        x = activePoint.tooltipPosition().x,
-        topY = y_axis.top,
-        bottomY = y_axis.bottom;
-      // draw line
+  afterDraw(chart) {
+    const tooltip = chart.tooltip;
+
+    if (tooltip?.getActiveElements()?.length) {
+      const ctx = chart.ctx;
+      const activePoint = tooltip.getActiveElements()[0];
+      const x = activePoint.element.x;
+      const yScale = chart.scales.y;
+
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(x, topY);
-      ctx.lineTo(x, bottomY);
+      ctx.moveTo(x, yScale.top);
+      ctx.lineTo(x, yScale.bottom);
       ctx.lineWidth = 2;
       ctx.strokeStyle = '#E5E5E5';
-      ctx.opacity = 0.5;
+      ctx.globalAlpha = 0.5;
       ctx.stroke();
       ctx.restore();
     }
@@ -27,14 +48,21 @@ const VerticalLinePlugin = {
 };
 
 const PowerQualityLineChart = ({ data, dates, powerQualityUnit }) => {
-  const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
-  const pqDataUnit = data && data.units;
+  const { isMediumScreen, isLessThan1296 } =
+    useContext(CompleteDataContext);
 
-  const pqData = data && Object.assign({}, data);
-  if (pqData) delete pqData.units;
+  const pqDataUnit = data?.units;
 
-  const pqDataValues = pqData && Object.values(pqData);
-  const pqDataNames = pqData && Object.keys(pqData);
+  /* ---------- clone + strip units ---------- */
+  const pqData = data
+    ? Object.fromEntries(
+      Object.entries(data).filter(([key]) => key !== 'units')
+    )
+    : {};
+
+  const pqDataNames = Object.keys(pqData);
+  const pqDataValues = Object.values(pqData);
+
   const colorsArray = [
     '#6C00FA',
     '#FF3DA1',
@@ -49,25 +77,41 @@ const PowerQualityLineChart = ({ data, dates, powerQualityUnit }) => {
     '#FFE11A',
   ];
 
-  const plottedDataSets =
-    pqDataValues &&
-    pqDataValues.map((eachDataValue, index) => {
-      return {
-        label: `${pqDataNames[index]} (${pqDataUnit})`,
-        data: eachDataValue,
-        fill: false,
-        backgroundColor: colorsArray[index],
-        borderColor: colorsArray[index],
-        borderWidth: 2,
-      };
-    });
+  // const datasets = pqDataValues.map((values, index) => ({
+  //   label: `${pqDataNames[index]} (${pqDataUnit})`,
+  //   data: values,
+  //   borderColor: colorsArray[index % colorsArray.length],
+  //   backgroundColor: colorsArray[index % colorsArray.length],
+  //   borderWidth: 2,
+  //   fill: false,
+  //   tension: 0.3,
+  //   pointRadius: 0,
+  // }));
 
-  const plottedData = {
+  const datasets = pqDataValues.map((values, index) => ({
+    label: `${pqDataNames[index]} (${pqDataUnit})`,
+    data: values,
+    borderColor: colorsArray[index % colorsArray.length],
+    backgroundColor: colorsArray[index % colorsArray.length],
+    borderWidth: 2,
+    fill: false,
+    tension: 0.3,
+
+    /* 🚫 KILL ALL VALUES / POINTS */
+    pointRadius: 0,
+    pointHoverRadius: 0,
+    pointHitRadius: 8,
+  }));
+
+  const chartData = {
     labels: dates,
-    datasets: plottedDataSets,
+    datasets,
   };
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+
     layout: {
       padding: {
         left: isMediumScreen ? 5 : 25,
@@ -76,83 +120,81 @@ const PowerQualityLineChart = ({ data, dates, powerQualityUnit }) => {
         bottom: isMediumScreen ? 10 : 25,
       },
     },
-    legend: {
-      display: true,
-      labels: {
-        boxWidth: isMediumScreen ? 13 : 16,
-        fontSize: isMediumScreen ? 14 : 16,
-        fontColor: 'black',
-        padding: isMediumScreen ? 10 : 25,
+
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          boxWidth: isMediumScreen ? 13 : 16,
+          padding: isMediumScreen ? 10 : 25,
+          color: '#000',
+        },
+      },
+      tooltip: {
+        enabled: true,
+        mode: 'index',
+        intersect: false,
+      },
+      datalabels: {
+        display: false, // 🚫 force-disable
       },
     },
-    maintainAspectRatio: false,
+
     scales: {
-      yAxes: [
-        {
-          gridLines: {
-            color: '#f0f0f0',
-            drawBorder: false,
-            drawTicks: false,
-            zeroLineColor: '#f0f0f0',
-          },
-          ticks: {
-            beginAtZero: true,
-            fontFamily: 'Roboto',
-            padding: 10,
-            fontColor: '#A3A3A3',
-            maxTicksLimit: 9,
-          },
-          scaleLabel: {
-            display: true,
-            labelString: powerQualityUnit,
-            padding: isMediumScreen ? 10 : 25,
-            fontSize: isMediumScreen ? 14 : 18,
-            fontColor: 'black',
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: '#f0f0f0',
+          drawBorder: false,
+        },
+        ticks: {
+          padding: 10,
+          color: '#A3A3A3',
+          maxTicksLimit: 9,
+        },
+        title: {
+          display: true,
+          text: powerQualityUnit,
+          padding: isMediumScreen ? 10 : 25,
+          font: {
+            size: isMediumScreen ? 14 : 18,
           },
         },
-      ],
-      xAxes: [
-        {
-          ticks: {
-            fontColor: '#A3A3A3',
-            fontFamily: 'Roboto',
-            padding: 10,
-            maxTicksLimit: isMediumScreen ? 5 : isLessThan1296 ? 7 : 9,
-          },
-          gridLines: {
-            drawTicks: false,
-            color: '#f0f0f0',
-            zeroLineColor: '#f0f0f0',
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Date and Time',
-            padding: isMediumScreen ? 10 : 25,
-            fontSize: isMediumScreen ? 14 : 18,
-            fontColor: 'black',
-          },
+      },
+      x: {
+        grid: {
+          drawTicks: false,
+          color: '#f0f0f0',
         },
-      ],
-    },
-    tooltips: {
-      enabled: true,
-      mode: 'index',
-      callbacks: {
-        title: function (tooltipItem, data) {
-          return data['labels'][tooltipItem[0]['index']];
+        ticks: {
+          color: '#A3A3A3',
+          padding: 10,
+          maxTicksLimit: isMediumScreen
+            ? 5
+            : isLessThan1296
+              ? 7
+              : 9,
+          maxRotation: 45,
+          minRotation: 45,
+        },
+        title: {
+          display: true,
+          text: 'Date and Time',
+          padding: isMediumScreen ? 10 : 25,
+          font: {
+            size: isMediumScreen ? 14 : 18,
+          },
         },
       },
     },
   };
 
   return (
-    <>
-      <Line
-        data={plottedData}
-        options={options}
-        plugins={[VerticalLinePlugin]}
-      />
-    </>
+    <Line
+      data={chartData}
+      options={options}
+      plugins={[VerticalLinePlugin]}
+    />
   );
 };
 

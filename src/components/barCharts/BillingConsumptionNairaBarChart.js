@@ -21,7 +21,7 @@ const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           gridLines: {
             color: '#f0f0f0',
@@ -45,8 +45,7 @@ const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
-      xAxes: [
+      xAxes:
         {
           gridLines: {
             drawTicks: false,
@@ -58,6 +57,8 @@ const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
             fontFamily: 'Roboto',
             fontColor: '#A3A3A3',
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
             padding: 10,
             fontSize: 10,
           },
@@ -69,7 +70,6 @@ const BillingConsumptionNairaBarChart = ({ chartValues, chartDates }) => {
             padding: isMediumScreen ? 10 : 25,
           },
         },
-      ],
     },
   };
 

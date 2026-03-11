@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Bar } from 'react-chartjs-2';
 import CompleteDataContext from '../../Context';
 
@@ -12,13 +12,10 @@ const CostTrackerMonthlyCostBarChart = ({ DieselData, utilityData, uiSettings })
   let formattedUtilData = {}
 
 
-
-
-
   // NOTE; Change this implmentation as it mutates the endpoint data
   // Can be a major cause of untracable bugs
   // eslint-disable-next-line array-callback-return
-  const getDieselData = DieselData?.map((e) => {
+  DieselData?.map((e) => {
 
     // temporaty fix for the data mutation
     const dData = { ...e };
@@ -36,9 +33,7 @@ const CostTrackerMonthlyCostBarChart = ({ DieselData, utilityData, uiSettings })
     const amount = dData.price_per_litre
 
     if (Object.keys(formattedDataForDiesel).includes(dData.date)) {
-      [formattedDataForDiesel].map((d) => {
-        d[dData.date] += amount
-      })
+      formattedDataForDiesel[dData.date] += amount;
     }
     else {
       formattedDataForDiesel = { ...formattedDataForDiesel, [dates]: amount }
@@ -48,7 +43,7 @@ const CostTrackerMonthlyCostBarChart = ({ DieselData, utilityData, uiSettings })
   // NOTE; Change this implmentation as it mutates the endpoint data
   // Can be a major cause of untracable bugs
   // eslint-disable-next-line array-callback-return
-  const getUtilityData = utilityData?.map(e => {
+  utilityData?.map(e => {
 
     // temporaty fix for the data mutation
     const dData = { ...e };
@@ -100,6 +95,8 @@ const CostTrackerMonthlyCostBarChart = ({ DieselData, utilityData, uiSettings })
   }
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
     layout: {
       padding: {
         left: isMediumScreen ? 5 : 25,
@@ -108,60 +105,63 @@ const CostTrackerMonthlyCostBarChart = ({ DieselData, utilityData, uiSettings })
         bottom: isMediumScreen ? 10 : 25,
       },
     },
-    legend: {
-      display: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false,
+      },
+      datalabels: {
+        display: false, // 👈 kills inner bar labels
+      },
     },
-    maintainAspectRatio: false,
     scales: {
-      yAxes: [
-        {
-          gridLines: {
-            color: '#f0f0f0',
-            drawBorder: false,
-            drawTicks: false,
-            zeroLineColor: '#f0f0f0',
-          },
-          ticks: {
-            beginAtZero: true,
-            fontFamily: 'Roboto',
-            fontColor: '#A3A3A3',
-            maxTicksLimit: 6,
-            fontSize: 10,
-            padding: 10,
-          },
-          scaleLabel: {
-            display: true,
-            padding: 10,
-            labelString: `Amount in Naira`,
-            fontColor: 'black',
-            fontSize: isMediumScreen ? 14 : 18,
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: "#f0f0f0",
+          drawBorder: false,
+        },
+        ticks: {
+          maxTicksLimit: 6,
+          color: "#A3A3A3",
+          padding: 10,
+          font: {
+            size: 10,
           },
         },
-      ],
-      xAxes: [
-        {
-          gridLines: {
-            drawTicks: false,
-            color: '#f0f0f0',
-            zeroLineColor: '#f0f0f0',
-          },
-          ticks: {
-            beginAtZero: true,
-            fontFamily: 'Roboto',
-            fontColor: '#A3A3A3',
-            maxTicksLimit: 10,
-            padding: 10,
-            fontSize: 10,
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Months of the Year',
-            fontColor: 'black',
-            fontSize: isMediumScreen ? 14 : 18,
-            padding: isMediumScreen ? 10 : 25,
+        title: {
+          display: true,
+          text: "Amount in Naira",
+          font: {
+            size: isMediumScreen ? 14 : 18,
           },
         },
-      ],
+      },
+      x: {
+        grid: {
+          color: "#f0f0f0",
+        },
+        ticks: {
+          maxTicksLimit: 10,
+          maxRotation: 45,
+          minRotation: 45,
+          color: "#A3A3A3",
+          padding: 10,
+          font: {
+            size: 10,
+          },
+        },
+        title: {
+          display: true,
+          text: "Months of the Year",
+          font: {
+            size: isMediumScreen ? 14 : 18,
+          },
+        },
+      },
     },
   };
 

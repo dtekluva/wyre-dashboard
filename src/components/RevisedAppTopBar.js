@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Select } from 'antd';
 import { useSelector } from 'react-redux';
 
@@ -15,14 +15,16 @@ import SwitchablePicker from './headers/SwitchablePicker';
 const { Option } = Select;
 
 function RevisedAppTopBar() {
+  const location = useLocation();
+  const pathname = location.pathname || '';
+
   const {
     isSidebarOpen,
-    currentUrl,
     setPowerQualityUnit,
     setParametersDataTimeInterval,
     userData
   } = useContext(CompleteDataContext);
-  
+
   const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   const pagesWithDateTimePickers = [
     'dashboard',
@@ -45,25 +47,23 @@ function RevisedAppTopBar() {
   ];
 
   const isDateTimePickerDisplayed = pagesWithDateTimePickers.some((page) =>
-    currentUrl.includes(page)
+    pathname.includes(page)
   );
 
   const isTimeIntervalSelectorDisplayed = pagesWithTimeIntervalSelector.some(
-    (page) => currentUrl.includes(page)
+    (page) => pathname.includes(page)
   );
 
   const isPageWithSwitchableSelector = pageWithSwitchablePicker.some(
-    (page) => currentUrl.includes(page)
+    (page) => pathname.includes(page)
   );
 
-  const isDateTimePickerDisabled = currentUrl.includes('last-reading');
+  const isPlottedUnitSelectorDisplayed = pathname.includes('power-quality');
 
-  const isPlottedUnitSelectorDisplayed = currentUrl.includes('power-quality');
-
-  const isTopBarCostTrackerRightDisplayed = currentUrl.includes('cost-tracker') || currentUrl.includes('dashboard') ;
+  const isTopBarCostTrackerRightDisplayed = pathname.includes('cost-tracker') || pathname.includes('dashboard');
 
   const isTopBarUserBranchesRightDisplayed =
-    currentUrl.includes('branches') && !currentUrl.includes('user-form');
+    pathname.includes('branches') && !pathname.includes('user-form');
 
   const handleIntervalChange = (interval) => {
     setParametersDataTimeInterval(interval);
@@ -143,12 +143,12 @@ function RevisedAppTopBar() {
 
     {/* Cost Tracker Buttons */}
     {sideBarData.branches?.length === 1 && (
-      <div
-        className={
-          isTopBarCostTrackerRightDisplayed
-            ? 'top-bar__right'
-            : 'top-bar__right h-hide'
-        }
+  <div
+    className={
+      isTopBarCostTrackerRightDisplayed
+        ? 'top-bar__right h-hide'
+        : 'top-bar__right'
+    }
       >
         <Link className="top-bar-right__button" to="/cost-tracker/add-bills">
           Add Bills

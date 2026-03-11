@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { Pie } from 'react-chartjs-2';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 // import ChartDataLabels from 'chartjs-plugin-piechart-outlabels';
 import CompleteDataContext from '../../Context';
 import { CHART_BACKGROUD_COLOR, CHART_BORDER_COLOR } from '../../helpers/constants';

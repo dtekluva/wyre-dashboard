@@ -1,81 +1,112 @@
-import axios from 'axios';
+import { APIService, APIServiceNoAuth, BaseAPIService } from '../../../config/api/apiConfig';
 import { logoutUser, getPermittedBranchesLoading, getPermittedBranchesSuccess, switchBranchLoading, switchBranchSuccess } from "./actionCreators";
-import EnvData from '../../../config/EnvData';
-import jwtDecode from 'jwt-decode';
+import { resetPasswordLoading, resetPasswordSuccess, confirmResetPasswordLoading, confirmResetPasswordSuccess, validateResetTokenLoading, validateResetTokenSuccess } from './actionCreators';
 
 
 export const logoutUserFromRedux = () => async (dispatch) => {
   dispatch(logoutUser());
 };
+
+export const resetPasswordAction = (data) => async (dispatch) => {
+  dispatch(resetPasswordLoading(true));
+  try {
+    const response = await APIServiceNoAuth.post('accounts/reset_password/', data);
+    dispatch(resetPasswordSuccess(response.data.message));
+    dispatch(resetPasswordLoading(false));
+    return { fulfilled: true, message: response.data.message };
+  } catch (error) {
+    dispatch(resetPasswordLoading(false));
+    const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Request failed';
+    return { fulfilled: false, message };
+  }
+};
+
+export const confirmResetPasswordAction = (payload) => async (dispatch) => {
+  dispatch(confirmResetPasswordLoading(true));
+  try {
+    const { token, new_password } = payload;
+    const response = await APIServiceNoAuth.post('accounts/confirm_reset_password/', { token, new_password });
+    dispatch(confirmResetPasswordSuccess(response.data.message));
+    dispatch(confirmResetPasswordLoading(false));
+    return { fulfilled: true, message: response.data.message };
+  } catch (error) {
+    dispatch(confirmResetPasswordLoading(false));
+    const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Request failed';
+    return { fulfilled: false, message };
+  }
+};
+
+export const validateResetTokenAction = (token) => async (dispatch) => {
+  if (!token?.trim()) {
+    dispatch(validateResetTokenSuccess({ validatedToken: '', valid: false, reason: 'missing' }));
+    return;
+  }
+  dispatch(validateResetTokenLoading(true));
+  try {
+    const response = await APIServiceNoAuth.get('validate_reset_token/?token=' + encodeURIComponent(token.trim()));
+    const { valid, reason } = response.data || {};
+    dispatch(validateResetTokenSuccess({
+      validatedToken: token.trim(),
+      valid: !!valid,
+      reason: reason || (valid ? null : 'invalid'),
+    }));
+  } catch (error) {
+    dispatch(validateResetTokenSuccess({
+      validatedToken: token.trim(),
+      valid: false,
+      reason: error.response?.data?.reason || 'invalid',
+    }));
+  }
+};
+
 export const getNewRefreshToken = async () => {
   try {
-    const requestUrl = EnvData.REACT_APP_API_BASE_URL + 'token/refresh/';
     if (localStorage.loggedWyreUser) {
       const user = JSON.parse(localStorage.loggedWyreUser);
-      const response = await axios.post(requestUrl, {
+      const response = await BaseAPIService.post('token/refresh/', {
         refresh: user.refresh,
       });
-      const newUser = { access: response.data.accces, ...user, }
+      const newUser = { access: response.data.accces, ...user };
       localStorage.setItem('loggedWyreUser', JSON.stringify(newUser));
     }
   } catch (error) {
     localStorage.clear();
-    window.href = '/'
+    window.href = '/';
   }
-
 };
 export const changePassword = async (data) => {
   try {
-    const requestUrl = EnvData.REACT_APP_API_URL + 'reset_password/';
     if (localStorage.loggedWyreUser) {
-      const user = JSON.parse(localStorage.loggedWyreUser);
-      const response = await axios.post(requestUrl, data);
-
-      return { fulfilled: true, message: response.data.message }
-      // log user out here
+      const response = await APIService.post('reset_password/', data);
+      return { fulfilled: true, message: response.data.message };
     }
   } catch (error) {
-    return { fulfilled: false, message: error.response.data.message }
+    return { fulfilled: false, message: error.response?.data?.message };
   }
-
 };
 
 export const getPermittedBranches = () => async (dispatch) => {
   dispatch(getPermittedBranchesLoading());
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let userId;
-  let token;
-
-  if (loggedUserJSON) {
-    try {
-      const userToken = JSON.parse(loggedUserJSON);
-      if (userToken.access) {
-        const user = jwtDecode(userToken.access);
-        userId = user.id;
-        token = userToken.access;
-      }
-    } catch (parseError) {
-      dispatch(getPermittedBranchesLoading(false));
-      return;
-    }
-  }
-
-  if (!token) {
+  if (!loggedUserJSON) {
     dispatch(getPermittedBranchesLoading(false));
     return;
   }
 
   try {
-    const response = await axios.get(
-      `${EnvData.REACT_APP_API_URL}accounts/user/permitted-branches/`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const userToken = JSON.parse(loggedUserJSON);
+    if (!userToken?.access) {
+      dispatch(getPermittedBranchesLoading(false));
+      return;
+    }
+  } catch (_parseError) {
+    dispatch(getPermittedBranchesLoading(false));
+    return;
+  }
 
+  try {
+    const response = await APIService.get('accounts/user/permitted-branches/');
     dispatch(getPermittedBranchesSuccess(response.data));
     dispatch(getPermittedBranchesLoading(false));
   } catch (error) {
@@ -92,35 +123,24 @@ export const switchBranch = (branchId) => async (dispatch) => {
   }
 
   const loggedUserJSON = localStorage.getItem('loggedWyreUser');
-  let token;
-
-  if (loggedUserJSON) {
-    try {
-      const userToken = JSON.parse(loggedUserJSON);
-      if (userToken.access) {
-        token = userToken.access;
-      }
-    } catch (parseError) {
-      dispatch(switchBranchLoading(false));
-      return;
-    }
-  }
-
-  if (!token) {
+  if (!loggedUserJSON) {
     dispatch(switchBranchLoading(false));
     return;
   }
 
   try {
-    const response = await axios.post(
-      `${EnvData.REACT_APP_API_URL}force-login/${branchId}/`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const userToken = JSON.parse(loggedUserJSON);
+    if (!userToken?.access) {
+      dispatch(switchBranchLoading(false));
+      return;
+    }
+  } catch (_parseError) {
+    dispatch(switchBranchLoading(false));
+    return;
+  }
+
+  try {
+    const response = await APIService.post(`force-login/${branchId}/`, {});
     dispatch(switchBranchSuccess(response.data));
     dispatch(switchBranchLoading(false));
   } catch (error) {

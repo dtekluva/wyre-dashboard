@@ -1,94 +1,106 @@
-import React from 'react';
-import { Doughnut } from 'react-chartjs-2';
-import { roundToDecimalPLace, 
-  sumOfArrayElements } from '../../helpers/genericHelpers';
+import React from "react";
+import { Doughnut } from "react-chartjs-2";
+import {
+  roundToDecimalPLace,
+  sumOfArrayElements,
+} from "../../helpers/genericHelpers";
 
-  const ScoreCardDoughnutChart = ({ data, uiSettings }) => {
-    const { unit, ...extractedDataObject } = data
-      ? data
-      : { unit: ['Empty'], others: ['Empty'] };
+const ScoreCardDoughnutChart = ({ data, uiSettings }) => {
+  const { unit, ...extractedDataObject } = data
+    ? data
+    : { unit: ["Empty"], others: ["Empty"] };
 
-    let extractedDataArray = Object.values(extractedDataObject).reverse();
-    let extractedLabelsArray = Object.keys(extractedDataObject).reverse();
+  let extractedDataArray = Object.values(extractedDataObject).reverse();
+  let extractedLabelsArray = Object.keys(extractedDataObject).reverse();
 
-    const extractedBuildData = extractedDataArray.map((item, index) => 
-      index === 1 ?  roundToDecimalPLace(item - extractedDataArray[0], 2) : roundToDecimalPLace(item, 2) );
-      if(sumOfArrayElements(extractedBuildData) === 0){
-        extractedBuildData[1] = 0.0000000000001 // hack to make the empty chart show
-      }
+  const extractedBuildData = extractedDataArray.map((item, index) =>
+    index === 1
+      ? roundToDecimalPLace(item - extractedDataArray[0], 2)
+      : roundToDecimalPLace(item, 2)
+  );
 
-    // Remove underscores and capitalize every word
-    extractedLabelsArray = extractedLabelsArray.map((label) =>
-      label
-        .replace(/_/g, ' ')
-        .replace(/(^\w{1})|(\s{1}\w{1})/g, (match) => match.toUpperCase())
-    );
-  
-    const plottedData = {
-      labels: extractedLabelsArray,
-      datasets: [
-        {
-          data: extractedBuildData,
-          backgroundColor: [uiSettings.appPrimaryColor, '#F0F0F0'],
-          borderWidth: 0,
-        },
-      ],
-    };
-  
-    const options = {
-      cutoutPercentage: 55,
-      layout: {
-        padding: {
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
-        },
+  // hack to make empty chart show
+  if (sumOfArrayElements(extractedBuildData) === 0) {
+    extractedBuildData[1] = 0.0000000000001;
+  }
+
+  // Remove underscores and capitalize words
+  extractedLabelsArray = extractedLabelsArray.map((label) =>
+    label
+      .replace(/_/g, " ")
+      .replace(/(^\w{1})|(\s{1}\w{1})/g, (match) =>
+        match.toUpperCase()
+      )
+  );
+
+  const plottedData = {
+    labels: extractedLabelsArray,
+    datasets: [
+      {
+        data: extractedBuildData,
+        backgroundColor: [
+          uiSettings.appPrimaryColor,
+          "#F0F0F0",
+        ],
+        borderWidth: 0,
       },
+    ],
+  };
+
+  const options = {
+    cutout: "55%", // ✅ replaces cutoutPercentage
+    maintainAspectRatio: false,
+    layout: {
+      padding: 0,
+    },
+    plugins: {
       legend: {
-        display: false,
+        display: false, // ✅ legend removed (v3/v4)
       },
-      maintainAspectRatio: false,
-      title: {
-        display: false,
-      },
-      plugins: {
-        outlabels: {
-          display: false,
-        },
-      },
-      tooltips: {
+      tooltip: {
         enabled: true,
-        mode: 'index',
+        mode: "index",
         callbacks: {
-          label: function (tooltipItem, data) {
-            let valueDisplay = data['datasets'][0]['data'][tooltipItem['index']];
-            if(['Forecast', 'Peak', 'Estimated Value']
-              .includes(data['labels'][tooltipItem['index']])){
-                valueDisplay = roundToDecimalPLace(
-                  sumOfArrayElements(data['datasets'][0]['data']), 2);
+          label: function (context) {
+            const { dataIndex, chart } = context;
+            let valueDisplay =
+              chart.data.datasets[0].data[dataIndex];
+
+            if (
+              ["Forecast", "Peak", "Estimated Value"].includes(
+                chart.data.labels[dataIndex]
+              )
+            ) {
+              valueDisplay = roundToDecimalPLace(
+                sumOfArrayElements(
+                  chart.data.datasets[0].data
+                ),
+                2
+              );
             }
+
             return (
-              data['labels'][tooltipItem['index']] +
-              ': ' +
+              chart.data.labels[dataIndex] +
+              ": " +
               valueDisplay +
-              ' ' +
+              " " +
               unit
             );
           },
         },
-        xPadding: 10,
-        yPadding: 10,
-        footerFontStyle: 'normal',
-        footerMarginTop: 12,
+        padding: 10,
       },
-    };
-  
-    return (
-      <>
-        <Doughnut data={plottedData} options={options} />
-      </>
-    );
+      // ✅ KILL ALL INNER / ARC LABELS
+      datalabels: {
+        display: false,
+      },
+      outlabels: {
+        display: false,
+      },
+    },
   };
-  
-  export default ScoreCardDoughnutChart;
+
+  return <Doughnut data={plottedData} options={options} />;
+};
+
+export default ScoreCardDoughnutChart;

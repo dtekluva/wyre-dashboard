@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Image, Card, Table, Select, Spin, Button, message } from "antd";
-import { useHistory, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { fetchReportData } from "../report/reportApi";
 import fallbackData from "../report/newreport.json";
@@ -12,7 +11,6 @@ import "../report/report.css";
 
 import { Doughnut } from "react-chartjs-2";
 import { Bar } from "react-chartjs-2";
-import Chart from "chart.js";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
@@ -32,8 +30,6 @@ function Report() {
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const history = useHistory();
-  const location = useLocation();
   const sideBar = useSelector((state) => state.sideBar);
 
   const branchId = sideBar?.sideBarData?.branches?.[0]?.branch_id;
@@ -175,7 +171,7 @@ function Report() {
         }}
       >
         <Spin size="large" />
-        <h2>Loading branches...</h2>
+        <h2>Loading Report...</h2>
       </div>
     );
   }
@@ -1134,13 +1130,13 @@ function Report() {
         }}
       >
         <Select
-          style={{ width: 200 }}
-          value={selectedDate.month}
-          onChange={handleMonthChange}
-          placeholder="Select Month"
+          style={{ width: 120 }}
+          value={selectedDate.year}
+          onChange={handleYearChange}
+          placeholder="Select Year"
           disabled={isLoadingNewReport}
         >
-          {monthOptions.map((option) => (
+          {yearOptions.map((option) => (
             <Option
               key={option.value}
               value={option.value}
@@ -1150,15 +1146,14 @@ function Report() {
             </Option>
           ))}
         </Select>
-
         <Select
-          style={{ width: 120 }}
-          value={selectedDate.year}
-          onChange={handleYearChange}
-          placeholder="Select Year"
+          style={{ width: 200 }}
+          value={selectedDate.month}
+          onChange={handleMonthChange}
+          placeholder="Select Month"
           disabled={isLoadingNewReport}
         >
-          {yearOptions.map((option) => (
+          {monthOptions.map((option) => (
             <Option
               key={option.value}
               value={option.value}

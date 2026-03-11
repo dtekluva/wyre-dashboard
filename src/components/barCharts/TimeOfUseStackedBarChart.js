@@ -31,7 +31,7 @@ const TimeOfUseStackedBarChart = ({
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           stacked: true,
           display: true,
@@ -55,13 +55,14 @@ const TimeOfUseStackedBarChart = ({
             fontColor: 'black',
           },
         },
-      ],
-      xAxes: [
+      xAxes:
         {
           ticks: {
             fontFamily: 'Roboto',
             padding: 10,
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
           },
           gridLines: {
             drawTicks: false,
@@ -77,7 +78,6 @@ const TimeOfUseStackedBarChart = ({
             fontColor: 'black',
           },
         },
-      ],
     },
   };
 

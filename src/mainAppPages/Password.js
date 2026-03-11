@@ -8,7 +8,7 @@ import BreadCrumb from '../components/BreadCrumb';
 
 import ErrorIcon from '../icons/ErrorIcon';
 import { connect } from 'react-redux';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },

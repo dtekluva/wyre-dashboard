@@ -30,7 +30,7 @@ const RunningTime = ({ runningTimeData, dataMessage }) => {
 
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           gridLines: {
             display: false,
@@ -51,8 +51,7 @@ const RunningTime = ({ runningTimeData, dataMessage }) => {
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           gridLines: {
             display: false,
@@ -62,6 +61,8 @@ const RunningTime = ({ runningTimeData, dataMessage }) => {
             fontFamily: 'Montserrat',
             fontColor: '#A3A3A3',
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
             padding: 0,
             fontSize: 12,
           },
@@ -71,7 +72,6 @@ const RunningTime = ({ runningTimeData, dataMessage }) => {
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
     },
   };
 

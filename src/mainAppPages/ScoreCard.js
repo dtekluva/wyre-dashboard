@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState, useMemo } from "react";
+import { useEffect, useContext, useState, useMemo } from "react";
 import CompleteDataContext from "../Context";
 
 import { fetchPowerFactor } from "../redux/actions/powerFactor/powerFactor.action";
@@ -132,7 +132,7 @@ function ScoreCard({
       // );
       operatingTimeDeviationBranchData &&
         operatingTimeDeviationBranchData &&
-        operatingTimeDeviationBranchData.devices.map((data) => {
+        operatingTimeDeviationBranchData.devices.forEach((data) => {
           if (data.score_card.is_generator) {
             allGenOpTime.push(data);
           }
@@ -251,7 +251,7 @@ function ScoreCard({
       fetchScorecardOperatingTimeData(userDateRange);
     }
     setPageLoaded(true);
-  }, [userDateRange]);
+  }, [userDateRange, fetchBaselineEnergyData, fetchPAPRData, fetchScorecardCarbonEmissionData, fetchGeneratorSizeEfficiencyData, fetchGeneratorFuelEfficiencyData, fetchScorecardOperatingTimeData, pageLoaded, scoreCardInfo.scoreCardData]);
 
   useEffect(() => {
     if (pageLoaded && scorecard.baselineEnergyData) {
@@ -263,7 +263,7 @@ function ScoreCard({
       setBaselineEnergyBranchData(devicesArrayData);
     }
     setPageLoaded(true);
-  }, [scorecard.baselineEnergyData, checkedBranchId, checkedDevicesId.length]);
+  }, [scorecard.baselineEnergyData, checkedBranchId, checkedDevicesId.length, checkedDevicesId, pageLoaded]);
 
   useEffect(() => {
     if (pageLoaded && scorecard.paprData) {
@@ -275,7 +275,7 @@ function ScoreCard({
       setPaprBranchData(devicesArrayData);
     }
     setPageLoaded(true);
-  }, [scorecard.paprData, checkedBranchId, checkedDevicesId.length]);
+  }, [scorecard.paprData, checkedBranchId, checkedDevicesId.length, checkedDevicesId, pageLoaded]);
 
   // THE REDUCER STATE FOR THIS ENDPOINT FAILS SOMETIMES!
   useEffect(() => {
@@ -292,6 +292,8 @@ function ScoreCard({
     scorecard.scorecardCarbonEmissionData,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
@@ -308,6 +310,8 @@ function ScoreCard({
     scorecard.generatorSizeEfficiencyData,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
@@ -324,6 +328,8 @@ function ScoreCard({
     scorecard.generatorFuelEfficiencyData,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
@@ -340,6 +346,8 @@ function ScoreCard({
     scorecard.operatingTimeDeviationData,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
@@ -453,7 +461,7 @@ function ScoreCard({
               </h2>
               <div>
                 <Tooltip placement='top' style={{ textAlign: 'justify' }}
-                  overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.BASE_ENERGY}>
+                  popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.BASE_ENERGY}>
                   <p>
                     <InformationIcon className="info-icon" />
                   </p>
@@ -511,7 +519,7 @@ function ScoreCard({
               </h2>
               <div>
                 <Tooltip placement='top' style={{ textAlign: 'justify' }}
-                  overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.PEAK_RATIO}>
+                  popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.PEAK_RATIO}>
                   <p>
                     <InformationIcon className="info-icon" />
                   </p>
@@ -563,7 +571,7 @@ function ScoreCard({
               </h2>
               <div>
                 <Tooltip placement='top' style={{ textAlign: 'justify' }}
-                  overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.CARBON}>
+                  popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.CARBON}>
                   <p>
                     <InformationIcon className="info-icon" />
                   </p>
@@ -638,7 +646,7 @@ function ScoreCard({
           <div className='doughnut-card-heading'>
             <h2 className='score-card-heading'>Generator Size Efficiency</h2>
             <Tooltip placement='top' style={{ textAlign: 'justify' }}
-              overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.SIZE_EFFICIENCY}>
+              popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.SIZE_EFFICIENCY}>
               <p>
                 <InformationIcon className="info-icon" />
               </p>
@@ -659,7 +667,7 @@ function ScoreCard({
           <div className='doughnut-card-heading'>
             <h2 className='score-card-heading'>Fuel Efficiency</h2>
             <Tooltip placement='top' style={{ textAlign: 'justify' }}
-              overlayStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.FUEL_EFFICIENCYL}>
+              popupStyle={{ whiteSpace: 'pre-line' }} title={SCORE_CARD_TOOLTIP_MESSAGES.FUEL_EFFICIENCYL}>
               <p>
                 <InformationIcon className="info-icon" />
               </p>
