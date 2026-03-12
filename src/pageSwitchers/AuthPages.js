@@ -12,6 +12,7 @@ import ConfirmResetPassword from '../authPages/ConfirmResetPassword';
 import Error from '../authPages/Error';
 
 import AuthHeader from '../components/AuthHeader';
+import ForceLogin from '../mainAppPages/ForceLogin';
 
 function AuthPages() {
 
@@ -28,6 +29,7 @@ function AuthPages() {
             <Route path='/features' element={<Features to="/features" />} />
             <Route path='/log-in' element={<Login to="/log-in" />}  />
             <Route path='/sign-up' element={<SignUp to="/sign-up" /> } />
+            <Route path='/force-login' element={<ForceLogin />} />
             <Route path='/change-password' element={<ChangePassword to="/change-password" /> } />
             <Route path='/reset-password' element={<ResetPassword to="/reset-password" /> } />
             <Route path='/confirm-reset-password' element={<ConfirmResetPassword to="/confirm-reset-password" /> } />
@@ -42,4 +44,3 @@ function AuthPages() {
 }
 
 export default AuthPages;
-

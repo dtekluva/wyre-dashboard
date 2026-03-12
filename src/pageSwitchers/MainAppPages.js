@@ -19,7 +19,7 @@ import AlertsAndAlarms from '../mainAppPages/AlertsAndAlarms';
 import BranchesDevicesAndUsers from '../mainAppPages/BranchesDevicesAndUsers';
 import BranchesUserForm from '../mainAppPages/BranchesUserForm';
 
-import ScrollToTop from '../helpers/ScrollToTop';
+import ScrollToTop from "../helpers/ScrollToTop";
 
 import AppHeader from '../components/AppHeader';
 import Sidebar from '../components/Sidebar';
@@ -31,6 +31,7 @@ import DieselOverviewPage from '../mainAppPages/DieselOverviewPage';
 import AddBills from '../mainAppPages/AddBills';
 import AddDieselEntry from '../mainAppPages/AddDieselEntry';
 import AddEquipment from '../mainAppPages/AddEquipment';
+import ForceLogin from '../mainAppPages/ForceLogin';
 
 function MainAppPages() {
   const { isSidebarOpen, setIsSidebarOpen } = useContext(CompleteDataContext);
@@ -136,6 +137,7 @@ function MainAppPages() {
                   path="/branches/user-form"
                   element={<BranchesUserForm />}
                 />
+                <Route path="/force-login" element={<ForceLogin />} />
 
                 <Route path="*" element={<Error />} />
               </Routes>
