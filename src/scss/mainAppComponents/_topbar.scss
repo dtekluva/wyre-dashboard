@@ -6,6 +6,16 @@
   width: 100%;
   @extend %gutters;
 
+  @include media('<medium') {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 16px;
+    padding-top: 12px;
+  }
+
   @include media('>=medium') {
     display: flex;
     justify-content: space-between;
@@ -15,10 +25,9 @@
     padding-top: 10px;
   }
 
-  &.h-hidden-medium-down {
-    @include media('<medium') {
-      display: none;
-    }
+  // iPad Mini/Air: keep top bar content on one line
+  @include media('>=medium', '<900px') {
+    flex-wrap: nowrap;
   }
 }
 
@@ -31,6 +40,32 @@
     min-height: 44px;
     min-width: 291px;
     overflow: auto;
+  }
+
+  // iPad Mini/Air: allow left to shrink so right buttons fit on one line
+  @include media('>=medium', '<900px') {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+}
+
+.top-bar__right {
+  @include media('<medium') {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @include media('>=medium') {
+    display: flex;
+    align-items: center;
+  }
+
+  // iPad Mini/Air: keep action buttons on one line
+  @include media('>=medium', '<900px') {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
   }
 }
 
@@ -68,11 +103,19 @@
   font-weight: $bold;
   padding: 12px 13px;
   text-align: center;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
 
   @include media('<medium') {
-    display: block;
-    margin-top: 30px;
-    width: 100%;
+    margin-top: 0;
+    margin-right: 8px;
+    margin-bottom: 0;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
   }
 
   @include media('>=medium') {
@@ -83,13 +126,15 @@
     }
   }
 
-  @include media('>=medium', '<888px') {
-    display: block;
-    margin: 0 auto 7px;
-    text-align: center;
+  @include media('>=medium', '<900px') {
+    margin: 0 6px 0 0;
+    padding: 10px 10px;
+    font-size: 1.1rem;
+    white-space: nowrap;
+    flex-shrink: 0;
 
     &:last-of-type {
-      margin-bottom: 0;
+      margin-right: 0;
     }
   }
 

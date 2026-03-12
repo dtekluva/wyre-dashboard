@@ -1,4 +1,5 @@
 import axios from "axios";
+import { APIService } from "../config/api/apiConfig";
 
 const BACKEND_URL = "https://backend.wyreng.com/api/v1";
 
@@ -44,4 +45,103 @@ export const fetchReportData = async (branchId, month, year) => {
     );
     throw error;
   }
+};
+
+// Fetch report preview (HTML email)
+export const fetchReportPreview = async ({
+  reportType,
+  branchId,
+  month,
+  year,
+  startDate,
+  endDate,
+  date
+}) => {
+  if (!branchId) throw new Error("Branch ID is required");
+  if (!reportType) throw new Error("Report type is required");
+
+  let url = `${BACKEND_URL}/preview-report/?report_type=${reportType}&branch_id=${branchId}`;
+
+  // Monthly
+  if (reportType === "monthly") {
+    url += `&month=${month}&year=${year}`;
+  }
+
+  // Periodic
+  if (reportType === "periodic") {
+    url += `&start_date=${startDate}&end_date=${endDate}`;
+  }
+
+  // Daily
+  if (reportType === "daily") {
+    url += `&date=${date}`;
+  }
+
+  const response = await APIService.get(url);
+
+  // Expecting { html_email: "<html>...</html>" }
+  return response.data.html_email;
+};
+
+// Send report via email
+export const sendReport = async ({
+  reportType,
+  branchId,
+  recipient,
+  month,
+  year,
+  startDate,
+  endDate,
+  date
+}) => {
+  if (!branchId) throw new Error("Branch ID is required");
+  if (!reportType) throw new Error("Report type is required");
+
+  const payload = {
+    branch_id: branchId,
+    report_type: reportType,
+    recipient
+  };
+
+  if (reportType === "monthly") {
+    payload.month = month;
+    payload.year = year;
+  }
+
+  if (reportType === "periodic") {
+    payload.start_date = startDate;
+    payload.end_date = endDate;
+  }
+
+  if (reportType === "daily") {
+    payload.date = date;
+  }
+
+  const response = await APIService.post(
+    `${BACKEND_URL}/forward-report/`,
+    payload
+  );
+
+  console.log("SEND REPORT PAYLOAD:", payload);
+
+  return response.data;
+};
+
+
+export const previewReport = async (context) => {
+  const params = new URLSearchParams(context).toString();
+
+  return APIService.get(
+    `${BACKEND_URL}/preview-report/?${params}`
+  );
+};
+
+export const sendingReport = async (context, carbonCopy = []) => {
+  return APIService.post(
+    `${BACKEND_URL}/forward-report/`,
+    {
+      ...context,
+      carbon_copy: carbonCopy,
+    }
+  );
 };

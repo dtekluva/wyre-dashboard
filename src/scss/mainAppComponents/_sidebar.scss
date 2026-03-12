@@ -6,11 +6,72 @@
   }
 }
 
+// Mobile: sidebar as overlay/drawer - does not affect layout
+.sidebar-backdrop {
+  display: none;
+
+  @include media('<medium') {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+    cursor: pointer;
+  }
+}
+
 .sidebar {
   color: $purple;
   padding-top: 10px;
   text-align: center;
   @extend %gutters;
+
+  // Mobile: fixed overlay, slides in from left
+  @include media('<medium') {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    max-width: 85vw;
+    height: 100vh;
+    z-index: 1000;
+    background-color: $purple;
+    color: $white;
+    transition: transform 0.25s ease-out;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+
+    // Ensure all sidebar text and icons are white on mobile
+    .sidebar-org__details span,
+    .sidebar-branch__details,
+    .sidebar-device__details,
+    .sidebar-branch__checkbox,
+    .sidebar-device__checkbox,
+    .ant-checkbox-wrapper {
+      color: $white !important;
+    }
+
+    // Icons (chevron, plus/minus) – white on mobile
+    .sidebar-org__button svg,
+    .sidebar-branch__button svg,
+    .h-white-fill-medium-up,
+    .h-white-fill-medium-up path {
+      fill: $white !important;
+    }
+  }
+
+  &.sidebar--closed {
+    @include media('<medium') {
+      transform: translateX(-100%);
+      pointer-events: none;
+    }
+  }
+
+  &.sidebar--open {
+    @include media('<medium') {
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+  }
 
   @include media('>=medium') {
     align-self: flex-start;
@@ -24,10 +85,25 @@
     position: sticky;
     top: 0;
   }
+
 }
 
 .sidebar-org-container {
   width: 100%;
+
+  @include media('<medium') {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @include media('>=medium') {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .sidebar-org__details {

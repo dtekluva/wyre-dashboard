@@ -21,13 +21,16 @@ const DailyConsumption = ({ totalDailyConsumptionBranchData, uiSettings, sideDet
         </Tooltip>
       </div>
       {
-        (Object.keys(sideDetails.sideBarData).length > 0) && totalDailyConsumptionBranchData &&
-        <DashboardStackedBarChart
-          uiSettings={uiSettings}
-          className=""
-          data={totalDailyConsumptionBranchData}
-          sideBarData={sideDetails.sideBarData}
-        />
+        (Object.keys(sideDetails.sideBarData).length > 0) && totalDailyConsumptionBranchData && (
+          <div className="dashboard-bar-chart-wrapper">
+            <DashboardStackedBarChart
+              uiSettings={uiSettings}
+              className=""
+              data={totalDailyConsumptionBranchData}
+              sideBarData={sideDetails.sideBarData}
+            />
+          </div>
+        )
       }
 
     </article>

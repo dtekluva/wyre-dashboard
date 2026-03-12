@@ -51,13 +51,12 @@ function Sidebar({ fetchSideBar: fetchSideBarData }) {
   return (
     <div
       ref={sidebarRef}
-      className={isSidebarOpen ? "sidebar" : "sidebar h-hidden-medium-down"}
+      className={`sidebar ${isSidebarOpen ? "sidebar--open" : "sidebar--closed"}`}
       style={{
         display: "flex",
         flexDirection: "column",
         minHeight: "100vh",
         overflow: "hidden",
-        position: "fix",
       }}
     >
       {/* Logo */}
@@ -100,8 +99,7 @@ function Sidebar({ fetchSideBar: fetchSideBarData }) {
             size="large"
             onClick={() => setPanelOpen((v) => !v)}
             style={{
-              width: "142%",
-              right: 42,
+              width: "100%",
               height: 44,
               borderRadius: 10,
               background: "#8686864D",

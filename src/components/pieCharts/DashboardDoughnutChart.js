@@ -74,10 +74,10 @@ const DashboardDoughnutChart = ({ data, uiSettings, sideBarData }) => {
     maintainAspectRatio: false,
     layout: {
       padding: {
-        left: 20,
-        right: 40,
+        left: isLessThan481 ? 10 : 20,
+        right: isLessThan481 ? 10 : 40,
         top: 10,
-        // bottom: 10,
+        bottom: isLessThan481 ? 15 : 10,
       },
     },
 
@@ -87,7 +87,7 @@ const DashboardDoughnutChart = ({ data, uiSettings, sideBarData }) => {
         text: 'Power Usage (Hours/Month)',
         color: 'black',
         font: {
-          size: 18,
+          size: isMediumScreen ? 16 : 18,
           weight: 'normal',
         },
         padding: {
@@ -98,14 +98,16 @@ const DashboardDoughnutChart = ({ data, uiSettings, sideBarData }) => {
 
       legend: {
         display: true,
-        position: isLessThan481 ? 'top' : 'right',
+        position: isLessThan481 ? 'bottom' : 'right',
+        align: 'center',
         labels: {
-          boxWidth: 13,
-          padding: 10,
+          boxWidth: 12,
+          padding: 8,
           color: 'black',
           font: {
-            size: isMediumScreen ? 14 : 16,
+            size: isMediumScreen ? 12 : 16,
           },
+          usePointStyle: true,
         },
       },
 
