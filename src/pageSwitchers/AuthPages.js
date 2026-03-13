@@ -1,5 +1,4 @@
-import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 // import Home from '../authPages/Home';
 import About from '../authPages/About';
@@ -9,32 +8,34 @@ import Login from '../authPages/Login';
 import SignUp from '../authPages/SignUp';
 import ChangePassword from '../authPages/ChangePassword';
 import ResetPassword from '../authPages/ResetPassword';
+import ConfirmResetPassword from '../authPages/ConfirmResetPassword';
 import Error from '../authPages/Error';
 
-import ScrollToTop from '../helpers/ScrollToTop';
-
 import AuthHeader from '../components/AuthHeader';
-import Footer from '../components/Footer';
+import ForceLogin from '../mainAppPages/ForceLogin';
 
 function AuthPages() {
+
   return (
     <div>
       <AuthHeader />
 
       <main className='auth-container'>
-        <ScrollToTop>
-          <Switch>
-            <Route exact path='/' component={Login} />
-            <Route path='/about' component={About} />
-            <Route path='/contact' component={Contact} />
-            <Route path='/features' component={Features} />
-            <Route path='/log-in' component={Login} />
-            <Route path='/sign-up' component={SignUp} />
-            <Route path='/change-password' component={ChangePassword} />
-            <Route path='/reset-password' component={ResetPassword} />
-            <Route component={Error} />
-          </Switch>
-        </ScrollToTop>
+        {/* <ScrollToTop> */}
+          <Routes> 
+            <Route path="/" element={<Login to="/" replace />} />           
+            <Route path='/about' element={<About to="/about" /> } />
+            <Route path='/contact' element={<Contact to="/contact" /> } />
+            <Route path='/features' element={<Features to="/features" />} />
+            <Route path='/log-in' element={<Login to="/log-in" />}  />
+            <Route path='/sign-up' element={<SignUp to="/sign-up" /> } />
+            <Route path='/force-login' element={<ForceLogin />} />
+            <Route path='/change-password' element={<ChangePassword to="/change-password" /> } />
+            <Route path='/reset-password' element={<ResetPassword to="/reset-password" /> } />
+            <Route path='/confirm-reset-password' element={<ConfirmResetPassword to="/confirm-reset-password" /> } />
+            <Route path="*" element={<Error />} />
+          </Routes>
+        {/* </ScrollToTop> */}
       </main>
 
       {/* <Footer /> */}

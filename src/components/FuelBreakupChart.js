@@ -9,7 +9,7 @@ const FuelBreakupChart = () => {
       <h3 className="font-semibold mb-3">Generator fuel usage breakup</h3>
       <ResponsiveContainer width="100%" height={250}>
         <LineChart data={dieselData.charts.fuelBreakup}>
-          <XAxis dataKey="day" />
+          <XAxis dataKey="day" angle={-45} textAnchor="end" height={80} />
           <YAxis />
           <Tooltip />
           <Legend />

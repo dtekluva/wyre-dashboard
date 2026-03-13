@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
-import { Bar } from "react-chartjs-2";
-import { Tooltip } from "antd";
-import CompleteDataContext from "../../Context";
+import { useContext } from 'react';
+import { Bar } from 'react-chartjs-2';
+import { Tooltip } from 'antd';
+import CompleteDataContext from '../../Context';
 
 import {
   convertDecimalTimeToNormal,
   getLastArrayItems,
-} from "../../helpers/genericHelpers";
-import { numberFormatter } from "../../helpers/numberFormatter";
-import InformationIcon from "../../icons/InformationIcon";
+} from '../../helpers/genericHelpers';
+import { numberFormatter } from '../../helpers/numberFormatter';
+import InformationIcon from '../../icons/InformationIcon';
 
 const ScoreCardBarChart = ({
   operatingTimeData,
@@ -16,121 +16,25 @@ const ScoreCardBarChart = ({
   dataMessage,
   uiSettings,
 }) => {
-  const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
-
-  const options = {
-    legend: {
-      display: false,
-    },
-
-    tooltips: {
-      enabled: true,
-      mode: "index",
-      callbacks: {
-        title: function (tooltipItem, data) {
-          return data["labels"][tooltipItem[0]["index"]];
-        },
-        label: function (tooltipItem, data) {
-          return (
-            convertDecimalTimeToNormal(
-              data["datasets"][0]["data"][tooltipItem["index"]]
-            ) +
-            "(" +
-            chartWastedEnergy[tooltipItem["index"]] +
-            " kWh" +
-            ")"
-          );
-        },
-
-        // footer: function () {
-        //   const titleAndMessageArray = [
-        //     dataTitle+ ': ',
-        //     ...messageArray,
-        //   ];
-        //   return titleAndMessageArray;
-        // },
-      },
-      footerFontStyle: "normal",
-      footerMarginTop: 12,
-    },
-
-    maintainAspectRatio: false,
-    scales: {
-      yAxes: [
-        {
-          gridLines: {
-            display: false,
-          },
-          ticks: {
-            beginAtZero: true,
-            fontFamily: "Roboto",
-            fontColor: "#A3A3A3",
-            maxTicksLimit: 6,
-            fontSize: 10,
-            padding: 0,
-          },
-          scaleLabel: {
-            display: true,
-            padding: 10,
-            labelString: "Wastage(hrs)",
-            fontColor: "black",
-            fontSize: isMediumScreen ? 14 : 18,
-          },
-        },
-      ],
-      xAxes: [
-        {
-          gridLines: {
-            display: false,
-          },
-          ticks: {
-            beginAtZero: true,
-            fontFamily: "Montserrat",
-            fontColor: "#A3A3A3",
-            maxTicksLimit: 10,
-            padding: 0,
-            fontSize: 12,
-          },
-          scaleLabel: {
-            display: true,
-            labelString: "Days of the Month",
-            fontColor: "black",
-            fontSize: isMediumScreen ? 14 : 18,
-          },
-        },
-      ],
-    },
-  };
+  const { isMediumScreen, isLessThan1296 } =
+    useContext(CompleteDataContext);
 
   const {
     chart,
     estimated_time_wasted,
     estimated_energy_wasted,
-    estimated_diesel_wasted,
-    estimated_cost,
-  } = operatingTimeData
-    ? operatingTimeData
-    : {
-        chart: {},
-        estimated_time_wasted: {},
-        estimated_energy_wasted: {},
-        estimated_diesel_wasted: {},
-        estimated_cost: {},
-      };
+  } = operatingTimeData || {
+    chart: {},
+    estimated_time_wasted: { value: 0 },
+    estimated_energy_wasted: { total: 0 },
+  };
 
-  const chartValues = chart.values;
-  const chartWastedEnergy = chart.energy_wasted;
+  const chartValues = chart.values || [];
+  const chartWastedEnergy = chart.energy_wasted || [];
 
-  // const timeWasted =
-  //   estimated_time_wasted.value.toFixed(2) + ' ' + estimated_time_wasted.unit;
   const timeWasted = estimated_time_wasted.value.toFixed(2);
-
   const estimatedEnergyWasted =
-    // estimated_energy_wasted?.total?.toFixed(2) + ' ' + estimated_energy_wasted?.unit;
     estimated_energy_wasted.total.toFixed(2);
-
-  const dieselWasted =
-    estimated_diesel_wasted.value + " " + estimated_diesel_wasted.unit;
 
   const data = {
     labels: isMediumScreen
@@ -144,21 +48,94 @@ const ScoreCardBarChart = ({
         maxBarThickness: 60,
         data: chartValues,
         backgroundColor: uiSettings.appPrimaryColor,
-        borderColor: "#5C3592",
-        borderWidth: 1,
+        borderWidth: 0,
       },
     ],
+  };
+
+  const options = {
+    maintainAspectRatio: false,
+
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        enabled: true,
+        mode: 'index',
+        callbacks: {
+          title: (context) => context[0]?.label || '',
+          label: (context) =>
+            `${convertDecimalTimeToNormal(context.parsed.y)} (${chartWastedEnergy[context.dataIndex]} kWh)`,
+        },
+      },
+      datalabels: {
+        display: false,
+      },
+      outlabels: {
+        display: false,
+      },
+    },
+
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: {
+          display: false,
+        },
+        ticks: {
+          maxTicksLimit: 6,
+          font: {
+            size: 10,
+            family: 'montserrat',
+          },
+          color: '#A3A3A3',
+        },
+        title: {
+          display: true,
+          text: 'Wastage (hrs)',
+          color: 'black',
+          font: {
+            size: isMediumScreen ? 14 : 18,
+          },
+        },
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          maxTicksLimit: 10,
+          maxRotation: 45,
+          minRotation: 45,
+          font: {
+            size: 12,
+            family: 'Montserrat',
+          },
+          color: '#A3A3A3',
+        },
+        title: {
+          display: true,
+          text: 'Days of the Month',
+          color: 'black',
+          font: {
+            size: isMediumScreen ? 14 : 18,
+          },
+        },
+      },
+    },
   };
 
   return (
     <div className="score-card-bar-chart-container">
       <div className="h-flex">
-        <div style={{ display: "flex" }}>
-          <h2 className="score-card-heading">Operating Time Deviation</h2>
+        <div style={{ display: 'flex' }}>
+          <h2 className="score-card-heading">
+            Operating Time Deviation
+          </h2>
           <Tooltip
             placement="top"
-            style={{ textAlign: "justify" }}
-            overlayStyle={{ whiteSpace: "pre-line" }}
+            popupStyle={{ whiteSpace: 'pre-line' }}
             title={dataMessage}
           >
             <p>
@@ -166,21 +143,19 @@ const ScoreCardBarChart = ({
             </p>
           </Tooltip>
         </div>
+
         <div className="score-card-bar-chart__text-wrapper">
-          {/* <p>
-            Total Waste: <strong>{dieselWasted}</strong>
+          <p>
+            Total Time:{' '}
+            <strong>
+              {convertDecimalTimeToNormal(timeWasted)}
+            </strong>
           </p>
           <p>
-            Total Cost:{' '}
-            <strong>{`₦ ${numberFormatter(estimated_cost.value)}`}</strong>
-          </p> */}
-          <p>
-            Total Time:{" "}
-            <strong>{convertDecimalTimeToNormal(timeWasted)}</strong>
-          </p>
-          <p>
-            Total Energy Wasted:{" "}
-            <strong>{numberFormatter(estimatedEnergyWasted)} kWh</strong>
+            Total Energy Wasted:{' '}
+            <strong>
+              {numberFormatter(estimatedEnergyWasted)} kWh
+            </strong>
           </p>
         </div>
       </div>

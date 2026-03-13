@@ -50,7 +50,7 @@ const CostTrackerConsumptionGroupedBarChart = ({ consumptionData }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           display: true,
           gridLines: {
@@ -75,8 +75,7 @@ const CostTrackerConsumptionGroupedBarChart = ({ consumptionData }) => {
             fontColor: "black",
           },
         },
-      ],
-      xAxes: [
+      xAxes:
         {
           ticks: {
             fontFamily: "Roboto",
@@ -84,6 +83,8 @@ const CostTrackerConsumptionGroupedBarChart = ({ consumptionData }) => {
             fontColor: "#A3A3A3",
             padding: 10,
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
           },
           gridLines: {
             drawTicks: false,
@@ -98,7 +99,6 @@ const CostTrackerConsumptionGroupedBarChart = ({ consumptionData }) => {
             fontColor: "black",
           },
         },
-      ],
     },
   };
 

@@ -50,10 +50,6 @@ function TopBar() {
 
   const isTopBarCostTrackerRightDisplayed = currentUrl.includes('cost-tracker') || currentUrl.includes('dashboard');
 
-
-  const isTopBarUserBranchesRightDisplayed =
-    currentUrl.includes('branches') && !currentUrl.includes('user-form');
-
   const handleIntervalChange = (interval) => {
     setParametersDataTimeInterval(interval);
     dataHttpServices.setEndpointDataTimeInterval(interval);
@@ -159,20 +155,6 @@ function TopBar() {
         </div>
          : null
         }
-      <div
-        className={
-          isTopBarUserBranchesRightDisplayed
-            ? 'top-bar__right'
-            : 'top-bar__right h-hide'
-        }
-      >
-        <Link
-          className='top-bar-right__button h-extra-padding'
-          to='/client-profile'
-        >
-          Edit Client
-        </Link>
-      </div>
     </div>
   );
 }

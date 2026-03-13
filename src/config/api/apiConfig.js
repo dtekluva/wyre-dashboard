@@ -16,6 +16,12 @@ export const instanceNoAuth = axios.create({
   timeout: 200000,
 });
 
+export const baseInstance = axios.create({
+  baseURL: EnvData.REACT_APP_API_BASE_URL,
+  headers: { 'Content-Type': 'application/json' },
+  timeout: 200000,
+});
+
 const useConfig = async (config) => {
   // if access token has expire call refresh token
   if (tokenIsExpired()) {
@@ -85,4 +91,10 @@ export const APIServiceNoAuth = {
   put(endpoint, data) {
     return instanceNoAuth.put(endpoint, data);
   },
+};
+
+export const BaseAPIService = {
+  post(endpoint, data, config = {}) {
+    return baseInstance.post(endpoint, data, config);
+  }
 };

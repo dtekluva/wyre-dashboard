@@ -20,9 +20,7 @@ import {
   fetchDieselMonthlyUsageSuccess
 } from "./actionCreators";
 import { APIService } from "../../../config/api/apiConfig";
-import jwtDecode from "jwt-decode";
-import { message } from "antd";
-
+import { jwtDecode } from 'jwt-decode';
 
 export const fetchCostTrackerData = () => async (dispatch) => {
   dispatch(fetchCostTrackerLoading());

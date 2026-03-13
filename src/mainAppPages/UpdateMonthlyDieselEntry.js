@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { notification, Form, Spin, DatePicker, Select } from 'antd';
+import { useState, useEffect, useContext } from 'react';
+import { notification, Form, Spin, DatePicker } from 'antd';
 import { connect } from 'react-redux';
 import CompleteDataContext from '../Context';
 import moment from 'moment'
 
 import { updateFuelConsumptionData } from '../redux/actions/constTracker/costTracker.action';
-import { DateField, NumberField, SelectField } from '../components/FormFields/GeneralFormFields';
-import { Option } from 'antd/lib/mentions';
+import { NumberField } from '../components/FormFields/GeneralFormFields';
 
 const openNotificationWithIcon = (type, formName) => {
   notification[type]({
@@ -34,7 +33,7 @@ function UpdateMonthlyDieselEntry({ match, setModal, reloadTableLists, dieselEnt
   const [dailyForm] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { setCurrentUrl, organization, userId, branchId } = useContext(
+  const { setCurrentUrl, userId, branchId } = useContext(
     CompleteDataContext
     );
 
@@ -62,7 +61,7 @@ function UpdateMonthlyDieselEntry({ match, setModal, reloadTableLists, dieselEnt
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
-  }, [match, userId]);
+  }, [match, userId, setCurrentUrl]);
 
   useEffect(() => {
     if (dieselEntryData) {
@@ -75,7 +74,7 @@ function UpdateMonthlyDieselEntry({ match, setModal, reloadTableLists, dieselEnt
         fuel_consumption_id: dieselEntryData.fuel_consumption_id
       })
     }
-  }, [dieselEntryData])
+  }, [dieselEntryData, dailyForm])
 
 
   let defaultBranch;

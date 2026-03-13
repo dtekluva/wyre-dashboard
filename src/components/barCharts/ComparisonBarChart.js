@@ -1,23 +1,10 @@
-import React, { useContext } from "react";
-import { Bar } from "react-chartjs-2";
-import CompleteDataContext from "../../Context";
+import { useContext } from 'react';
+import { Bar } from 'react-chartjs-2';
+import CompleteDataContext from '../../Context';
 
 const ComparisonBarChart = ({ comparisonData }) => {
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
   const { diesel_estimate, diesel_purchase } = comparisonData;
-
-  const colorsArray = [
-    "#FF3DA1",
-    "#00C7E6",
-    "#5C3592",
-    "#82ca9d",
-    "#ff9b3d",
-    "#360259",
-    "#0371b5",
-    "#D90000",
-    "#757575",
-    "#FFE11A",
-  ];
 
   const options = {
     layout: {
@@ -37,9 +24,8 @@ const ComparisonBarChart = ({ comparisonData }) => {
         padding: isLessThan1296 ? 10 : 25,
       },
     },
-    // maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes:
         {
           display: true,
           gridLines: {
@@ -64,8 +50,7 @@ const ComparisonBarChart = ({ comparisonData }) => {
             fontColor: "black",
           },
         },
-      ],
-      xAxes: [
+      xAxes:
         {
           ticks: {
             fontFamily: "Roboto",
@@ -73,6 +58,8 @@ const ComparisonBarChart = ({ comparisonData }) => {
             fontColor: "#A3A3A3",
             padding: 10,
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
           },
           gridLines: {
             drawTicks: false,
@@ -87,7 +74,6 @@ const ComparisonBarChart = ({ comparisonData }) => {
             fontColor: "black",
           },
         },
-      ],
     },
   };
 

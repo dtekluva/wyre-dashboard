@@ -1,6 +1,6 @@
 // import { Rate } from 'antd';
 
-import { daysInMonth, roundToDecimalPLace } from '../../helpers/genericHelpers';
+import { daysInMonth } from '../../helpers/genericHelpers';
 import { numberFormatter } from '../../helpers/numberFormatter';
 
 const colorSelector = {

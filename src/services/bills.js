@@ -15,17 +15,6 @@ const addCostForDiesel = async (DataObject, token, userId, fuelType) =>{
     const res = await postRequest
     return res.data
 }
-const editCostForDiesel = async (DataObject, token, userId, fuelType) =>{
-    const postRequest = axios.post(`${costTrackerUrl}/${userId}/add_cost/${fuelType}/`, DataObject, {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `bearer ${token}`,
-          }
-    })
-    const res = await postRequest
-    return res.data
-}
-
 const addCostPrePaid = async (data, token, userId) =>{
     const postRequest = axios.post(`${costTrackerUrl}/${userId}/add_cost/pre-paid/`, data, {
         headers: {

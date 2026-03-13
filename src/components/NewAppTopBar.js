@@ -1,43 +1,35 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Tag, DatePicker, TimePicker, Form, Modal, Space } from "antd";
-import CompleteDataContext from "../Context";
-import moment from "moment";
-import dataHttpServices from "../services/devices";
+import { useContext, useEffect, useState } from 'react';
+import { Tag, DatePicker, TimePicker, Form, Modal, Space } from 'antd';
+import CompleteDataContext from '../Context';
+import dayjs from 'dayjs';
+import quarterOfYear from 'dayjs/plugin/quarterOfYear';
+import moment from 'moment';
+import dataHttpServices from '../services/devices';
+
+dayjs.extend(quarterOfYear);
 
 const { CheckableTag } = Tag;
 const { RangePicker } = DatePicker;
 
-// default pickers
+// default pickers (dayjs – antd v6 uses dayjs)
 const picker = {
-  Today: [moment().startOf("day"), moment()],
-  Yesterday: [
-    moment().subtract(1, "days").startOf("day"),
-    moment().subtract(1, "days").endOf("day"),
-  ],
-  "Past Week": [moment("00:00:00", "HH:mm:ss").subtract(7, "days"), moment()],
-  "Past Month": [
-    moment("00:00:00", "HH:mm:ss").subtract(1, "months"),
-    moment(),
-  ],
-  "Past Quarter": [
-    moment().quarter(moment().quarter()).startOf("quarter").startOf("day"),
-    moment(),
-  ],
-  "Past Half Year": [
-    moment("00:00:00", "HH:mm:ss").subtract(6, "months"),
-    moment(),
-  ],
-  "Past Year": [moment("00:00:00", "HH:mm:ss").subtract(1, "years"), moment()],
+  Today: [dayjs().startOf('day'), dayjs()],
+  Yesterday: [dayjs().subtract(1, 'day').startOf('day'), dayjs().subtract(1, 'day').endOf('day')],
+  'Past Week': [dayjs().subtract(7, 'day').startOf('day'), dayjs()],
+  'Past Month': [dayjs().subtract(1, 'month').startOf('day'), dayjs()],
+  'Past Quarter': [dayjs().startOf('quarter').startOf('day'), dayjs()],
+  'Past Half Year': [dayjs().subtract(6, 'month').startOf('day'), dayjs()],
+  'Past Year': [dayjs().subtract(1, 'year').startOf('day'), dayjs()],
 };
 
 function NewAppTopBar() {
-  const { setUserDateRange, setSelectedDateRange, currentUrl } =
-    useContext(CompleteDataContext);
+  const {
+    setUserDateRange,
+    setSelectedDateRange,
+  } = useContext(CompleteDataContext);
 
-  const [selectedDate, setSelectedDate] = useState([
-    moment().startOf("month").startOf("day"),
-    moment(),
-  ]);
+
+  const [selectedDate, setSelectedDate] = useState([dayjs().startOf('month').startOf('day'), dayjs()]);
   const [showMonths, setShowMonths] = useState(false);
   const [showDays, setShowDays] = useState(false);
   const [showQuarters, setShowQuarters] = useState(false);
@@ -48,127 +40,115 @@ function NewAppTopBar() {
   const [openModal, setOpenModal] = useState(false);
   const [form] = Form.useForm();
 
-  const isTopBarCostTrackerRightDisplayed = currentUrl.includes("cost-tracker");
-
   useEffect(() => {
     form.setFieldsValue({
       from: selectedDate[0],
       to: selectedDate[1],
       timeFrom: selectedDate[0],
       timeTo: selectedDate[1],
-    });
-  }, [selectedDate]);
+    })
+
+  }, [selectedDate, form]);
 
   const setDateValueOnSelect = (startDate, endDate) => {
     let newStartDate = startDate;
     let newEndDate = endDate;
-    if (moment(startDate).isAfter(moment(endDate))) {
-      newStartDate = moment(endDate).startOf("day");
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      newStartDate = dayjs(endDate).startOf('day');
     }
     return [newStartDate, newEndDate];
   };
 
   // day select handler
   const onDaySelect = (day) => {
-    setSelectedDate(
-      setDateValueOnSelect(
-        moment(selectedDate[0]).set("date", day).startOf("day"),
-        moment(selectedDate[1]).set("date", day).endOf("day")
-      )
-    );
+    setSelectedDate(setDateValueOnSelect(
+      selectedDate[0].date(day).startOf('day'),
+      selectedDate[1].date(day).endOf('day')
+    ));
   };
 
-  // month select handler
-  const onMonthSelect = (month) => {
-    if (componentText === "Select Month") {
+  // month select handler (month is short name 'Jan','Feb',... from PickMonth; dayjs month is 0-indexed)
+  const onMonthSelect = (monthName) => {
+    const monthIndex = Array.from({ length: 12 }, (_, i) => dayjs().month(i).format('MMM')).indexOf(monthName);
+    if (monthIndex === -1) return;
+    if (componentText === 'Select Month') {
       return setSelectedDate([
-        moment(selectedDate[0])
-          .set("month", month)
-          .startOf("month")
-          .startOf("day"),
-        moment(selectedDate[1]).set("month", month).endOf("month").endOf("day"),
+        selectedDate[0].month(monthIndex).startOf('month').startOf('day'),
+        selectedDate[1].month(monthIndex).endOf('month').endOf('day'),
       ]);
     }
-    return setSelectedDate([
-      moment(selectedDate[0]).set("month", month).startOf("day"),
-      moment(selectedDate[1]).set("month", month).endOf("day"),
+    setSelectedDate([
+      selectedDate[0].month(monthIndex).startOf('day'),
+      selectedDate[1].month(monthIndex).endOf('day'),
     ]);
   };
+
   // year select handler
   const onYearSelect = (year) => {
-    if (componentText === "Select Year") {
+    if (componentText === 'Select Year') {
       setSelectedDate([
-        moment(selectedDate[0])
-          .set("year", year)
-          .startOf("year")
-          .startOf("day"),
-        moment(selectedDate[1]).set("year", year).endOf("year").endOf("day"),
+        selectedDate[0].year(year).startOf('year').startOf('day'),
+        selectedDate[1].year(year).endOf('year').endOf('day'),
       ]);
+      return;
     }
-    return setSelectedDate([
-      moment(selectedDate[0]).set("year", year).startOf("day"),
-      moment(selectedDate[1]).set("year", year).endOf("day"),
+    setSelectedDate([
+      selectedDate[0].year(year).startOf('day'),
+      selectedDate[1].year(year).endOf('day'),
     ]);
   };
+
   // Quarter select handler
   const onQuarterSelect = (quarter) => {
-    if (componentText === "Select Quarter") {
+    if (componentText === 'Select Quarter') {
       return setSelectedDate([
-        moment(selectedDate[0])
-          .quarter(quarter)
-          .startOf("quarter")
-          .startOf("day"),
-        moment(selectedDate[0]).quarter(quarter).endOf("quarter").endOf("day"),
-      ]);
-    }
-  };
-  const onWeekSelect = (week) => {
-    if (componentText === "Select Week") {
-      return setSelectedDate([
-        moment()
-          .subtract(week * 7 - 1, "days")
-          .startOf("day"),
-        moment().endOf("day"),
-      ]);
-    }
-  };
-  //half year select handler
-  const onHalfYearSelect = (half) => {
-    const quarterValue = half > 1 ? 3 : 1;
-    if (componentText === "Select Half Year") {
-      return setSelectedDate([
-        moment(selectedDate[0])
-          .quarter(quarterValue)
-          .startOf("quarter")
-          .startOf("day"),
-        moment(selectedDate[0])
-          .quarter(quarterValue + 1)
-          .endOf("quarter")
-          .endOf("day"),
+        selectedDate[0].quarter(quarter).startOf('quarter').startOf('day'),
+        selectedDate[0].quarter(quarter).endOf('quarter').endOf('day'),
       ]);
     }
   };
 
-  // on date search submit(to make the api call)
+  const onWeekSelect = (week) => {
+    if (componentText === 'Select Week') {
+      return setSelectedDate([
+        dayjs().subtract((week * 7) - 1, 'day').startOf('day'),
+        dayjs().endOf('day'),
+      ]);
+    }
+  };
+
+  // half year select handler
+  const onHalfYearSelect = (half) => {
+    const quarterValue = half > 1 ? 3 : 1;
+    if (componentText === 'Select Half Year') {
+      return setSelectedDate([
+        selectedDate[0].quarter(quarterValue).startOf('quarter').startOf('day'),
+        selectedDate[0].quarter(quarterValue + 1).endOf('quarter').endOf('day'),
+      ]);
+    }
+  };
+
+
+  // on date search submit (convert dayjs to moment for API/context)
   const onApplyClick = () => {
-    dataHttpServices.setEndpointDateRange(selectedDate);
-    setUserDateRange(selectedDate);
+    const start = moment(selectedDate[0].toISOString());
+    const end = moment(selectedDate[1].toISOString());
+    dataHttpServices.setEndpointDateRange([start, end]);
+    setUserDateRange([start, end]);
     setSelectedDateRange([
-      moment(selectedDate[0]).format("DD-MM-YYYY HH:mm"),
-      moment(selectedDate[1]).format("DD-MM-YYYY HH:mm"),
+      selectedDate[0].format('DD-MM-YYYY HH:mm'),
+      selectedDate[1].format('DD-MM-YYYY HH:mm'),
     ]);
     setOpenModal(false);
   };
 
   // on open day select handler for when open day is selected
   const openDaySelectButtonClick = (checked) => {
-    setComponentText("Select Day");
+    setComponentText('Select Day');
 
     if (checked) {
-      // set the date to what to begining of day an dnow
-      setSelectedDate([moment().startOf("day"), moment()]);
+      setSelectedDate([dayjs().startOf('day'), dayjs()]);
     }
-    // setSearchCheckedDate(checked, setSelectedDate, moment().startOf('day'));
     setShowYears(checked);
     setShowMonths(checked);
     setShowDays(checked);
@@ -181,8 +161,7 @@ function NewAppTopBar() {
   const openMonthSelectButtonClick = (checked) => {
     setComponentText("Select Month");
     if (checked) {
-      // set the date to what to begining of day an dnow
-      setSelectedDate([moment().startOf("month").startOf("day"), moment()]);
+      setSelectedDate([dayjs().startOf('month').startOf('day'), dayjs()]);
     }
     setShowYears(checked);
     setShowMonths(checked);
@@ -196,8 +175,7 @@ function NewAppTopBar() {
   const onOpenQuarterSelectButton = (checked) => {
     setComponentText("Select Quarter");
     if (checked) {
-      // set the date to what to begining of day an dnow
-      setSelectedDate([moment().startOf("quarter").startOf("day"), moment()]);
+      setSelectedDate([dayjs().startOf('quarter').startOf('day'), dayjs()]);
     }
     setShowYears(checked);
     setShowQuarters(checked);
@@ -211,8 +189,7 @@ function NewAppTopBar() {
   const onOpenPastYearSelectButton = (checked) => {
     setComponentText("Select Year");
     if (checked) {
-      // set the date to what to begining of day an dnow
-      setSelectedDate([moment().startOf("year").startOf("day"), moment()]);
+      setSelectedDate([dayjs().startOf('year').startOf('day'), dayjs()]);
     }
     setShowYears(checked);
     setShowMonths(false);
@@ -226,17 +203,10 @@ function NewAppTopBar() {
   const onOpenHalfYearSelectButton = (checked) => {
     setComponentText("Select Half Year");
     if (checked) {
-      const quarterValue = moment().quarter() > 2 ? 3 : 1;
-      // set the date to what to begining of day an dnow
+      const quarterValue = dayjs().quarter() > 2 ? 3 : 1;
       setSelectedDate([
-        moment(selectedDate[0])
-          .quarter(quarterValue)
-          .startOf("quarter")
-          .startOf("day"),
-        moment(selectedDate[0])
-          .quarter(quarterValue + 1)
-          .endOf("quarter")
-          .endOf("day"),
+        selectedDate[0].quarter(quarterValue).startOf('quarter').startOf('day'),
+        selectedDate[0].quarter(quarterValue + 1).endOf('quarter').endOf('day'),
       ]);
     }
     setShowHalfYears(checked);
@@ -249,80 +219,49 @@ function NewAppTopBar() {
 
   // check half year date
   const checkedHalfYear = (value) => {
-    if (moment(selectedDate[0]).quarter() > 2 && value === 2) {
-      return true;
-    }
-    if (moment(selectedDate[0]).quarter() < 3 && value === 1) {
-      return true;
-    }
+    if (selectedDate[0].quarter() > 2 && value === 2) return true;
+    if (selectedDate[0].quarter() < 3 && value === 1) return true;
+    return false;
   };
 
-  // handle when user select a calendar
+  // handle when user select a calendar (antd passes dayjs)
   const onFirstCalendarClick = (date) => {
     setComponentText(false);
-    if (moment(date).isBefore(moment())) {
-      return setSelectedDate(
-        setDateValueOnSelect(moment(date).startOf("day"), selectedDate[1])
-      );
+    const d = dayjs(date);
+    if (d.isBefore(dayjs(), 'day')) {
+      return setSelectedDate(setDateValueOnSelect(d.startOf('day'), selectedDate[1]));
     }
-
-    const currentTime = moment().startOf("day");
-
-    setSelectedDate(
-      setDateValueOnSelect(
-        moment(date).set({
-          hour: currentTime.get("hour"),
-          minute: currentTime.get("minute"),
-          second: currentTime.get("second"),
-        }),
-        selectedDate[1]
-      )
-    );
+    setSelectedDate(setDateValueOnSelect(
+      d.set('hour', dayjs().hour()).set('minute', dayjs().minute()).set('second', dayjs().second()),
+      selectedDate[1]
+    ));
   };
 
   // handle when user select the second calendar
   const onSecondCalendarClick = (date) => {
     setComponentText(false);
-    if (moment(date).isBefore(moment())) {
-      return setSelectedDate(
-        setDateValueOnSelect(selectedDate[0], moment(date).endOf("day"))
-      );
+    const d = dayjs(date);
+    if (d.isBefore(dayjs(), 'day')) {
+      return setSelectedDate(setDateValueOnSelect(selectedDate[0], d.endOf('day')));
     }
-    const currentTime = moment();
-    return setSelectedDate(
-      setDateValueOnSelect(
-        selectedDate[0],
-        moment(date).set({
-          hour: currentTime.get("hour"),
-          minute: currentTime.get("minute"),
-          second: currentTime.get("second"),
-        })
-      )
-    );
+    setSelectedDate(setDateValueOnSelect(selectedDate[0], d.set('hour', dayjs().hour()).set('minute', dayjs().minute()).set('second', dayjs().second())));
   };
 
-  // handle when user select the first time
+  // handle when user select the first time (antd passes dayjs)
   const onFirstTimeClick = (time) => {
     setComponentText(false);
     setSelectedDate([
-      moment(selectedDate[0]).set({
-        hour: time.get("hour"),
-        minute: "20",
-      }),
+      selectedDate[0].set('hour', time.hour()).set('minute', time.minute()),
       selectedDate[1],
     ]);
   };
 
-  // handle when user select the first second
+  // handle when user select the second time
   const onSecondTimeClick = (time) => {
     setComponentText(false);
     setSelectedDate([
       selectedDate[0],
-      moment(selectedDate[1]).set({
-        hour: time.get("hour"),
-        minute: "20",
-        second: time.get("second"),
-      }),
+      selectedDate[1].set('hour', time.hour()).set('minute', time.minute()).set('second', time.second()),
     ]);
   };
 
@@ -424,19 +363,19 @@ function NewAppTopBar() {
     </p>
   );
 
-  // handles date range
+  // handles date range (current is dayjs from antd)
   const dateRender = (current) => {
     const style = {};
-    style.color = "rgba(0, 0, 0, 0.65)";
-    style.backgroundColor = "inherit";
-
-    if (
-      current.isSameOrAfter(selectedDate[0]) &&
-      current.isSameOrBefore(selectedDate[1])
-    ) {
-      style.border = "1px solid #1890ff";
-      style.backgroundColor = "#5C3592";
-      style.color = "white";
+    style.color = 'rgba(0, 0, 0, 0.65)';
+    style.backgroundColor = 'inherit';
+    const start = selectedDate[0].startOf('day');
+    const end = selectedDate[1].endOf('day');
+    const inRange = (current.isAfter(start) || current.isSame(selectedDate[0], 'day'))
+      && (current.isBefore(end) || current.isSame(selectedDate[1], 'day'));
+    if (inRange) {
+      style.border = '1px solid #1890ff';
+      style.backgroundColor = '#5C3592';
+      style.color = 'white';
     }
     return (
       <div className="ant-picker-cell-inner" style={style}>
@@ -445,8 +384,8 @@ function NewAppTopBar() {
     );
   };
 
-  // the date that are disabled
-  const disabledDate = (current) => current.isAfter(moment()) || null;
+  // the date that are disabled (antd passes dayjs)
+  const disabledDate = (current) => current.isAfter(dayjs(), 'day') || null;
 
   const getPopupContainer = (trigger) => trigger.parentNode;
 
@@ -466,7 +405,6 @@ function NewAppTopBar() {
             isChecked={showDays}
             clickCallBack={openDaySelectButtonClick}
           />
-          {/* <DefaultSelectTag text='Select Week' isChecked={showWeeks} clickCallBack={onOpenWeekSelectButton} /> */}
           <DefaultSelectTag
             text="Select Month"
             isChecked={showMonths}
@@ -497,84 +435,41 @@ function NewAppTopBar() {
           <SelectTag text="Past Half Year" />
           <SelectTag text="Past Year" />
         </div>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          {showYears &&
-            Array.from({ length: 5 }, (v, k) => moment().year() - 4 + k).map(
-              (year) => {
-                return (
-                  <PickYear
-                    isChecked={
-                      year === moment(selectedDate[0]).year() && componentText
-                    }
-                    year={year}
-                  />
-                );
-              }
-            )}
+        <div style={{ display: 'flex', flexDirection: 'row' }} >
+          {showYears && Array.from({ length: 5 }, (v, k) => dayjs().year() - 4 + k).map((year) => (
+            <PickYear key={year} isChecked={year === selectedDate[0].year() && componentText} year={year} />
+          ))}
         </div>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          {showMonths &&
-            moment.monthsShort().map((month) => {
-              return (
-                <PickMonth
-                  isChecked={
-                    month === moment(selectedDate[0]).format("MMM") &&
-                    componentText
-                  }
-                  month={month}
-                />
-              );
-            })}
+        <div style={{ display: 'flex', flexDirection: 'row' }} >
+          {showMonths && Array.from({ length: 12 }, (_, i) => dayjs().month(i).format('MMM')).map((month) => (
+            <PickMonth key={month} isChecked={month === selectedDate[0].format('MMM') && componentText} month={month} />
+          ))}
         </div>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          {showQuarters &&
-            Array.from({ length: 4 }, (v, k) => k + 1).map((quarter) => {
-              return (
-                <PickQuarterTag
-                  isChecked={
-                    quarter === moment(selectedDate[0]).quarter() &&
-                    componentText
-                  }
-                  text={`Q${quarter}`}
-                  quarter={quarter}
-                />
-              );
-            })}
+        <div style={{ display: 'flex', flexDirection: 'row' }} >
+          {showQuarters && Array.from({ length: 4 }, (v, k) => k + 1).map((quarter) => (
+            <PickQuarterTag
+              key={quarter}
+              isChecked={quarter === selectedDate[0].quarter() && componentText}
+              text={`Q${quarter}`} quarter={quarter} />
+          ))}
         </div>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          {showWeeks &&
-            Array.from({ length: 4 }, (v, k) => k + 1).map((week) => {
-              return <PickWeekTag text={`Past ${week} week`} week={week} />;
-            })}
+        <div style={{ display: 'flex', flexDirection: 'row' }} >
+          {showWeeks && Array.from({ length: 4 }, (v, k) => k + 1).map((week) => (
+            <PickWeekTag key={week} text={`Past ${week} week`} week={week} />
+          ))}
         </div>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          {showHalfYears &&
-            Array.from({ length: 2 }, (v, k) => k + 1).map((half) => {
-              return (
-                <PickHalfYearTag
-                  isChecked={checkedHalfYear(half) && componentText}
-                  text={`${half} Half`}
-                  half={half}
-                />
-              );
-            })}
+        <div style={{ display: 'flex', flexDirection: 'row' }} >
+          {showHalfYears && Array.from({ length: 2 }, (v, k) => k + 1).map((half) => (
+            <PickHalfYearTag key={half} isChecked={checkedHalfYear(half) && componentText} text={`${half} Half`} half={half} />
+          ))}
         </div>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          {showDays &&
-            Array.from({ length: moment().daysInMonth() }, (v, k) => k + 1).map(
-              (day) => {
-                return (
-                  <PickDay
-                    isChecked={
-                      day === moment(selectedDate[0]).date() && componentText
-                    }
-                    day={day}
-                  />
-                );
-              }
-            )}
+        <div style={{ display: 'flex', flexDirection: 'row' }} >
+          {showDays && Array.from({ length: dayjs().daysInMonth() }, (v, k) => k + 1).map((day) => (
+            <PickDay key={day} isChecked={day === selectedDate[0].date() && componentText} day={day} />
+          ))}
         </div>
         <Form
+          form={form}
           layout="vertical"
           hideRequiredMark
           initialValues={{
@@ -665,39 +560,36 @@ function NewAppTopBar() {
   );
 
   return (
-    <div>
-      {/* <div> */}
-      {/* <Popover placement="rightBottom" trigger="click" content={content} width={'800px'} style={{ width: '100%' }} >
-        <Button>RB</Button>
-      </Popover> */}
-      <Space
-        className="date-range-picker-containers"
-        direction="horizontal"
-        size={12}
-        onClick={() => setOpenModal(!openModal)}
-      >
-        <RangePicker
-          className="date-range-picker"
-          value={selectedDate}
+    <>
+      <div>
+        <Space
+          className="date-range-picker-containers"
+          direction="horizontal"
+          size={12}
           onClick={() => setOpenModal(!openModal)}
-          format="DD-MM-YYYY HH:mm"
-          open={false}
-          inputReadOnly={true}
-        />
-      </Space>
-      {openModal && (
-        <Modal
-          onOk={onApplyClick}
-          okText="Apply"
-          onCancel={() => setOpenModal(!openModal)}
-          closable={false}
-          width={745}
-          visible={openModal}
         >
-          <Content />
-        </Modal>
-      )}
-    </div>
+          <RangePicker
+            className="date-range-picker"
+            value={selectedDate}
+            onClick={() => setOpenModal(!openModal)}
+            format="DD-MM-YYYY HH:mm"
+            open={false}
+            inputReadOnly={true}
+          />
+        </Space>
+      </div>
+
+      <Modal
+        open={openModal}
+        onOk={onApplyClick}
+        okText="Apply"
+        onCancel={() => setOpenModal(false)}
+        closable={false}
+        width={745}
+      >
+        <Content />
+      </Modal>
+    </>
   );
 }
 

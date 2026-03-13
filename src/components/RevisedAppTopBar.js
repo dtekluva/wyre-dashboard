@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Select } from 'antd';
 import { useSelector } from 'react-redux';
 
@@ -15,14 +15,15 @@ import SwitchablePicker from './headers/SwitchablePicker';
 const { Option } = Select;
 
 function RevisedAppTopBar() {
+  const location = useLocation();
+  const pathname = location.pathname || '';
+
   const {
-    isSidebarOpen,
-    currentUrl,
     setPowerQualityUnit,
     setParametersDataTimeInterval,
     userData
   } = useContext(CompleteDataContext);
-  
+
   const sideBarData = useSelector((state) => state.sideBar.sideBarData);
   const pagesWithDateTimePickers = [
     'dashboard',
@@ -45,25 +46,21 @@ function RevisedAppTopBar() {
   ];
 
   const isDateTimePickerDisplayed = pagesWithDateTimePickers.some((page) =>
-    currentUrl.includes(page)
+    pathname.includes(page)
   );
 
   const isTimeIntervalSelectorDisplayed = pagesWithTimeIntervalSelector.some(
-    (page) => currentUrl.includes(page)
+    (page) => pathname.includes(page)
   );
 
   const isPageWithSwitchableSelector = pageWithSwitchablePicker.some(
-    (page) => currentUrl.includes(page)
+    (page) => pathname.includes(page)
   );
 
-  const isDateTimePickerDisabled = currentUrl.includes('last-reading');
+  const isPlottedUnitSelectorDisplayed = pathname.includes('power-quality');
 
-  const isPlottedUnitSelectorDisplayed = currentUrl.includes('power-quality');
-
-  const isTopBarCostTrackerRightDisplayed = currentUrl.includes('cost-tracker') || currentUrl.includes('dashboard') ;
-
-  const isTopBarUserBranchesRightDisplayed =
-    currentUrl.includes('branches') && !currentUrl.includes('user-form');
+  const isTopBarCostTrackerRightDisplayed = pathname.includes('cost-tracker') || pathname.includes('dashboard');
+  const isDieselOverviewPage = pathname.includes('diesel-overview');
 
   const handleIntervalChange = (interval) => {
     setParametersDataTimeInterval(interval);
@@ -74,9 +71,13 @@ function RevisedAppTopBar() {
     setPowerQualityUnit(unit);
   };
 
+  const handleDieselDownload = () => {
+    window.dispatchEvent(new CustomEvent('diesel-download-pdf'));
+  };
+
   return userData.is_solar_customer ? null
   : (
-  <div className={isSidebarOpen ? 'top-bar' : 'top-bar h-hidden-medium-down'}>
+  <div className="top-bar">
     <div className="top-bar__left">
 
       {/* Date/Time Picker */}
@@ -143,12 +144,12 @@ function RevisedAppTopBar() {
 
     {/* Cost Tracker Buttons */}
     {sideBarData.branches?.length === 1 && (
-      <div
-        className={
-          isTopBarCostTrackerRightDisplayed
-            ? 'top-bar__right'
-            : 'top-bar__right h-hide'
-        }
+  <div
+    className={
+      isTopBarCostTrackerRightDisplayed
+        ? 'top-bar__right h-hide'
+        : 'top-bar__right'
+    }
       >
         <Link className="top-bar-right__button" to="/cost-tracker/add-bills">
           Add Bills
@@ -165,18 +166,19 @@ function RevisedAppTopBar() {
       </div>
     )}
 
-    {/* Edit Client Button */}
-    <div
-      className={
-        isTopBarUserBranchesRightDisplayed
-          ? 'top-bar__right'
-          : 'top-bar__right h-hide'
-      }
-    >
-      <Link className="top-bar-right__button h-extra-padding" to="/client-profile">
-        Edit Client
-      </Link>
-    </div>
+    {/* Download Report - Diesel Overview */}
+    {isDieselOverviewPage && (
+      <div className="top-bar__right top-bar__download">
+        <button
+          type="button"
+          className="top-bar-right__button"
+          onClick={handleDieselDownload}
+        >
+          Download Report
+        </button>
+      </div>
+    )}
+
   </div>
 );
 

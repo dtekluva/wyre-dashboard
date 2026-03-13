@@ -1,25 +1,12 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import dayjs from 'dayjs';
 import moment from 'moment';
 import CompleteDataContext from '../Context';
 
-// import { useLocation } from 'react-router-dom';
-
-import dataHttpServices from '../services/devices';
 
 const DateRange = () => {
   const { selectedDateRange, userDateRange, organization } = useContext(CompleteDataContext)
   const scoreCardDate = organization.score_cards_date;
-
-  const defaultDateRange = dataHttpServices.endpointDateRange;
-  const defaultStartDate = defaultDateRange.split(' ');
-  // const reversedDate = defaultStartDate[1].split('').reverse().join('');
-  // const defaultEndDate = reversedDate.toString().split('', 10).reverse().join('');
-
-  const startDate = dayjs(defaultStartDate[0]).format('MMMM');
-  let endArr = defaultStartDate[1].split("/");
-  const endDateArray = endArr[1];  
-  const endDate = dayjs(endDateArray.split("-").reverse()).format('MMMM');
 
   const dateRangeStyles = {
     color: '#646464',

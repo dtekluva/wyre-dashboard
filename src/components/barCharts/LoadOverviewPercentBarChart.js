@@ -1,17 +1,13 @@
-import { Button } from "antd";
-import React, { useContext } from "react";
-import { Bar } from "react-chartjs-2";
-import CompleteDataContext from "../../Context";
-import { useHistory } from "react-router";
+import { Button } from 'antd';
+import React, { useContext } from 'react';
+import { Bar } from 'react-chartjs-2';
+import CompleteDataContext from '../../Context';
+import { useNavigate } from 'react-router';
 
 import { getLastArrayItems } from "../../helpers/genericHelpers";
 
-const LoadOverviewPercentBarChart = ({
-  runningPercentageData,
-  uiSettings,
-  pDemand,
-}) => {
-  const history = useHistory();
+const LoadOverviewPercentBarChart = ({ runningPercentageData, uiSettings, pDemand }) => {
+  const history = useNavigate();
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
   const options = {
     legend: {
@@ -35,53 +31,53 @@ const LoadOverviewPercentBarChart = ({
 
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes:
         {
           gridLines: {
-            color: "#f0f0f0",
+            color: '#f0f0f0',
             drawBorder: false,
             drawTicks: false,
-            zeroLineColor: "#f0f0f0",
+            zeroLineColor: '#f0f0f0',
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: "Roboto",
-            fontColor: "#A3A3A3",
+            fontFamily: 'Roboto',
+            fontColor: '#A3A3A3',
             maxTicksLimit: 6,
             fontSize: 10,
             padding: 0,
           },
           scaleLabel: {
-            labelString: `Total Consumption (${"kWh"})`,
+            labelString: `Total Consumption (${'kWh'})`,
             display: true,
             padding: 10,
-            fontColor: "black",
+            fontColor: 'black',
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
-      xAxes: [
+      xAxes:
         {
           gridLines: {
             drawTicks: false,
-            color: "#f0f0f0",
-            zeroLineColor: "#f0f0f0",
+            color: '#f0f0f0',
+            zeroLineColor: '#f0f0f0',
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: "Montserrat",
-            fontColor: "#A3A3A3",
+            fontFamily: 'Montserrat',
+            fontColor: '#A3A3A3',
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
             padding: 0,
             fontSize: 12,
           },
           scaleLabel: {
             display: true,
-            fontColor: "black",
+            fontColor: 'black',
             fontSize: isMediumScreen ? 14 : 18,
           },
         },
-      ],
     },
   };
 
@@ -99,7 +95,7 @@ const LoadOverviewPercentBarChart = ({
         maxBarThickness: 50,
         data: chartValues,
         backgroundColor: uiSettings.appPrimaryColor,
-        borderColor: "#5C3592",
+        borderColor: '#5C3592',
         borderWidth: 1,
       },
     ],
@@ -108,21 +104,18 @@ const LoadOverviewPercentBarChart = ({
   return (
     <div className="load-overview-bar-chart-container">
       <div className="h-flex">
-        <div
-          className="load-overview-running-time-header"
-          style={{ display: "flex" }}
-        >
+        <div className="load-overview-running-time-header" style={{ display: 'flex' }}>
           <h2>Load Overview</h2>
         </div>
         <Button
-          className="load-overview-details__button"
+          className='load-overview-details__button'
           style={{ backgroundColor: uiSettings.appPrimaryColor }}
-          type="primary"
+          type='primary'
           pDemand={pDemand}
           onClick={() => {
-            return (pDemand = { pDemand }), history.push("/load-overview");
+            history('/load-overview');
           }}
-          size="small"
+          size='small'
         >
           View Details
         </Button>

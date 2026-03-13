@@ -9,7 +9,7 @@ const FuelUsageChart = () => {
       <h3 className="font-semibold mb-3">Fuel usage</h3>
       <ResponsiveContainer width="100%" height={250}>
         <BarChart data={dieselData.charts.fuelUsage}>
-          <XAxis dataKey="day" />
+          <XAxis dataKey="day" angle={-45} textAnchor="end" height={80} />
           <YAxis />
           <Tooltip />
           <Bar dataKey="fuel" fill="#6D28D9" radius={[6, 6, 0, 0]} />

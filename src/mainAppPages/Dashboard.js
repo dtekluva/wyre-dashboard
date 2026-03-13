@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useRef, useState } from "react";
+import { useEffect, useContext, useRef, useState } from "react";
 import moment from "moment";
 import { connect, useSelector } from "react-redux";
 import CompleteDataContext from "../Context";
@@ -54,22 +54,17 @@ function Dashboard({
   fetchPowerFactor: fetchAllPowerFactor,
   fetchPAPR,
   dashboard,
+  powerFactor,
 }) {
   let {
     checkedItems,
     checkedBranchId,
     checkedDevicesId,
-    checkedBranches,
-    checkedDevices,
     userDateRange,
     uiSettings,
   } = useContext(CompleteDataContext);
-  
-  
+
   const dashBoardInfo = useSelector((state) => state.dashboard);
-  const branchId =
-    sideDetails?.sideBarData?.branches &&
-    sideDetails?.sideBarData?.branches[0]?.branch_id;
 
   const { setCurrentUrl, userData } = useContext(CompleteDataContext);
   const [totalEnergyBranchData, setTotalEnergyBranchData] = useState(null);
@@ -90,36 +85,49 @@ function Dashboard({
   }, [match, setCurrentUrl]);
 
   useEffect(() => {
-    if (Object.keys(sideDetails.sideBarData).length > 0) {
-      let allDevices = [];
-      sideDetails.sideBarData.branches.forEach((branch) => {
-        branch.devices.forEach((device) => {
-          allDevices.push(device.device_id);
+    if (!(powerFactor.allPowerFactor.length > 0)) {
+      if (Object.keys(sideDetails.sideBarData).length > 0) {
+        let allDevices = [];
+        sideDetails.sideBarData.branches.forEach((branch) => {
+          branch.devices.forEach((device) => {
+            allDevices.push(device.device_id);
+          });
         });
-      });
-      const start_date = moment().startOf("month").format("YYYY-MM-DD");
-      const end_date = moment().startOf("month").format("YYYY-MM-DD");
-      fetchAllPowerFactor(allDevices, { start_date, end_date });
+        const start_date = moment().startOf("month").format("YYYY-MM-DD");
+        const end_date = moment().startOf("month").format("YYYY-MM-DD");
+        fetchAllPowerFactor(allDevices, { start_date, end_date });
+      }
     }
-      fetchBlendedost(userDateRange);
-  }, [sideDetails.sideBarData, userDateRange]);
+
+  }, [sideDetails.sideBarData, powerFactor.allPowerFactor.length, fetchAllPowerFactor]);
+
 
   useEffect(() => {
-    if (!pageLoaded && isEmpty(dashBoardInfo.dashBoardData || {})) {
-      fetchDashBoardDataCard_1(userDateRange);
-      fetchDashBoardDataCard_2(userDateRange);
-      fetchDashBoardDataCard_3(userDateRange);
-      fetchPAPR(userDateRange)
-    }
 
-    if (!isEmpty(dashBoardInfo.dashBoardData) > 0 && pageLoaded) {
-      fetchDashBoardDataCard_1(userDateRange);
-      fetchDashBoardDataCard_2(userDateRange);
-      fetchDashBoardDataCard_3(userDateRange);
-      fetchPAPR(userDateRange)
+    fetchBlendedost(userDateRange);
+
+  }, [userDateRange, fetchBlendedost]);
+
+  useEffect(() => {
+
+    if (!dashboard.fetchDashBoardCard_1_Loading && !dashboard.fetchDashBoardCard_2_Loading && !dashboard.fetchDashBoardCard_3_Loading) {
+      if (!pageLoaded && isEmpty(dashBoardInfo.dashBoardData || {})) {
+        fetchDashBoardDataCard_1(userDateRange);
+        fetchDashBoardDataCard_2(userDateRange);
+        fetchDashBoardDataCard_3(userDateRange);
+        fetchPAPR(userDateRange)
+      }
+
+      if (!isEmpty(dashBoardInfo.dashBoardData) > 0 && pageLoaded) {
+        fetchDashBoardDataCard_1(userDateRange);
+        fetchDashBoardDataCard_2(userDateRange);
+        fetchDashBoardDataCard_3(userDateRange);
+        fetchPAPR(userDateRange)
+      }
+      setPageLoaded(true);
     }
-    setPageLoaded(true);
-  }, [userDateRange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userDateRange, dashBoardInfo.dashBoardData, fetchDashBoardDataCard_1, fetchDashBoardDataCard_2, fetchDashBoardDataCard_3, fetchPAPR, pageLoaded]);
 
   useEffect(() => {
     if (Object.keys(dashboard.demandData).length > 0) {
@@ -150,6 +158,8 @@ function Dashboard({
     dashboard.dashBoardCard_1_Data,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
@@ -167,6 +177,8 @@ function Dashboard({
     dashboard.dashBoardCard_2_Data,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   useEffect(() => {
@@ -184,6 +196,8 @@ function Dashboard({
     dashboard.dashBoardCard_3_Data,
     checkedBranchId,
     checkedDevicesId.length,
+    checkedDevicesId,
+    pageLoaded,
   ]);
 
   const pageRef = useRef();

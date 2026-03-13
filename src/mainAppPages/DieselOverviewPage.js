@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import DieselHeader from "../components/DieselHeader";
@@ -9,7 +9,7 @@ import FuelUsageCard from "../components/FuelUsageCard";
 import OperationalEfficiencyCard from "../components/OperationalEfficiencyCard";
 import CostAnalysisCard from "../components/CostAnalysisCard";
 import BreadCrumb from "../components/BreadCrumb";
-import { DatePicker, message } from "antd";
+import { DatePicker } from "antd";
 import { connect } from "react-redux";
 import {
   fetchBranchGeneratorsStatusData,
@@ -52,15 +52,14 @@ const DieselOverviewPage = ({
   const [costAnalysisData, setCostAnalysisData] = useState(null);
 
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [frequency, setFrequency] = useState("daily");
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [frequency] = useState("daily");
   const dashboardRef = useRef(null);
 
   useEffect(() => {
     fetchBranchGeneratorsStatusData();
     fetchDieselPriceData();
     fetchCoEmissionData();
-  }, []);
+  }, [fetchBranchGeneratorsStatusData, fetchDieselPriceData, fetchCoEmissionData]);
 
   useEffect(() => {
     if (!selectedDate) return;
@@ -70,7 +69,7 @@ const DieselOverviewPage = ({
     fetchFuelUsageData(selectedDate);
     fetchGenMetricsData(selectedDate);
     fetchCostMetricsData(selectedDate);
-  }, [selectedDate]);
+  }, [selectedDate, fetchGenTotalEnergyUsedData, fetchGenStatusChartData, fetchGenFuelUsageData, fetchFuelUsageData, fetchGenMetricsData, fetchCostMetricsData]);
 
   useEffect(() => {
     if (diesel) {
@@ -86,9 +85,8 @@ const DieselOverviewPage = ({
     }
   }, [diesel]);
 
-  const handleDownloadPDF = async () => {
+  const handleDownloadPDF = useCallback(async () => {
     try {
-      setIsDownloading(true);
       await new Promise((res) => setTimeout(res, 300));
 
       const element = dashboardRef.current;
@@ -130,16 +128,21 @@ const DieselOverviewPage = ({
       pdf.save(`Diesel_Usage_${dayjs(selectedDate).format("MMM_YYYY")}.pdf`);
     } catch (err) {
       console.error("PDF generation failed:", err);
-    } finally {
-      setIsDownloading(false);
     }
-  };
+  }, [frequency, selectedDate]);
+
+  useEffect(() => {
+    const handleDieselDownloadEvent = () => handleDownloadPDF();
+    window.addEventListener("diesel-download-pdf", handleDieselDownloadEvent);
+    return () =>
+      window.removeEventListener("diesel-download-pdf", handleDieselDownloadEvent);
+  }, [handleDownloadPDF]);
 
   return (
     <>
-      {/* Header controls */}
+      {/* Header controls - Download Report is in top bar */}
       <div
-        className="no-print"
+        className="no-print diesel-page-header"
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -148,23 +151,6 @@ const DieselOverviewPage = ({
         }}
       >
         <BreadCrumb routesArray={breadCrumbRoutes} />
-        <button
-          onClick={handleDownloadPDF}
-          disabled={isDownloading}
-          style={{
-            // backgroundColor: "#5C12A7",
-            backgroundColor: "#5c3592",
-            color: "#fff",
-            padding: "8px 20px",
-            whiteSpace: "nowrap",
-            border: "none",
-            borderRadius: "6px",
-            cursor: isDownloading ? "not-allowed" : "pointer",
-            fontWeight: 500,
-          }}
-        >
-          {isDownloading ? "Downloading diesel usage..." : "Download Report"}
-        </button>
       </div>
 
       {/* Dashboard content */}

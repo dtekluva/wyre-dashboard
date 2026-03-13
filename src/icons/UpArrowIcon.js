@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 function UpArrowIcon({className}) {
   //const [color, setColor] = useState('#fa0303');

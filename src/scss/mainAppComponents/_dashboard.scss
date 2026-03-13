@@ -172,10 +172,18 @@
 
 .dashboard-bar-container {
   border-radius: $medium-border;
+  display: flex;
+  flex-direction: column;
 
   @include media('>=medium') {
     height: 500px;
   }
+}
+
+.dashboard-bar-chart-wrapper {
+  flex: 1;
+  min-height: 0;
+  position: relative;
 }
 
 .dashboard-row-3 {
@@ -384,21 +392,35 @@
 /* === Price Card Layout === */
 .price-card {
   display: grid;
-  grid-template-columns: auto 1fr auto; /* icon, labels, values */
-  align-items: center;
+  grid-template-columns: auto 1fr; /* icon, label-value rows */
+  align-items: start;
   gap: 1rem;
 }
 
-.price-center {
+.price-rows {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.price-right {
+.price-rows-inner {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.price-row .card-label-price {
+  flex-shrink: 0;
+}
+
+.price-row .card-value {
   text-align: right;
 }
 
@@ -419,10 +441,15 @@
     text-align: left;
   }
   .gen-center,
-  .gen-right,
-  .price-right {
+  .gen-right {
     text-align: left;
     align-items: flex-start;
+  }
+  .price-card {
+    grid-template-columns: auto 1fr; /* keep icon + rows side by side */
+  }
+  .price-row .card-value {
+    text-align: right;
   }
 }
 
@@ -1230,3 +1257,305 @@
   font-size: 13px;
   margin-top: 2px;
 }
+
+// Revamped REPORT PAGE
+.report-card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  margin-top: 24px;
+  max-width: 480px;
+}
+
+.report-card h4 {
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.report-card input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.report-card button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.report-card button:disabled {
+  background: #c7d2fe;
+  cursor: not-allowed;
+}
+
+.hint {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #6b7280;
+}
+
+.report-type-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background: #eef2ff;
+}
+
+.tab-btn.active {
+  background: $purple !important;
+  color: #ffffff;
+  border-color: $purple !important;
+}
+
+// Revamped REPORT PAGE
+.report-card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  margin-top: 24px;
+  max-width: 480px;
+}
+
+.report-card h4 {
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.report-card input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.report-card button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.report-card button:disabled {
+  background: #c7d2fe;
+  cursor: not-allowed;
+}
+
+.hint {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #6b7280;
+}
+
+.report-type-tabs {
+  display: flex;
+  align-items: center;
+}
+
+/* Optional: selected value alignment */
+.ant-select-single.ant-select-outlined
+.ant-select-selection-item {
+  line-height: 40px;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background: #eef2ff;
+}
+
+.tab-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+/* Select styling is centralized in base/framework-overrides.scss */
+
+// --------------------------------------------------------------
+// Report page landing layout
+// --------------------------------------------------------------
+.report-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 $small-gutter $large-gutter;
+
+  @include media('>=medium') {
+    padding: 0 $medium-gutter $large-gutter;
+  }
+}
+
+.report-page__header {
+  margin-bottom: $medium-gutter;
+  padding-bottom: $medium-gutter;
+  border-bottom: 1px solid $border-grey2;
+}
+
+.report-page__title {
+  font-size: 2.4rem;
+  font-weight: $semi-bold;
+  color: $dark-blue;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+
+  @include media('>=medium') {
+    font-size: 2.8rem;
+  }
+}
+
+.report-page__subtitle {
+  font-size: 1.4rem;
+  color: $grey1;
+  margin: 0;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.report-page__controls {
+  background: $white;
+  border-radius: $medium-border;
+  box-shadow: $grey-box-shadow;
+  padding: $medium-gutter;
+  margin-bottom: $medium-gutter;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include media('>=medium') {
+    max-width: 480px;
+  }
+}
+
+.report-page__send {
+  margin-left: auto;
+  margin-right: auto;
+
+  @include media('>=medium') {
+    max-width: 480px;
+  }
+
+  .report-card {
+    margin-top: 0;
+  }
+}
+
+.report-page .report-type-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.report-page .tab-btn {
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 1.4rem;
+  font-weight: $medium;
+}
+
+.report-page__date-group {
+  margin-top: 16px;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+.report-page__date-range {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+  align-items: start;
+
+  .report-page__date-group {
+    margin-top: 0;
+  }
+}
+
+.report-page__label {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: $medium;
+  color: $dark-blue;
+  margin-bottom: 6px;
+}
+
+.report-page__date-input {
+  width: 100%;
+  max-width: 240px;
+  padding: 10px 14px;
+  font-size: 1.4rem;
+  font-family: $default-font;
+  color: $dark-blue;
+  border: 1px solid $border-grey3;
+  border-radius: 8px;
+  background: $white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $purple;
+    box-shadow: 0 0 0 3px rgba(92, 53, 146, 0.12);
+  }
+
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+}
+
+.report-page__preview {
+  margin-bottom: $medium-gutter;
+  border-radius: $medium-border;
+  overflow: hidden;
+  box-shadow: $grey-box-shadow;
+}
+
+.report-page__monthly {
+  margin-bottom: $medium-gutter;
+}
+
+.monthly-report__selects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+

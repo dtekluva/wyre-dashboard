@@ -1,6 +1,6 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import CompleteDataContext from '../../Context';
-import { Table, notification, Typography, Dropdown, Popconfirm, Space, Menu } from 'antd';
+import { Table, notification, Typography, Dropdown, Popconfirm, Space, Menu, Button } from 'antd';
 import { EditOutlined, DownOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import { sortArrayOfObjectByDate } from '../../helpers/genericHelpers';
@@ -37,46 +37,10 @@ const UtilityPurchasedTable = ({ data, userId, role, setEditUtilityPurchaseModal
     }
   };
 
-  const itemData = (record) => {
-    return [
-      {
-        key: '1',
-        label: (
-          <>
-            <EditOutlined />
-            <a target="_blank" onClick={(e) => {
-              e.preventDefault();
-              setEditUtilityPurchaseModal(true);
-              setUtilityPurchaseData(record)
-            }} rel="noopener noreferrer">
-              Edit Utility Purchase
-            </a>
-          </>
-
-        ),
-      },
-      {
-        key: '2',
-        label: (<> {
-          <>
-            <Icon icon="ant-design:delete-outlined" />
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
-              <a>Delete Utility Purchase</a>
-            </Popconfirm>
-          </>
-        }
-        </>
-
-        ),
-      }
-    ];
-  }
-
   const optionsColumn = () => ({
     title: 'Options',
     width: '10%',
     render: (_, record) => {
-      const items = itemData(record);
       return (
         <Dropdown
           trigger={["click"]}
@@ -87,31 +51,39 @@ const UtilityPurchasedTable = ({ data, userId, role, setEditUtilityPurchaseModal
               <Menu.Item onClick={() => {}}>
                 <Space size={4}>
                   <EditOutlined />{" "}
-                  <a
-                    target="_blank"
+                  <Button
+                    type="link"
                     onClick={(e) => {
-                      e.preventDefault();
+                      e.stopPropagation();
                       setEditUtilityPurchaseModal(true);
                       setUtilityPurchaseData(record);
                     }}
-                    rel="noopener noreferrer"
-                  >Edit Utility Purchase</a>
+                    style={{ padding: 0, height: 'auto', lineHeight: 'inherit' }}
+                  >Edit Utility Purchase</Button>
                 </Space>
               </Menu.Item>
               <Menu.Item onClick={() => {}} type="link">
                 <Space size={4}>
                   <Icon icon="ant-design:delete-outlined" />
                   <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
-                    <a>Delete Utility Purchase</a>
+                    <Button
+                      type="link"
+                      style={{ padding: 0, height: 'auto', lineHeight: 'inherit' }}
+                    >Delete Utility Purchase</Button>
                   </Popconfirm>
                 </Space>
               </Menu.Item>
             </Menu>
           }
         >
-          <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+          <Button
+            type="link"
+            className="ant-dropdown-link"
+            onClick={(e) => e.preventDefault()}
+            style={{ padding: 0, height: 'auto', lineHeight: 'inherit' }}
+          >
             More <DownOutlined />
-          </a>
+          </Button>
         </Dropdown>
       );
 
@@ -192,7 +164,7 @@ const UtilityPurchasedTable = ({ data, userId, role, setEditUtilityPurchaseModal
         className='table-striped-rows utitily-overview-table'
         rowKey={(record) => record.id}
         scroll={isMediumScreen && { x: 600, y: 300 }}
-        summary={pageData => {
+        summary={() => {
 
           return (
             <>

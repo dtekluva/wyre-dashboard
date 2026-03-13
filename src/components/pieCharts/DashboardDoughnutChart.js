@@ -1,8 +1,16 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import CompleteDataContext from '../../Context';
 import { convertDecimalTimeToNormal } from '../../helpers/genericHelpers';
+
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 const DashboardDoughnutChart = ({ data, uiSettings, sideBarData }) => {
   const { isMediumScreen, useMediaQuery } = useContext(CompleteDataContext);
@@ -62,38 +70,65 @@ const DashboardDoughnutChart = ({ data, uiSettings, sideBarData }) => {
   };
 
   const options = {
+    // cutout: '65%',
+    maintainAspectRatio: false,
     layout: {
       padding: {
-        left: 20,
-        right: 20,
+        left: isLessThan481 ? 10 : 20,
+        right: isLessThan481 ? 10 : 40,
         top: 10,
-        bottom: 80,
+        bottom: isLessThan481 ? 15 : 10,
       },
     },
-    legend: {
-      display: true,
-      labels: {
-        boxWidth: 13,
-        fontSize: isMediumScreen ? 14 : 16,
-        fontColor: 'black',
-        padding: 10,
-      },
-      position: isLessThan481 ? 'top' : 'right',
-    },
-    maintainAspectRatio: false,
+
     plugins: {
-      outlabels: {
-        display: false,
+      title: {
+        display: true,
+        text: 'Power Usage (Hours/Month)',
+        color: 'black',
+        font: {
+          size: isMediumScreen ? 16 : 18,
+          weight: 'normal',
+        },
+        padding: {
+          top: 10,
+          bottom: 20,
+        },
       },
+
+      legend: {
+        display: true,
+        position: isLessThan481 ? 'bottom' : 'right',
+        align: 'center',
+        labels: {
+          boxWidth: 12,
+          padding: 8,
+          color: 'black',
+          font: {
+            size: isMediumScreen ? 12 : 16,
+          },
+          usePointStyle: true,
+        },
+      },
+
+      tooltip: {
+        enabled: true,
+        callbacks: {
+          title: (tooltipItems) => {
+            return tooltipItems[0].label;
+          },
+          label: (tooltipItem) => {
+            return convertDecimalTimeToNormal(tooltipItem.raw);
+          },
+        },
+      },
+
       datalabels: {
+        display: true,
         formatter: (value, context) => {
-          let sum = 0;
-          let dataArr = context.chart.data.datasets[0].data;
-          dataArr.forEach((data) => {
-            sum += data;
-          });
-          let percentage = ((value * 100) / sum).toFixed() + '%';
-          return percentage;
+          const dataArr = context.chart.data.datasets[0].data;
+          const sum = dataArr.reduce((a, b) => a + b, 0);
+          return `${((value * 100) / sum).toFixed()}%`;
         },
         color: 'white',
         font: {
@@ -102,35 +137,13 @@ const DashboardDoughnutChart = ({ data, uiSettings, sideBarData }) => {
         },
       },
     },
-    title: {
-      display: true,
-      text: 'Power Usage (Hours/Month)',
-      fontSize: 18,
-      fontStyle: 'normal',
-      fontColor: 'black',
-      padding: 10,
-    },
-    tooltips: {
-      enabled: true,
-      mode: 'index',
-      callbacks: {
-        title: function (tooltipItem, data) {
-          return data['labels'][tooltipItem[0]['index']];
-        },
-        label: function (tooltipItem, data) {
-          return convertDecimalTimeToNormal(data['datasets'][0]['data'][tooltipItem['index']]);
-        },
-      },
-    },
   };
 
   return (
     <>
-      <Doughnut
-        data={plottedData}
-        options={options}
-        plugins={[ChartDataLabels]}
-      />
+      <div style={{ height: '320px', position: 'relative' }}>
+        <Doughnut data={plottedData} options={options} />
+      </div>
     </>
   );
 };

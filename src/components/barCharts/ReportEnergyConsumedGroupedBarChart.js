@@ -43,7 +43,7 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
     },
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           stacked: false,
           display: true,
@@ -69,8 +69,7 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
             fontColor: "black",
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           stacked: false,
           ticks: {
@@ -79,6 +78,8 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
             fontColor: "#A3A3A3",
             padding: 10,
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
           },
           gridLines: {
             drawTicks: false,
@@ -93,7 +94,6 @@ const ReportEnergyConsumedGroupedBarChart = ({ data }) => {
             fontColor: "black",
           },
         },
-      ],
     },
   };
 

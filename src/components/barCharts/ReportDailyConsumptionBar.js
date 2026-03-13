@@ -37,7 +37,7 @@ const ReportDailyConsumptionBar = ({ dailyConsumptionData, dataMessage }) => {
 
     maintainAspectRatio: false,
     scales: {
-      yAxes: [
+      yAxes: 
         {
           gridLines: {
             display: false,
@@ -58,8 +58,7 @@ const ReportDailyConsumptionBar = ({ dailyConsumptionData, dataMessage }) => {
             fontSize: isMediumScreen ? 8 : 10,
           },
         },
-      ],
-      xAxes: [
+      xAxes: 
         {
           barPercentage: 1,
           categoryPercentage: 1,
@@ -71,6 +70,8 @@ const ReportDailyConsumptionBar = ({ dailyConsumptionData, dataMessage }) => {
             fontFamily: 'Montserrat',
             fontColor: '#A3A3A3',
             maxTicksLimit: 10,
+            maxRotation: 45,
+            minRotation: 45,
             padding: 0,
             fontSize: 12,
             autoSkip: false,
@@ -82,7 +83,6 @@ const ReportDailyConsumptionBar = ({ dailyConsumptionData, dataMessage }) => {
             fontSize: isMediumScreen ? 10 : 14,
           },
         },
-      ],
     },
   };
 

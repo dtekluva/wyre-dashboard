@@ -42,23 +42,54 @@ function DateTimePicker({ isDateTimePickerDisabled }) {
           onChange={onChange}
           onOk={onOk}
           disabled={isDateTimePickerDisabled}
-          ranges={{
-            Today: [moment().startOf('day'), moment()],
-            'Past 24 Hours': [moment('00:00:00', 'HH:mm:ss').subtract(1, 'days'), moment()],
-            'Past Week': [moment('00:00:00', 'HH:mm:ss').subtract(7, 'days'), moment()],
-            'Past Month': [moment('00:00:00', 'HH:mm:ss').subtract(1, 'months'), moment()],
-            'Past Three Months': [moment('00:00:00', 'HH:mm:ss').subtract(3, 'months'), moment()],
-            'Past Half Year': [moment('00:00:00', 'HH:mm:ss').subtract(6, 'months'), moment()],
-            'Past Year': [moment('00:00:00', 'HH:mm:ss').subtract(1, 'years'), moment()],
-            'This Week': [moment('00:00:00', 'HH:mm:ss').startOf('week'), moment()],
-            'This Month': [moment('00:00:00', 'HH:mm:ss').startOf('month'), moment()],
-            'This Quarter': [
-              moment().quarter(moment().quarter()).startOf('quarter'),
-              moment(),
-            ],
-            'This Year': [moment('00:00:00', 'HH:mm:ss').startOf('year'), moment()],
-          }}
+          presets={[
+            {
+              label: 'Today',
+              value: [moment().startOf('day'), moment()],
+            },
+            {
+              label: 'Past 24 Hours',
+              value: [moment().subtract(24, 'hours'), moment()],
+            },
+            {
+              label: 'Past Week',
+              value: [moment().subtract(7, 'days').startOf('day'), moment()],
+            },
+            {
+              label: 'Past Month',
+              value: [moment().subtract(1, 'months').startOf('day'), moment()],
+            },
+            {
+              label: 'Past Three Months',
+              value: [moment().subtract(3, 'months').startOf('day'), moment()],
+            },
+            {
+              label: 'Past Half Year',
+              value: [moment().subtract(6, 'months').startOf('day'), moment()],
+            },
+            {
+              label: 'Past Year',
+              value: [moment().subtract(1, 'years').startOf('day'), moment()],
+            },
+            {
+              label: 'This Week',
+              value: [moment().startOf('week'), moment()],
+            },
+            {
+              label: 'This Month',
+              value: [moment().startOf('month'), moment()],
+            },
+            {
+              label: 'This Quarter',
+              value: [moment().startOf('quarter'), moment()],
+            },
+            {
+              label: 'This Year',
+              value: [moment().startOf('year'), moment()],
+            },
+          ]}
         />
+
       </Space>
     </>
   );
