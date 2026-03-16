@@ -365,7 +365,7 @@ function MonthlyReport({ setReportContext }) {
                         : generatorColors[(i - 1) % generatorColors.length]
                 ),
                 borderRadius: 999,
-                barThickness: 40,
+                maxBarThickness: 40,
                 borderSkipped: false,
             },
         ],
@@ -666,12 +666,7 @@ function MonthlyReport({ setReportContext }) {
                 },
             },
             datalabels: {
-                color: "#FFFFFF",
-                font: {
-                    weight: "bold",
-                    size: 16,
-                },
-                formatter: (value) => value + "%",
+                display: false,
             },
         },
         cutout: "55%",
@@ -843,10 +838,15 @@ function MonthlyReport({ setReportContext }) {
         ],
     };
 
+    const powerDemandMax = Math.max(
+        parseFloat(reportData.power_demand.operational.peak) || 0,
+        parseFloat(reportData.power_demand.non_operational.peak) || 0,
+        parseFloat(reportData.power_demand.weekends.peak) || 0
+    );
     const powerDemandOptions = {
         indexAxis: "x",
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         layout: {
             padding: {
                 top: 20,
@@ -866,6 +866,8 @@ function MonthlyReport({ setReportContext }) {
                         size: 14,
                     },
                 },
+                min: 0,
+                suggestedMax: Math.ceil((powerDemandMax || 100) * 1.1),
             },
             y: {
                 grid: {
@@ -877,8 +879,6 @@ function MonthlyReport({ setReportContext }) {
                         size: 14,
                     },
                 },
-                min: 0,
-                suggestedMax: 120,
             },
         },
         plugins: {
@@ -892,6 +892,9 @@ function MonthlyReport({ setReportContext }) {
                         return `${context.dataset.label}: ${context.raw} kWh`;
                     },
                 },
+            },
+            datalabels: {
+                display: false,
             },
         },
         barPercentage: 0.9,
@@ -1189,7 +1192,7 @@ function MonthlyReport({ setReportContext }) {
                                 </div>
                             </Card>
                             <Card className="value">
-                                <h1 style={{ fontSize: "32Px", textAlign: "center" }}>
+                                <h1 style={{ fontSize: "32px", textAlign: "center" }}>
                                     <Image className="tilde" src={tilderSrc} preview={false} />
                                     <span
                                         className="amount"
@@ -1341,8 +1344,6 @@ function MonthlyReport({ setReportContext }) {
                                 <Bar
                                     data={dataSource}
                                     options={options}
-                                    width={900}
-                                    height={300}
                                 />
                             </div>
                             <div className="chart-legend">{chartLegend}</div>

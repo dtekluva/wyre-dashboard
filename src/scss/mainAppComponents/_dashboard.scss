@@ -1419,6 +1419,10 @@
   @include media('>=medium') {
     padding: 0 $medium-gutter $large-gutter;
   }
+
+  @include media('>=medium', '<large') {
+    max-width: 100%;
+  }
 }
 
 .report-page__header {

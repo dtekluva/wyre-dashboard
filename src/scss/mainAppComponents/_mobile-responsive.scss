@@ -904,3 +904,542 @@
     min-height: 400px;
   }
 }
+
+.report-page__monthly {
+  @include media('<medium') {
+    margin-left: -#{$small-gutter};
+    margin-right: -#{$small-gutter};
+    overflow-x: hidden;
+  }
+}
+
+.report-page__monthly .report-page {
+  @include media('<medium') {
+    padding-left: 0;
+    padding-right: 0;
+    max-width: 100%;
+  }
+}
+
+.report-page__monthly .report-page .main-layer,
+.report-page__monthly .report-page .layer-1 {
+  @include media('<medium') {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Monthly Report: mobile responsiveness
+// ---------------------------------------------------------------------------
+.report-page .main-layer .layer-1 .init-space {
+  @include media('<medium') {
+    margin: 16px;
+  }
+
+  @include media('<544px') {
+    margin: 12px;
+  }
+}
+
+.report-page .heading h1 {
+  @include media('<medium') {
+    font-size: 1.8rem;
+    line-height: 1.3;
+  }
+
+  @include media('<544px') {
+    font-size: 1.5rem;
+  }
+}
+
+.report-page .heading {
+  @include media('<medium') {
+    margin-bottom: 32px;
+    font-size: 1.6rem;
+  }
+}
+
+.report-page .wyre-logo img {
+  @include media('<medium') {
+    width: 70px !important;
+    height: auto;
+  }
+}
+
+// Total Energy head card: stack on mobile
+.report-page .head-card {
+  @include media('<medium') {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.report-page .head-card .title,
+.report-page .head-card .value {
+  @include media('<medium') {
+    width: 100%;
+    height: auto;
+    min-height: 80px;
+    border-radius: 16px;
+    padding: 16px;
+  }
+}
+
+.report-page .head-card .title {
+  @include media('<medium') {
+    border-radius: 16px 16px 0 0;
+  }
+}
+
+.report-page .head-card .value {
+  @include media('<medium') {
+    border-radius: 0 0 16px 16px;
+    justify-content: center;
+  }
+}
+
+.report-page .head-card .value h1 .amount {
+  @include media('<medium') {
+    font-size: 2.2rem !important;
+  }
+
+  @include media('<544px') {
+    font-size: 1.8rem !important;
+  }
+}
+
+.report-page .head-card .value h1 .unit {
+  @include media('<medium') {
+    font-size: 1.4rem !important;
+  }
+}
+
+.report-page .head-card .value h1 .tilde {
+  @include media('<medium') {
+    width: 24px !important;
+    height: auto !important;
+  }
+}
+
+// Energy source card: stack header + info, then chart + legend
+.report-page .energy-source-card > div:first-child {
+  @include media('<medium') {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+}
+
+.report-page .energy-source-card .energy-source-header {
+  @include media('<medium') {
+    margin-bottom: 12px;
+  }
+}
+
+.report-page .energy-source-card .energy-source-header h1 {
+  @include media('<medium') {
+    font-size: 1.4rem;
+  }
+}
+
+.report-page .energy-source-card > div:first-child > div:last-child {
+  @include media('<medium') {
+    width: 100% !important;
+    max-width: 100%;
+  }
+}
+
+.report-page .energy-source-chart {
+  @include media('<medium') {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 24px !important;
+    height: auto !important;
+    margin-left: 0 !important;
+    max-width: 100%;
+  }
+}
+
+.report-page .energy-source-chart > div:first-child {
+  @include media('<medium') {
+    width: min(260px, 100%) !important;
+    height: min(260px, 80vw) !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+.report-page .energy-source-chart > div:last-child {
+  @include media('<medium') {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
+
+.report-page .energy-source-chart > div:last-child > div {
+  @include media('<medium') {
+    font-size: 1.4rem !important;
+    margin-bottom: 12px !important;
+    flex-wrap: wrap;
+  }
+}
+
+.report-page .energy-source-chart > div:last-child > div span:last-child {
+  @include media('<medium') {
+    flex: 1 1 auto;
+    min-width: 0;
+    word-break: break-word;
+  }
+}
+
+// Top contributors card
+.report-page .top-contributors-card > div:first-child {
+  @include media('<medium') {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+}
+
+.report-page .top-contributors-card > div:first-child > div:last-child {
+  @include media('<medium') {
+    width: 100% !important;
+  }
+}
+
+.report-page .contributors-header .header-content h1 {
+  @include media('<medium') {
+    font-size: 1.4rem;
+  }
+}
+
+.report-page .total-energy {
+  @include media('<medium') {
+    font-size: 2rem;
+  }
+}
+
+.report-page .total-energy span {
+  @include media('<medium') {
+    font-size: 1.4rem;
+  }
+}
+
+.report-page .chart-container {
+  @include media('<medium') {
+    height: 280px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.report-page .chart-container canvas {
+  @include media('<medium') {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+// Metric containers: stack header + info
+.report-page .metric-container > div:first-child,
+.report-page .metric-container .icon-and-title + div,
+.report-page .power-demand-card > div:first-child {
+  @include media('<medium') {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+}
+
+.report-page .metric-container > div:first-child > div:last-child,
+.report-page .metric-container .icon-and-title + div,
+.report-page .power-demand-card > div:first-child > div:last-child {
+  @include media('<medium') {
+    width: 100% !important;
+    max-width: 100%;
+  }
+}
+
+.report-page .metric-header h2 {
+  @include media('<medium') {
+    font-size: 1.4rem !important;
+  }
+}
+
+.report-page .consumption-metrics > h1 {
+  @include media('<medium') {
+    font-size: 1.6rem;
+    margin-bottom: 16px;
+  }
+}
+
+// Tables: horizontal scroll on mobile
+.report-page .metric-container .ant-table-wrapper,
+.report-page .metric-container .ant-table,
+.report-page .power-demand-card .ant-table-wrapper,
+.report-page .band-table {
+  @include media('<medium') {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.report-page .metric-container .ant-table-thead > tr > th,
+.report-page .metric-container .ant-table-tbody > tr > td {
+  @include media('<544px') {
+    padding: 10px 12px;
+    font-size: 1.2rem;
+  }
+}
+
+.report-page .band-table .ant-table-thead > tr > th,
+.report-page .band-table .ant-table-tbody > tr > td {
+  @include media('<544px') {
+    padding: 10px 12px;
+    font-size: 1.2rem;
+  }
+}
+
+// Power demand legend: stack on mobile
+.report-page .power-demand-legend {
+  @include media('<medium') {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    margin-left: 0 !important;
+    padding: 16px !important;
+    gap: 20px !important;
+  }
+
+  @include media('>=medium', '<large') {
+    margin-left: 0;
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+}
+
+.report-page .power-demand-card .chart-container {
+  @include media('<medium') {
+    height: 320px;
+    padding: 0 8px;
+    min-width: 280px;
+  }
+}
+
+// Generator efficiency cards: stack and full width
+.report-page .generator-efficiency {
+  @include media('<medium') {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+.report-page .generator-efficiency .current,
+.report-page .generator-efficiency .best-ever {
+  @include media('<medium') {
+    width: 100%;
+    height: auto;
+    min-height: 140px;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+}
+
+.report-page .efficiency-value {
+  @include media('<medium') {
+    font-size: 2.4rem;
+  }
+}
+
+.report-page .generator-efficiency h2 {
+  @include media('<medium') {
+    font-size: 1.4rem;
+  }
+}
+
+// Bottom doughnut section
+.report-page .bottom-doughnut {
+  @include media('<medium') {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+.report-page .bottom-doughnut .band-category,
+.report-page .bottom-doughnut .data-entry {
+  @include media('<medium') {
+    width: 100%;
+  }
+}
+
+.report-page .doughnut-container {
+  @include media('<medium') {
+    height: 220px;
+  }
+}
+
+.report-page .data-entry .doughnut-container {
+  @include media('<medium') {
+    height: 160px;
+  }
+}
+
+.report-page .bottom-doughnut h2 {
+  @include media('<medium') {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+}
+
+.report-page .comparison-title {
+  @include media('<medium') {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 1.4rem;
+    padding: 0 16px;
+  }
+}
+
+.report-page .icon-and-title {
+  @include media('<medium') {
+    margin-left: 0 !important;
+    padding-top: 12px !important;
+    padding-bottom: 8px !important;
+  }
+}
+
+.report-page .icon-title h1 {
+  @include media('<medium') {
+    font-size: 1.4rem !important;
+    margin-left: 12px !important;
+  }
+}
+
+.report-page .chart-legend {
+  @include media('<medium') {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 0 12px;
+  }
+}
+
+.report-page .chart-legend .legend-label {
+  @include media('<medium') {
+    font-size: 1.2rem;
+  }
+}
+
+// Monthly report selects
+.monthly-report__selects {
+  @include media('<medium') {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.monthly-report__selects .ant-select {
+  @include media('<medium') {
+    width: 100% !important;
+    max-width: 100%;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Monthly Report: tablet responsiveness (iPad Mini, iPad Air, etc.)
+// ---------------------------------------------------------------------------
+.report-page__monthly {
+  @include media('>=medium', '<large') {
+    margin-left: -#{$medium-gutter};
+    margin-right: -#{$medium-gutter};
+    overflow-x: hidden;
+  }
+}
+
+.report-page__monthly .report-page {
+  @include media('>=medium', '<large') {
+    padding-left: 0;
+    padding-right: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+.report-page__monthly .report-page .main-layer {
+  @include media('>=medium', '<large') {
+    align-items: stretch;
+    width: 100%;
+  }
+}
+
+.report-page__monthly .report-page .layer-1 {
+  @include media('>=medium', '<large') {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.report-page .main-layer .layer-1 .init-space {
+  @include media('>=medium', '<large') {
+    margin: 20px;
+  }
+}
+
+.report-page .head-card,
+.report-page .energy-source-card,
+.report-page .top-contributors-card,
+.report-page .metric-container,
+.report-page .power-demand-card {
+  @include media('>=medium', '<large') {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.report-page .energy-source-chart {
+  @include media('>=medium', '<large') {
+    max-width: 100%;
+    margin-left: 0;
+  }
+}
+
+.report-page .generator-efficiency {
+  @include media('>=medium', '<large') {
+    gap: 20px;
+  }
+}
+
+.report-page .generator-efficiency .current,
+.report-page .generator-efficiency .best-ever {
+  @include media('>=medium', '<large') {
+    flex: 1;
+    min-width: 0;
+    padding: 20px;
+  }
+}
+
+.report-page .generator-efficiency .current > div,
+.report-page .generator-efficiency .best-ever > div {
+  @include media('>=medium', '<large') {
+    min-width: 0;
+  }
+}
+
+.report-page .efficiency-value {
+  @include media('>=medium', '<large') {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+.report-page .achieved-date {
+  @include media('>=medium', '<large') {
+    font-size: 1.2rem;
+    word-break: break-word;
+  }
+}
+
+.report-page .bottom-doughnut .band-category,
+.report-page .bottom-doughnut .data-entry {
+  @include media('>=medium', '<large') {
+    flex: 1;
+    min-width: 0;
+  }
+}
