@@ -1022,9 +1022,66 @@
   }
 }
 
-// Energy source card: stack header + info, then chart + legend
+// Total Energy Consumed: horizontal layout on tablet (iPad Mini, iPad Air)
+.report-page .head-card {
+  @include media('>=medium', '<large') {
+    flex-direction: row;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.report-page .head-card .title,
+.report-page .head-card .value {
+  @include media('>=medium', '<large') {
+    width: 50%;
+    height: 132px;
+    border-radius: 16px;
+    padding: 16px;
+  }
+}
+
+.report-page .head-card .title {
+  @include media('>=medium', '<large') {
+    border-radius: 16px 0 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.report-page .head-card .value {
+  @include media('>=medium', '<large') {
+    border-radius: 0 16px 16px 0;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.report-page .head-card .title h1 {
+  @include media('>=medium', '<large') {
+    font-size: 1.8rem;
+    text-align: center;
+    margin: 0;
+  }
+}
+
+.report-page .head-card .value h1 .amount {
+  @include media('>=medium', '<large') {
+    font-size: 2.4rem !important;
+  }
+}
+
+.report-page .head-card .value h1 .unit {
+  @include media('>=medium', '<large') {
+    font-size: 1.4rem !important;
+  }
+}
+
+// Energy source card: stack header + info on mobile and tablet
 .report-page .energy-source-card > div:first-child {
-  @include media('<medium') {
+  @include media('<large') {
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 12px !important;
@@ -1032,26 +1089,28 @@
 }
 
 .report-page .energy-source-card .energy-source-header {
-  @include media('<medium') {
+  @include media('<large') {
     margin-bottom: 12px;
   }
 }
 
 .report-page .energy-source-card .energy-source-header h1 {
-  @include media('<medium') {
-    font-size: 1.4rem;
+  @include media('<large') {
+    font-size: 1.5rem;
   }
 }
 
 .report-page .energy-source-card > div:first-child > div:last-child {
-  @include media('<medium') {
+  @include media('<large') {
     width: 100% !important;
     max-width: 100%;
   }
 }
 
+// Energy source chart: stacked layout on mobile AND tablet (iPad Mini, etc.)
+// Side-by-side doesn't fit well on narrow viewports; stacked ensures chart + legend swatches display correctly
 .report-page .energy-source-chart {
-  @include media('<medium') {
+  @include media('<large') {
     flex-direction: column !important;
     align-items: center !important;
     gap: 24px !important;
@@ -1062,30 +1121,39 @@
 }
 
 .report-page .energy-source-chart > div:first-child {
-  @include media('<medium') {
-    width: min(260px, 100%) !important;
-    height: min(260px, 80vw) !important;
+  @include media('<large') {
+    width: min(280px, 100%) !important;
+    height: min(280px, 80vw) !important;
     margin-bottom: 0 !important;
   }
 }
 
 .report-page .energy-source-chart > div:last-child {
-  @include media('<medium') {
+  @include media('<large') {
     min-width: 0 !important;
     width: 100% !important;
+    height: auto !important;
   }
 }
 
 .report-page .energy-source-chart > div:last-child > div {
-  @include media('<medium') {
-    font-size: 1.4rem !important;
+  @include media('<large') {
+    font-size: 1.5rem !important;
     margin-bottom: 12px !important;
     flex-wrap: wrap;
   }
 }
 
+.report-page .energy-source-chart > div:last-child > div span:first-of-type {
+  @include media('<large') {
+    flex-shrink: 0;
+    min-width: 25px;
+    min-height: 10px;
+  }
+}
+
 .report-page .energy-source-chart > div:last-child > div span:last-child {
-  @include media('<medium') {
+  @include media('<large') {
     flex: 1 1 auto;
     min-width: 0;
     word-break: break-word;
@@ -1393,16 +1461,17 @@
   }
 }
 
-.report-page .energy-source-chart {
+.report-page .energy-source-card {
   @include media('>=medium', '<large') {
-    max-width: 100%;
-    margin-left: 0;
+    overflow: visible;
   }
 }
 
 .report-page .generator-efficiency {
   @include media('>=medium', '<large') {
-    gap: 20px;
+    gap: 16px;
+    flex-direction: row;
+    overflow: visible;
   }
 }
 
@@ -1410,15 +1479,33 @@
 .report-page .generator-efficiency .best-ever {
   @include media('>=medium', '<large') {
     flex: 1;
-    min-width: 0;
-    padding: 20px;
+    min-width: 180px;
+    padding: 0;
+    height: 210px;
+    overflow: visible;
   }
 }
 
-.report-page .generator-efficiency .current > div,
-.report-page .generator-efficiency .best-ever > div {
+.report-page .generator-efficiency .current .ant-card-body,
+.report-page .generator-efficiency .best-ever .ant-card-body {
   @include media('>=medium', '<large') {
-    min-width: 0;
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: visible;
+    box-sizing: border-box;
+  }
+}
+
+.report-page .generator-efficiency .current h2,
+.report-page .generator-efficiency .best-ever h2 {
+  @include media('>=medium', '<large') {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 }
 
@@ -1426,13 +1513,22 @@
   @include media('>=medium', '<large') {
     flex-wrap: wrap;
     gap: 8px;
+    font-size: 2.5rem;
+  }
+}
+
+.report-page .generator-efficiency .change-indicator {
+  @include media('>=medium', '<large') {
+    font-size: 1.2rem;
+    padding: 2px 6px;
   }
 }
 
 .report-page .achieved-date {
   @include media('>=medium', '<large') {
     font-size: 1.2rem;
-    word-break: break-word;
+    margin-top: 6px;
+    line-height: 1.3;
   }
 }
 

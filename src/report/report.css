@@ -459,14 +459,13 @@
 }
 
 .report-page .energy-source-chart {
-  height: 300px;
+  min-height: 300px;
   position: relative;
   max-width: 850px;
   display: flex;
-  /* padding-left: 40px; */
-  margin-left: -40px;
+  margin-left: 20px;
   justify-content: start;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* Style for hover tooltips */
@@ -829,7 +828,13 @@
 
 .report-page .band-table {
   border-radius: 8px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+}
+
+.report-page .band-table .ant-table {
+  min-width: max-content;
 }
 
 .report-page .aligh-start-table .ant-table-thead > tr > th {

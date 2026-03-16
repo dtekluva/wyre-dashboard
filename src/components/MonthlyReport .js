@@ -9,8 +9,12 @@ import {
 } from "../helpers/reportTableColumns";
 import "../report/report.css";
 
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Doughnut } from "react-chartjs-2";
 import { Bar } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 const logoSrc = "/ReportIcons/Wyre-logo.png";
 const tilderSrc = "/ReportIcons/tilder.png";
@@ -332,6 +336,7 @@ function MonthlyReport({ setReportContext }) {
     const totalSourceEnergy = chartData.reduce((sum, val) => sum + val, 0);
 
     const energySourceData = {
+        labels: chartLabels,
         legend: {
             display: false,
         },
@@ -666,7 +671,13 @@ function MonthlyReport({ setReportContext }) {
                 },
             },
             datalabels: {
-                display: false,
+                display: true,
+                formatter: (value) => `${value}%`,
+                color: "#fff",
+                font: {
+                    size: 14,
+                    weight: "600",
+                },
             },
         },
         cutout: "55%",
@@ -1255,14 +1266,22 @@ function MonthlyReport({ setReportContext }) {
                                     style={{
                                         width: 300,
                                         height: 300,
-                                        marginBottom: "30px",
                                         position: "relative",
+                                        flexShrink: 0,
                                     }}
                                 >
                                     <Doughnut data={energySourceData} options={doughnutOptions} />
                                 </div>
                                 {/* Custom legend */}
-                                <div style={{ minWidth: 220 }}>
+                                <div
+                                    style={{
+                                        minWidth: 220,
+                                        height: 300,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                    }}
+                                >
                                     {chartLabels.map((label, idx) => {
                                         const value = chartData[idx];
                                         const percent =
