@@ -1419,23 +1419,32 @@
   @include media('>=medium') {
     padding: 0 $medium-gutter $large-gutter;
   }
+
+  @include media('>=medium', '<large') {
+    max-width: 100%;
+  }
 }
 
 .report-page__header {
   margin-bottom: $medium-gutter;
-  padding-bottom: $medium-gutter;
-  border-bottom: 1px solid $border-grey2;
+  padding: $medium-gutter 0;
+  text-align: center;
+
+  @include media('>=medium') {
+    margin-bottom: $large-gutter;
+    padding: $large-gutter 0;
+  }
 }
 
 .report-page__title {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   font-weight: $semi-bold;
   color: $dark-blue;
   margin: 0 0 8px 0;
   letter-spacing: -0.02em;
 
   @include media('>=medium') {
-    font-size: 2.8rem;
+    font-size: 2.6rem;
   }
 }
 
@@ -1443,21 +1452,29 @@
   font-size: 1.4rem;
   color: $grey1;
   margin: 0;
-  line-height: 1.5;
-  text-align: center;
-}
-
-.report-page__controls {
-  background: $white;
-  border-radius: $medium-border;
-  box-shadow: $grey-box-shadow;
-  padding: $medium-gutter;
-  margin-bottom: $medium-gutter;
+  line-height: 1.6;
+  max-width: 480px;
   margin-left: auto;
   margin-right: auto;
 
   @include media('>=medium') {
-    max-width: 480px;
+    font-size: 1.5rem;
+  }
+}
+
+.report-page__controls {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: $medium-gutter;
+  margin-bottom: $medium-gutter;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid $border-grey2;
+
+  @include media('>=medium') {
+    max-width: 520px;
+    padding: $large-gutter;
   }
 }
 
@@ -1477,15 +1494,36 @@
 .report-page .report-type-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 0;
+  margin-bottom: 24px;
+  background: $purplegrey;
+  border-radius: 10px;
+  padding: 4px;
 }
 
 .report-page .tab-btn {
-  padding: 10px 20px;
-  border-radius: 24px;
+  flex: 1;
+  min-width: 80px;
+  padding: 12px 20px;
+  border-radius: 8px;
   font-size: 1.4rem;
   font-weight: $medium;
+  background: transparent;
+  color: $grey2;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.6);
+    color: $dark-blue;
+  }
+
+  &.active {
+    background: $white !important;
+    color: $purple !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
 }
 
 .report-page__date-group {
@@ -1513,13 +1551,13 @@
   font-size: 1.3rem;
   font-weight: $medium;
   color: $dark-blue;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .report-page__date-input {
   width: 100%;
-  max-width: 240px;
-  padding: 10px 14px;
+  max-width: 260px;
+  padding: 12px 14px;
   font-size: 1.4rem;
   font-family: $default-font;
   color: $dark-blue;

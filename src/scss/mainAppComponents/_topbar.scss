@@ -29,6 +29,18 @@
   @include media('>=medium', '<900px') {
     flex-wrap: nowrap;
   }
+
+  // Report page: cleaner, more professional top bar
+  .app--report-page & {
+    background: $white;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+    @include media('>=medium') {
+      padding-bottom: 16px;
+      padding-top: 14px;
+    }
+  }
 }
 
 .top-bar__left {

@@ -45,6 +45,7 @@ const Report = () => {
   return (
     <div className="report-page">
       <header className="report-page__header">
+        <h1 className="report-page__title">Reports</h1>
         <p className="report-page__subtitle">
           Generate daily, periodic, or monthly reports for your branch.
         </p>

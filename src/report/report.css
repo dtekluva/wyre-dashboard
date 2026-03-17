@@ -3,18 +3,20 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: flex-start;
 }
 
 .report-page .layer-1 {
   /* height: 100vh; */
   /* margin: 30px; */
+  width: 100%;
   max-width: 100%;
   padding-bottom: 50px;
   margin: 0 auto;
   background-color: #f4f4f4;
   font-family: "Inter", sans-serif;
+  box-sizing: border-box;
 }
 
 @media (min-width: 1024px) {
@@ -265,6 +267,16 @@
   overflow: hidden;
 }
 
+/* Horizontal scroll for all report tables so columns and values are viewable in full */
+.report-page .ant-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.report-page .ant-table-wrapper .ant-table {
+  min-width: max-content;
+}
+
 .report-page .current {
   width: 49%;
   height: 250px;
@@ -447,14 +459,13 @@
 }
 
 .report-page .energy-source-chart {
-  height: 300px;
+  min-height: 300px;
   position: relative;
   max-width: 850px;
   display: flex;
-  /* padding-left: 40px; */
-  margin-left: -40px;
+  margin-left: 20px;
   justify-content: start;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* Style for hover tooltips */
@@ -817,7 +828,13 @@
 
 .report-page .band-table {
   border-radius: 8px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+}
+
+.report-page .band-table .ant-table {
+  min-width: max-content;
 }
 
 .report-page .aligh-start-table .ant-table-thead > tr > th {
