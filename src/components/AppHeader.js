@@ -284,6 +284,19 @@ function Header() {
               </>
             ) : (
               <>
+                <HeaderLink
+                  onClick={toggleNav}
+                  url="/solar-overview"
+                  linkText="Solar Overview"
+                />
+                {isOperator ? (
+                  <HeaderLink
+                    onClick={toggleNav}
+                    url="/alerts-and-alarms"
+                    linkText="Alerts and Alarms"
+                  />
+                ) : null}
+
                 <li className="header-nav-list__item h-hidden-1296-up">
                   <HeaderIcon
                     onClick={toggleNav}

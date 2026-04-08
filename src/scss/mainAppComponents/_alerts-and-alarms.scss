@@ -1,5 +1,49 @@
 .alerts-and-alarms-form-content-wrapper {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
   padding-bottom: 40px;
+  width: 100%;
+}
+
+// Title + optional solar-only intro share one white band (avoids overlap/clipping with body copy)
+.alerts-and-alarms-page-header {
+  background-color: $white;
+  box-sizing: border-box;
+  padding-top: 24px;
+  padding-bottom: 20px;
+  width: 100%;
+}
+
+// Full width like .alerts-and-alarms-form-section-heading — no max-width, so the line isn’t squeezed into a tall narrow column
+.alerts-and-alarms-lead {
+  box-sizing: border-box;
+  color: scale-color($black, $lightness: 35%);
+  font-size: 1.6rem;
+  font-weight: $light;
+  line-height: 1.45;
+  margin: 12px 0 0;
+  max-width: none;
+  padding: 0 48px;
+  text-align: center;
+  width: 100%;
+
+  @include media('>=1100px') {
+    padding: 0 11.5%;
+  }
+
+  @include media('>=1500px') {
+    padding: 0 20%;
+  }
+
+  @include media('<medium') {
+    padding: 0 16px;
+  }
+
+  @include media('<544px') {
+    padding: 0 12px;
+  }
 }
 
 .alerts-and-alarms-heading,
@@ -10,6 +54,10 @@
 
 .alerts-and-alarms-heading {
   padding-top: 24px;
+}
+
+.alerts-and-alarms-page-header .alerts-and-alarms-heading {
+  padding-top: 0;
 }
 
 .alerts-and-alarms-form-inputs-wrapper {
