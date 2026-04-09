@@ -45,13 +45,15 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
     if (alertsAndAlarms?.alertsData) {
       const raw = alertsAndAlarms.alertsData.data || {};
       const thresholdRaw = raw.solar_capacity_utilization_threshold_pct;
+      let thresholdPct = 90;
+      if (thresholdRaw !== undefined && thresholdRaw !== null && thresholdRaw !== '') {
+        const n = Number(thresholdRaw);
+        thresholdPct = Number.isNaN(n) ? 90 : Math.min(90, Math.max(0, n));
+      }
       const data = {
         ...raw,
         solar_capacity_utilization_alerts: raw.solar_capacity_utilization_alerts ?? false,
-        solar_capacity_utilization_threshold_pct:
-          thresholdRaw !== undefined && thresholdRaw !== null && thresholdRaw !== ''
-            ? Number(thresholdRaw)
-            : 90,
+        solar_capacity_utilization_threshold_pct: thresholdPct,
       };
       const genData = alertsAndAlarms.alertsData.generator_data || [];
       setPreloadedAlertsFormData(data);
@@ -82,7 +84,10 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       if (t === '' || t === null || t === undefined || Number.isNaN(Number(t))) {
         dataPayload.solar_capacity_utilization_threshold_pct = 90;
       } else {
-        dataPayload.solar_capacity_utilization_threshold_pct = Number(t);
+        dataPayload.solar_capacity_utilization_threshold_pct = Math.min(
+          90,
+          Math.max(0, Number(t))
+        );
       }
       const updatedAlertsFormData = {
         data: dataPayload,
@@ -314,7 +319,13 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             preloadedAlertsFormData?.solar_capacity_utilization_threshold_pct ?? ''
                           }
                           onChange={(e) => {
-                            const val = formatIntInputs(e);
+                            let val = formatIntInputs(e);
+                            if (val !== '' && val !== undefined && val !== null) {
+                              const n = Number(val);
+                              if (!Number.isNaN(n)) {
+                                val = Math.min(90, Math.max(0, n));
+                              }
+                            }
                             preloadedAlertsFormData.solar_capacity_utilization_threshold_pct = val;
                             setPreloadedAlertsFormData((prev) => ({
                               ...prev,
@@ -328,7 +339,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                               }
                               const n = Number(value);
                               if (Number.isNaN(n)) return false;
-                              if (n < 0 || n > 100) return false;
+                              if (n < 0 || n > 90) return false;
                               return true;
                             },
                           })}
@@ -338,7 +349,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                       </p>
                       <p className="input-error-message">
                         {errors.solarCapacityUtilizationThreshold &&
-                          'Enter a percentage between 0 and 100'}
+                          'Enter a percentage from 0 to 90'}
                       </p>
                     </div>
 
