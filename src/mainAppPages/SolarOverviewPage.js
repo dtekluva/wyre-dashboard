@@ -16,6 +16,7 @@ import parametersImg from "../assets/icons/parameterIcon.png";
 import batteryImg from "../assets/icons/battery.png";
 import gridImg from "../assets/icons/grid.png";
 import usageImg from "../assets/icons/usage.png";
+import generatorImg from "../assets/icons/generator.svg";
 import locationLogo from "../assets/icons/locationIcon.png";
 import sunLogo from "../assets/icons/sunIcon.png";
 import { motion } from "framer-motion"; // Node12-safe import
@@ -172,7 +173,11 @@ const EnergySummary = ({ tableContentsData }) => {
 
 /* FlowDiagram - Framer Motion v4 compatible */
 const FlowDiagram = ({ inverterData }) => {
-  const { pv, battery, grid, load } = inverterData || {};
+  const { pv, battery, grid, load, generator_power: generatorPower } = inverterData || {};
+  const generatorStatusNorm = String(generatorPower?.status ?? "")
+    .trim()
+    .toUpperCase();
+  const showGenerator = generatorStatusNorm === "ON";
 
   const batteryKw = battery?.kw ?? 0;
   const batteryStatus =
@@ -192,6 +197,10 @@ const FlowDiagram = ({ inverterData }) => {
   const production = pv?.kw ?? 0;
   const capacity = pv?.installed_capacity_kwp ?? 0;
   const capacityPercentage = pv?.percentage ?? 0;
+
+  const generatorKw = generatorPower?.kw ?? 0;
+  const generatorFlowStatus = generatorKw > 0 ? "Supplying" : "Idle";
+  const generatorFlowColor = generatorKw > 0 ? "#ea580c" : "#9ca3af";
 
   const nodes = {
     production: {
@@ -216,6 +225,24 @@ const FlowDiagram = ({ inverterData }) => {
       percentage: capacityPercentage,
       direction: pv?.direction,
     },
+    ...(showGenerator
+      ? {
+          generator: {
+            x: -40,
+            y: 160,
+            r: 24,
+            color: "#c2410c",
+            bg: "#ffedd5",
+            icon: generatorImg,
+            label: "Generator",
+            value: `${generatorKw.toFixed(2)} kW`,
+            direction: generatorPower?.direction,
+            status: generatorPower?.status,
+            flowStatus: generatorFlowStatus,
+            statusColor: generatorFlowColor,
+          },
+        }
+      : {}),
     battery: {
       x: -40,
       y: 270,
@@ -257,6 +284,9 @@ const FlowDiagram = ({ inverterData }) => {
 
   const connectors = [
     { from: "capacity", to: "production", color: nodes.capacity.color, side: "left", offset: -28 },
+    ...(showGenerator
+      ? [{ from: "generator", to: "production", color: nodes.generator.color, side: "left", offset: -8 }]
+      : []),
     { from: "battery", to: "production", color: nodes.battery.color, side: "left", offset: 12 },
     { from: "grid", to: "production", color: nodes.grid.color, side: "right", offset: -18 },
     { from: "usage", to: "production", color: nodes.usage.color, side: "right", offset: 22 },
@@ -270,7 +300,11 @@ const FlowDiagram = ({ inverterData }) => {
           const end = nodes[to];
           const direction = start && start.direction;
           const isIdle = direction === "IDLE";
-          const isGridOff = start && start.status === "OFF";
+          const startStatus = String(start?.status ?? "").trim().toUpperCase();
+          const isSourceOff =
+            start &&
+            startStatus === "OFF" &&
+            (from === "grid" || from === "generator");
 
           // Correct direction based on your rule:
           // IN  = Production → Node
@@ -326,7 +360,7 @@ const FlowDiagram = ({ inverterData }) => {
               />
 
               {/* animated pulses (only when not IDLE and connector's grid is not OFF) */}
-              {!isIdle && !isGridOff &&
+              {!isIdle && !isSourceOff &&
                 [0, 0.6, 1.2].map((delay, pulseIdx) => (
                   <motion.path
                     key={pulseIdx}
@@ -352,19 +386,35 @@ const FlowDiagram = ({ inverterData }) => {
             </g>
           );
         })}
+        {showGenerator && nodes.generator && (
+          <line
+            x1={nodes.capacity.x}
+            y1={nodes.capacity.y + nodes.capacity.r}
+            x2={nodes.generator.x}
+            y2={nodes.generator.y - nodes.generator.r}
+            stroke={nodes.capacity.color}
+            strokeWidth="2.5"
+            strokeDasharray="7 5"
+            strokeLinecap="round"
+            opacity={0.72}
+          />
+        )}
 
         {Object.entries(nodes).map(([key, n]) => {
           const iconSize = n.r * 0.9;
           let labelOffsetX = 0;
           let textAnchor = "middle";
 
-          if (key === "capacity" || key === "battery") {
-            labelOffsetX = -n.r - 95;
+          if (key === "capacity" || key === "battery" || key === "generator") {
+            const labelR = key === "generator" ? nodes.capacity.r : n.r;
+            labelOffsetX = -labelR - 95;
             textAnchor = "start";
           } else if (key === "grid" || key === "usage") {
             labelOffsetX = n.r + 95;
             textAnchor = "end";
           }
+
+          const pillOn = String(n.status ?? "").trim().toUpperCase() === "ON";
 
           return (
             <g key={key}>
@@ -383,7 +433,7 @@ const FlowDiagram = ({ inverterData }) => {
                 />
                )
               }
-              {key === "grid" && (
+              {(key === "grid" || key === "generator") && (
                 <g
                   transform={`translate(${n.x + n.r - 24}, ${n.y - n.r - 10})`}
                 >
@@ -395,14 +445,13 @@ const FlowDiagram = ({ inverterData }) => {
                     ry="10"
                     width="40"
                     height="18"
-                    fill={n.status === "ON" ? "#22c55e" : "#ef4444"}
+                    fill={pillOn ? "#22c55e" : "#ef4444"}
                     stroke="#fff"
                     strokeWidth="1.5"
                     style={{
-                      filter:
-                        n.status === "ON"
-                          ? "drop-shadow(0 0 6px #22c55e)"
-                          : "drop-shadow(0 0 6px #ef4444)",
+                      filter: pillOn
+                        ? "drop-shadow(0 0 6px #22c55e)"
+                        : "drop-shadow(0 0 6px #ef4444)",
                     }}
                   />
 
@@ -416,7 +465,7 @@ const FlowDiagram = ({ inverterData }) => {
                     fill="#ffffff"
                     style={{ pointerEvents: "none" }}
                   >
-                    {n.status}
+                    {pillOn ? "ON" : "OFF"}
                   </text>
                 </g>
               )}
@@ -475,7 +524,7 @@ const FlowDiagram = ({ inverterData }) => {
                   <text x={n.x + labelOffsetX} y={n.y - 14} textAnchor={textAnchor} fontSize="12" fill="#6B7280">
                     {n.value}
                   </text>
-                  {key === "battery" && (
+                  {(key === "battery" || key === "generator") && (
                     <text
                       x={n.x + labelOffsetX}
                       y={n.y + 2}
@@ -484,7 +533,7 @@ const FlowDiagram = ({ inverterData }) => {
                       fontWeight="600"
                       fill={n.statusColor}
                     >
-                      {n.status}
+                      {key === "battery" ? n.status : n.flowStatus}
                     </text>
                   )}
                 </>
