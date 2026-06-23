@@ -21,6 +21,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const [generator_data, setGenerator_data] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isOperator = userData.role_text === "OPERATOR";
+  const isSolarOnlyCustomer = userData?.is_solar_customer === true;
   const fetchAlertsDataLoading = alertsAndAlarms?.fetchAlertsDataLoading ?? false;
   const isFormBusy = fetchAlertsDataLoading || isSubmitting;
   
@@ -42,7 +43,18 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   
   useEffect(() => {
     if (alertsAndAlarms?.alertsData) {
-      const data = alertsAndAlarms.alertsData.data || {};
+      const raw = alertsAndAlarms.alertsData.data || {};
+      const thresholdRaw = raw.solar_capacity_utilization_threshold_pct;
+      let thresholdPct = 90;
+      if (thresholdRaw !== undefined && thresholdRaw !== null && thresholdRaw !== '') {
+        const n = Number(thresholdRaw);
+        thresholdPct = Number.isNaN(n) ? 90 : Math.min(90, Math.max(0, n));
+      }
+      const data = {
+        ...raw,
+        solar_capacity_utilization_alerts: raw.solar_capacity_utilization_alerts ?? false,
+        solar_capacity_utilization_threshold_pct: thresholdPct,
+      };
       const genData = alertsAndAlarms.alertsData.generator_data || [];
       setPreloadedAlertsFormData(data);
       setGenerator_data(genData);
@@ -67,9 +79,19 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const handleAlertsSubmit = async () => {
     setIsSubmitting(true);
     try {
+      const dataPayload = { ...preloadedAlertsFormData };
+      const t = dataPayload.solar_capacity_utilization_threshold_pct;
+      if (t === '' || t === null || t === undefined || Number.isNaN(Number(t))) {
+        dataPayload.solar_capacity_utilization_threshold_pct = 90;
+      } else {
+        dataPayload.solar_capacity_utilization_threshold_pct = Math.min(
+          90,
+          Math.max(0, Number(t))
+        );
+      }
       const updatedAlertsFormData = {
-        'data': preloadedAlertsFormData,
-        'generator_data': generator_data
+        data: dataPayload,
+        generator_data: generator_data,
       };
       const request = await setAlertAndAlarm(updatedAlertsFormData);
       if (request.fullfilled) {
@@ -90,9 +112,20 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       </div>
       {isOperator ?
         <div className="alerts-and-alarms-form-content-wrapper">
-          <h1 className="center-main-heading alerts-and-alarms-heading">
-            Alerts and Alarms
-          </h1>
+          {isSolarOnlyCustomer ? (
+            <div className="alerts-and-alarms-page-header">
+              <h1 className="center-main-heading alerts-and-alarms-heading">
+                Alerts and Alarms
+              </h1>
+              <p className="alerts-and-alarms-lead">
+                Notifications for your solar system: battery state of charge, weather forecasts, and capacity utilization.
+              </p>
+            </div>
+          ) : (
+            <h1 className="center-main-heading alerts-and-alarms-heading">
+              Alerts and Alarms
+            </h1>
+          )}
 
           <form
             action="#"
@@ -105,9 +138,12 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
             >
             <fieldset className="alerts-and-alarms-form-inputs-wrapper" disabled={isFormBusy}>
               <legend className="alerts-and-alarms-form-section-heading">
-                Standard Alerts on Anomalies
+                {isSolarOnlyCustomer
+                  ? 'Solar system alerts'
+                  : 'Standard Alerts on Anomalies'}
               </legend>
               <ol className="alerts-and-alarms-list">
+                {!isSolarOnlyCustomer ? (
                 <li className="alerts-and-alarms-list-item">
                   <div className="alerts-and-alarms-question-container">
                     <p className="alerts-and-alarms-question">
@@ -200,6 +236,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                     </div>
                   </div>
                 </li>
+                ) : null}
 
                 <li className="alerts-and-alarms-list-item">
                   <div className="alerts-and-alarms-question-container">
@@ -260,6 +297,94 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                   </div>
                 </li>
 
+                <li className="alerts-and-alarms-list-item">
+                  <div className="alerts-and-alarms-question-container">
+                    <div>
+                      <p className="alerts-and-alarms-question">
+                        <label
+                          className="h-screen-reader-text"
+                          htmlFor="solar-capacity-utilization-threshold"
+                        >
+                          Solar capacity utilization threshold percentage
+                        </label>
+                        When solar capacity utilization exceeds{' '}
+                        <input
+                          className="alerts-and-alarms-input"
+                          type="text"
+                          inputMode="decimal"
+                          name="solarCapacityUtilizationThreshold"
+                          id="solar-capacity-utilization-threshold"
+                          placeholder="90"
+                          value={
+                            preloadedAlertsFormData?.solar_capacity_utilization_threshold_pct ?? ''
+                          }
+                          onChange={(e) => {
+                            let val = formatIntInputs(e);
+                            if (val !== '' && val !== undefined && val !== null) {
+                              const n = Number(val);
+                              if (!Number.isNaN(n)) {
+                                val = Math.min(90, Math.max(0, n));
+                              }
+                            }
+                            preloadedAlertsFormData.solar_capacity_utilization_threshold_pct = val;
+                            setPreloadedAlertsFormData((prev) => ({
+                              ...prev,
+                              solar_capacity_utilization_threshold_pct: val,
+                            }));
+                          }}
+                          ref={register('solarCapacityUtilizationThreshold', {
+                            validate: (value) => {
+                              if (value === '' || value === null || value === undefined) {
+                                return true;
+                              }
+                              const n = Number(value);
+                              if (Number.isNaN(n)) return false;
+                              if (n < 0 || n > 90) return false;
+                              return true;
+                            },
+                          })}
+                        />{' '}
+                        <span className="alerts-and-alarms-unit">%</span>
+                        {' '}of installed capacity
+                      </p>
+                      <p className="input-error-message">
+                        {errors.solarCapacityUtilizationThreshold &&
+                          'Enter a percentage from 0 to 90'}
+                      </p>
+                    </div>
+
+                    <div>
+                      <HiddenInputLabel
+                        htmlFor="solar-capacity-utilization-checkbox"
+                        labelText="Solar capacity utilization alerts"
+                      />
+                      <Controller
+                        name="solarCapacityUtilizationChecked"
+                        defaultValue={preloadedAlertsFormData?.solar_capacity_utilization_alerts}
+                        control={control}
+                        render={({ field }) => (
+                          <Checkbox
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              field.onChange(checked);
+                              preloadedAlertsFormData.solar_capacity_utilization_alerts = checked;
+                              setPreloadedAlertsFormData((prev) => ({
+                                ...prev,
+                                solar_capacity_utilization_alerts: checked,
+                              }));
+                            }}
+                            checked={preloadedAlertsFormData?.solar_capacity_utilization_alerts}
+                            className="solar-capacity-utilization-checkbox alerts-and-alarms-checkbox"
+                            id="solar-capacity-utilization-checkbox"
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
+                </li>
+
+                {!isSolarOnlyCustomer ? (
+                <>
                 <li className="alerts-and-alarms-list-item">
                   <div className="alerts-and-alarms-question-container">
                     <div>
@@ -525,9 +650,12 @@ render={({ field }) => (
                     </div>
                   </div>
                 </li>
+                </>
+                ) : null}
               </ol>
             </fieldset>
 
+            {!isSolarOnlyCustomer ? (
             <fieldset className="alerts-and-alarms-form-inputs-wrapper h-second" disabled={isFormBusy}>
               <legend className="alerts-and-alarms-form-section-heading">
                 Customised Alerts on Selected Events
@@ -913,6 +1041,17 @@ render={({ field }) => (
                 </button>
               </div>
             </fieldset>
+            ) : (
+              <div style={{ marginBottom: '5%', marginLeft: '10%' }}>
+                <button
+                  type="submit"
+                  className="generic-submit-button alert-and-alarms-button"
+                  disabled={isFormBusy}
+                >
+                  {isSubmitting ? 'Saving...' : fetchAlertsDataLoading ? 'Loading...' : 'Save Updates'}
+                </button>
+              </div>
+            )}
             </Spin>
 
           </form>

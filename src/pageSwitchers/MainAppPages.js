@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import CompleteDataContext from '../Context';
 import Billing from '../mainAppPages/Billing';
@@ -35,9 +35,12 @@ import ForceLogin from '../mainAppPages/ForceLogin';
 
 function MainAppPages() {
   const { isSidebarOpen, setIsSidebarOpen } = useContext(CompleteDataContext);
+  const location = useLocation();
+  const isReportPage = location.pathname === '/report';
 
   return (
-    <div className="app">
+    <div className={`app ${isReportPage ? 'app--report-page' : ''}`}>
+      {/* Mobile sidebar backdrop - closes sidebar when tapped */}
       {isSidebarOpen && (
         <div
           className="sidebar-backdrop"

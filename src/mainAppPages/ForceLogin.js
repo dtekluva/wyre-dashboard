@@ -9,14 +9,24 @@ function ForceLogin() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const user = {};
-    for (const [key, value] of params.entries()) {
+    let redirectPath = null;
+    for (const [key, value] of params.entries())
+    {
+      if (key === "redirect")
+      {
+        redirectPath = value;
+        continue;
+      }
       user[key] = value;
     }
-    if (user.access && user.refresh) {
+    if (user.access && user.refresh)
+    {
       window.localStorage.setItem("loggedWyreUser", JSON.stringify(user));
     }
+    const destination =
+      redirectPath && redirectPath.startsWith("/") ? redirectPath : "/dashboard";
     setTimeout(() => {
-      navigate("/dashboard", { replace: true });
+      navigate(destination, { replace: true });
     }, 1000);
   }, [location, navigate]);
 

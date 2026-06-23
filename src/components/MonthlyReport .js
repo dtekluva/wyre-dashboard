@@ -9,8 +9,12 @@ import {
 } from "../helpers/reportTableColumns";
 import "../report/report.css";
 
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Doughnut } from "react-chartjs-2";
 import { Bar } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 const logoSrc = "/ReportIcons/Wyre-logo.png";
 const tilderSrc = "/ReportIcons/tilder.png";
@@ -332,6 +336,7 @@ function MonthlyReport({ setReportContext }) {
     const totalSourceEnergy = chartData.reduce((sum, val) => sum + val, 0);
 
     const energySourceData = {
+        labels: chartLabels,
         legend: {
             display: false,
         },
@@ -365,7 +370,7 @@ function MonthlyReport({ setReportContext }) {
                         : generatorColors[(i - 1) % generatorColors.length]
                 ),
                 borderRadius: 999,
-                barThickness: 40,
+                maxBarThickness: 40,
                 borderSkipped: false,
             },
         ],
@@ -666,12 +671,13 @@ function MonthlyReport({ setReportContext }) {
                 },
             },
             datalabels: {
-                color: "#FFFFFF",
+                display: true,
+                formatter: (value) => `${value}%`,
+                color: "#fff",
                 font: {
-                    weight: "bold",
-                    size: 16,
+                    size: 14,
+                    weight: "600",
                 },
-                formatter: (value) => value + "%",
             },
         },
         cutout: "55%",
@@ -843,10 +849,15 @@ function MonthlyReport({ setReportContext }) {
         ],
     };
 
+    const powerDemandMax = Math.max(
+        parseFloat(reportData.power_demand.operational.peak) || 0,
+        parseFloat(reportData.power_demand.non_operational.peak) || 0,
+        parseFloat(reportData.power_demand.weekends.peak) || 0
+    );
     const powerDemandOptions = {
         indexAxis: "x",
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         layout: {
             padding: {
                 top: 20,
@@ -866,6 +877,8 @@ function MonthlyReport({ setReportContext }) {
                         size: 14,
                     },
                 },
+                min: 0,
+                suggestedMax: Math.ceil((powerDemandMax || 100) * 1.1),
             },
             y: {
                 grid: {
@@ -877,8 +890,6 @@ function MonthlyReport({ setReportContext }) {
                         size: 14,
                     },
                 },
-                min: 0,
-                suggestedMax: 120,
             },
         },
         plugins: {
@@ -892,6 +903,9 @@ function MonthlyReport({ setReportContext }) {
                         return `${context.dataset.label}: ${context.raw} kWh`;
                     },
                 },
+            },
+            datalabels: {
+                display: false,
             },
         },
         barPercentage: 0.9,
@@ -1189,7 +1203,7 @@ function MonthlyReport({ setReportContext }) {
                                 </div>
                             </Card>
                             <Card className="value">
-                                <h1 style={{ fontSize: "32Px", textAlign: "center" }}>
+                                <h1 style={{ fontSize: "32px", textAlign: "center" }}>
                                     <Image className="tilde" src={tilderSrc} preview={false} />
                                     <span
                                         className="amount"
@@ -1252,14 +1266,22 @@ function MonthlyReport({ setReportContext }) {
                                     style={{
                                         width: 300,
                                         height: 300,
-                                        marginBottom: "30px",
                                         position: "relative",
+                                        flexShrink: 0,
                                     }}
                                 >
                                     <Doughnut data={energySourceData} options={doughnutOptions} />
                                 </div>
                                 {/* Custom legend */}
-                                <div style={{ minWidth: 220 }}>
+                                <div
+                                    style={{
+                                        minWidth: 220,
+                                        height: 300,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                    }}
+                                >
                                     {chartLabels.map((label, idx) => {
                                         const value = chartData[idx];
                                         const percent =
@@ -1341,8 +1363,6 @@ function MonthlyReport({ setReportContext }) {
                                 <Bar
                                     data={dataSource}
                                     options={options}
-                                    width={900}
-                                    height={300}
                                 />
                             </div>
                             <div className="chart-legend">{chartLegend}</div>
