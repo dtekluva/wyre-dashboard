@@ -112,6 +112,14 @@
   font-size: 30px;
 }
 
+.report-page__select {
+  display: flex;
+  justify-content: space-between;
+  padding-inline: 10px;
+  align-items: center;
+  width: 100%;
+}
+
 @media (max-width: 7800px) {
   .report-page .head-card h1 {
     font-size: 27px;
