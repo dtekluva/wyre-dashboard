@@ -1,0 +1,90 @@
+.personal-data-content-wrapper {
+  background-color: $white;
+  padding: 16px;
+  padding-bottom: 40px;
+
+  @include media('>=medium') {
+    padding: 24px 50px 80px;
+  }
+
+  @include media('>=1455px') {
+    padding: 24px 86px 80px;
+  }
+}
+
+.personal-data-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid $border-grey1;
+}
+
+.personal-data-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.personal-data-profile-name {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: $semi-bold;
+  color: $black;
+}
+
+.personal-data-profile-org {
+  margin: 4px 0 0;
+  font-size: 1.4rem;
+  color: scale-color($black, $lightness: 35%);
+}
+
+.personal-data-section {
+  margin-top: 40px;
+}
+
+.personal-data-section-heading {
+  margin: 0 0 20px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid $border-grey1;
+  font-size: 1.6rem;
+  font-weight: $medium;
+}
+
+.personal-data-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 20px;
+
+  @include media('>=1086px') {
+    gap: 32px 30px;
+  }
+}
+
+.personal-data-field {
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  @include media('>=1086px') {
+    flex: 1 1 30%;
+    max-width: calc(33.333% - 20px);
+  }
+}
+
+.personal-data-field-label {
+  font-size: 1.3rem;
+  font-weight: $regular;
+  color: scale-color($black, $lightness: 35%);
+}
+
+.personal-data-field-value {
+  font-size: 1.5rem;
+  font-weight: $medium;
+  color: $black;
+  word-break: break-word;
+}
