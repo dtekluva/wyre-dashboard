@@ -351,7 +351,7 @@ function Header() {
                   <Link
                     className="header-sublink avatar-sublink"
                     onClick={toggleNavAndDropdown}
-                    to="/branches/user-form"
+                    to="/personal-data"
                   >
                     <ProfileIcon /> <span>Personal Data</span>
                   </Link>
@@ -371,7 +371,7 @@ function Header() {
                   <Link
                     className="header-sublink avatar-sublink"
                     onClick={toggleNavAndDropdown}
-                    to="/dashboard"
+                    to="/password"
                   >
                     <PadlockIcon /> <span>Password</span>
                   </Link>
@@ -449,7 +449,7 @@ function Header() {
             <li className="header-sublinks-list__item avatar-sublink-item">
               <Link
                 className="header-sublink avatar-sublink"
-                to="/branches/user-form"
+                to="/personal-data"
               >
                 <ProfileIcon /> <span>Personal Data</span>
               </Link>
