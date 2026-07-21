@@ -18,6 +18,7 @@ import Password from '../mainAppPages/Password';
 import AlertsAndAlarms from '../mainAppPages/AlertsAndAlarms';
 import BranchesDevicesAndUsers from '../mainAppPages/BranchesDevicesAndUsers';
 import BranchesUserForm from '../mainAppPages/BranchesUserForm';
+import PersonalData from '../mainAppPages/PersonalData';
 
 import ScrollToTop from "../helpers/ScrollToTop";
 
@@ -123,6 +124,7 @@ function MainAppPages() {
                   element={<ClientProfile />}
                 />
                 <Route path="/password" element={<Password />} />
+                <Route path="/personal-data" element={<PersonalData />} />
                 <Route
                   path="/load-overview"
                   element={<LoadOverview />}

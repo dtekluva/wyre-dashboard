@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { useLocation } from 'react-router-dom';
 import { DatePicker, notification } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 import CompleteDataContext from '../Context';
@@ -15,46 +16,58 @@ const breadCrumbRoutes = [
   { url: '/branches/user-form', name: 'User Form', id: 3 },
 ];
 
-const openNotificationWithIcon = (type, userName, action) => {
+const openNotificationWithIcon = (type, message, description) => {
   notification[type]({
-    message: 'Bill Updated',
-    description: `${userName} successfully ${action}`,
+    message,
+    description,
   });
 };
 
-function BranchesUserForm({ match }) {
+function BranchesUserForm() {
   const { preloadedUserFormData, setCurrentUrl } = useContext(
     CompleteDataContext
   );
   const [allUsers, setAllUsers] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
-    if (match && match.url) {
-      setCurrentUrl(match.url);
-    }
-  }, [match, setCurrentUrl]);
+    setCurrentUrl(location.pathname);
+  }, [location.pathname, setCurrentUrl]);
 
   // Get all users
   useEffect(() => {
-    branchesHttpServices.getAll('users').then((returnedData) => {
-      setAllUsers(returnedData);
-    });
+    branchesHttpServices
+      .getAll('users')
+      .then((returnedData) => {
+        setAllUsers(returnedData);
+      })
+      .catch((error) => {
+        console.error('Failed to load users:', error);
+        openNotificationWithIcon(
+          'error',
+          'Could not load users',
+          'Start the branches server with: npm run branches-server'
+        );
+      });
   }, []);
 
-  const { register, handleSubmit, setValue, control, errors } = useForm(
-    preloadedUserFormData ? { defaultValues: preloadedUserFormData } : ''
+  const hasPreloadedData =
+    preloadedUserFormData &&
+    !Array.isArray(preloadedUserFormData) &&
+    Object.keys(preloadedUserFormData).length > 0;
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm(
+    hasPreloadedData ? { defaultValues: preloadedUserFormData } : undefined
   );
 
-  const dateAddedPicker = (
-    <DatePicker
-      format="DD-MM-YYYY"
-      className="generic-input user-form-input"
-      id="date-added"
-      onChange={(e) => setValue('nextMaintDate', e.target.value, true)}
-    />
-  );
-
-  const onSubmit = ({ name, phone, email, organisation }) => {
+  const onSubmit = async ({ name, phone, email, organisation }) => {
     const newUserData = {
       name,
       email,
@@ -62,42 +75,59 @@ function BranchesUserForm({ match }) {
       organisation,
     };
 
-    const userAlreadyExists = allUsers.some(
-      (eachUser) => eachUser.id === preloadedUserFormData.id
-    );
+    const userAlreadyExists =
+      hasPreloadedData &&
+      allUsers.some((eachUser) => eachUser.id === preloadedUserFormData.id);
 
-    /* 
-    If form is not prefilled add new data
-    Otherwise, replace data
-    */
-    if (!userAlreadyExists) {
-      branchesHttpServices
-        .add({ ...newUserData, id: uuidv4() }, 'users')
-        .then((returnedUser) => {
-          setAllUsers(allUsers.concat(returnedUser));
-          openNotificationWithIcon('success', `${returnedUser.name}`, 'added');
-        })
-        .catch((error) => {
-          console.log(error.response);
-        });
-    } else {
-      const id = preloadedUserFormData.id;
-      const updatedUser = { ...preloadedUserFormData, ...newUserData };
+    setIsSubmitting(true);
 
-      branchesHttpServices
-        .update(updatedUser, 'users', id)
-        .then((returnedUser) => {
-          setAllUsers(
-            allUsers.map((eachUser) =>
-              eachUser.id !== returnedUser.id ? eachUser : returnedUser
-            )
-          );
-          openNotificationWithIcon(
-            'success',
-            `${returnedUser.name}`,
-            'updated'
-          );
-        });
+    try {
+      /* 
+      If form is not prefilled add new data
+      Otherwise, replace data
+      */
+      if (!userAlreadyExists) {
+        const returnedUser = await branchesHttpServices.add(
+          { ...newUserData, id: uuidv4() },
+          'users'
+        );
+        setAllUsers((prev) => prev.concat(returnedUser));
+        openNotificationWithIcon(
+          'success',
+          'User Added',
+          `${returnedUser.name} successfully added`
+        );
+        if (!hasPreloadedData) {
+          reset();
+        }
+      } else {
+        const id = preloadedUserFormData.id;
+        const updatedUser = { ...preloadedUserFormData, ...newUserData };
+        const returnedUser = await branchesHttpServices.update(
+          updatedUser,
+          'users',
+          id
+        );
+        setAllUsers((prev) =>
+          prev.map((eachUser) =>
+            eachUser.id !== returnedUser.id ? eachUser : returnedUser
+          )
+        );
+        openNotificationWithIcon(
+          'success',
+          'User Updated',
+          `${returnedUser.name} successfully updated`
+        );
+      }
+    } catch (error) {
+      console.error('Failed to save user:', error);
+      openNotificationWithIcon(
+        'error',
+        'Could not save user',
+        'Make sure the branches server is running (npm run branches-server on port 3003).'
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -111,9 +141,9 @@ function BranchesUserForm({ match }) {
         <h1 className="center-main-heading">User Form</h1>
 
         <form
-          action="#"
           className="user-form"
           onSubmit={handleSubmit(onSubmit)}
+          noValidate
         >
           <div className="user-form-inputs-wrapper">
             <div className="user-form-input-container">
@@ -126,12 +156,13 @@ function BranchesUserForm({ match }) {
               <input
                 className="generic-input"
                 type="text"
-                name="name"
                 id="name"
-                ref={register}
-                required
+                {...register('name', { required: 'Name is required' })}
                 autoFocus
               />
+              <p className="input-error-message">
+                {errors.name && errors.name.message}
+              </p>
             </div>
 
             <div className="user-form-input-container">
@@ -144,11 +175,18 @@ function BranchesUserForm({ match }) {
               <input
                 className="generic-input"
                 type="email"
-                name="email"
                 id="email-address"
-                ref={register}
-                required
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Please enter a valid email',
+                  },
+                })}
               />
+              <p className="input-error-message">
+                {errors.email && errors.email.message}
+              </p>
             </div>
 
             <div className="user-form-input-container h-no-mr">
@@ -161,17 +199,18 @@ function BranchesUserForm({ match }) {
               <input
                 className="generic-input"
                 type="text"
-                inputMode="decimal"
-                name="phone"
+                inputMode="tel"
                 id="phone-number"
-                ref={register({
-                  required: true,
-                  pattern: /^-?\d+\.?\d*$/,
+                {...register('phone', {
+                  required: 'Phone number is required',
+                  pattern: {
+                    value: /^[\d+\-\s()]+$/,
+                    message: 'Please enter a valid phone number',
+                  },
                 })}
-                required
               />
               <p className="input-error-message">
-                {errors.phone && 'Please enter a number'}
+                {errors.phone && errors.phone.message}
               </p>
             </div>
 
@@ -185,11 +224,14 @@ function BranchesUserForm({ match }) {
               <input
                 className="generic-input"
                 type="text"
-                name="organisation"
                 id="organisation"
-                ref={register}
-                required
+                {...register('organisation', {
+                  required: 'Organisation is required',
+                })}
               />
+              <p className="input-error-message">
+                {errors.organisation && errors.organisation.message}
+              </p>
             </div>
 
             <div className="user-form-input-container h-not-visible h-hidden-1086-down">
@@ -202,9 +244,8 @@ function BranchesUserForm({ match }) {
               <input
                 className="generic-input"
                 type="text"
-                name="branch"
                 id="branch"
-                ref={register}
+                {...register('branch')}
               />
             </div>
 
@@ -216,14 +257,18 @@ function BranchesUserForm({ match }) {
                 Date Added
               </label>
               <Controller
-                as={dateAddedPicker}
                 name="dateAdded"
                 control={control}
-                defaultValue=""
-                validateStatus={
-                  errors.dateAdded && 'Please enter a date' ? 'error' : ''
-                }
-                help={errors.dateAdded && 'Please enter a date'}
+                defaultValue={null}
+                render={({ field }) => (
+                  <DatePicker
+                    format="DD-MM-YYYY"
+                    className="generic-input user-form-input"
+                    id="date-added"
+                    value={field.value}
+                    onChange={(date) => field.onChange(date)}
+                  />
+                )}
               />
               <p className="input-error-message">
                 {errors.dateAdded && 'Please enter a date'}
@@ -231,8 +276,12 @@ function BranchesUserForm({ match }) {
             </div>
           </div>
 
-          <button className="generic-submit-button user-form-submit-button">
-            Add
+          <button
+            type="submit"
+            className="generic-submit-button user-form-submit-button"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Saving...' : hasPreloadedData ? 'Update' : 'Add'}
           </button>
         </form>
       </div>
