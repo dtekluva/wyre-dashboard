@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { Button, Input } from "antd";
@@ -10,6 +10,87 @@ import {
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import { APIService } from "../../config/api/apiConfig";
+import DOMPurify from "dompurify";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+
+function stripMarkdownArtifacts(raw) {
+  if (!raw || typeof raw !== "string") return "";
+  let text = raw;
+  text = text.replace(/<br\s*\/?>\s*-\s*/gi, "\n- ");
+  text = text.replace(/<br\s*\/?>/gi, "\n");
+  text = text.replace(/^(#{1,6})\s*<\/?strong>/gm, "$1 ");
+  text = text.replace(/<\/?strong>/gi, "**");
+  text = text.replace(/<\/?em>/gi, "*");
+  text = text.replace(/<p>(.*?)<\/p>/gis, "$1\n\n");
+  return text.trim();
+}
+
+function AiMessageContent({ html }) {
+  const markdown = useMemo(() => stripMarkdownArtifacts(html), [html]);
+  const clean = useMemo(
+    () =>
+      DOMPurify.sanitize(markdown, {
+        ALLOWED_TAGS: [
+          "p",
+          "br",
+          "strong",
+          "b",
+          "em",
+          "i",
+          "u",
+          "a",
+          "ul",
+          "ol",
+          "li",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "table",
+          "thead",
+          "tbody",
+          "tr",
+          "th",
+          "td",
+          "code",
+          "pre",
+          "blockquote",
+          "hr",
+          "span",
+          "div",
+          "sub",
+          "sup",
+        ],
+        ALLOWED_ATTR: ["href", "target", "rel", "title", "class"],
+      }),
+    [markdown]
+  );
+
+  return (
+    <div className="wyre-ai-content">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
+        components={{
+          a: ({ href, children, ...props }) => (
+            <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+              {children}
+            </a>
+          ),
+          table: ({ children, ...props }) => (
+            <div className="wyre-ai-table-wrap">
+              <table {...props}>{children}</table>
+            </div>
+          ),
+        }}
+      >
+        {clean}
+      </ReactMarkdown>
+    </div>
+  );
+}
 
 export default function AiChat() {
   const [isOpen, setIsOpen] = useState(true);
@@ -31,8 +112,6 @@ export default function AiChat() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState(null);
   const [sessionId, setSessionId] = useState(null);
-
-  // New feature states
   const [topic, setTopic] = useState(null);
   const [suggestedPrompts, setSuggestedPrompts] = useState([
     "What is my total energy usage?",
@@ -40,7 +119,6 @@ export default function AiChat() {
     "Show total cost breakdown by branch for last month",
   ]);
   const [promptsVersion, setPromptsVersion] = useState(0);
-
   const chatRef = useRef(null);
   const widgetRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -74,11 +152,9 @@ export default function AiChat() {
         setIsOpen(false);
       }
     };
-
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -93,18 +169,15 @@ export default function AiChat() {
       if (isLoading) return;
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // Ensure the chat container is fully scrollable
       const chatElement = chatRef.current;
       const originalStyle = {
         overflowY: chatElement.style.overflowY,
         height: chatElement.style.height,
       };
 
-      // Temporarily set the chat container to display all content
       chatElement.style.overflowY = "visible";
       chatElement.style.height = "auto";
 
-      // Create canvas with full scroll height
       const canvas = await html2canvas(chatElement, {
         scale: 2,
         height: chatElement.scrollHeight,
@@ -113,7 +186,6 @@ export default function AiChat() {
         scrollY: 0,
       });
 
-      // Restore original styles
       chatElement.style.overflowY = originalStyle.overflowY;
       chatElement.style.height = originalStyle.height;
 
@@ -130,12 +202,9 @@ export default function AiChat() {
 
       pdf.setFontSize(20);
       pdf.setTextColor(0, 0, 0);
-      const pdfTitle = topic ? `Wyre AI • ${topic}` : "Wyre AI Chat History";
-      pdf.text(pdfTitle, pageWidth / 2, margin + 10, {
-        align: "center",
-      });
+      const pdfTitle = topic ? `Wyre AI • ${topic}` : "Wyre AI Chat";
+      pdf.text(pdfTitle, pageWidth / 2, margin + 10, { align: "center" });
 
-      // Paginate content
       let yOffset = 0;
       let pageCount = 1;
 
@@ -146,7 +215,6 @@ export default function AiChat() {
           pdf.setTextColor(0, 0, 0);
         }
 
-        // Create a temporary canvas for cropping
         const tempCanvas = document.createElement("canvas");
         const tempCtx = tempCanvas.getContext("2d");
         tempCanvas.width = imgWidth;
@@ -155,7 +223,6 @@ export default function AiChat() {
           imgHeight - yOffset
         );
 
-        // Draw the cropped portion
         tempCtx.drawImage(
           canvas,
           0,
@@ -169,7 +236,6 @@ export default function AiChat() {
         );
         const croppedImgData = tempCanvas.toDataURL("image/png");
 
-        // Add cropped image to PDF
         const croppedImgHeight = tempCanvas.height / pixelsPerMm;
         pdf.addImage(
           croppedImgData,
@@ -204,7 +270,6 @@ export default function AiChat() {
   };
 
   const handleSuggestedQuestion = (question) => {
-    if (isTyping) return;
     sendQuestion(question);
   };
 
@@ -226,7 +291,6 @@ export default function AiChat() {
     setIsTyping(true);
 
     try {
-      // Keep existing endpoint intact
       const response = await APIService.post("/chatbot/chat/branch/", {
         question: trimmed,
         session_id: sessionId,
@@ -244,8 +308,6 @@ export default function AiChat() {
       };
 
       setSessionId(responseData.session_id);
-
-      // New: capture topic and dynamic prompts if provided
       if (!topic && responseData.topic) {
         setTopic(responseData.topic);
       }
@@ -256,7 +318,6 @@ export default function AiChat() {
         setSuggestedPrompts(responseData.suggested_prompts);
         setPromptsVersion((v) => v + 1);
       }
-
       setMessages((prev) => [...prev, aiResponse]);
       setIsTyping(false);
     } catch (error) {
@@ -267,11 +328,11 @@ export default function AiChat() {
 
   return (
     <>
-      {/* Floating AI Button */}
       <Button
         type="primary"
         shape="circle"
         size="large"
+        className="wyre-ai-trigger-btn"
         onClick={() => setIsOpen(true)}
         style={{
           position: "fixed",
@@ -279,14 +340,9 @@ export default function AiChat() {
           right: "40px",
           width: "50px",
           height: "50px",
-          backgroundColor: "#5C3592",
-          borderColor: "#5C3592",
-          fontSize: "18px",
-          fontWeight: "500",
+          backgroundColor: "#5C12A7",
+          borderColor: "#5C12A7",
           zIndex: 40,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
           transition: "all 0.3s ease",
           transform: isOpen ? "scale(0)" : "scale(1)",
           opacity: isOpen ? 0 : 1,
@@ -296,13 +352,14 @@ export default function AiChat() {
         <img
           src="/icon/wyre-ai-logo.svg"
           alt="Wyre Ai Logo"
-          style={{ width: "30px", height: "30px" }}
+          className="wyre-ai-trigger-btn__logo"
         />
       </Button>
       <Button
         type="primary"
         shape="circle"
         size="large"
+        className="wyre-ai-trigger-btn"
         onClick={() => setIsOpen(false)}
         style={{
           position: "fixed",
@@ -310,8 +367,8 @@ export default function AiChat() {
           right: "40px",
           width: "50px",
           height: "50px",
-          backgroundColor: "#5C3592",
-          borderColor: "#5C3592",
+          backgroundColor: "#5C12A7",
+          borderColor: "#5C12A7",
           fontSize: "18px",
           fontWeight: "bold",
           zIndex: 40,
@@ -324,7 +381,6 @@ export default function AiChat() {
         <DownOutlined />
       </Button>
 
-      {/* Chat Widget */}
       <div
         ref={widgetRef}
         style={{
@@ -333,7 +389,6 @@ export default function AiChat() {
           right: "40px",
           width: "420px",
           height: "80%",
-          // backgroundColor: "white",
           borderRadius: "8px",
           boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
           transition: "all 0.3s ease-in-out",
@@ -347,13 +402,11 @@ export default function AiChat() {
           flexDirection: "column",
         }}
       >
-        {/* Header */}
         <div
           style={{
-            backgroundColor: "#5C3592",
+            backgroundColor: "#5C12A7",
             color: "white",
             padding: "12px",
-            height: "60px",
             borderRadius: "8px 8px 0 0",
             display: "flex",
             alignItems: "center",
@@ -379,17 +432,23 @@ export default function AiChat() {
               style={{
                 color: "white",
                 fontSize: "14px",
-                fontWeight: 500,
-                letterSpacing: "0.5px",
+                fontWeight: 550,
+                letterSpacing: "0.8px",
+                textTransform: "uppercase",
               }}
             >
               {topic || "Wyre AI Dashboard Assistant"}
             </p>
           </div>
-          <DownloadOutlined
-            style={{ fontSize: "20px", cursor: "pointer" }}
+          <Button
+            type="text"
+            size="small"
+            icon={<DownloadOutlined style={{ fontSize: "20px" }} />}
             onClick={downloadChatAsPDF}
-            disabled={isLoading}
+            style={{
+              color: "#fff",
+            }}
+            disabled={isLoading || messages.length < 2}
           />
           {downloadError && (
             <div style={{ color: "red", fontSize: "12px", marginTop: "8px" }}>
@@ -412,38 +471,12 @@ export default function AiChat() {
             gap: "12px",
           }}
         >
-          {!isDownloading && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
-            >
-              <p
-                style={{
-                  fontSize: "14px",
-                  fontWeight: 550,
-                  letterSpacing: "0.5px",
-                  color: "gray",
-                }}
-              >
-                Wyre AI Chat
-              </p>
-              <p
-                style={{
-                  fontSize: "12px",
-                  fontWeight: 500,
-                  letterSpacing: "0.5px",
-                  color: "gray",
-                  marginTop: "4px",
-                }}
-              >
-                <InfoCircleOutlined
-                  style={{ fontSize: "12px", marginRight: "6px" }}
-                />
-                Please Ask Questions Related to Wyre
+          {!isDownloading && messages.length <= 1 && (
+            <div className="wyre-ai-chat-intro">
+              <p className="wyre-ai-chat-intro__title">Wyre AI Chat</p>
+              <p className="wyre-ai-chat-intro__hint">
+                <InfoCircleOutlined />
+                <span>Please ask questions related to Wyre</span>
               </p>
             </div>
           )}
@@ -461,7 +494,7 @@ export default function AiChat() {
                     style={{
                       width: "24px",
                       height: "24px",
-                      backgroundColor: "#5C3592",
+                      backgroundColor: "#5C12A7",
                       borderRadius: "50%",
                       display: "flex",
                       alignItems: "center",
@@ -475,45 +508,14 @@ export default function AiChat() {
                       style={{ width: "15px", height: "15px" }}
                     />
                   </div>
-                  <div
-                    style={{
-                      backgroundColor: "white",
-                      borderRadius: "8px",
-                      padding: "8px 12px",
-                      maxWidth: "200px",
-                      boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
-                      border: "1px solid #b9b9b9",
-                    }}
-                  >
-                    <p
-                      style={{
-                        fontSize: "12px",
-                        lineHeight: "1.4",
-                        wordBreak: "break-word",
-                      }}
-                    >
-                      <div
-                        dangerouslySetInnerHTML={{ __html: message.content }}
-                      />
-                    </p>
+                  <div className="wyre-ai-bubble wyre-ai-bubble--ai">
+                    <AiMessageContent html={message.content} />
                   </div>
                 </div>
               ) : (
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                  <div
-                    style={{
-                      backgroundColor: "#5C35922B",
-                      borderRadius: "8px",
-                      padding: "8px 12px",
-                      border: "1px solid #b9b9b9",
-                      maxWidth: "200px",
-                    }}
-                  >
-                    <p style={{ fontSize: "12px", wordBreak: "break-word" }}>
-                      <div
-                        dangerouslySetInnerHTML={{ __html: message.content }}
-                      />
-                    </p>
+                  <div className="wyre-ai-bubble wyre-ai-bubble--user">
+                    <AiMessageContent html={message.content} />
                   </div>
                 </div>
               )}
@@ -525,9 +527,9 @@ export default function AiChat() {
                   marginTop: "4px",
                 }}
               >
-                <p style={{ color: "#999", fontSize: "10px" }}>
+                <span style={{ color: "#999", fontSize: "10px" }}>
                   {message.timestamp}
-                </p>
+                </span>
               </div>
             </div>
           ))}
@@ -540,7 +542,7 @@ export default function AiChat() {
                 style={{
                   width: "24px",
                   height: "24px",
-                  backgroundColor: "#5C3592",
+                  backgroundColor: "#5C12A7",
                   borderRadius: "50%",
                   display: "flex",
                   alignItems: "center",
@@ -558,8 +560,7 @@ export default function AiChat() {
                 style={{
                   backgroundColor: "white",
                   borderRadius: "8px",
-                  height: "40px",
-                  padding: "40px 18px",
+                  padding: "8px",
                   boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
                 }}
               >
@@ -599,7 +600,6 @@ export default function AiChat() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Suggested Prompts */}
         <div
           style={{
             padding: "8px 12px",
@@ -616,7 +616,7 @@ export default function AiChat() {
             <Button
               key={`${prompt}-${index}-${promptsVersion}`}
               size="small"
-              onClick={() => handleSuggestedQuestion(prompt)}
+              onClick={() => !isTyping && handleSuggestedQuestion(prompt)}
               disabled={isTyping}
               style={{
                 textAlign: "left",
@@ -641,7 +641,6 @@ export default function AiChat() {
           ))}
         </div>
 
-        {/* Input Area */}
         <div
           style={{
             padding: "12px",
@@ -663,13 +662,10 @@ export default function AiChat() {
                 type="primary"
                 size="small"
                 shape="circle"
-                color="#5C3592"
                 icon={<SendOutlined size={34} />}
                 onClick={!isTyping ? handleSendMessage : undefined}
                 disabled={!inputValue.trim() || isTyping}
                 style={{
-                  // backgroundColor: "#5C3592",
-                  // borderColor: "#5C3592",
                   width: "34px",
                   height: "34px",
                   minWidth: "34px",
@@ -689,6 +685,65 @@ export default function AiChat() {
       </div>
 
       <style jsx>{`
+        .wyre-ai-trigger-btn {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          padding: 0 !important;
+          line-height: 0 !important;
+          overflow: hidden;
+        }
+        .wyre-ai-trigger-btn > span {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          width: 100%;
+          height: 100%;
+          line-height: 0;
+        }
+        .wyre-ai-trigger-btn__logo {
+          display: block;
+          width: 26px;
+          height: auto;
+          max-height: 30px;
+          margin: 0;
+          object-fit: contain;
+          transform: translateY(-1px);
+        }
+
+        .wyre-ai-chat-intro {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          padding: 4px 0 8px;
+          margin-bottom: 4px;
+        }
+        .wyre-ai-chat-intro__title {
+          margin: 0;
+          font-size: 13px;
+          font-weight: 600;
+          letter-spacing: 0.4px;
+          color: #8c8c8c;
+        }
+        .wyre-ai-chat-intro__hint {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          margin: 0;
+          padding: 5px 12px;
+          font-size: 11px;
+          font-weight: 500;
+          color: #5c12a7;
+          background: rgba(92, 18, 167, 0.07);
+          border: 1px solid rgba(92, 18, 167, 0.14);
+          border-radius: 14px;
+          line-height: 1.3;
+        }
+        .wyre-ai-chat-intro__hint span {
+          white-space: nowrap;
+        }
+
         @keyframes bounce {
           0%,
           80%,
@@ -708,6 +763,112 @@ export default function AiChat() {
             opacity: 1;
             transform: translateY(0);
           }
+        }
+
+        .wyre-ai-bubble {
+          border-radius: 10px;
+          padding: 10px 14px;
+          max-width: 85%;
+          word-break: break-word;
+        }
+        .wyre-ai-bubble--ai {
+          background: #ffffff;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+          border: 1px solid #e8e8e8;
+        }
+        .wyre-ai-bubble--user {
+          background: rgba(92, 53, 146, 0.11);
+          border: 1px solid #d4c5e6;
+        }
+
+        .wyre-ai-content {
+          font-size: 12.5px;
+          line-height: 1.55;
+          color: #1f1f1f;
+        }
+        .wyre-ai-content p {
+          margin: 0 0 8px;
+        }
+        .wyre-ai-content p:last-child {
+          margin-bottom: 0;
+        }
+        .wyre-ai-content strong {
+          font-weight: 700;
+          color: #111;
+        }
+        .wyre-ai-content br {
+          display: block;
+          content: "";
+          margin-top: 2px;
+        }
+        .wyre-ai-content ul,
+        .wyre-ai-content ol {
+          margin: 4px 0 8px;
+          padding-left: 18px;
+        }
+        .wyre-ai-content li {
+          margin-bottom: 3px;
+        }
+        .wyre-ai-content table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 8px 0;
+          font-size: 11.5px;
+        }
+        .wyre-ai-content table th,
+        .wyre-ai-content table td {
+          border: 1px solid #e0e0e0;
+          padding: 5px 8px;
+          text-align: left;
+        }
+        .wyre-ai-content table th {
+          background: #f5f0fa;
+          font-weight: 600;
+          color: #333;
+        }
+        .wyre-ai-content table tr:nth-child(even) {
+          background: #fafafa;
+        }
+        .wyre-ai-content a {
+          color: #5c12a7;
+          text-decoration: underline;
+        }
+        .wyre-ai-content code {
+          background: #f3f0f7;
+          padding: 1px 5px;
+          border-radius: 4px;
+          font-size: 11.5px;
+          font-family: "SF Mono", Menlo, monospace;
+        }
+        .wyre-ai-content pre {
+          background: #1e1e2e;
+          color: #cdd6f4;
+          padding: 10px 12px;
+          border-radius: 8px;
+          overflow-x: auto;
+          font-size: 11px;
+          margin: 8px 0;
+        }
+        .wyre-ai-content pre code {
+          background: none;
+          padding: 0;
+          color: inherit;
+        }
+        .wyre-ai-content h1,
+        .wyre-ai-content h2,
+        .wyre-ai-content h3 {
+          margin: 10px 0 6px;
+          font-weight: 700;
+          line-height: 1.3;
+        }
+        .wyre-ai-content h1 {
+          font-size: 15px;
+        }
+        .wyre-ai-content h2 {
+          font-size: 14px;
+        }
+        .wyre-ai-content h3 {
+          font-size: 13px;
         }
       `}</style>
     </>
