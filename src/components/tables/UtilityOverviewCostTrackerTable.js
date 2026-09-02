@@ -1,7 +1,13 @@
 import { Table, Typography } from 'antd';
 import { numberFormatter } from '../../helpers/numberFormatter';
 
-const UtilityOverviewCostTrackerTable = ({ dataSource, isLoading }) => {
+const UtilityOverviewCostTrackerTable = ({
+  dataSource,
+  isLoading,
+  pagination,
+  currentPage,
+  onPageChange,
+}) => {
   const { Text } = Typography;
   dataSource && dataSource.forEach(obj => {
     for (const propertyName in obj) {
@@ -82,16 +88,29 @@ const UtilityOverviewCostTrackerTable = ({ dataSource, isLoading }) => {
     percentageSum += percentage;
   });
 
+  const totalEntries = pagination?.total_count ?? (dataSource?.length ?? 0);
+
+  const tablePagination = pagination && pagination.total_pages > 1
+    ? {
+        current: currentPage ?? pagination.current_page,
+        pageSize: pagination.page_size,
+        total: pagination.total_count,
+        showSizeChanger: false,
+        onChange: onPageChange,
+      }
+    : false;
+
   return (
     <div>
       <Table
         columns={columns}
         dataSource={dataSource && dataSource}
         className='table-striped-rows utitily-overview-table'
-        rowKey={(record) => record.id}
-        footer={() => `${dataSource && dataSource.length} entries in total`}
+        rowKey={(record, index) => record.month ?? record.id ?? index}
+        footer={() => `${totalEntries} entries in total`}
         scroll={{ x: 500 }}
         loading={isLoading}
+        pagination={tablePagination}
         summary={pageData => {
 
           return (

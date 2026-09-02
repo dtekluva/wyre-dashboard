@@ -54,24 +54,30 @@ export const getCostTrackerOverviewData = (branchId) => async (dispatch) => {
   }
 };
 
-export const getDieselOverviewData = (branchId) => async (dispatch) => {
+export const getDieselOverviewData = (branchId, { page = 1, pageSize = 6 } = {}) => async (dispatch) => {
   dispatch(fetchDieselOverviewLoading());
-  const requestUrl = `cost-tracker/diesel-overview/${branchId}`;
+  const requestUrl = `cost-tracker/diesel-overview/${branchId}/?page=${page}&page_size=${pageSize}`;
   try {
     const response = await APIService.get(requestUrl);
-    dispatch(fetchDieselOverviewSuccess(response.data.data));
+    dispatch(fetchDieselOverviewSuccess({
+      data: response.data.data,
+      pagination: response.data.pagination,
+    }));
     dispatch(fetchDieselOverviewLoading(false))
   } catch (error) {
     dispatch(fetchDieselOverviewLoading(false));
   }
 };
 
-export const getUtilityOverviewData = (branchId) => async (dispatch) => {
+export const getUtilityOverviewData = (branchId, { page = 1, pageSize = 12 } = {}) => async (dispatch) => {
   dispatch(fetchUtilityOverviewLoading());
-  const requestUrl = `cost-tracker/utility-overview/${branchId}`;
+  const requestUrl = `cost-tracker/utility-overview/${branchId}/?page=${page}&page_size=${pageSize}`;
   try {
     const response = await APIService.get(requestUrl);
-    dispatch(fetchUtilityOverviewSuccess(response.data.data));
+    dispatch(fetchUtilityOverviewSuccess({
+      data: response.data.data,
+      pagination: response.data.pagination,
+    }));
     dispatch(fetchUtilityOverviewLoading(false))
   } catch (error) {
     dispatch(fetchUtilityOverviewLoading(false));

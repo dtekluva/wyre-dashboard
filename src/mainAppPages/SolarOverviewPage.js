@@ -94,6 +94,150 @@ const CircleGauge = ({ value, max, percentage, size = 200, segments = 48 }) => {
   );
 };
 
+const formatSummaryNumber = (val, decimals = 0) => {
+  const num = Number(val);
+  if (!Number.isFinite(num)) return "0";
+  return num.toLocaleString(undefined, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+};
+
+const BatteryFlowIcon = ({ direction = "down", color = "#7B61FF" }) => (
+  <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+    <rect x="0.5" y="0.5" width="13" height="13" rx="2" fill={color} stroke={color} />
+    <path
+      d={direction === "down" ? "M7 3.5 L7 10.5 M4.5 8 L7 10.5 L9.5 8" : "M7 10.5 L7 3.5 M4.5 6 L7 3.5 L9.5 6"}
+      fill="none"
+      stroke="#fff"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const getBatteryFlowMetric = (item, flow) => {
+  const prefix = flow === "charged" ? "charge" : "discharge";
+  return {
+    kwh: item?.[`${prefix}_kwh`] ?? 0,
+    cost: item?.[`${prefix}_cost`] ?? 0,
+  };
+};
+
+const formatBatteryDateLabel = (date) => {
+  const parsed = dayjs(date);
+  return parsed.isValid() ? parsed.format("DD MMM YYYY") : "";
+};
+
+const getBatteryDateRange = (periodKey, item = {}, batteryData = {}) => {
+  const apiRange = item.date_range ?? item.period ?? item.date_label;
+  if (apiRange) return apiRange;
+
+  const startDate = item.start_date ?? item.from_date;
+  const endDate = item.end_date ?? item.to_date;
+  const formattedStart = formatBatteryDateLabel(startDate);
+  const formattedEnd = formatBatteryDateLabel(endDate);
+
+  if (formattedStart && formattedEnd) {
+    return `${formattedStart} – ${formattedEnd}`;
+  }
+  if (formattedStart) return formattedStart;
+  if (formattedEnd) return formattedEnd;
+
+  if (periodKey === "total") {
+    const rootRange =
+      batteryData.total_date_range ??
+      batteryData.date_range ??
+      batteryData.total?.date_range;
+    if (rootRange) return rootRange;
+
+    const rootStart = batteryData.total_start_date ?? batteryData.start_date;
+    const rootEnd = batteryData.total_end_date ?? batteryData.end_date;
+    const formattedRootStart = formatBatteryDateLabel(rootStart);
+    const formattedRootEnd = formatBatteryDateLabel(rootEnd);
+
+    if (formattedRootStart && formattedRootEnd) {
+      return `${formattedRootStart} – ${formattedRootEnd}`;
+    }
+    if (formattedRootStart) return formattedRootStart;
+    if (formattedRootEnd) return formattedRootEnd;
+  }
+
+  const today = dayjs();
+  if (periodKey === "today") return today.format("DD MMM YYYY");
+  if (periodKey === "monthly") {
+    return `${today.startOf("month").format("DD")} – ${today.endOf("month").format("DD MMM YYYY")}`;
+  }
+
+  return "";
+};
+
+const BatteryTabContent = ({ batteryData = {} }) => {
+  const periods = [
+    { key: "total", label: "Total" },
+    { key: "today", label: "Today" },
+    { key: "monthly", label: "Current Month" },
+  ];
+
+  return (
+    <div className="battery-tab-content">
+      <div className="battery-tab-grid battery-tab-grid--header">
+        <div />
+        <div className="battery-tab-col-heading battery-tab-col-heading--charged">
+          <BatteryFlowIcon direction="down" color="#7B61FF" />
+          <span>CHARGED · IN</span>
+        </div>
+        <div className="battery-tab-col-heading battery-tab-col-heading--discharged">
+          <BatteryFlowIcon direction="up" color="#58B90A" />
+          <span>DISCHARGED · OUT</span>
+        </div>
+      </div>
+
+      {periods.map(({ key, label }) => {
+        const item = batteryData[key] || {};
+        const charged = getBatteryFlowMetric(item, "charged");
+        const discharged = getBatteryFlowMetric(item, "discharged");
+        const dateRange = getBatteryDateRange(key, item, batteryData);
+
+        return (
+          <div key={key} className="battery-tab-row">
+            <div className="battery-tab-period">
+              <div className="battery-tab-period-label">{label}</div>
+              <div className="battery-tab-period-range">{dateRange || "\u00A0"}</div>
+            </div>
+
+            <div className="battery-tab-metric battery-tab-metric--charged">
+              <div className="battery-tab-kwh">
+                {formatSummaryNumber(charged.kwh, 1)} <span>kWh</span>
+              </div>
+              <div className="battery-tab-cost">₦ {formatSummaryNumber(charged.cost, 2)}</div>
+            </div>
+
+            <div className="battery-tab-metric battery-tab-metric--discharged">
+              <div className="battery-tab-kwh">
+                {formatSummaryNumber(discharged.kwh, 1)} <span>kWh</span>
+              </div>
+              <div className="battery-tab-cost">₦ {formatSummaryNumber(discharged.cost, 2)}</div>
+            </div>
+          </div>
+        );
+      })}
+
+      <div className="battery-tab-legend">
+        <div className="battery-tab-legend-item">
+          <BatteryFlowIcon direction="down" color="#7B61FF" />
+          <span>Charged = energy stored into the battery</span>
+        </div>
+        <div className="battery-tab-legend-item">
+          <BatteryFlowIcon direction="up" color="#58B90A" />
+          <span>Discharged = energy delivered from the battery</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const EnergySummary = ({ tableContentsData }) => {
   if (!tableContentsData) return null;
 
@@ -105,17 +249,11 @@ const EnergySummary = ({ tableContentsData }) => {
     grid: "Grid",
   };
 
-  // Dynamic content labels per tab (battery labels will be updated when backend adds target fields)
   const contentLabels = {
     generation: {
       total: "Total Yield",
       today: "Today's yield",
       monthly: "Current Month's yield",
-    },
-    battery: {
-      total: "Total",
-      today: "Today",
-      monthly: "Current Month",
     },
     load: {
       total: "Consumption",
@@ -129,41 +267,45 @@ const EnergySummary = ({ tableContentsData }) => {
     },
   };
 
-  const formatValue = (val) => (val ? Number(val).toLocaleString() : "0");
+  const formatValue = (val) => formatSummaryNumber(val);
 
   return (
     <div className="energy-summary-container" style={{ background: "#fff" }}>
       <Tabs defaultActiveKey="generation" tabBarGutter={50}>
         {tabs.map((key) => (
           <Tabs.TabPane tab={tabLabels[key]} key={key}>
-            <div className="energy-tab-content" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-              {["total", "today", "monthly"].map((period) => {
-                const item = tableContentsData[key]?.[period] || {};
-                const label = contentLabels[key]?.[period] ?? period;
-                return (
-                  <div
-                    key={period}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div style={{ fontSize: "14px", fontWeight: 500, color: "#333" }}>
-                      {label}
-                    </div>
+            {key === "battery" ? (
+              <BatteryTabContent batteryData={tableContentsData.battery} />
+            ) : (
+              <div className="energy-tab-content" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                {["total", "today", "monthly"].map((period) => {
+                  const item = tableContentsData[key]?.[period] || {};
+                  const label = contentLabels[key]?.[period] ?? period;
+                  return (
+                    <div
+                      key={period}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div style={{ fontSize: "14px", fontWeight: 500, color: "#333" }}>
+                        {label}
+                      </div>
 
-                    <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-                      <div style={{ fontSize: "14px", fontWeight: 500, color: "#999" }}>
-                        {formatValue(item.kwh)} <span style={{ color: "#999" }}>kWh</span>
-                      </div>
-                      <div style={{ fontSize: "14px", fontWeight: 500, color: "#999" }}>
-                        {formatValue(item.cost)} <span style={{ color: "#00b140" }}>NGN</span>
+                      <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+                        <div style={{ fontSize: "14px", fontWeight: 500, color: "#999" }}>
+                          {formatValue(item.kwh)} <span style={{ color: "#999" }}>kWh</span>
+                        </div>
+                        <div style={{ fontSize: "14px", fontWeight: 500, color: "#999" }}>
+                          {formatValue(item.cost)} <span style={{ color: "#00b140" }}>NGN</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </Tabs.TabPane>
         ))}
       </Tabs>
@@ -638,7 +780,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
       {/* Top row: Left gauge card + Right flow card – stacked on mobile, side-by-side on desktop */}
-      <Row gutter={16}>
+      <Row gutter={16} className="overview-top-row">
         <Col xs={24} sm={24} md={24} lg={13}>
           <Spin spinning={solar.weatherReadingsLoading}>
             <Card className="left-card">
