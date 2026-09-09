@@ -66,7 +66,7 @@ const EnergyConsumptionBarChart = ({
         enabled: true,
       },
       datalabels: {
-        display: false, // important: suppress inner bar labels
+        display: false,
       },
     },
 
@@ -135,16 +135,16 @@ const EnergyConsumptionBarChart = ({
   };
 
   const colorsArray = [
-    '#FF3DA1',
-    '#00C7E6',
-    '#6C00FA',
-    '#82ca9d',
-    '#ff9b3d',
-    '#360259',
-    '#0371b5',
-    '#D90000',
-    '#757575',
-    '#FFE11A',
+    "#FF3DA1",
+    "#00C7E6",
+    "#5C3592",
+    "#82ca9d",
+    "#ff9b3d",
+    "#360259",
+    "#0371b5",
+    "#D90000",
+    "#757575",
+    "#FFE11A",
   ];
 
   const datasets = chartDeviceNames.map((name, index) => ({

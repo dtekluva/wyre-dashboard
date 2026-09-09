@@ -102,24 +102,24 @@ select {
 }
 
 button,
-[type='button'],
-[type='reset'],
-[type='submit'] {
+[type="button"],
+[type="reset"],
+[type="submit"] {
   -webkit-appearance: button;
 }
 
 button::-moz-focus-inner,
-[type='button']::-moz-focus-inner,
-[type='reset']::-moz-focus-inner,
-[type='submit']::-moz-focus-inner {
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
   border-style: none;
   padding: 0;
 }
 
 button:-moz-focusring,
-[type='button']:-moz-focusring,
-[type='reset']:-moz-focusring,
-[type='submit']:-moz-focusring {
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
   outline: 1px dotted ButtonText;
 }
 
@@ -146,24 +146,24 @@ textarea {
   overflow: auto;
 }
 
-[type='checkbox'],
-[type='radio'] {
+[type="checkbox"],
+[type="radio"] {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   padding: 0;
 }
 
-[type='number']::-webkit-inner-spin-button,
-[type='number']::-webkit-outer-spin-button {
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
   height: auto;
 }
 
-[type='search'] {
+[type="search"] {
   -webkit-appearance: textfield;
   outline-offset: -2px;
 }
 
-[type='search']::-webkit-search-decoration {
+[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
 }
 
@@ -287,7 +287,7 @@ details summary {
   cursor: pointer;
 }
 
-details:not([open])> :not(summary) {
+details:not([open]) > :not(summary) {
   display: none !important;
 }
 
@@ -311,7 +311,7 @@ button {
 
 button:focus,
 button:focus-visible {
-  border-color: #6c00fa;
+  border-color: #5c3592;
   outline: 5px auto -webkit-focus-ring-color;
   outline: 2px solid transparent;
   -webkit-box-shadow: 0 0 0 2px #e1cbff;
@@ -323,11 +323,11 @@ button:focus-visible {
 }
 
 /* Remove IOS input style */
-input[type='email'],
-input[type='text'],
-input[type='tel'],
-input[type='password'],
-input[type='number'],
+input[type="email"],
+input[type="text"],
+input[type="tel"],
+input[type="password"],
+input[type="number"],
 textarea {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -336,7 +336,7 @@ textarea {
 
 input:focus,
 textarea:focus {
-  border-color: #6c00fa;
+  border-color: #5c3592;
   outline: 5px auto -webkit-focus-ring-color;
   outline: 2px solid transparent;
   -webkit-box-shadow: 0 0 0 2px #e1cbff;
@@ -358,7 +358,6 @@ header,
 }
 
 @media (min-width: 769px) {
-
   header,
   .h-regular-gutters,
   .sidebar,
@@ -370,7 +369,6 @@ header,
 }
 
 @media (min-width: 1013px) {
-
   header,
   .h-regular-gutters,
   .sidebar,
@@ -390,7 +388,8 @@ html {
 
 body {
   color: #000000;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   font-size: 16px;
   font-size: 1.6rem;
   -webkit-font-smoothing: antialiased;
@@ -594,13 +593,13 @@ p {
 
 @media (min-width: 768px) {
   .h-purple-stroke-medium-up {
-    stroke: #6c00fa;
+    stroke: #5c3592;
   }
 }
 
 @media (min-width: 768px) {
   .h-purple-stroke-medium-up path {
-    stroke: #6c00fa;
+    stroke: #5c3592;
   }
 }
 
@@ -668,7 +667,7 @@ p {
 }
 
 .anticon.anticon-calendar svg {
-  fill: #6c00fa;
+  fill: #5c3592;
   width: 17px;
   height: 17px;
 }
@@ -677,7 +676,6 @@ p {
 # Checkbox
 --------------------------------------------------------------*/
 @media (min-width: 768px) {
-
   .sidebar-checkbox .ant-checkbox,
   .sidebar-checkbox .ant-checkbox-checked .ant-checkbox-inner,
   .sidebar-checkbox .ant-checkbox-input .ant-checkbox-checked,
@@ -685,8 +683,8 @@ p {
   .sidebar-checkbox .ant-checkbox-inner,
   .sidebar-checkbox .ant-checkbox-input,
   .sidebar-checkbox .ant-checkbox-input:hover,
-  .sidebar-checkbox .ant-checkbox-input:focus+.ant-checkbox-inner {
-    background-color: #6c00fa !important;
+  .sidebar-checkbox .ant-checkbox-input:focus + .ant-checkbox-inner {
+    background-color: #5c3592 !important;
     border-color: #ffffff !important;
   }
 }
@@ -696,9 +694,9 @@ p {
 .alerts-and-alarms-checkbox .ant-checkbox-inner:after,
 .alerts-and-alarms-checkbox .ant-checkbox-wrapper:hover .ant-checkbox-inner,
 .alerts-and-alarms-checkbox .ant-checkbox:hover .ant-checkbox-inner,
-.alerts-and-alarms-checkbox .ant-checkbox-input:focus+.ant-checkbox-inner {
+.alerts-and-alarms-checkbox .ant-checkbox-input:focus + .ant-checkbox-inner {
   background-color: #ffffff !important;
-  border-color: #6c00fa !important;
+  border-color: #5c3592 !important;
 }
 
 .ant-checkbox-checked .ant-checkbox-inner::after {
@@ -711,7 +709,7 @@ p {
   border-color: #ffffff !important;
 }
 
-.ant-checkbox-input:focus+.ant-checkbox-inner {
+.ant-checkbox-input:focus + .ant-checkbox-inner {
   -webkit-box-shadow: 0 0 0 2px #e1cbff !important;
   box-shadow: 0 0 0 2px #e1cbff !important;
   -webkit-transition: border 0.3s, -webkit-box-shadow 0.3s !important;
@@ -813,7 +811,7 @@ thead.ant-table-thead tr th {
 }
 
 .short-button--purple {
-  background-color: #6c00fa;
+  background-color: #5c3592;
   color: #ffffff;
 }
 
@@ -876,7 +874,7 @@ thead.ant-table-thead tr th {
 }
 
 .generic-submit-button {
-  background-color: #6c00fa;
+  background-color: #5c3592;
   border: 0;
   color: #ffffff;
   display: block;
@@ -984,9 +982,9 @@ thead.ant-table-thead tr th {
 }
 
 .table-row-button {
-  border: 1px solid #6c00fa;
+  border: 1px solid #5c3592;
   border-radius: 3px;
-  color: #6c00fa;
+  color: #5c3592;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1028,7 +1026,13 @@ thead.ant-table-thead tr th {
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-    background-image: linear-gradient(to right, #6c00fa, #6c00fa 300.45px, #ffffff 15%, #ffffff 100%);
+    background-image: linear-gradient(
+      to right,
+      #5c3592,
+      #5c3592 300.45px,
+      #ffffff 15%,
+      #ffffff 100%
+    );
     -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
     -webkit-box-orient: horizontal;
@@ -1092,7 +1096,6 @@ thead.ant-table-thead tr th {
     display: block;
   }
 }
-
 
 .header-logo {
   line-height: 1;
@@ -1174,7 +1177,6 @@ thead.ant-table-thead tr th {
   }
 }
 
-
 .header-nav-list__item {
   border-top: #f0f0f0 1px solid;
   font-size: 1.4rem;
@@ -1213,7 +1215,7 @@ thead.ant-table-thead tr th {
 
 @media (min-width: 768px) and (max-width: 1319px) {
   .header-link:hover {
-    color: #6c00fa;
+    color: #5c3592;
   }
 }
 
@@ -1223,10 +1225,10 @@ thead.ant-table-thead tr th {
   }
 
   .header-link:hover:after {
-    background: #6c00fa;
+    background: #5c3592;
     border-radius: 4px 4px 0px 0px;
     bottom: -5px;
-    content: '';
+    content: "";
     display: block;
     height: 4px;
     position: absolute;
@@ -1251,7 +1253,7 @@ thead.ant-table-thead tr th {
 
 @media (min-width: 768px) and (max-width: 1319px) {
   .header-link-dropdown-button:hover {
-    color: #6c00fa;
+    color: #5c3592;
   }
 }
 
@@ -1261,10 +1263,10 @@ thead.ant-table-thead tr th {
   }
 
   .header-link-dropdown-button:hover:after {
-    background: #6c00fa;
+    background: #5c3592;
     border-radius: 4px 4px 0px 0px;
     bottom: -5px;
-    content: '';
+    content: "";
     display: block;
     height: 4px;
     position: absolute;
@@ -1308,7 +1310,7 @@ thead.ant-table-thead tr th {
   }
 
   .header-sublinks-list__item:hover {
-    background-color: #6c00fa;
+    background-color: #5c3592;
   }
 
   .header-sublinks-list__item:hover .header-sublink {
@@ -1324,7 +1326,7 @@ thead.ant-table-thead tr th {
 
 @media (min-width: 768px) and (max-width: 1319px) {
   .header-sublink:hover {
-    color: #6c00fa;
+    color: #5c3592;
   }
 }
 
@@ -1448,7 +1450,7 @@ thead.ant-table-thead tr th {
 }
 
 .header-avatar:hover {
-  border-color: #6c00fa;
+  border-color: #5c3592;
 }
 
 .header-avatar__image {
@@ -1475,11 +1477,10 @@ thead.ant-table-thead tr th {
 }
 
 .sidebar {
-  color: #6c00fa;
+  color: #5c3592;
   padding-top: 10px;
   text-align: center;
 }
-
 
 .sidebar-org-container {
   width: 100%;
@@ -1515,7 +1516,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 768px) {
-
   .sidebar-org__button,
   .sidebar-branch__button {
     padding: 8px 4px 8px 4px;
@@ -1560,7 +1560,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 768px) {
-
   .sidebar-branch__checkbox,
   .sidebar-device__checkbox {
     color: #ffffff;
@@ -1644,7 +1643,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 768px) {
-
   .plotted-unit-selector-container,
   .time-interval-selector-container {
     margin-left: 30px;
@@ -1658,7 +1656,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 768px) {
-
   .plotted-unit-selector,
   .time-interval-selector {
     max-width: 230px;
@@ -1677,7 +1674,7 @@ thead.ant-table-thead tr th {
 }
 
 .top-bar-right__button {
-  background-color: #6c00fa;
+  background-color: #5c3592;
   border-radius: 8px;
   color: #ffffff;
   font-size: 1.2rem;
@@ -1875,7 +1872,7 @@ thead.ant-table-thead tr th {
 }
 
 .dashboard__total-energy {
-  background-color: #6c00fa;
+  background-color: #5c3592;
   color: #ffffff;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1919,7 +1916,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1200px) {
-
   .dashboard__demand-banner,
   .dashboard__cost-emissions-banner {
     margin-top: 0;
@@ -1987,7 +1983,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1200px) {
-
   .dashboard-pie-container,
   .dashboard-today-and-yesterday {
     min-height: 386px;
@@ -2051,7 +2046,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1200px) {
-
   .today-usage__value,
   .yesterday-usage__value {
     font-size: 5.4rem;
@@ -2250,7 +2244,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1531px) {
-
   .score-card-row-4__left,
   .score-card-row-4__right {
     -webkit-box-flex: 1;
@@ -2285,7 +2278,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (max-width: 417px) {
-
   .gen-efficiency-doughnut-and-text,
   .fuel-consumption-doughnut-and-text {
     -webkit-box-orient: vertical;
@@ -2323,7 +2315,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (max-width: 417px) {
-
   .gen-efficiency-doughnut-container,
   .fuel-consumption-doughnut-container {
     margin-right: 0;
@@ -2972,7 +2963,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1100px) {
-
   .alerts-and-alarms-form-section-heading,
   .alerts-and-alarms-list,
   .alert-and-alarms-button-container {
@@ -2981,7 +2971,6 @@ thead.ant-table-thead tr th {
 }
 
 @media (min-width: 1500px) {
-
   .alerts-and-alarms-form-section-heading,
   .alerts-and-alarms-list,
   .alert-and-alarms-button-container {
@@ -3316,7 +3305,7 @@ thead.ant-table-thead tr th {
 }
 
 .error-cta {
-  background: #6c00fa;
+  background: #5c3592;
   border: 0;
   border-radius: 6px;
   color: #ffffff;
@@ -3479,7 +3468,7 @@ thead.ant-table-thead tr th {
 
 .password-error-text {
   margin-left: 8px;
-  color: #6c00fa;
+  color: #5c3592;
   font-size: 1.3rem;
   font-weight: 600;
 }
@@ -3514,7 +3503,8 @@ thead.ant-table-thead tr th {
   max-width: 350px;
   padding: 0 24px;
   width: 100%;
-  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 }
 
 @media (min-width: 769px) {
@@ -3654,7 +3644,8 @@ thead.ant-table-thead tr th {
 
 .forgot-password {
   color: #6a8ba3;
-  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   font-size: 1.4rem;
   font-weight: 700;
   text-decoration: underline;
@@ -3665,7 +3656,7 @@ thead.ant-table-thead tr th {
 }
 
 .signup-login-contact-button {
-  background: #6c00fa;
+  background: #5c3592;
   border: 0;
   border-radius: 6px;
   color: #ffffff;
@@ -3816,7 +3807,7 @@ thead.ant-table-thead tr th {
 }
 
 .header-short-button--auth {
-  background-color: #6c00fa;
+  background-color: #5c3592;
   border: 0;
   border-radius: 8px;
   color: #ffffff;
@@ -3934,9 +3925,10 @@ thead.ant-table-thead tr th {
 }
 
 .footer-heading {
-  color: #6c00fa;
+  color: #5c3592;
   font-weight: 400;
-  font-family: "Roboto", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Roboto", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica,
+    Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   margin: 20px 0;
 }
 
@@ -3956,11 +3948,11 @@ thead.ant-table-thead tr th {
   color: #6a8ba3;
   font-style: normal;
   line-height: 144%;
-  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Nunito Sans", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 }
 
 @media (min-width: 769px) {
-
   .footer-links-list-item,
   .footer-link {
     font-size: 1.8rem;
@@ -3976,7 +3968,8 @@ thead.ant-table-thead tr th {
 }
 
 .footest {
-  font-family: "Roboto", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: "Roboto", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica,
+    Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   margin-top: 70px;
   padding: 22px 16px;
   background-color: rgba(106, 139, 163, 0.04);
@@ -3990,7 +3983,7 @@ thead.ant-table-thead tr th {
 }
 
 .footest-text {
-  color: #6c00fa;
+  color: #5c3592;
 }
 
 /*# sourceMappingURL=style.css.map */
