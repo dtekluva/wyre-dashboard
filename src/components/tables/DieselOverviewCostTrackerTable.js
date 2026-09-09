@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import moment from 'moment';
-import { Modal, Table, Dropdown, Popconfirm, Space, notification, Button } from 'antd';
+import { Modal, Table, Dropdown, Popconfirm, Space, notification, Button, Tooltip } from 'antd';
 import { EditOutlined, DownOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import UpdateDieselEntry from '../../mainAppPages/UpdateDieselEntry';
@@ -12,6 +12,9 @@ import Column from 'antd/lib/table/Column';
 const DieselOverviewCostTrackerTable = ({
   dieselOverviewData,
   isLoading,
+  pagination,
+  currentPage,
+  onPageChange,
   userId,
   role,
   fetchFuelConsumptionInfo,
@@ -112,37 +115,92 @@ const DieselOverviewCostTrackerTable = ({
     setFuelDataLoading(false);
   };
 
+  const renderColumnTitle = (shortTitle, fullTitle) => (
+    <Tooltip title={fullTitle}>
+      <span className="diesel-overview-table__header">{shortTitle}</span>
+    </Tooltip>
+  );
+
   const columns = [
     {
-      title: 'Month',
+      title: renderColumnTitle('Month', 'Month'),
       dataIndex: 'month',
+      width: '12%',
       render: (month) => (
-        <p
+        <button
+          type="button"
+          className="diesel-overview-table__month-link"
           onClick={() => fetchFuelData(month)}
-          style={{ cursor: 'pointer', color: 'blue' }}
         >
           {month}
-        </p>
+        </button>
       ),
     },
-    { title: 'Inputted Usage(Ltr)', dataIndex: 'inputted_usage', render: numberFormatter },
-    { title: 'Forecasted Usage (Ltr)', dataIndex: 'forecasted_usage', render: numberFormatter },
-    { title: 'Inputted Cost (₦)', dataIndex: 'inputted_cost', render: numberFormatter },
-    { title: 'Forecasted Cost (₦)', dataIndex: 'forecasted_cost', render: numberFormatter },
-    { title: 'Diesel Difference (Ltr)', dataIndex: 'diesel_difference', render: numberFormatter },
-    { title: 'Price Difference (₦)', dataIndex: 'cost_difference', render: numberFormatter },
-    { title: 'Percentage Difference (%)', dataIndex: 'percentage_usage', render: numberFormatter },
+    {
+      title: renderColumnTitle('Input (L)', 'Inputted Usage (Ltr)'),
+      dataIndex: 'inputted_usage',
+      align: 'right',
+      render: numberFormatter,
+    },
+    {
+      title: renderColumnTitle('Forecast (L)', 'Forecasted Usage (Ltr)'),
+      dataIndex: 'forecasted_usage',
+      align: 'right',
+      render: numberFormatter,
+    },
+    {
+      title: renderColumnTitle('Input (₦)', 'Inputted Cost (₦)'),
+      dataIndex: 'inputted_cost',
+      align: 'right',
+      render: numberFormatter,
+    },
+    {
+      title: renderColumnTitle('Forecast (₦)', 'Forecasted Cost (₦)'),
+      dataIndex: 'forecasted_cost',
+      align: 'right',
+      render: numberFormatter,
+    },
+    {
+      title: renderColumnTitle('Diff (L)', 'Diesel Difference (Ltr)'),
+      dataIndex: 'diesel_difference',
+      align: 'right',
+      render: numberFormatter,
+    },
+    {
+      title: renderColumnTitle('Diff (₦)', 'Price Difference (₦)'),
+      dataIndex: 'cost_difference',
+      align: 'right',
+      render: numberFormatter,
+    },
+    {
+      title: renderColumnTitle('Diff (%)', 'Percentage Difference (%)'),
+      dataIndex: 'percentage_usage',
+      align: 'right',
+      render: numberFormatter,
+    },
   ];
+
+  const tablePagination = pagination
+    ? {
+        current: currentPage ?? pagination.current_page,
+        pageSize: pagination.page_size,
+        total: pagination.total_count,
+        showSizeChanger: false,
+        onChange: onPageChange,
+      }
+    : false;
 
   return (
     <div className="diesel-overview-table-wrapper">
       <Table
+        className="diesel-overview-table"
         columns={columns}
         dataSource={dieselOverviewData}
         loading={isLoading}
         rowKey={(record, index) => record.month ?? record.id ?? record.key ?? index}
-        pagination={{ pageSize: 6 }}
-        scroll={{ x: 'max-content' }}
+        pagination={tablePagination}
+        size="small"
+        tableLayout="fixed"
       />
 
       <Modal

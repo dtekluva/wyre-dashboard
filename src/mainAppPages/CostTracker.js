@@ -34,6 +34,9 @@ const breadCrumbRoutes = [
   { url: "#", name: "Cost Tracker", id: 2 },
 ];
 
+const DIESEL_OVERVIEW_PAGE_SIZE = 6;
+const UTILITY_OVERVIEW_PAGE_SIZE = 12;
+
 function CostTracker({
   match,
   getCostTrackerOverviewData,
@@ -57,6 +60,8 @@ function CostTracker({
   const [editUtilityPurchaseModal, setEditUtilityPurchaseModal] =
     useState(false);
   const [editIppPurchaseModal, setEditIppPurchaseModal] = useState(false);
+  const [dieselOverviewPage, setDieselOverviewPage] = useState(1);
+  const [utilityOverviewPage, setUtilityOverviewPage] = useState(1);
   const costTracker = useSelector((state) => state.costTracker);
   const sideBar = useSelector((state) => state.sideBar);
 
@@ -81,13 +86,29 @@ function CostTracker({
   }, [match, setCurrentUrl]);
 
   useEffect(() => {
-    if (branchId) {     
+    if (branchId) {
+      setDieselOverviewPage(1);
+      setUtilityOverviewPage(1);
       getCostTrackerOverviewData(branchId);
-      getDieselOverviewData(branchId);
-      getUtilityOverviewData(branchId);
+      getDieselOverviewData(branchId, { page: 1, pageSize: DIESEL_OVERVIEW_PAGE_SIZE });
+      getUtilityOverviewData(branchId, { page: 1, pageSize: UTILITY_OVERVIEW_PAGE_SIZE });
       getCostTrackerBaselineData(branchId);
     }
   }, [branchId, getCostTrackerOverviewData, getDieselOverviewData, getUtilityOverviewData, getCostTrackerBaselineData]);
+
+  const handleDieselOverviewPageChange = (page) => {
+    setDieselOverviewPage(page);
+    if (branchId) {
+      getDieselOverviewData(branchId, { page, pageSize: DIESEL_OVERVIEW_PAGE_SIZE });
+    }
+  };
+
+  const handleUtilityOverviewPageChange = (page) => {
+    setUtilityOverviewPage(page);
+    if (branchId) {
+      getUtilityOverviewData(branchId, { page, pageSize: UTILITY_OVERVIEW_PAGE_SIZE });
+    }
+  };
 
   useEffect(() => {
     setCostTrackerOverviewData(costTracker.costTrackerOverviewData);
@@ -146,6 +167,9 @@ function CostTracker({
       <DieselOverviewCostTrackerTable
         isLoading={costTracker?.fetchDieselOverviewLoading}
         dieselOverviewData={dieselOverviewData?.diesel_overview}
+        pagination={costTracker?.dieselOverviewPagination}
+        currentPage={dieselOverviewPage}
+        onPageChange={handleDieselOverviewPageChange}
         setDieselEntryData={setDieselEntryData}
         dieselEntryData={dieselEntryData}
         userId={userData.user_id}
@@ -175,6 +199,9 @@ function CostTracker({
       <UtilityOverviewCostTrackerTable
         isLoading={costTracker?.fetchUtilityOverviewLoading}
         dataSource={utilityOverviewData?.utility_overview}
+        pagination={costTracker?.utilityOverviewPagination}
+        currentPage={utilityOverviewPage}
+        onPageChange={handleUtilityOverviewPageChange}
       />
     </article>
   );

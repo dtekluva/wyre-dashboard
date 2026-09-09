@@ -10,9 +10,11 @@ const INITIAL_STATE = {
   
   fetchDieselOverviewLoading: false,
   dieselOverviewData: false,
+  dieselOverviewPagination: false,
   
   fetchUtilityOverviewLoading: false,
   utilityOverviewData: false,
+  utilityOverviewPagination: false,
 
   fetchIppOverviewLoading: false,
   ippOverviewData: false,
@@ -100,7 +102,8 @@ const reducer = (state = INITIAL_STATE, action) => {
     case costTrackerType.FETCH_DIESEL_OVERVIEW_SUCCESS:
       return {
         ...state,
-        dieselOverviewData: action.payload,
+        dieselOverviewData: action.payload.data,
+        dieselOverviewPagination: action.payload.pagination,
       };
 
     case costTrackerType.FETCH_UTILITY_OVERVIEW_LOADING:
@@ -111,7 +114,8 @@ const reducer = (state = INITIAL_STATE, action) => {
     case costTrackerType.FETCH_UTILITY_OVERVIEW_SUCCESS:
       return {
         ...state,
-        utilityOverviewData: action.payload,
+        utilityOverviewData: action.payload.data,
+        utilityOverviewPagination: action.payload.pagination,
       };
       
     case costTrackerType.FETCH_IPP_OVERVIEW_LOADING:
