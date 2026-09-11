@@ -1,7 +1,7 @@
 .dashboard-row-1 {
   width: 100%;
 
-  @include media('>=1200px') {
+  @include media(">=1200px") {
     display: flex;
     justify-content: space-between;
   }
@@ -13,11 +13,11 @@
   border-radius: $medium-border;
   background-color: $white;
 
-  @include media('>=medium') {
+  @include media(">=medium") {
     height: 200px;
   }
 
-  @include media('>=1200px') {
+  @include media(">=1200px") {
     max-width: 31.5%;
   }
 }
@@ -27,17 +27,16 @@
   height: 174px;
   border-radius: $medium-border;
 
-  @include media('>=medium') {
+  @include media(">=medium") {
     height: 200px;
   }
 
-  @include media('>=1200px') {
+  @include media(">=1200px") {
     flex: 1;
     min-width: 30.5%;
     column-gap: 30px;
   }
 }
-
 
 .dashboard__total-energy {
   background-color: $purple;
@@ -62,7 +61,7 @@
 }
 
 .solar-energy_value {
-  color: #FFC205;
+  color: #ffc205;
   font-size: 1.5rem !important;
 }
 
@@ -75,7 +74,7 @@
   background-color: $white;
   margin-top: 30px;
 
-  @include media('>=1200px') {
+  @include media(">=1200px") {
     margin-top: 0;
   }
 }
@@ -89,7 +88,7 @@
   background-color: $white;
   margin-top: 10px;
 
-  @include media('>=1200px') {
+  @include media(">=1200px") {
     margin-top: 0;
   }
 }
@@ -126,12 +125,12 @@
 }
 
 .unified-search-bar:hover {
-  border-color: #7C3AED !important;
+  border-color: #7c3aed !important;
   box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2) !important;
 }
 
 .unified-search-bar:focus-within {
-  border-color: #7C3AED !important;
+  border-color: #7c3aed !important;
   box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3) !important;
 }
 .hide-scrollbar::-webkit-scrollbar {
@@ -175,7 +174,7 @@
   display: flex;
   flex-direction: column;
 
-  @include media('>=medium') {
+  @include media(">=medium") {
     height: 500px;
   }
 }
@@ -187,7 +186,7 @@
 }
 
 .dashboard-row-3 {
-  @include media('>=1200px') {
+  @include media(">=1200px") {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -196,13 +195,13 @@
 
 .dashboard-pie-container,
 .dashboard-today-and-yesterday {
-  @include media('>=1200px') {
+  @include media(">=1200px") {
     min-height: 386px;
   }
 }
 
 .dashboard-pie-container {
-  @include media('>=1200px') {
+  @include media(">=1200px") {
     width: 57.25%;
   }
 }
@@ -212,7 +211,7 @@
   margin-top: 30px;
   border-radius: $medium-border;
 
-  @include media('>=1200px') {
+  @include media(">=1200px") {
     width: 40%;
   }
 }
@@ -249,11 +248,10 @@
   margin: 17px;
   font-weight: 300;
 
-  @include media('>=1200px') {
+  @include media(">=1200px") {
     font-size: 5.4rem;
   }
 }
-
 
 .power-icon__image {
   height: 60px;
@@ -275,7 +273,6 @@
   margin-left: 1rem;
 }
 
-
 /* === Diesel-Overview page === */
 /* Header */
 .dashboard-header {
@@ -295,7 +292,7 @@
 
 /* Generic card */
 .header-card {
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 12px;
   padding: 1.5rem;
   display: flex;
@@ -314,8 +311,7 @@
 .card-label {
   font-size: 0.95rem;
   font-weight: 600;
-  color: 
-  #444;
+  color: #444;
 }
 .card-label-price {
   font-size: 12px;
@@ -334,7 +330,7 @@
 }
 
 .card-value.green {
-  color: #52AC0B;
+  color: #52ac0b;
 }
 
 .status-dot {
@@ -348,7 +344,7 @@
 }
 
 .status-dot.on {
-  background: #52AC0B;
+  background: #52ac0b;
 }
 
 .value-red {
@@ -453,7 +449,6 @@
   }
 }
 
-
 /* 2nd Row grid layout */
 .diesel-grid1 {
   display: grid;
@@ -472,7 +467,7 @@
 .total-energy-card {
   padding: 16px;
   border-radius: 12px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   text-align: center;
   width: 100%;
   height: 100%;
@@ -538,7 +533,7 @@
 
 /* Card styling */
 .card {
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 12px;
   padding: 1.5rem;
   height: 100%;
@@ -629,7 +624,6 @@
   font-weight: 600;
 }
 
-
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .diesel-grid1 {
@@ -701,8 +695,8 @@
 }
 
 .fub-tooltip {
-  background: #4B4F52;
-  color: #FFFFFF;
+  background: #4b4f52;
+  color: #ffffff;
   border: 1px solid #ccc;
   padding: 6px 10px;
   border-radius: 4px;
@@ -816,9 +810,8 @@
   }
 }
 
-
 .cost-analysis-card {
-  background: #D7C6F3; /* light purple bg */
+  background: #d7c6f3; /* light purple bg */
   padding: 20px;
 }
 
@@ -878,7 +871,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin: 0 20px;
   text-align: center;
 }
@@ -892,7 +885,7 @@
 .flow-line {
   width: 60px;
   height: 4px;
-  background: linear-gradient(90deg, #7B61FF, #7B61FF, transparent);
+  background: linear-gradient(90deg, #7b61ff, #7b61ff, transparent);
   background-size: 200% 100%;
   border-radius: 2px;
 }
@@ -906,7 +899,7 @@
 
 .solarPage-cardLabel {
   position: absolute;
-  top: -38px;     /* Moves it above the card edge */
+  top: -38px; /* Moves it above the card edge */
   left: 0px;
   text-align: center;
   background: white;
@@ -1006,12 +999,14 @@
   margin-top: 20px;
 }
 
-
 /* layout */
-.solar-overview { }
+.solar-overview {
+}
 
 /* breadcrumb wrapper */
-.breadcrumb-and-print-buttons { margin-bottom: 12px; }
+.breadcrumb-and-print-buttons {
+  margin-bottom: 12px;
+}
 
 /* cards */
 .left-card {
@@ -1086,11 +1081,11 @@
     white-space: nowrap;
 
     &--charged {
-      color: #7B61FF;
+      color: #7b61ff;
     }
 
     &--discharged {
-      color: #58B90A;
+      color: #58b90a;
     }
   }
 
@@ -1121,11 +1116,11 @@
     text-align: right;
 
     &--charged .battery-tab-kwh {
-      color: #7B61FF;
+      color: #7b61ff;
     }
 
     &--discharged .battery-tab-kwh {
-      color: #58B90A;
+      color: #58b90a;
     }
   }
 
@@ -1179,88 +1174,90 @@
   // margin-bottom: 12px;
 }
 
-.header-left { 
-  display: flex; 
+.header-left {
+  display: flex;
   gap: 12px;
-  align-items: center; 
+  align-items: center;
 }
 
-.header-left .icon-small { 
-  font-size: 18px; 
-  color: #6b7280; 
-  margin-right: 8px; 
+.header-left .icon-small {
+  font-size: 18px;
+  color: #6b7280;
+  margin-right: 8px;
 }
 
 .header-text .location {
   // font-weight: 600;
-  color: #6b7280; 
+  color: #6b7280;
   display: flex;
   align-items: center;
-  gap: 6px;        /* space between icon and text */
+  gap: 6px; /* space between icon and text */
   font-size: 14px;
 }
 
-.header-text .sun-info { 
-  font-size: 12px; 
-  color: #6b7280; 
-  display:flex; 
-  gap:6px;
-  // align-items:center; 
+.header-text .sun-info {
+  font-size: 12px;
+  color: #6b7280;
+  display: flex;
+  gap: 6px;
+  // align-items:center;
 }
 
 /* left card main */
-.left-card-body { 
-  display:block;
+.left-card-body {
+  display: block;
 }
 
 /* layout inside left card */
-.left-card .left-card-body { 
-  display:flex; 
-  gap: 48px; 
-  align-items:center; 
-  justify-content: center; 
-  padding-top: 10px; 
+.left-card .left-card-body {
+  display: flex;
+  gap: 48px;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
 }
 
 /* gauge area */
-.circle-gauge { display:block; }
+.circle-gauge {
+  display: block;
+}
 
 /* right of gauge stats */
-.gauge-stats { 
-  display:flex; 
-  flex-direction:column; 
-  gap: 18px; 
-  min-width: 160px; 
+.gauge-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 160px;
 }
-.stat-row { 
-  display:flex; 
-  gap: 12px; 
-  align-items:center; 
+.stat-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
-.dot { 
-  width:10px; 
-  height:10px; 
-  border-radius:50%; 
-  display:inline-block; 
-  flex-shrink:0; 
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
 }
-.dot-active { 
-  background: linear-gradient(90deg,#7B61FF,#6C4CFF); 
-  box-shadow: 0 4px 16px rgba(124,58,237,0.12); 
+.dot-active {
+  background: linear-gradient(90deg, #7b61ff, #6c4cff);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.12);
 }
-.dot-muted { 
-  background: #E6E9EE; 
+.dot-muted {
+  background: #e6e9ee;
 }
 
 /* stat text */
-.stat-label { 
-  font-size:12px; 
-  color:#6b7280; 
+.stat-label {
+  font-size: 12px;
+  color: #6b7280;
 }
-.stat-value { 
-  font-size:16px; 
-  font-weight:700; 
-  color:#111827; 
+.stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
 }
 
 .animation-card {
@@ -1270,15 +1267,15 @@
 }
 
 /* right card flow svg */
-.flow-svg { 
-  width:100%; 
-  height:320px; 
-  overflow:visible; 
+.flow-svg {
+  width: 100%;
+  height: 320px;
+  overflow: visible;
 }
 
 /* node group subtle styling */
-.node-group text { 
-  font-family: Inter, Arial, sans-serif; 
+.node-group text {
+  font-family: Inter, Arial, sans-serif;
 }
 
 // SVG
@@ -1287,20 +1284,26 @@
 }
 
 /* charts */
-.charts-row { 
-  margin-top: 20px; 
+.charts-row {
+  margin-top: 20px;
 }
-.chart-header { 
-  display:flex; 
-  justify-content:space-between; 
-  align-items:center; 
-  margin-bottom:8px; 
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 /* responsive */
 @media (max-width: 1000px) {
-  .left-card .left-card-body { flex-direction: column; align-items: center; }
-  .gauge-stats { min-width: auto; text-align:center; }
+  .left-card .left-card-body {
+    flex-direction: column;
+    align-items: center;
+  }
+  .gauge-stats {
+    min-width: auto;
+    text-align: center;
+  }
 }
 
 .cost-tracker-form-section {
@@ -1322,7 +1325,7 @@
   align-items: center !important;
   padding-top: 4px !important;
   padding-bottom: 4px !important;
-  height: 40px !important;  /* matches screenshot height */
+  height: 40px !important; /* matches screenshot height */
 }
 
 .custom-params-select .ant-select-selection-item {
@@ -1338,7 +1341,7 @@
 .custom-filter .ant-select-selector,
 .custom-filter .ant-picker {
   border: none !important;
-  border-radius: 6px !important;   /* Soft rounded corners */
+  border-radius: 6px !important; /* Soft rounded corners */
   box-shadow: none !important;
   background: #fff !important;
   height: 34px !important;
@@ -1370,7 +1373,7 @@
 }
 
 .custom-filter .ant-select-arrow {
-  display: none !important;  /* remove the default dropdown arrow */
+  display: none !important; /* remove the default dropdown arrow */
 }
 
 /* dropdown panel */
@@ -1525,8 +1528,7 @@
 }
 
 /* Optional: selected value alignment */
-.ant-select-single.ant-select-outlined
-.ant-select-selection-item {
+.ant-select-single.ant-select-outlined .ant-select-selection-item {
   line-height: 40px;
   display: flex;
   gap: 8px;
@@ -1559,15 +1561,15 @@
 // Report page landing layout
 // --------------------------------------------------------------
 .report-page {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 $small-gutter $large-gutter;
 
-  @include media('>=medium') {
+  @include media(">=medium") {
     padding: 0 $medium-gutter $large-gutter;
   }
 
-  @include media('>=medium', '<large') {
+  @include media(">=medium", "<large") {
     max-width: 100%;
   }
 }
@@ -1577,7 +1579,7 @@
   padding: $medium-gutter 0;
   text-align: center;
 
-  @include media('>=medium') {
+  @include media(">=medium") {
     margin-bottom: $large-gutter;
     padding: $large-gutter 0;
   }
@@ -1590,7 +1592,7 @@
   margin: 0 0 8px 0;
   letter-spacing: -0.02em;
 
-  @include media('>=medium') {
+  @include media(">=medium") {
     font-size: 2.6rem;
   }
 }
@@ -1604,7 +1606,7 @@
   margin-left: auto;
   margin-right: auto;
 
-  @include media('>=medium') {
+  @include media(">=medium") {
     font-size: 1.5rem;
   }
 }
@@ -1619,7 +1621,7 @@
   margin-right: auto;
   border: 1px solid $border-grey2;
 
-  @include media('>=medium') {
+  @include media(">=medium") {
     max-width: 520px;
     padding: $large-gutter;
   }
@@ -1629,7 +1631,7 @@
   margin-left: auto;
   margin-right: auto;
 
-  @include media('>=medium') {
+  @include media(">=medium") {
     max-width: 480px;
   }
 
@@ -1659,7 +1661,9 @@
   color: $grey2;
   border: none;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 
   &:hover:not(.active) {
     background: rgba(255, 255, 255, 0.6);
@@ -1711,7 +1715,9 @@
   border: 1px solid $border-grey3;
   border-radius: 8px;
   background: $white;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:focus {
     outline: none;
@@ -1743,4 +1749,3 @@
   align-items: center;
   margin-bottom: 16px;
 }
-

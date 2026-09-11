@@ -20,7 +20,7 @@ const Report = () => {
   const sideBar = useSelector((state) => state.sideBar);
   const branchId = sideBar?.sideBarData?.branches?.[0]?.branch_id;
 
-  const [reportType, setReportType] = useState("daily");
+  const [reportType, setReportType] = useState("monthly");
 
   const [date, setDate] = useState("");
   const [startDate, setStartDate] = useState("");

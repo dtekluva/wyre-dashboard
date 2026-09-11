@@ -343,13 +343,14 @@ function MonthlyReport({ month, year }) {
   const totalSourceEnergy = chartData.reduce((sum, val) => sum + val, 0);
 
   const energySourceData = {
-    labels: chartLabels.map((label, idx) => {
-      const value = chartData[idx];
-      return `${label}: ${value.toLocaleString()} kWh (${totalSourceEnergy === 0 ? '0.0' : ((value / totalSourceEnergy) * 100).toFixed(1)}%)`;
-    }),
+    labels: chartLabels,
     datasets: [
       {
-        data: chartData.map(val => totalSourceEnergy === 0 ? 0 : Number(((val / totalSourceEnergy) * 100).toFixed(1))),
+        data: chartData.map((val) =>
+          totalSourceEnergy === 0
+            ? 0
+            : Number(((val / totalSourceEnergy) * 100).toFixed(1))
+        ),
         backgroundColor: chartColors,
         borderWidth: 0,
       },
@@ -562,32 +563,7 @@ function MonthlyReport({ month, year }) {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'right',
-        align: 'center',
-        labels: {
-          usePointStyle: false,
-          boxWidth: 26,
-          boxHeight: 9,
-          padding: 20,
-          font: {
-            size: 20,
-            weight: '550'
-          },
-          generateLabels: function (chart) {
-            const datasets = chart.data.datasets;
-            const labels = chart.data.labels;
-
-            return labels.map((label, i) => ({
-              text: label,
-              fillStyle: datasets[0].backgroundColor[i],
-              strokeStyle: datasets[0].backgroundColor[i],
-              lineWidth: 0,
-              borderRadius: 4,
-              hidden: false,
-              index: i
-            }));
-          }
-        }
+        display: false,
       },
       tooltip: {
         enabled: true,
@@ -595,19 +571,19 @@ function MonthlyReport({ month, year }) {
           label: function (context) {
             const value = context.raw || 0;
             return `${value}%`;
-          }
-        }
+          },
+        },
       },
       datalabels: {
-        color: '#FFFFFF',
+        color: "#FFFFFF",
         font: {
-          weight: 'bold',
-          size: 16
+          weight: "bold",
+          size: 16,
         },
-        formatter: (value) => value + '%'
-      }
+        formatter: (value) => (value > 0 ? `${value}%` : ""),
+      },
     },
-    cutout: '55%'
+    cutout: "55%",
   };
 
 
@@ -1343,7 +1319,36 @@ function MonthlyReport({ month, year }) {
               </div>
             </div>
             <div className="energy-source-chart">
-              <Doughnut data={energySourceData} options={doughnutOptions} plugins={[ChartDataLabels]} />
+              <div className="energy-source-doughnut">
+                <Doughnut
+                  data={energySourceData}
+                  options={doughnutOptions}
+                  plugins={[ChartDataLabels]}
+                />
+              </div>
+              <div className="energy-source-legend">
+                {chartLabels.map((label, idx) => {
+                  const value = chartData[idx];
+                  const percent =
+                    totalSourceEnergy === 0
+                      ? "0.0"
+                      : ((value / totalSourceEnergy) * 100).toFixed(1);
+                  return (
+                    <div className="energy-source-legend-item" key={label}>
+                      <span
+                        className="energy-source-legend-swatch"
+                        style={{ backgroundColor: chartColors[idx] }}
+                      />
+                      <span className="energy-source-legend-text">
+                        <b>{label}</b>: {value.toLocaleString()} kWh{" "}
+                        <span className="energy-source-legend-pct">
+                          ({percent}%)
+                        </span>
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </Card>
         </section>

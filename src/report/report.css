@@ -21,7 +21,7 @@
 
 @media (min-width: 1024px) {
   .report-page .layer-1 {
-    max-width: 1000px;
+    max-width: 1200px;
   }
 }
 
@@ -469,11 +469,50 @@
 .report-page .energy-source-chart {
   min-height: 300px;
   position: relative;
-  max-width: 850px;
+  width: 100%;
   display: flex;
-  margin-left: 20px;
-  justify-content: start;
-  align-items: stretch;
+  align-items: center;
+  justify-content: center;
+  gap: 80px;
+  flex-wrap: wrap;
+}
+
+.report-page .energy-source-doughnut {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.report-page .energy-source-legend {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+
+.report-page .energy-source-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+}
+
+.report-page .energy-source-legend-swatch {
+  display: inline-block;
+  width: 25px;
+  height: 10px;
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+
+.report-page .energy-source-legend-text {
+  color: #000;
+}
+
+.report-page .energy-source-legend-pct {
+  color: #888;
 }
 
 /* Style for hover tooltips */
@@ -893,7 +932,7 @@
 }
 
 .report-page .solar-hero-label {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #515151;
@@ -905,7 +944,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 40px;
   font-weight: 700;
   color: #000;
@@ -913,7 +952,7 @@
 }
 
 .report-page .solar-hero-sub {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 14px;
   color: #515151;
 }
@@ -922,7 +961,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 13px;
   font-weight: 550;
   padding: 5px 10px;
@@ -943,7 +982,7 @@
 .report-page .solar-summary-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   margin-top: 8px;
 }
 
@@ -972,7 +1011,7 @@
   color: #000;
   border-bottom: 1px solid #f0f0f0;
   vertical-align: middle;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
 }
 
 .report-page .solar-summary-table tbody td:nth-child(2),
@@ -986,7 +1025,7 @@
   font-weight: 600;
   font-size: 16px;
   color: #000;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .report-page .solar-sub-period {
@@ -995,7 +1034,7 @@
   color: #888;
   font-weight: 400;
   margin-top: 3px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .report-page .solar-savings-value {
@@ -1015,11 +1054,11 @@
 }
 
 .report-page .solar-highlight-row td:first-child strong {
-  color: #9640FF;
+  color: #9640ff;
 }
 
 .report-page .solar-highlight-row .solar-savings-value {
-  color: #9640FF;
+  color: #9640ff;
 }
 
 .report-page .solar-summary-table tbody tr:first-child td {
@@ -1079,7 +1118,7 @@
 }
 
 .report-page .battery-stat-label {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 12px;
   font-weight: 600;
   color: #515151;
@@ -1088,7 +1127,7 @@
 }
 
 .report-page .battery-stat-value {
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 34px;
   font-weight: 700;
   color: #000;
@@ -1105,7 +1144,7 @@
 }
 
 .report-page .battery-stat-sub {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 12px;
   color: #888;
 }
@@ -1141,7 +1180,7 @@
 }
 
 .report-page .battery-daily-legend .legend-label {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: #000;
@@ -1155,7 +1194,7 @@
 
 .report-page .battery-daily-axis-labels {
   text-align: center;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 13px;
   color: #888;
   margin-top: 8px;
@@ -1165,7 +1204,7 @@
 /* Power demand legend group title used to label each group when categories
    collapse (residential = weekdays + weekends). */
 .report-page .legend-group-title {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 13px;
   font-weight: 600;
   color: #515151;
