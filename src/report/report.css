@@ -862,3 +862,314 @@
 .report-page .antCard .ant-card {
   border: #d4d4fcbd 1px solid;
 }
+
+/* Solar Savings Impact */
+.report-page .solar-savings-card .metric-header {
+  padding: 0;
+}
+
+.report-page .solar-savings-card .metric-header h2 {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: #000;
+}
+
+.report-page .solar-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 24px 0 28px 0;
+  padding: 24px 28px;
+  background: rgba(150, 64, 255, 0.05);
+  border-radius: 14px;
+}
+
+.report-page .solar-hero-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.report-page .solar-hero-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #515151;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.report-page .solar-hero-value {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: #000;
+  line-height: 1.1;
+}
+
+.report-page .solar-hero-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #515151;
+}
+
+.report-page .solar-trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 550;
+  padding: 5px 10px;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+.report-page .solar-trend-badge.positive {
+  background: rgba(45, 164, 78, 0.12);
+  color: #2da44e;
+}
+
+.report-page .solar-trend-badge.negative {
+  background: rgba(207, 62, 65, 0.12);
+  color: #cf3e41;
+}
+
+.report-page .solar-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Inter', sans-serif;
+  margin-top: 8px;
+}
+
+.report-page .solar-summary-table thead th {
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  color: #515151;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  text-transform: none;
+}
+
+.report-page .solar-summary-table thead th:nth-child(2),
+.report-page .solar-summary-table thead th:nth-child(3) {
+  text-align: center;
+}
+
+.report-page .solar-summary-table thead th:last-child {
+  text-align: right;
+}
+
+.report-page .solar-summary-table tbody td {
+  padding: 18px 16px;
+  font-size: 16px;
+  color: #000;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.report-page .solar-summary-table tbody td:nth-child(2),
+.report-page .solar-summary-table tbody td:nth-child(3) {
+  text-align: center;
+  font-weight: 550;
+}
+
+.report-page .solar-summary-table tbody td strong {
+  display: block;
+  font-weight: 600;
+  font-size: 16px;
+  color: #000;
+  font-family: 'Inter', sans-serif;
+}
+
+.report-page .solar-sub-period {
+  display: block;
+  font-size: 13px;
+  color: #888;
+  font-weight: 400;
+  margin-top: 3px;
+  font-family: 'Inter', sans-serif;
+}
+
+.report-page .solar-savings-value {
+  font-weight: 600;
+  text-align: right !important;
+  font-size: 17px;
+  color: #000;
+  white-space: nowrap;
+}
+
+.report-page .solar-highlight-row {
+  background: rgba(150, 64, 255, 0.04);
+}
+
+.report-page .solar-highlight-row td {
+  border-bottom: none !important;
+}
+
+.report-page .solar-highlight-row td:first-child strong {
+  color: #9640FF;
+}
+
+.report-page .solar-highlight-row .solar-savings-value {
+  color: #9640FF;
+}
+
+.report-page .solar-summary-table tbody tr:first-child td {
+  background: rgba(249, 207, 64, 0.06);
+}
+
+/* Battery Daily Usage card */
+.report-page .battery-daily-card {
+  padding: 8px 4px 16px 4px;
+}
+
+.report-page .battery-daily-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.report-page .battery-daily-info {
+  width: 40%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.report-page .battery-daily-info p {
+  font-size: 13px;
+  color: #515151;
+  margin: 0;
+}
+
+.report-page .battery-daily-stats {
+  display: flex;
+  gap: 0;
+  margin: 20px 0 24px 0;
+  padding: 20px 24px;
+  background: rgba(150, 64, 255, 0.05);
+  border-radius: 14px;
+}
+
+.report-page .battery-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 20px;
+  border-right: 1px solid rgba(150, 64, 255, 0.18);
+}
+
+.report-page .battery-stat:first-child {
+  padding-left: 4px;
+}
+
+.report-page .battery-stat:last-child {
+  padding-right: 4px;
+  border-right: none;
+}
+
+.report-page .battery-stat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #515151;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.report-page .battery-stat-value {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  color: #000;
+  line-height: 1.1;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.report-page .battery-stat-unit {
+  font-size: 15px;
+  font-weight: 500;
+  color: #515151;
+}
+
+.report-page .battery-stat-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: #888;
+}
+
+.report-page .battery-daily-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 0 24px;
+  margin-bottom: 8px;
+}
+
+.report-page .battery-daily-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.report-page .battery-daily-legend .legend-square {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.report-page .battery-daily-legend .legend-line {
+  width: 22px;
+  height: 3px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.report-page .battery-daily-legend .legend-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #000;
+}
+
+.report-page .battery-daily-chart {
+  height: 480px;
+  position: relative;
+  padding: 8px 16px 0 8px;
+}
+
+.report-page .battery-daily-axis-labels {
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #888;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* Power demand legend group title used to label each group when categories
+   collapse (residential = weekdays + weekends). */
+.report-page .legend-group-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #515151;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
