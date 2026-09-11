@@ -1,11 +1,10 @@
-import { useContext } from 'react'
+import { useContext } from 'react';
 import { Bar } from 'react-chartjs-2';
 import CompleteDataContext from '../../Context';
 
-
-const ComparisonBarChart = ({comparisonData}) => {
-    const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
-    const {diesel_estimate,diesel_purchase} = comparisonData
+const ComparisonBarChart = ({ comparisonData }) => {
+  const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
+  const { diesel_estimate, diesel_purchase } = comparisonData;
 
   const options = {
     layout: {
@@ -21,43 +20,42 @@ const ComparisonBarChart = ({comparisonData}) => {
       labels: {
         boxWidth: isMediumScreen ? 13 : 16,
         fontSize: isLessThan1296 ? 14 : 16,
-        fontColor: 'black',
+        fontColor: "black",
         padding: isLessThan1296 ? 10 : 25,
       },
     },
-    // maintainAspectRatio: false,
     scales: {
-      yAxes: 
+      yAxes:
         {
           display: true,
           gridLines: {
-            color: '#f0f0f0',
+            color: "#f0f0f0",
             drawBorder: false,
             drawTicks: false,
-            zeroLineColor: '#f0f0f0',
+            zeroLineColor: "#f0f0f0",
           },
           ticks: {
             beginAtZero: true,
-            fontFamily: 'Roboto',
+            fontFamily: "Roboto",
             padding: 10,
             maxTicksLimit: 6,
             fontSize: 10,
-            fontColor: '#A3A3A3',
+            fontColor: "#A3A3A3",
           },
           scaleLabel: {
             display: true,
             labelString: `Estimated Diesel Cost & Usage (${diesel_estimate.units})`,
             padding: isMediumScreen ? 10 : 25,
             fontSize: isMediumScreen ? 14 : 18,
-            fontColor: 'black',
+            fontColor: "black",
           },
         },
-      xAxes: 
+      xAxes:
         {
           ticks: {
-            fontFamily: 'Roboto',
+            fontFamily: "Roboto",
             fontSize: 10,
-            fontColor: '#A3A3A3',
+            fontColor: "#A3A3A3",
             padding: 10,
             maxTicksLimit: 10,
             maxRotation: 45,
@@ -65,42 +63,42 @@ const ComparisonBarChart = ({comparisonData}) => {
           },
           gridLines: {
             drawTicks: false,
-            color: '#f0f0f0',
-            zeroLineColor: '#f0f0f0',
+            color: "#f0f0f0",
+            zeroLineColor: "#f0f0f0",
           },
           scaleLabel: {
             display: true,
-            labelString: 'Months of the Year',
+            labelString: "Months of the Year",
             padding: isMediumScreen ? 10 : 25,
             fontSize: isMediumScreen ? 14 : 18,
-            fontColor: 'black',
+            fontColor: "black",
           },
         },
     },
   };
 
-    return (
-        <div>
-            <Bar
-                data={{
-                    labels :diesel_estimate.dates,
-                    datasets:[{
-                        label:'Monthly Diesel Estimated Consumption',
-                        data: diesel_estimate.values,
-                        backgroundColor:'#FF3DA1',
-                    },
-                    {
-                        label:'Monthly Diesel Estimated Usage',
-                        data: diesel_purchase.values,
-                        backgroundColor:'#00C7E6',
-                    }
-                ]
-                }}
-                options={options}
-            />
-            
-        </div>
-    )
-}
+  return (
+    <div>
+      <Bar
+        data={{
+          labels: diesel_estimate.dates,
+          datasets: [
+            {
+              label: "Monthly Diesel Estimated Consumption",
+              data: diesel_estimate.values,
+              backgroundColor: "#FF3DA1",
+            },
+            {
+              label: "Monthly Diesel Estimated Usage",
+              data: diesel_purchase.values,
+              backgroundColor: "#00C7E6",
+            },
+          ],
+        }}
+        options={options}
+      />
+    </div>
+  );
+};
 
-export default ComparisonBarChart
+export default ComparisonBarChart;

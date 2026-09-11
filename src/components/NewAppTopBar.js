@@ -50,7 +50,6 @@ function NewAppTopBar() {
 
   }, [selectedDate, form]);
 
-
   const setDateValueOnSelect = (startDate, endDate) => {
     let newStartDate = startDate;
     let newEndDate = endDate;
@@ -130,7 +129,6 @@ function NewAppTopBar() {
   };
 
 
-
   // on date search submit (convert dayjs to moment for API/context)
   const onApplyClick = () => {
     const start = moment(selectedDate[0].toISOString());
@@ -157,11 +155,11 @@ function NewAppTopBar() {
     setShowHalfYears(false);
     setShowQuarters(false);
     setShowWeeks(false);
-  }
+  };
 
   // open month select handler to open the component
   const openMonthSelectButtonClick = (checked) => {
-    setComponentText('Select Month');
+    setComponentText("Select Month");
     if (checked) {
       setSelectedDate([dayjs().startOf('month').startOf('day'), dayjs()]);
     }
@@ -171,11 +169,11 @@ function NewAppTopBar() {
     setShowDays(false);
     setShowQuarters(false);
     setShowWeeks(false);
-  }
+  };
 
   // open quarter select handler to open the component
   const onOpenQuarterSelectButton = (checked) => {
-    setComponentText('Select Quarter');
+    setComponentText("Select Quarter");
     if (checked) {
       setSelectedDate([dayjs().startOf('quarter').startOf('day'), dayjs()]);
     }
@@ -185,11 +183,11 @@ function NewAppTopBar() {
     setShowDays(false);
     setShowHalfYears(false);
     setShowWeeks(false);
-  }
+  };
 
   // open year select handler to open the component
   const onOpenPastYearSelectButton = (checked) => {
-    setComponentText('Select Year');
+    setComponentText("Select Year");
     if (checked) {
       setSelectedDate([dayjs().startOf('year').startOf('day'), dayjs()]);
     }
@@ -199,11 +197,11 @@ function NewAppTopBar() {
     setShowQuarters(false);
     setShowHalfYears(false);
     setShowWeeks(false);
-  }
+  };
 
   // open half year select handler to open the component
   const onOpenHalfYearSelectButton = (checked) => {
-    setComponentText('Select Half Year');
+    setComponentText("Select Half Year");
     if (checked) {
       const quarterValue = dayjs().quarter() > 2 ? 3 : 1;
       setSelectedDate([
@@ -217,7 +215,7 @@ function NewAppTopBar() {
     setShowDays(false);
     setShowQuarters(false);
     setShowWeeks(false);
-  }
+  };
 
   // check half year date
   const checkedHalfYear = (value) => {
@@ -277,56 +275,93 @@ function NewAppTopBar() {
     setShowDays(false);
     setShowQuarters(false);
     setShowWeeks(false);
-  }
+  };
 
   const SelectTag = (data) => (
-    <CheckableTag className='date-search-tag'
-      style={{ width: '14%' }}
-      onClick={() => onDefaultTagClick(data.text)}>{data.text}</CheckableTag>
-  )
+    <CheckableTag
+      className="date-search-tag"
+      style={{ width: "14%" }}
+      onClick={() => onDefaultTagClick(data.text)}
+    >
+      {data.text}
+    </CheckableTag>
+  );
   const DefaultSelectTag = (data) => (
-    <CheckableTag className='date-search-tag'
-      style={{ width: '19%' }}
+    <CheckableTag
+      className="date-search-tag"
+      style={{ width: "19%" }}
       checked={data.isChecked && data.text === componentText}
-      onChange={data.clickCallBack}>{data.text}</CheckableTag>
-  )
+      onChange={data.clickCallBack}
+    >
+      {data.text}
+    </CheckableTag>
+  );
   const PickQuarterTag = (data) => (
-    <CheckableTag className='date-search-tag' style={{ width: '24%' }}
+    <CheckableTag
+      className="date-search-tag"
+      style={{ width: "24%" }}
       checked={data.isChecked}
-      onChange={() => onQuarterSelect(data.quarter)}>{data.text}</CheckableTag>
-  )
+      onChange={() => onQuarterSelect(data.quarter)}
+    >
+      {data.text}
+    </CheckableTag>
+  );
   const PickWeekTag = (data) => (
-    <CheckableTag className='date-search-tag' style={{ width: '24%' }}
-      onChange={() => onWeekSelect(data.week)}>{data.text}</CheckableTag>
+    <CheckableTag
+      className="date-search-tag"
+      style={{ width: "24%" }}
+      onChange={() => onWeekSelect(data.week)}
+    >
+      {data.text}
+    </CheckableTag>
   );
 
   const PickHalfYearTag = (data) => (
-    <CheckableTag className='date-search-tag' style={{ width: '48%' }}
+    <CheckableTag
+      className="date-search-tag"
+      style={{ width: "48%" }}
       checked={data.isChecked}
-      onChange={() => onHalfYearSelect(data.half)}>{data.text}</CheckableTag>
+      onChange={() => onHalfYearSelect(data.half)}
+    >
+      {data.text}
+    </CheckableTag>
   );
 
   const PickYear = (data) => (
-    <CheckableTag onChange={() => onYearSelect(data.year)} checked={data.isChecked}
-      style={{ width: '20%' }} className='date-search-tag'
-    >{data.year}</CheckableTag>
+    <CheckableTag
+      onChange={() => onYearSelect(data.year)}
+      checked={data.isChecked}
+      style={{ width: "20%" }}
+      className="date-search-tag"
+    >
+      {data.year}
+    </CheckableTag>
   );
 
   const PickMonth = (data) => (
-    <CheckableTag className='date-search-tag'
-      style={{ width: '7.8%' }}
-      checked={data.isChecked} onChange={() => onMonthSelect(data.month)}
-    >{data.month}</CheckableTag>
-  )
+    <CheckableTag
+      className="date-search-tag"
+      style={{ width: "7.8%" }}
+      checked={data.isChecked}
+      onChange={() => onMonthSelect(data.month)}
+    >
+      {data.month}
+    </CheckableTag>
+  );
 
   const PickDay = (data) => (
-    <p style={{
-      backgroundColor: data.isChecked && '#6c00fa',
-      color: data.isChecked && 'white',
-      width: '2.9%'
-    }}
-      className='pickday-search-tag' onClick={() => onDaySelect(data.day)} >{data.day}</p>
-  )
+    <p
+      style={{
+        backgroundColor: data.isChecked && "#5C3592",
+        color: data.isChecked && "white",
+        width: "2.9%",
+      }}
+      className="pickday-search-tag"
+      onClick={() => onDaySelect(data.day)}
+    >
+      {data.day}
+    </p>
+  );
 
   // handles date range (current is dayjs from antd)
   const dateRender = (current) => {
@@ -339,7 +374,7 @@ function NewAppTopBar() {
       && (current.isBefore(end) || current.isSame(selectedDate[1], 'day'));
     if (inRange) {
       style.border = '1px solid #1890ff';
-      style.backgroundColor = '#6c00fa';
+      style.backgroundColor = '#5C3592';
       style.color = 'white';
     }
     return (
@@ -354,29 +389,51 @@ function NewAppTopBar() {
 
   const getPopupContainer = (trigger) => trigger.parentNode;
 
-
   const Content = () => (
-    <div className='header-date-search' style={{
-      display: 'flex', flexDirection: 'column',
-      height: componentText ? 460 : 400
-    }} >
+    <div
+      className="header-date-search"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: componentText ? 460 : 400,
+      }}
+    >
       <div>
-        <div style={{ display: 'flex', flexDirection: 'row' }} >
-          <DefaultSelectTag text='Select Day' isChecked={showDays} clickCallBack={openDaySelectButtonClick} />
-          {/* <DefaultSelectTag text='Select Week' isChecked={showWeeks} clickCallBack={onOpenWeekSelectButton} /> */}
-          <DefaultSelectTag text='Select Month' isChecked={showMonths} clickCallBack={openMonthSelectButtonClick} />
-          <DefaultSelectTag text='Select Quarter' isChecked={showQuarters} clickCallBack={onOpenQuarterSelectButton} />
-          <DefaultSelectTag text='Select Half Year' isChecked={showHalfYears} clickCallBack={onOpenHalfYearSelectButton} />
-          <DefaultSelectTag text='Select Year' isChecked={showYears} clickCallBack={onOpenPastYearSelectButton} />
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <DefaultSelectTag
+            text="Select Day"
+            isChecked={showDays}
+            clickCallBack={openDaySelectButtonClick}
+          />
+          <DefaultSelectTag
+            text="Select Month"
+            isChecked={showMonths}
+            clickCallBack={openMonthSelectButtonClick}
+          />
+          <DefaultSelectTag
+            text="Select Quarter"
+            isChecked={showQuarters}
+            clickCallBack={onOpenQuarterSelectButton}
+          />
+          <DefaultSelectTag
+            text="Select Half Year"
+            isChecked={showHalfYears}
+            clickCallBack={onOpenHalfYearSelectButton}
+          />
+          <DefaultSelectTag
+            text="Select Year"
+            isChecked={showYears}
+            clickCallBack={onOpenPastYearSelectButton}
+          />
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row' }} >
-          <SelectTag text='Today' />
-          <SelectTag text='Yesterday' />
-          <SelectTag text='Past Week' />
-          <SelectTag text='Past Month' />
-          <SelectTag text='Past Quarter' />
-          <SelectTag text='Past Half Year' />
-          <SelectTag text='Past Year' />
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <SelectTag text="Today" />
+          <SelectTag text="Yesterday" />
+          <SelectTag text="Past Week" />
+          <SelectTag text="Past Month" />
+          <SelectTag text="Past Quarter" />
+          <SelectTag text="Past Half Year" />
+          <SelectTag text="Past Year" />
         </div>
         <div style={{ display: 'flex', flexDirection: 'row' }} >
           {showYears && Array.from({ length: 5 }, (v, k) => dayjs().year() - 4 + k).map((year) => (
@@ -419,17 +476,20 @@ function NewAppTopBar() {
             from: selectedDate[0],
             to: selectedDate[1],
             timeFrom: selectedDate[0],
-            timeTo: selectedDate[1]
+            timeTo: selectedDate[1],
           }}
         >
-          <div className='header-date-component' >
-            <div style={{
-              position: 'relative',
-              display: 'flex', flexDirection: 'row',
-              marginTop: 5,
-              marginLeft: 2
-            }}>
-              <div className='start-date'>
+          <div className="header-date-component">
+            <div
+              style={{
+                position: "relative",
+                display: "flex",
+                flexDirection: "row",
+                marginTop: 5,
+                marginLeft: 2,
+              }}
+            >
+              <div className="start-date">
                 <Form.Item name="from" label="From">
                   <DatePicker
                     getPopupContainer={getPopupContainer}
@@ -439,41 +499,57 @@ function NewAppTopBar() {
                     open={true}
                     style={{ width: 170, marginLeft: 5 }}
                     onChange={onFirstCalendarClick}
-                    className={'my-class'} />
+                    className={"my-class"}
+                  />
                 </Form.Item>
               </div>
-              <div className='start-time' style={{ marginLeft: 115, marginRight: 5 }}>
+              <div
+                className="start-time"
+                style={{ marginLeft: 115, marginRight: 5 }}
+              >
                 <Form.Item name="timeFrom" label="Time">
-                  <TimePicker onSelect={onFirstTimeClick} style={{ width: 55 }} format={'HH'}
-                    getPopupContainer={getPopupContainer} open={true} />
+                  <TimePicker
+                    onSelect={onFirstTimeClick}
+                    style={{ width: 55 }}
+                    format={"HH"}
+                    getPopupContainer={getPopupContainer}
+                    open={true}
+                  />
                 </Form.Item>
               </div>
             </div>
-            <div style={{
-              position: 'relative',
-              display: 'flex', flexDirection: 'row',
-              marginTop: 5,
-              marginLeft: 2
-            }}>
-              <div className='end-date' >
+            <div
+              style={{
+                position: "relative",
+                display: "flex",
+                flexDirection: "row",
+                marginTop: 5,
+                marginLeft: 2,
+              }}
+            >
+              <div className="end-date">
                 <Form.Item name="to" label="To">
                   <DatePicker
                     onChange={onSecondCalendarClick}
                     getCalendarContainer={getPopupContainer}
                     dateRender={dateRender}
                     disabledDate={disabledDate}
-                    className={'my-class'}
+                    className={"my-class"}
                     style={{ width: 170 }}
                     getPopupContainer={getPopupContainer}
-                    open={true} />
+                    open={true}
+                  />
                 </Form.Item>
               </div>
-              <div className='end-time' style={{ marginLeft: 115 }}>
+              <div className="end-time" style={{ marginLeft: 115 }}>
                 <Form.Item name="timeTo" label="Time">
-                  <TimePicker onSelect={onSecondTimeClick}
+                  <TimePicker
+                    onSelect={onSecondTimeClick}
                     style={{ width: 55, marginRight: 5 }}
-                    format={'HH'}
-                    getPopupContainer={getPopupContainer} open={true} />
+                    format={"HH"}
+                    getPopupContainer={getPopupContainer}
+                    open={true}
+                  />
                 </Form.Item>
               </div>
             </div>
@@ -485,10 +561,7 @@ function NewAppTopBar() {
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        {/* <Popover placement="rightBottom" trigger="click" content={content} width={'800px'} style={{ width: '100%' }} >
-        <Button>RB</Button>
-      </Popover> */}
+      <div>
         <Space
           className="date-range-picker-containers"
           direction="horizontal"
@@ -517,7 +590,6 @@ function NewAppTopBar() {
         <Content />
       </Modal>
     </>
-
   );
 }
 
