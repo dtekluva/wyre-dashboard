@@ -222,7 +222,8 @@ const getBatteryDateRange = (periodKey, item = {}, batteryData = {}, yieldData =
   }
 
   if (periodKey === "total") {
-    // return getBatteryTotalSinceLabel(item, batteryData, yieldData) || "Since Jan 01, 2024";
+    // No frontend fallback — label only when API provides since/date fields.
+    return getBatteryTotalSinceLabel(item, batteryData, yieldData);
   }
 
   return "";
@@ -259,7 +260,7 @@ const BatteryTabContent = ({ batteryData = {}, yieldData = {} }) => {
           <div key={key} className="battery-tab-row">
             <div className="battery-tab-period">
               <div className="battery-tab-period-label">{label}</div>
-              {key === "total" ? (
+              {key === "total" && dateRange ? (
                 <div className="battery-tab-period-range">{dateRange}</div>
               ) : null}
             </div>
