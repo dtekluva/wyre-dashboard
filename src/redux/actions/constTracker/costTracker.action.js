@@ -140,19 +140,26 @@ export const getBranchGeneratorsData = (branchId) => async (dispatch) => {
   }
 };
 
-export const fetchFuelConsumptionData = (queryString) => async (dispatch) => {
+export const fetchFuelConsumptionData = (branchId, year, month) => async (dispatch) => {
   dispatch(fetchFuelDataLoading());
-  const requestUrl = `diesel_tracker_overview/${queryString}`;
+  const requestUrl = `diesel_tracker_overview/${branchId}/${year}/${month}/`;
   try {
     const response = await APIService.get(requestUrl);
     dispatch(fetchFuelDataSuccess(response.data.data));
     dispatch(fetchFuelDataLoading(false))
     return {
       fullfilled: true,
-      data: response.data.data
+      data: response.data.data,
+      branchId: response.data.branch_id,
+      branchName: response.data.branch_name,
     }
   } catch (error) {
     dispatch(fetchFuelDataLoading(false));
+    const errorBody = error?.response?.data;
+    return {
+      fullfilled: false,
+      message: errorBody?.message || errorBody?.detail || 'Unable to fetch diesel tracker data',
+    };
   }
 };
 

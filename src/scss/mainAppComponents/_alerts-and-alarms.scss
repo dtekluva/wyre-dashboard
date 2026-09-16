@@ -2,68 +2,74 @@
   align-items: stretch;
   display: flex;
   flex-direction: column;
+  gap: 20px;
   max-width: 100%;
-  padding-bottom: 40px;
+  padding-bottom: 48px;
   width: 100%;
 }
 
-// Title + optional solar-only intro share one white band (avoids overlap/clipping with body copy)
 .alerts-and-alarms-page-header {
   background-color: $white;
+  border-radius: $medium-border;
+  box-shadow: 0 1px 3px rgba($black, 0.06);
   box-sizing: border-box;
-  padding-top: 24px;
-  padding-bottom: 20px;
-  width: 100%;
-}
-
-// Full width like .alerts-and-alarms-form-section-heading — no max-width, so the line isn’t squeezed into a tall narrow column
-.alerts-and-alarms-lead {
-  box-sizing: border-box;
-  color: scale-color($black, $lightness: 35%);
-  font-size: 1.6rem;
-  font-weight: $light;
-  line-height: 1.45;
-  margin: 12px 0 0;
-  max-width: none;
-  padding: 0 48px;
-  text-align: center;
+  margin-top: 8px;
+  padding: 28px 48px 24px;
   width: 100%;
 
   @include media('>=1100px') {
-    padding: 0 11.5%;
+    padding-left: 11.5%;
+    padding-right: 11.5%;
   }
 
   @include media('>=1500px') {
-    padding: 0 20%;
+    padding-left: 20%;
+    padding-right: 20%;
   }
 
   @include media('<medium') {
-    padding: 0 16px;
-  }
-
-  @include media('<544px') {
-    padding: 0 12px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }
 
-.alerts-and-alarms-heading,
-.alerts-and-alarms-form-inputs-wrapper {
-  background-color: $white;
-  padding: 0;
+.alerts-and-alarms-lead {
+  box-sizing: border-box;
+  color: scale-color($black, $lightness: 38%);
+  font-size: 1.55rem;
+  font-weight: $light;
+  line-height: 1.5;
+  margin: 10px auto 0;
+  max-width: 720px;
+  text-align: center;
+  width: 100%;
 }
 
 .alerts-and-alarms-heading {
-  padding-top: 24px;
-}
-
-.alerts-and-alarms-page-header .alerts-and-alarms-heading {
   padding-top: 0;
 }
 
-.alerts-and-alarms-form-inputs-wrapper {
+.alerts-and-alarms-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.alerts-and-alarms-section-card {
+  background-color: $white;
+  border: 1px solid $border-grey2;
+  border-radius: $medium-border;
+  box-shadow: 0 2px 8px rgba($black, 0.04);
+  margin: 0;
+  padding: 0 0 8px;
+
   &.h-second {
-    margin-top: 30px;
+    margin-top: 0;
   }
+}
+
+.alerts-and-alarms-form-inputs-wrapper {
+  padding: 0;
 }
 
 .alerts-and-alarms-form-section-heading,
@@ -72,20 +78,31 @@
   padding: 0 48px;
 
   @include media('>=1100px') {
-    padding: 0 11.5%;
+    padding-left: 11.5%;
+    padding-right: 11.5%;
   }
 
   @include media('>=1500px') {
-    padding: 0 20%;
+    padding-left: 20%;
+    padding-right: 20%;
+  }
+
+  @include media('<medium') {
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
 
 .alerts-and-alarms-form-section-heading {
-  font-size: 1.8rem;
+  border-bottom: 1px solid $border-grey2;
+  color: $purple;
+  display: block;
+  font-size: 1.85rem;
   font-weight: $medium;
-  display: inline-block;
-  background-color: $white;
-  padding-top: 40px;
+  margin: 0;
+  padding-bottom: 16px;
+  padding-top: 28px;
+  width: 100%;
 
   @include media('>=medium') {
     font-size: 2rem;
@@ -94,55 +111,245 @@
 
 .alerts-and-alarms-list {
   list-style: decimal;
-  padding-top: 25px;
-  padding-bottom: 60px;
+  list-style-position: outside;
+  margin: 0;
+  padding-bottom: 32px;
+  padding-top: 8px;
 }
 
 .alerts-and-alarms-list-item {
-  margin-top: 35px;
+  border-bottom: 1px solid $border-grey2;
+  margin-top: 0;
+  padding: 28px 0 28px 8px;
 
-  &:first-of-type {
-    margin-top: 0;
+  &:last-of-type {
+    border-bottom: 0;
+    padding-bottom: 12px;
+  }
+
+  &--battery-soc {
+    padding-bottom: 32px;
   }
 }
 
 .alerts-and-alarms-question-container {
+  align-items: flex-start;
   display: flex;
-  align-items: center;
+  gap: 24px;
   justify-content: space-between;
 }
 
 .alerts-and-alarms-question {
+  color: scale-color($black, $lightness: 15%);
+  flex: 1;
   font-size: 1.5rem;
   font-weight: $light;
-  margin-right: 50px;
+  line-height: 1.45;
+  margin: 0;
 
   @include media('>=medium') {
-    font-size: 1.7rem;
+    font-size: 1.65rem;
   }
 }
 
-.alerts-and-alarms-input {
-  border: 1px solid $border-grey4;
-  color: scale-color($black, $lightness: 35%);
+.alerts-and-alarms-subheading {
+  color: scale-color($black, $lightness: 25%);
+  font-size: 1.35rem;
+  font-weight: $medium;
+  margin: 0 0 8px;
+}
+
+.alerts-and-alarms-subquestion {
+  color: scale-color($black, $lightness: 30%);
   font-size: 1.4rem;
-  height: 24px;
-  padding: 8px 11px;
+  font-weight: $light;
+}
+
+.alerts-and-alarms-input {
+  background-color: $white;
+  border: 1px solid $border-grey3;
+  border-radius: 6px;
+  color: scale-color($black, $lightness: 25%);
+  font-size: 1.4rem;
+  height: auto;
+  margin: 0 8px;
   max-width: 104px;
-  border-radius: 2px;
-  margin: 0 10px;
+  padding: 8px 11px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    border-color: scale-color($purple, $lightness: 40%);
+    box-shadow: 0 0 0 2px rgba($purple, 0.12);
+    outline: none;
+  }
+}
+
+.alerts-and-alarms-unit {
+  color: scale-color($black, $lightness: 40%);
+  font-size: 1.4rem;
 }
 
 .alerts-and-alarms-checkbox {
-  transform: scale(1.35);
+  flex-shrink: 0;
+  margin-top: 2px;
+  transform: scale(1.25);
 }
 
 .alert-and-alarms-button-container {
+  background-color: transparent;
+  border-top: 1px solid $border-grey2;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 8px;
+  padding-bottom: 28px;
+  padding-top: 24px;
+  width: 100%;
+}
+
+.alert-and-alarms-button {
+  margin-top: 0;
+  min-width: 178px;
+}
+
+// ── Battery SOC (in-list block) ──
+
+.battery-soc-block {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  background-color: white;
+  gap: 20px;
   width: 100%;
-  margin-top: 30px;
-  padding-bottom: 30px;
+}
+
+.battery-soc-toggle-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.battery-soc-toggle-item {
+  margin-top: 16px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &--indented {
+    margin-left: 2rem;
+    margin-top: 14px;
+  }
+}
+
+.battery-soc-push-label {
+  font-size: 1.4rem;
+
+  @include media('>=medium') {
+    font-size: 1.5rem;
+  }
+}
+
+.battery-soc-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-left: 0;
+  max-width: 100%;
+
+  @include media('>=medium') {
+    margin-left: 0.5rem;
+  }
+}
+
+.battery-soc-panel {
+  background-color: $purplegrey;
+  border: 1px solid scale-color($purple, $lightness: 82%);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+}
+
+.battery-soc-panel-title {
+  color: $purple;
+  font-size: 1.45rem;
+  font-weight: $medium;
+  margin: 0;
+}
+
+.battery-soc-config-hint,
+.battery-soc-empty-hint {
+  color: scale-color($black, $lightness: 42%);
+  font-size: 1.28rem;
+  font-weight: $light;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.battery-soc-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 34px;
+}
+
+.battery-soc-chip {
+  background-color: $white !important;
+  border: 1px solid scale-color($purple, $lightness: 72%) !important;
+  border-radius: 6px !important;
+  color: $purple !important;
+  font-size: 1.3rem !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+  padding: 6px 12px !important;
+
+  .anticon-close {
+    color: scale-color($purple, $lightness: 25%) !important;
+  }
+}
+
+.battery-soc-add-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.battery-soc-time-picker {
+  min-width: 130px;
+}
+
+.battery-soc-operator-select {
+  min-width: 220px;
+}
+
+.battery-soc-threshold-input {
+  margin: 0;
+  max-width: 72px;
+}
+
+.battery-soc-add-button {
+  background-color: $purple;
+  border: 0;
+  border-radius: 6px;
+  color: $white;
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: $bold;
+  height: 38px;
+  min-width: 128px;
+  padding: 0 16px;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 }

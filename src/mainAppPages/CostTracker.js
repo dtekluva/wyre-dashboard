@@ -172,7 +172,7 @@ function CostTracker({
         onPageChange={handleDieselOverviewPageChange}
         setDieselEntryData={setDieselEntryData}
         dieselEntryData={dieselEntryData}
-        userId={userData.user_id}
+        branchId={branchId}
         role={userData.role_text}
         fetchFuelConsumptionInfo={fetchFuelConsumptionInfo}
       />

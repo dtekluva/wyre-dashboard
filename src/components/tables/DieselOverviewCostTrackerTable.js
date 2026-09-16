@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import moment from 'moment';
-import { Modal, Table, Dropdown, Popconfirm, Space, notification, Button, Tooltip } from 'antd';
+import { Modal, Table, Dropdown, Popconfirm, Space, notification, Button } from 'antd';
 import { EditOutlined, DownOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import UpdateDieselEntry from '../../mainAppPages/UpdateDieselEntry';
@@ -15,7 +15,7 @@ const DieselOverviewCostTrackerTable = ({
   pagination,
   currentPage,
   onPageChange,
-  userId,
+  branchId,
   role,
   fetchFuelConsumptionInfo,
   deleteFuelConsumptionData: deleteDieselEntry,
@@ -39,6 +39,13 @@ const DieselOverviewCostTrackerTable = ({
     notification[type]({
       message: 'Failed',
       description: `Your attempt to delete the ${formName} cannot be completed at the moment, please try again`,
+    });
+  };
+
+  const showFetchError = (message) => {
+    notification.error({
+      message: 'Unable to load diesel entries',
+      description: message,
     });
   };
 
@@ -86,14 +93,15 @@ const DieselOverviewCostTrackerTable = ({
   ];
 
   const fetchFuelData = async (date) => {
+    if (!branchId) return;
+
     const year = moment(date).format('YYYY');
-    const month = moment(date).endOf('month').format('MM');
-    const queryString = `${userId}/${year}/${month}`;
+    const month = moment(date).month() + 1;
 
     setModalOpener(true);
     setFuelDataLoading(true);
 
-    const fuelData = await fetchFuelConsumptionInfo(queryString);
+    const fuelData = await fetchFuelConsumptionInfo(branchId, year, month);
 
     if (fuelData?.fullfilled) {
       const mapped = fuelData.data.map((d) => ({
@@ -110,74 +118,34 @@ const DieselOverviewCostTrackerTable = ({
       }));
 
       setModalData(mapped);
+    } else if (fuelData?.message) {
+      showFetchError(fuelData.message);
+      setModalOpener(false);
     }
 
     setFuelDataLoading(false);
   };
 
-  const renderColumnTitle = (shortTitle, fullTitle) => (
-    <Tooltip title={fullTitle}>
-      <span className="diesel-overview-table__header">{shortTitle}</span>
-    </Tooltip>
-  );
-
   const columns = [
     {
-      title: renderColumnTitle('Month', 'Month'),
+      title: 'Month',
       dataIndex: 'month',
-      width: '12%',
       render: (month) => (
-        <button
-          type="button"
-          className="diesel-overview-table__month-link"
+        <p
           onClick={() => fetchFuelData(month)}
+          style={{ cursor: 'pointer', color: 'blue' }}
         >
           {month}
-        </button>
+        </p>
       ),
     },
-    {
-      title: renderColumnTitle('Input (L)', 'Inputted Usage (Ltr)'),
-      dataIndex: 'inputted_usage',
-      align: 'right',
-      render: numberFormatter,
-    },
-    {
-      title: renderColumnTitle('Forecast (L)', 'Forecasted Usage (Ltr)'),
-      dataIndex: 'forecasted_usage',
-      align: 'right',
-      render: numberFormatter,
-    },
-    {
-      title: renderColumnTitle('Input (₦)', 'Inputted Cost (₦)'),
-      dataIndex: 'inputted_cost',
-      align: 'right',
-      render: numberFormatter,
-    },
-    {
-      title: renderColumnTitle('Forecast (₦)', 'Forecasted Cost (₦)'),
-      dataIndex: 'forecasted_cost',
-      align: 'right',
-      render: numberFormatter,
-    },
-    {
-      title: renderColumnTitle('Diff (L)', 'Diesel Difference (Ltr)'),
-      dataIndex: 'diesel_difference',
-      align: 'right',
-      render: numberFormatter,
-    },
-    {
-      title: renderColumnTitle('Diff (₦)', 'Price Difference (₦)'),
-      dataIndex: 'cost_difference',
-      align: 'right',
-      render: numberFormatter,
-    },
-    {
-      title: renderColumnTitle('Diff (%)', 'Percentage Difference (%)'),
-      dataIndex: 'percentage_usage',
-      align: 'right',
-      render: numberFormatter,
-    },
+    { title: 'Inputted Usage(Ltr)', dataIndex: 'inputted_usage', render: numberFormatter },
+    { title: 'Forecasted Usage (Ltr)', dataIndex: 'forecasted_usage', render: numberFormatter },
+    { title: 'Inputted Cost (₦)', dataIndex: 'inputted_cost', render: numberFormatter },
+    { title: 'Forecasted Cost (₦)', dataIndex: 'forecasted_cost', render: numberFormatter },
+    { title: 'Diesel Difference (Ltr)', dataIndex: 'diesel_difference', render: numberFormatter },
+    { title: 'Price Difference (₦)', dataIndex: 'cost_difference', render: numberFormatter },
+    { title: 'Percentage Difference (%)', dataIndex: 'percentage_usage', render: numberFormatter },
   ];
 
   const tablePagination = pagination
@@ -193,14 +161,12 @@ const DieselOverviewCostTrackerTable = ({
   return (
     <div className="diesel-overview-table-wrapper">
       <Table
-        className="diesel-overview-table"
         columns={columns}
         dataSource={dieselOverviewData}
         loading={isLoading}
         rowKey={(record, index) => record.month ?? record.id ?? record.key ?? index}
         pagination={tablePagination}
-        size="small"
-        tableLayout="fixed"
+        scroll={{ x: 'max-content' }}
       />
 
       <Modal

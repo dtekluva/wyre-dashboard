@@ -38,7 +38,8 @@ export const fetchComponentsTableData = () => async (dispatch) => {
   const requestUrl = `solar/yield/${branchId}/`;
   try {
     const response = await APIService.get(requestUrl);
-    dispatch(getComponentsTableSuccess(response.data));
+    const payload = response.data?.data ?? response.data;
+    dispatch(getComponentsTableSuccess(payload));
     dispatch(getComponentsTableLoading(false))
   } catch (error) {
     dispatch(getComponentsTableLoading(false));
