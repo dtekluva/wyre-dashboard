@@ -3,12 +3,62 @@ import UnAuthorizeResponse from './UnAuthorizeResponse';
 import { getAlertAndAlarm, setAlertAndAlarm } from '../redux/actions/alertsAndAlarm/alertsAndAlarm.action';
 import { connect } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
-import { Checkbox, notification, Spin } from 'antd';
+import { Checkbox, notification, Spin, Tag, TimePicker, Select } from 'antd';
 import { useEffect } from 'react';
 import BreadCrumb from '../components/BreadCrumb';
 import { useState } from 'react';
 import { useContext } from 'react';
 import CompleteDataContext from '../Context';
+
+const DEFAULT_DAYS_OF_WEEK = '0,1,2,3,4,5,6';
+
+const formatThresholdLabel = (threshold) => {
+  const symbol = threshold.operator === 'gte' ? '≥' : '≤';
+  return `${symbol} ${threshold.value}%`;
+};
+
+const formatScheduleTimeLabel = (time24) => {
+  const [hoursRaw, minutesRaw] = time24.split(':');
+  const hours = Number(hoursRaw);
+  const minutes = Number(minutesRaw);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return time24;
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const hour12 = hours % 12 || 12;
+  return `${hour12}:${String(minutes).padStart(2, '0')} ${period}`;
+};
+
+const buildScheduleTimePayload = (scheduleTimes) =>
+  scheduleTimes.map(({ time, days_of_week }) => {
+    const entry = { time };
+    if (days_of_week && days_of_week !== DEFAULT_DAYS_OF_WEEK) {
+      entry.days_of_week = days_of_week;
+    }
+    return entry;
+  });
+
+const buildThresholdPayload = (thresholds) =>
+  thresholds.map(({ operator, value }) => ({
+    operator,
+    value: Number(value),
+  }));
+
+const formatApiError = (errorPayload) => {
+  if (!errorPayload) return 'Something unexpected occurred, please try again.';
+  if (typeof errorPayload === 'string') return errorPayload;
+  if (errorPayload.error) {
+    if (typeof errorPayload.error === 'string') return errorPayload.error;
+    const nested = Object.entries(errorPayload.error)
+      .map(([key, value]) => {
+        if (Array.isArray(value)) return `${key}: ${value.join(', ')}`;
+        if (typeof value === 'object' && value !== null) return `${key}: ${JSON.stringify(value)}`;
+        return `${key}: ${value}`;
+      })
+      .join('; ');
+    if (nested) return nested;
+  }
+  if (errorPayload.message) return errorPayload.message;
+  return 'Something unexpected occurred, please try again.';
+};
 
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },
@@ -19,6 +69,14 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const { setCurrentUrl, userData } = useContext(CompleteDataContext);
   const [preloadedAlertsFormData, setPreloadedAlertsFormData] = useState({});
   const [generator_data, setGenerator_data] = useState([]);
+  const [batterySocConfig, setBatterySocConfig] = useState(undefined);
+  const [scheduleTimes, setScheduleTimes] = useState([]);
+  const [thresholds, setThresholds] = useState([]);
+  const [pendingScheduleTime, setPendingScheduleTime] = useState(null);
+  const [pendingThresholdOperator, setPendingThresholdOperator] = useState('lte');
+  const [pendingThresholdValue, setPendingThresholdValue] = useState('');
+  const [scheduleTimeError, setScheduleTimeError] = useState('');
+  const [thresholdError, setThresholdError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isOperator = userData.role_text === "OPERATOR";
   const isSolarOnlyCustomer = userData?.is_solar_customer === true;
@@ -56,8 +114,29 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
         solar_capacity_utilization_threshold_pct: thresholdPct,
       };
       const genData = alertsAndAlarms.alertsData.generator_data || [];
+      const socConfig = alertsAndAlarms.alertsData.battery_soc_config ?? null;
       setPreloadedAlertsFormData(data);
       setGenerator_data(genData);
+      setBatterySocConfig(socConfig);
+      if (socConfig) {
+        setScheduleTimes(
+          (socConfig.schedule_times || []).map(({ time, days_of_week }) => ({
+            time,
+            days_of_week: days_of_week || DEFAULT_DAYS_OF_WEEK,
+          }))
+        );
+        setThresholds(
+          (socConfig.thresholds || []).map(({ operator, value }) => ({
+            operator,
+            value,
+          }))
+        );
+      } else {
+        setScheduleTimes([]);
+        setThresholds([]);
+      }
+      setScheduleTimeError('');
+      setThresholdError('');
       reset(data);
     }
   }, [alertsAndAlarms, reset]);
@@ -76,6 +155,85 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
     return value
   }
 
+  const showBatterySocBlock = batterySocConfig != null;
+
+  const handleBatterySocEmailToggle = (checked) => {
+    preloadedAlertsFormData.daily_battery_soc_alerts = checked;
+    setPreloadedAlertsFormData((prev) => ({ ...prev, daily_battery_soc_alerts: checked }));
+    if (batterySocConfig) {
+      setBatterySocConfig((prev) => ({
+        ...prev,
+        email_enabled: checked,
+        is_enabled: checked || prev.push_enabled,
+      }));
+    }
+  };
+
+  const handleBatterySocPushToggle = (checked) => {
+    if (batterySocConfig) {
+      setBatterySocConfig((prev) => ({
+        ...prev,
+        push_enabled: checked,
+        is_enabled:
+          checked ||
+          prev.email_enabled ||
+          Boolean(preloadedAlertsFormData.daily_battery_soc_alerts),
+      }));
+    }
+  };
+
+  const handleAddScheduleTime = () => {
+    if (!pendingScheduleTime) {
+      setScheduleTimeError('Select a time to add.');
+      return;
+    }
+    const time = pendingScheduleTime.format('HH:mm');
+    if (scheduleTimes.some((entry) => entry.time === time)) {
+      setScheduleTimeError('This time is already scheduled.');
+      return;
+    }
+    setScheduleTimes((prev) =>
+      [...prev, { time, days_of_week: DEFAULT_DAYS_OF_WEEK }].sort((a, b) =>
+        a.time.localeCompare(b.time)
+      )
+    );
+    setPendingScheduleTime(null);
+    setScheduleTimeError('');
+  };
+
+  const handleRemoveScheduleTime = (timeToRemove) => {
+    setScheduleTimes((prev) => prev.filter((entry) => entry.time !== timeToRemove));
+    setScheduleTimeError('');
+  };
+
+  const handleAddThreshold = () => {
+    const raw = pendingThresholdValue;
+    if (raw === '' || raw === null || raw === undefined) {
+      setThresholdError('Enter a SOC percentage.');
+      return;
+    }
+    const value = Number(raw);
+    if (Number.isNaN(value) || value < 0 || value > 100) {
+      setThresholdError('Enter a percentage from 0 to 100.');
+      return;
+    }
+    const duplicate = thresholds.some(
+      (entry) => entry.operator === pendingThresholdOperator && Number(entry.value) === value
+    );
+    if (duplicate) {
+      setThresholdError('This threshold is already configured.');
+      return;
+    }
+    setThresholds((prev) => [...prev, { operator: pendingThresholdOperator, value }]);
+    setPendingThresholdValue('');
+    setThresholdError('');
+  };
+
+  const handleRemoveThreshold = (index) => {
+    setThresholds((prev) => prev.filter((_, i) => i !== index));
+    setThresholdError('');
+  };
+
   const handleAlertsSubmit = async () => {
     setIsSubmitting(true);
     try {
@@ -93,12 +251,25 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
         data: dataPayload,
         generator_data: generator_data,
       };
+
+      if (batterySocConfig) {
+        const emailEnabled = Boolean(dataPayload.daily_battery_soc_alerts);
+        const pushEnabled = Boolean(batterySocConfig.push_enabled);
+        updatedAlertsFormData.battery_soc_config = {
+          is_enabled: emailEnabled || pushEnabled,
+          push_enabled: pushEnabled,
+          email_enabled: emailEnabled,
+          schedule_times: buildScheduleTimePayload(scheduleTimes),
+          thresholds: buildThresholdPayload(thresholds),
+        };
+      }
+
       const request = await setAlertAndAlarm(updatedAlertsFormData);
       if (request.fullfilled) {
         openNotification("success", "Success", "Your changes have been updated successfully");
         getAlertAndAlarm();
       } else {
-        openNotification('error', "Error", 'Something unexpected occurred, please try again.');
+        openNotification('error', 'Error', formatApiError(request.message));
       }
     } finally {
       setIsSubmitting(false);
@@ -112,20 +283,16 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       </div>
       {isOperator ?
         <div className="alerts-and-alarms-form-content-wrapper">
-          {isSolarOnlyCustomer ? (
-            <div className="alerts-and-alarms-page-header">
-              <h1 className="center-main-heading alerts-and-alarms-heading">
-                Alerts and Alarms
-              </h1>
-              <p className="alerts-and-alarms-lead">
-                Notifications for your solar system: battery state of charge, weather forecasts, and capacity utilization.
-              </p>
-            </div>
-          ) : (
+          <div className="alerts-and-alarms-page-header">
             <h1 className="center-main-heading alerts-and-alarms-heading">
               Alerts and Alarms
             </h1>
-          )}
+            <p className="alerts-and-alarms-lead">
+              {isSolarOnlyCustomer
+                ? 'Notifications for your solar system: battery state of charge, weather forecasts, and capacity utilization.'
+                : 'Configure how Wyre notifies you about anomalies, solar performance, and operational events.'}
+            </p>
+          </div>
 
           <form
             action="#"
@@ -136,7 +303,10 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
               spinning={isFormBusy}
               tip={fetchAlertsDataLoading ? 'Loading alerts...' : 'Saving updates...'}
             >
-            <fieldset className="alerts-and-alarms-form-inputs-wrapper" disabled={isFormBusy}>
+            <fieldset
+              className="alerts-and-alarms-form-inputs-wrapper alerts-and-alarms-section-card"
+              disabled={isFormBusy}
+            >
               <legend className="alerts-and-alarms-form-section-heading">
                 {isSolarOnlyCustomer
                   ? 'Solar system alerts'
@@ -238,35 +408,175 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                 </li>
                 ) : null}
 
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    {' '}
-                    <label
-                      htmlFor="solar-battery-soc-checkbox"
-                      className="alerts-and-alarms-question"
-                    >
-                      Solar Battery Level Alerts
-                    </label>{' '}
-                    <Controller
-                      name="solarBatterySocChecked"
-                      defaultValue={preloadedAlertsFormData?.daily_battery_soc_alerts}
-                      control={control}
-                      render={({ field }) => (
-                        <Checkbox
-                          onChange={(e) => {
-                            const checked = e.target.checked;
-                            field.onChange(checked);
-                            preloadedAlertsFormData.daily_battery_soc_alerts = checked;
-                            setPreloadedAlertsFormData(prev => ({ ...prev, daily_battery_soc_alerts: checked }));
-                          }}
-                          checked={preloadedAlertsFormData?.daily_battery_soc_alerts}
-                          className="solar-battery-soc-checkbox alerts-and-alarms-checkbox"
-                          id="solar-battery-soc-checkbox"
-                        />
-                      )}
-                    />
+                {showBatterySocBlock ? (
+                <li className="alerts-and-alarms-list-item alerts-and-alarms-list-item--battery-soc">
+                  <div className="battery-soc-block">
+                    <ul className="battery-soc-toggle-list">
+                      <li className="battery-soc-toggle-item">
+                        <div className="alerts-and-alarms-question-container">
+                          <label
+                            htmlFor="solar-battery-soc-checkbox"
+                            className="alerts-and-alarms-question"
+                          >
+                            Send battery SOC alerts by email
+                          </label>
+                          <Controller
+                            name="solarBatterySocChecked"
+                            defaultValue={preloadedAlertsFormData?.daily_battery_soc_alerts}
+                            control={control}
+                            render={({ field }) => (
+                              <Checkbox
+                                onChange={(e) => {
+                                  const checked = e.target.checked;
+                                  field.onChange(checked);
+                                  handleBatterySocEmailToggle(checked);
+                                }}
+                                checked={
+                                  preloadedAlertsFormData?.daily_battery_soc_alerts ??
+                                  batterySocConfig?.email_enabled
+                                }
+                                className="solar-battery-soc-checkbox alerts-and-alarms-checkbox"
+                                id="solar-battery-soc-checkbox"
+                              />
+                            )}
+                          />
+                        </div>
+                      </li>
+                      <li className="battery-soc-toggle-item battery-soc-toggle-item--indented">
+                        <div className="alerts-and-alarms-question-container">
+                          <label
+                            htmlFor="solar-battery-soc-push-checkbox"
+                            className="alerts-and-alarms-question battery-soc-push-label"
+                          >
+                            Also notify the mobile app (push)
+                          </label>
+                          <Checkbox
+                            id="solar-battery-soc-push-checkbox"
+                            checked={Boolean(batterySocConfig?.push_enabled)}
+                            onChange={(e) => handleBatterySocPushToggle(e.target.checked)}
+                            className="solar-battery-soc-push-checkbox alerts-and-alarms-checkbox"
+                          />
+                        </div>
+                      </li>
+                    </ul>
+
+                    <div className="battery-soc-panels">
+                      <div className="battery-soc-panel">
+                        <p className="battery-soc-panel-title">Scheduled updates</p>
+                        <p className="battery-soc-config-hint">
+                          Send a status email at each time (Africa/Lagos). Add as many as needed.
+                          Granularity is 15 minutes.
+                        </p>
+                        <div className="battery-soc-chip-list">
+                          {scheduleTimes.length > 0 ? (
+                            scheduleTimes.map((entry) => (
+                              <Tag
+                                key={entry.time}
+                                closable
+                                onClose={(e) => {
+                                  e.preventDefault();
+                                  handleRemoveScheduleTime(entry.time);
+                                }}
+                                className="battery-soc-chip"
+                              >
+                                {formatScheduleTimeLabel(entry.time)}
+                              </Tag>
+                            ))
+                          ) : (
+                            <span className="battery-soc-empty-hint">No times configured yet.</span>
+                          )}
+                        </div>
+                        <div className="battery-soc-add-row">
+                          <TimePicker
+                            value={pendingScheduleTime}
+                            onChange={(value) => {
+                              setPendingScheduleTime(value);
+                              setScheduleTimeError('');
+                            }}
+                            format="HH:mm"
+                            minuteStep={15}
+                            needConfirm={false}
+                            placeholder="Select time"
+                            className="battery-soc-time-picker"
+                          />
+                          <button
+                            type="button"
+                            className="battery-soc-add-button"
+                            onClick={handleAddScheduleTime}
+                          >
+                            Add time
+                          </button>
+                        </div>
+                        {scheduleTimeError ? (
+                          <p className="input-error-message">{scheduleTimeError}</p>
+                        ) : null}
+                      </div>
+
+                      <div className="battery-soc-panel">
+                        <p className="battery-soc-panel-title">When battery charge crosses</p>
+                        <p className="battery-soc-config-hint">
+                          Alert once when SOC hits a level you set — e.g. drops to 30% or rises to 80%.
+                          It will not repeat until SOC recovers by about 3%.
+                        </p>
+                        <div className="battery-soc-chip-list">
+                          {thresholds.length > 0 ? (
+                            thresholds.map((entry, index) => (
+                              <Tag
+                                key={`${entry.operator}-${entry.value}-${index}`}
+                                closable
+                                onClose={(e) => {
+                                  e.preventDefault();
+                                  handleRemoveThreshold(index);
+                                }}
+                                className="battery-soc-chip"
+                              >
+                                {formatThresholdLabel(entry)}
+                              </Tag>
+                            ))
+                          ) : (
+                            <span className="battery-soc-empty-hint">No thresholds configured yet.</span>
+                          )}
+                        </div>
+                        <div className="battery-soc-add-row">
+                          <Select
+                            value={pendingThresholdOperator}
+                            onChange={setPendingThresholdOperator}
+                            className="battery-soc-operator-select"
+                            options={[
+                              { value: 'lte', label: 'Drops to / below (≤)' },
+                              { value: 'gte', label: 'Rises to / above (≥)' },
+                            ]}
+                          />
+                          <input
+                            className="alerts-and-alarms-input battery-soc-threshold-input"
+                            type="text"
+                            inputMode="decimal"
+                            placeholder="30"
+                            value={pendingThresholdValue}
+                            onChange={(e) => {
+                              setPendingThresholdValue(formatIntInputs(e));
+                              setThresholdError('');
+                            }}
+                            aria-label="SOC threshold percentage"
+                          />
+                          <span className="alerts-and-alarms-unit">%</span>
+                          <button
+                            type="button"
+                            className="battery-soc-add-button"
+                            onClick={handleAddThreshold}
+                          >
+                            Add threshold
+                          </button>
+                        </div>
+                        {thresholdError ? (
+                          <p className="input-error-message">{thresholdError}</p>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
                 </li>
+                ) : null}
+
                 <li className="alerts-and-alarms-list-item">
                   <div className="alerts-and-alarms-question-container">
                     {' '}
@@ -653,10 +963,25 @@ render={({ field }) => (
                 </>
                 ) : null}
               </ol>
+
+              {isSolarOnlyCustomer ? (
+                <div className="alert-and-alarms-button-container">
+                  <button
+                    type="submit"
+                    className="generic-submit-button alert-and-alarms-button"
+                    disabled={isFormBusy}
+                  >
+                    {isSubmitting ? 'Saving...' : fetchAlertsDataLoading ? 'Loading...' : 'Save Updates'}
+                  </button>
+                </div>
+              ) : null}
             </fieldset>
 
             {!isSolarOnlyCustomer ? (
-            <fieldset className="alerts-and-alarms-form-inputs-wrapper h-second" disabled={isFormBusy}>
+            <fieldset
+              className="alerts-and-alarms-form-inputs-wrapper alerts-and-alarms-section-card h-second"
+              disabled={isFormBusy}
+            >
               <legend className="alerts-and-alarms-form-section-heading">
                 Customised Alerts on Selected Events
               </legend>
@@ -1031,7 +1356,7 @@ render={({ field }) => (
 
               </ol>
 
-              <div style={{ marginBottom: '5%', marginLeft: '10%' }}>
+              <div className="alert-and-alarms-button-container">
                 <button
                   type="submit"
                   className="generic-submit-button alert-and-alarms-button"
@@ -1041,17 +1366,7 @@ render={({ field }) => (
                 </button>
               </div>
             </fieldset>
-            ) : (
-              <div style={{ marginBottom: '5%', marginLeft: '10%' }}>
-                <button
-                  type="submit"
-                  className="generic-submit-button alert-and-alarms-button"
-                  disabled={isFormBusy}
-                >
-                  {isSubmitting ? 'Saving...' : fetchAlertsDataLoading ? 'Loading...' : 'Save Updates'}
-                </button>
-              </div>
-            )}
+            ) : null}
             </Spin>
 
           </form>

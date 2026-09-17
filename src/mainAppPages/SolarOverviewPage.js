@@ -125,55 +125,111 @@ const getBatteryFlowMetric = (item, flow) => {
   };
 };
 
-const formatBatteryDateLabel = (date) => {
-  const parsed = dayjs(date);
-  return parsed.isValid() ? parsed.format("DD MMM YYYY") : "";
+const parseBatteryReferenceDate = (value) => {
+  if (value == null || value === "") return null;
+
+  const direct = dayjs(value);
+  if (direct.isValid()) return direct;
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    const parsedFromNative = dayjs(new Date(trimmed));
+    if (parsedFromNative.isValid()) return parsedFromNative;
+  }
+
+  return null;
 };
 
-const getBatteryDateRange = (periodKey, item = {}, batteryData = {}) => {
-  const apiRange = item.date_range ?? item.period ?? item.date_label;
-  if (apiRange) return apiRange;
+const formatBatterySinceLabel = (value) => {
+  if (value == null || value === "") return "";
 
-  const startDate = item.start_date ?? item.from_date;
-  const endDate = item.end_date ?? item.to_date;
-  const formattedStart = formatBatteryDateLabel(startDate);
-  const formattedEnd = formatBatteryDateLabel(endDate);
-
-  if (formattedStart && formattedEnd) {
-    return `${formattedStart} – ${formattedEnd}`;
-  }
-  if (formattedStart) return formattedStart;
-  if (formattedEnd) return formattedEnd;
-
-  if (periodKey === "total") {
-    const rootRange =
-      batteryData.total_date_range ??
-      batteryData.date_range ??
-      batteryData.total?.date_range;
-    if (rootRange) return rootRange;
-
-    const rootStart = batteryData.total_start_date ?? batteryData.start_date;
-    const rootEnd = batteryData.total_end_date ?? batteryData.end_date;
-    const formattedRootStart = formatBatteryDateLabel(rootStart);
-    const formattedRootEnd = formatBatteryDateLabel(rootEnd);
-
-    if (formattedRootStart && formattedRootEnd) {
-      return `${formattedRootStart} – ${formattedRootEnd}`;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (/^since\s/i.test(trimmed)) {
+      return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
     }
-    if (formattedRootStart) return formattedRootStart;
-    if (formattedRootEnd) return formattedRootEnd;
+
+    const startPart = trimmed.split(/\s*[\u2010-\u2015\u2212–—-]\s*/)[0]?.trim();
+    const parsed = parseBatteryReferenceDate(startPart || trimmed);
+    if (parsed) {
+      return `Since ${parsed.format("DD MMM YYYY")}`;
+    }
   }
 
-  const today = dayjs();
-  if (periodKey === "today") return today.format("DD MMM YYYY");
-  if (periodKey === "monthly") {
-    return `${today.startOf("month").format("DD")} – ${today.endOf("month").format("DD MMM YYYY")}`;
+  const parsed = parseBatteryReferenceDate(value);
+  if (parsed) {
+    return `Since ${parsed.format("DD MMM YYYY")}`;
   }
 
   return "";
 };
 
-const BatteryTabContent = ({ batteryData = {} }) => {
+const resolveYieldPayload = (tableContentsData) => {
+  if (!tableContentsData) return {};
+  if (tableContentsData.battery) return tableContentsData;
+  if (tableContentsData.data?.battery) return tableContentsData.data;
+  return tableContentsData;
+};
+
+const getBatteryTotalSinceLabel = (item = {}, batteryData = {}, yieldData = {}) => {
+  const candidates = [
+    batteryData.since,
+    batteryData.since_date,
+    batteryData.total_since,
+    batteryData.total_since_date,
+    batteryData.tracking_start_date,
+    batteryData.total_start_date,
+    batteryData.start_date,
+    batteryData.total_date_range,
+    batteryData.date_range,
+    batteryData.total?.since,
+    batteryData.total?.since_date,
+    batteryData.total?.start_date,
+    batteryData.total?.from_date,
+    batteryData.total?.date_range,
+    batteryData.total?.period,
+    batteryData.total?.date_label,
+    item.since,
+    item.since_date,
+    item.start_date,
+    item.from_date,
+    item.date_range,
+    item.period,
+    item.date_label,
+    yieldData.since,
+    yieldData.since_date,
+    yieldData.total_since,
+    yieldData.total_since_date,
+    yieldData.tracking_start_date,
+    yieldData.battery_since,
+    yieldData.battery_since_date,
+    yieldData.generation?.total?.since_date,
+    yieldData.generation?.total?.start_date,
+    yieldData.generation?.total?.date_range,
+  ];
+
+  for (const candidate of candidates) {
+    const label = formatBatterySinceLabel(candidate);
+    if (label) return label;
+  }
+
+  return "";
+};
+
+const getBatteryDateRange = (periodKey, item = {}, batteryData = {}, yieldData = {}) => {
+  if (periodKey === "today" || periodKey === "monthly") {
+    return "";
+  }
+
+  if (periodKey === "total") {
+    // No frontend fallback — label only when API provides since/date fields.
+    return getBatteryTotalSinceLabel(item, batteryData, yieldData);
+  }
+
+  return "";
+};
+
+const BatteryTabContent = ({ batteryData = {}, yieldData = {} }) => {
   const periods = [
     { key: "total", label: "Total" },
     { key: "today", label: "Today" },
@@ -198,27 +254,27 @@ const BatteryTabContent = ({ batteryData = {} }) => {
         const item = batteryData[key] || {};
         const charged = getBatteryFlowMetric(item, "charged");
         const discharged = getBatteryFlowMetric(item, "discharged");
-        const dateRange = getBatteryDateRange(key, item, batteryData);
+        const dateRange = getBatteryDateRange(key, item, batteryData, yieldData);
 
         return (
           <div key={key} className="battery-tab-row">
             <div className="battery-tab-period">
               <div className="battery-tab-period-label">{label}</div>
-              <div className="battery-tab-period-range">{dateRange || "\u00A0"}</div>
+              {key === "total" && dateRange ? (
+                <div className="battery-tab-period-range">{dateRange}</div>
+              ) : null}
             </div>
 
             <div className="battery-tab-metric battery-tab-metric--charged">
               <div className="battery-tab-kwh">
                 {formatSummaryNumber(charged.kwh, 1)} <span>kWh</span>
               </div>
-              <div className="battery-tab-cost">₦ {formatSummaryNumber(charged.cost, 2)}</div>
             </div>
 
             <div className="battery-tab-metric battery-tab-metric--discharged">
               <div className="battery-tab-kwh">
                 {formatSummaryNumber(discharged.kwh, 1)} <span>kWh</span>
               </div>
-              <div className="battery-tab-cost">₦ {formatSummaryNumber(discharged.cost, 2)}</div>
             </div>
           </div>
         );
@@ -240,6 +296,9 @@ const BatteryTabContent = ({ batteryData = {} }) => {
 
 const EnergySummary = ({ tableContentsData }) => {
   if (!tableContentsData) return null;
+
+  const yieldData = resolveYieldPayload(tableContentsData);
+  const batteryData = yieldData.battery ?? {};
 
   const tabs = ["generation", "battery", "load", "grid"];
   const tabLabels = {
@@ -275,11 +334,11 @@ const EnergySummary = ({ tableContentsData }) => {
         {tabs.map((key) => (
           <Tabs.TabPane tab={tabLabels[key]} key={key}>
             {key === "battery" ? (
-              <BatteryTabContent batteryData={tableContentsData.battery} />
+              <BatteryTabContent batteryData={batteryData} yieldData={yieldData} />
             ) : (
               <div className="energy-tab-content" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
                 {["total", "today", "monthly"].map((period) => {
-                  const item = tableContentsData[key]?.[period] || {};
+                  const item = yieldData[key]?.[period] || {};
                   const label = contentLabels[key]?.[period] ?? period;
                   return (
                     <div
