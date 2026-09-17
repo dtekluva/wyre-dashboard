@@ -18,6 +18,10 @@ const INITIAL_STATE = {
 
   batteryChartLoading: false,
   batteryChartData: false,
+
+  solarLiveLoading: false,
+  solarLiveData: false,
+  solarLiveRefreshIntervalSeconds: 15,
 };
 
 const solarReducer = (state = INITIAL_STATE, action) => {
@@ -88,6 +92,21 @@ const solarReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         batteryChartData: action.payload,
+      };
+
+    case solarType.FETCH_SOLAR_LIVE_LOADING:
+      return {
+        ...state,
+        solarLiveLoading: action.payload,
+      };
+    case solarType.FETCH_SOLAR_LIVE_SUCCESS:
+      return {
+        ...state,
+        solarLiveData: action.payload,
+        solarLiveRefreshIntervalSeconds:
+          action.payload?.refresh_interval_seconds
+          ?? state.solarLiveRefreshIntervalSeconds
+          ?? 15,
       };
 
     default: return state;

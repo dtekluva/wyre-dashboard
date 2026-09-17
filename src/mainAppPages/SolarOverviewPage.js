@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card, Row, Col, Select, Tabs, DatePicker, Spin } from "antd";
 import {
   AreaChart,
@@ -21,7 +21,14 @@ import locationLogo from "../assets/icons/locationIcon.png";
 import sunLogo from "../assets/icons/sunIcon.png";
 import { motion } from "framer-motion"; // Node12-safe import
 import BreadCrumb from "../components/BreadCrumb";
-import { fetchBatterySystemData, fetchComponentsTableData, fetchConsumptionsData, fetchInverterGridsData, fetchPvProductionData, fetchWeatherReadingsData } from "../redux/actions/solar/solar.action";
+import {
+  fetchBatterySystemData,
+  fetchComponentsTableData,
+  fetchConsumptionsData,
+  fetchPvProductionData,
+  fetchSolarLiveData,
+  fetchWeatherReadingsData,
+} from "../redux/actions/solar/solar.action";
 import { connect } from "react-redux";
 import dayjs from "dayjs";
 
@@ -101,6 +108,63 @@ const formatSummaryNumber = (val, decimals = 0) => {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
+};
+
+const formatLagosDateTimeShort = (value) => {
+  if (value == null || value === "") return null;
+  const parsed = dayjs(value);
+  if (!parsed.isValid()) return null;
+  return parsed.format("DD MMM, HH:mm");
+};
+
+const mapLiveToFlowData = (live) => {
+  if (!live) return {};
+  return {
+    pv: live.pv,
+    battery: live.battery,
+    grid: live.grid,
+    load: live.load,
+    generator_power: live.generator_power,
+  };
+};
+
+const ChartDayStatBadge = ({ label, value, unit, subLabel, variant = "default" }) => (
+  <div className={`solar-chart-stat-badge solar-chart-stat-badge--${variant}`}>
+    <div className="solar-chart-stat-badge__label">{label}</div>
+    <div className="solar-chart-stat-badge__value">
+      {value} <span>{unit}</span>
+    </div>
+    {subLabel ? <div className="solar-chart-stat-badge__sub">{subLabel}</div> : null}
+  </div>
+);
+
+const BatteryChartTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+
+  const point = payload[0]?.payload ?? {};
+  const chargeEntry = payload.find((entry) => entry.dataKey === "battery_charge");
+  const dischargeEntry = payload.find((entry) => entry.dataKey === "battery_discharge");
+
+  return (
+    <div className="solar-battery-chart-tooltip">
+      <div className="solar-battery-chart-tooltip__time">{label}</div>
+      {chargeEntry ? (
+        <div className="solar-battery-chart-tooltip__row solar-battery-chart-tooltip__row--charge">
+          battery_charge: {formatSummaryNumber(chargeEntry.value, 1)} kWh
+        </div>
+      ) : null}
+      {dischargeEntry ? (
+        <div className="solar-battery-chart-tooltip__row solar-battery-chart-tooltip__row--discharge">
+          battery_discharge: {formatSummaryNumber(dischargeEntry.value, 1)} kWh
+        </div>
+      ) : null}
+      {point.soc_pct != null ? (
+        <div className="solar-battery-chart-tooltip__soc">
+          SOC (State of Charge): {formatSummaryNumber(point.soc_pct, 1)}%
+        </div>
+      ) : null}
+    </div>
+  );
 };
 
 const BatteryFlowIcon = ({ direction = "down", color = "#7B61FF" }) => (
@@ -294,18 +358,63 @@ const BatteryTabContent = ({ batteryData = {}, yieldData = {} }) => {
   );
 };
 
+const PowerDemandMetricCell = ({ kw, at, variant }) => {
+  const atLabel = at ? formatLagosDateTimeShort(at) : null;
+  return (
+    <div className={`power-demand-cell power-demand-cell--${variant}`}>
+      <div className="power-demand-kw">
+        {formatSummaryNumber(kw, 3)} <span>kW</span>
+      </div>
+      {atLabel ? <div className="power-demand-at">{atLabel}</div> : null}
+    </div>
+  );
+};
+
+const PowerDemandTabContent = ({ powerDemand = {} }) => {
+  const periods = [
+    { key: "today", label: "Today" },
+    { key: "monthly", label: "Current Month" },
+    { key: "total", label: "Total" },
+  ];
+
+  return (
+    <div className="power-demand-tab-content">
+      <div className="power-demand-grid power-demand-grid--header">
+        <div />
+        <div className="power-demand-col-heading power-demand-col-heading--max">Max</div>
+        <div className="power-demand-col-heading power-demand-col-heading--min">Min</div>
+        <div className="power-demand-col-heading power-demand-col-heading--avg">Avg</div>
+      </div>
+
+      {periods.map(({ key, label }) => {
+        const item = powerDemand[key] || {};
+        return (
+          <div key={key} className="power-demand-grid power-demand-row">
+            <div className="power-demand-period-label">{label}</div>
+            <PowerDemandMetricCell kw={item.max_kw} at={item.max_at} variant="max" />
+            <PowerDemandMetricCell kw={item.min_kw} at={item.min_at} variant="min" />
+            <PowerDemandMetricCell kw={item.avg_kw} variant="avg" />
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const EnergySummary = ({ tableContentsData }) => {
   if (!tableContentsData) return null;
 
   const yieldData = resolveYieldPayload(tableContentsData);
   const batteryData = yieldData.battery ?? {};
+  const powerDemand = yieldData.power_demand ?? {};
 
-  const tabs = ["generation", "battery", "load", "grid"];
+  const tabs = ["generation", "battery", "load", "grid", "power_demand"];
   const tabLabels = {
     generation: "Generation",
     battery: "Battery",
     load: "Load",
     grid: "Grid",
+    power_demand: "Power demand",
   };
 
   const contentLabels = {
@@ -330,11 +439,13 @@ const EnergySummary = ({ tableContentsData }) => {
 
   return (
     <div className="energy-summary-container" style={{ background: "#fff" }}>
-      <Tabs defaultActiveKey="generation" tabBarGutter={50}>
+      <Tabs defaultActiveKey="generation" tabBarGutter={20}>
         {tabs.map((key) => (
           <Tabs.TabPane tab={tabLabels[key]} key={key}>
             {key === "battery" ? (
               <BatteryTabContent batteryData={batteryData} yieldData={yieldData} />
+            ) : key === "power_demand" ? (
+              <PowerDemandTabContent powerDemand={powerDemand} />
             ) : (
               <div className="energy-tab-content" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
                 {["total", "today", "monthly"].map((period) => {
@@ -381,12 +492,17 @@ const FlowDiagram = ({ inverterData }) => {
   const showGenerator = generatorStatusNorm === "ON";
 
   const batteryKw = battery?.kw ?? 0;
+  const batteryDirection = String(battery?.direction ?? "").trim().toUpperCase();
   const batteryStatus =
-    batteryKw > 0
+    batteryDirection === "OUT"
       ? "Discharging"
-      : batteryKw < 0
+      : batteryDirection === "IN"
         ? "Charging"
-        : "Idle";
+        : batteryKw > 0
+          ? "Discharging"
+          : batteryKw < 0
+            ? "Charging"
+            : "Idle";
 
   const batteryStatusColor =
     batteryStatus === "Discharging"
@@ -452,7 +568,7 @@ const FlowDiagram = ({ inverterData }) => {
       bg: "#dcfce7",
       icon: batteryImg,
       label: "Battery",
-      value: `${(battery?.kw ?? 0).toFixed(2)} kW`,
+      value: `${Math.abs(batteryKw).toFixed(2)} kW`,
       percentage: battery?.percentage ?? 0,
       direction: battery?.direction,
       status: batteryStatus,
@@ -750,14 +866,23 @@ const FlowDiagram = ({ inverterData }) => {
 /* ---------------------------
    Main SolarOverviewPage
    --------------------------- */
-const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTableData, fetchInverterGridsData, fetchConsumptionsData, fetchPvProductionData, fetchBatterySystemData }) => {
+const SolarOverviewPage = ({
+  solar,
+  fetchWeatherReadingsData,
+  fetchComponentsTableData,
+  fetchSolarLiveData,
+  fetchConsumptionsData,
+  fetchPvProductionData,
+  fetchBatterySystemData,
+}) => {
   const [parameters, setParameters] = useState("Parameters");
   const [weatherContentsData, setWeatherContentsData] = useState(null);
   const [tableContentsData, setTableContentsData] = useState(null);
-  const [inverterContentsData, setInverterContentsData] = useState({});
   const [consumptionChartContents, setConsumptionChartContents] = useState(null);
   const [pvProductionChartContents, setPvProductionChartContents] = useState(null);
   const [batteryChartContents, setBatteryChartContents] = useState(null);
+  const livePollIntervalRef = useRef(null);
+  const liveRefreshSecondsRef = useRef(15);
 
   const handleConsumptionDateChange = (date) => {
     if (!date) return;
@@ -787,24 +912,75 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
     const today = new Date();
     const day = today.getDate();
 
-    fetchWeatherReadingsData()
-    fetchComponentsTableData()
-    fetchInverterGridsData()
+    fetchWeatherReadingsData();
+    fetchComponentsTableData();
+    fetchSolarLiveData({ silent: false });
     fetchConsumptionsData(today, day);
     fetchPvProductionData(today, day);
     fetchBatterySystemData(today, day);
-  }, [fetchWeatherReadingsData, fetchComponentsTableData, fetchInverterGridsData, fetchConsumptionsData, fetchPvProductionData, fetchBatterySystemData]);
+  }, [
+    fetchWeatherReadingsData,
+    fetchComponentsTableData,
+    fetchSolarLiveData,
+    fetchConsumptionsData,
+    fetchPvProductionData,
+    fetchBatterySystemData,
+  ]);
 
   useEffect(() => {
-    if (solar) {  
+    if (Number.isFinite(solar.solarLiveRefreshIntervalSeconds) && solar.solarLiveRefreshIntervalSeconds > 0) {
+      liveRefreshSecondsRef.current = solar.solarLiveRefreshIntervalSeconds;
+    }
+  }, [solar.solarLiveRefreshIntervalSeconds]);
+
+  useEffect(() => {
+    const clearLivePoll = () => {
+      if (livePollIntervalRef.current) {
+        clearInterval(livePollIntervalRef.current);
+        livePollIntervalRef.current = null;
+      }
+    };
+
+    const startLivePoll = () => {
+      clearLivePoll();
+      if (document.visibilityState !== "visible") return;
+      livePollIntervalRef.current = setInterval(() => {
+        fetchSolarLiveData({ silent: true });
+      }, liveRefreshSecondsRef.current * 1000);
+    };
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchSolarLiveData({ silent: true });
+        startLivePoll();
+      } else {
+        clearLivePoll();
+      }
+    };
+
+    startLivePoll();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      clearLivePoll();
+    };
+  }, [fetchSolarLiveData, solar.solarLiveRefreshIntervalSeconds]);
+
+  useEffect(() => {
+    if (solar) {
       setWeatherContentsData(solar?.weatherReadingsData);
-      setTableContentsData(solar?.componentsTableData)
-      setInverterContentsData(solar?.inverterGridsData);
+      setTableContentsData(solar?.componentsTableData);
       setConsumptionChartContents(solar?.consumptionChartData);
       setPvProductionChartContents(solar?.pvProductionChartData);
       setBatteryChartContents(solar?.batteryChartData);
     }
   }, [solar]);
+
+  const liveSnapshot = solar?.solarLiveData && typeof solar.solarLiveData === "object" ? solar.solarLiveData : null;
+  const flowDiagramData = mapLiveToFlowData(liveSnapshot);
+  const livePv = liveSnapshot?.pv ?? {};
+  const showLiveInitialLoading = solar.solarLiveLoading && !liveSnapshot;
 
   // Map API data for chart
   const consumptionChartData = consumptionChartContents?.hours?.map((h) => ({
@@ -821,9 +997,9 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
   
   const batteryChartData = batteryChartContents?.hours?.map((h) => ({
     time: h.hour_label,
-    backup_load: h.backup_load_kwh ?? 0,
     battery_charge: h.battery_charge_kwh ?? 0,
     battery_discharge: h.battery_discharge_kwh ?? 0,
+    soc_pct: h.soc_pct,
   })) || [];
 
   const IconLabel = ({ icon, text }) => (
@@ -840,7 +1016,7 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
       </div>
       {/* Top row: Left gauge card + Right flow card – stacked on mobile, side-by-side on desktop */}
       <Row gutter={16} className="overview-top-row">
-        <Col xs={24} sm={24} md={24} lg={13}>
+        <Col xs={24} sm={24} md={24} lg={10} xl={10}>
           <Spin spinning={solar.weatherReadingsLoading}>
             <Card className="left-card">
               <div className="left-card-header">
@@ -864,43 +1040,45 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
                 </div>
               </div>
 
-              <div className="left-card-body">
-                <div className="gauge-area">
-                  <CircleGauge
-                    value={weatherContentsData?.metrics?.pv_production_kw || 0}
-                    max={weatherContentsData?.metrics?.installed_capacity_kWp || 100}
-                    percentage={weatherContentsData?.metrics?.percentage_usage || 0}
-                    size={175}
-                    segments={30}
-                  />
-                </div>
+              <Spin spinning={showLiveInitialLoading}>
+                <div className="left-card-body">
+                  <div className="gauge-area">
+                    <CircleGauge
+                      value={livePv.kw ?? 0}
+                      max={livePv.installed_capacity_kwp ?? 100}
+                      percentage={livePv.percentage ?? 0}
+                      size={158}
+                      segments={30}
+                    />
+                  </div>
 
-                <div className="gauge-stats">
-                  <div className="stat-row">
-                    <span className="dot dot-active" />
-                    <div>
-                      <div className="stat-label">PV Production</div>
-                      <div className="stat-value">
-                        {weatherContentsData?.metrics?.pv_production_kw || 0} kW
+                  <div className="gauge-stats">
+                    <div className="stat-row">
+                      <span className="dot dot-active" />
+                      <div>
+                        <div className="stat-label">PV Production</div>
+                        <div className="stat-value">
+                          {formatSummaryNumber(livePv.kw, 3)} kW
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="stat-row">
+                      <span className="dot dot-muted" />
+                      <div>
+                        <div className="stat-label">Installed Capacity</div>
+                        <div className="stat-value">
+                          {formatSummaryNumber(livePv.installed_capacity_kwp, 1)} kWp
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  <div className="stat-row">
-                    <span className="dot dot-muted" />
-                    <div>
-                      <div className="stat-label">Installed Capacity</div>
-                      <div className="stat-value">
-                        {weatherContentsData?.metrics?.installed_capacity_kWp || 0} kWp
-                      </div>
-                    </div>
-                  </div>
                 </div>
-              </div>
+              </Spin>
             </Card>
           </Spin>
         </Col>
-        <Col xs={24} sm={24} md={24} lg={11}>
+        <Col xs={24} sm={24} md={24} lg={14} xl={14}>
           <Spin spinning={solar.componentsTableLoading}>
             <Card className="summary-card">
               <EnergySummary tableContentsData={tableContentsData} />
@@ -911,9 +1089,9 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
          {/* Flow Diagram animation */}
       <Row gutter={16} className="svg-row">
         <Col span={24}>
-        <Spin spinning={solar.inverterGridsLoading}>          
+        <Spin spinning={showLiveInitialLoading}>
           <Card className="animation-card">
-            <FlowDiagram inverterData={inverterContentsData} />
+            <FlowDiagram inverterData={flowDiagramData} />
           </Card>
         </Spin>
         </Col>
@@ -961,6 +1139,27 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
                   <Option value="load">Load</Option>
                 </Select>
               </div>
+              {(consumptionChartContents?.total_production_kwh != null
+                || consumptionChartContents?.total_consumption_kwh != null) && (
+                <div className="solar-chart-stat-badges">
+                  {consumptionChartContents?.total_production_kwh != null ? (
+                    <ChartDayStatBadge
+                      label="Total Production"
+                      value={formatSummaryNumber(consumptionChartContents.total_production_kwh, 1)}
+                      unit="kWh"
+                      variant="production"
+                    />
+                  ) : null}
+                  {consumptionChartContents?.total_consumption_kwh != null ? (
+                    <ChartDayStatBadge
+                      label="Total Consumption"
+                      value={formatSummaryNumber(consumptionChartContents.total_consumption_kwh, 1)}
+                      unit="kWh"
+                      variant="consumption"
+                    />
+                  ) : null}
+                </div>
+              )}
               <ResponsiveContainer width="100%" height={250}>
                 <AreaChart data={consumptionChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -1021,6 +1220,32 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
                   allowClear={false}
                 />
               </div>
+              {(pvProductionChartContents?.daily_total_production_kwh != null
+                || pvProductionChartContents?.peak_daily_production_kw != null) && (
+                <div className="solar-chart-stat-badges">
+                  {pvProductionChartContents?.daily_total_production_kwh != null ? (
+                    <ChartDayStatBadge
+                      label="Daily Total Production"
+                      value={formatSummaryNumber(pvProductionChartContents.daily_total_production_kwh, 1)}
+                      unit="kWh"
+                      variant="pv-total"
+                    />
+                  ) : null}
+                  {pvProductionChartContents?.peak_daily_production_kw != null ? (
+                    <ChartDayStatBadge
+                      label="Peak Daily Production"
+                      value={formatSummaryNumber(pvProductionChartContents.peak_daily_production_kw, 1)}
+                      unit="kW"
+                      subLabel={
+                        pvProductionChartContents.peak_daily_production_at
+                          ? `at ${pvProductionChartContents.peak_daily_production_at}`
+                          : null
+                      }
+                      variant="pv-peak"
+                    />
+                  ) : null}
+                </div>
+              )}
               <ResponsiveContainer width="100%" height={250}>
                 <AreaChart data={PvChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -1058,14 +1283,34 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
                   allowClear={false}
                 />
               </div>
+              {(batteryChartContents?.total_battery_charge_kwh != null
+                || batteryChartContents?.total_battery_discharge_kwh != null) && (
+                <div className="solar-chart-stat-badges">
+                  {batteryChartContents?.total_battery_charge_kwh != null ? (
+                    <ChartDayStatBadge
+                      label="Total Battery Charge"
+                      value={formatSummaryNumber(batteryChartContents.total_battery_charge_kwh, 1)}
+                      unit="kWh"
+                      variant="battery-charge"
+                    />
+                  ) : null}
+                  {batteryChartContents?.total_battery_discharge_kwh != null ? (
+                    <ChartDayStatBadge
+                      label="Total Battery Discharge"
+                      value={formatSummaryNumber(batteryChartContents.total_battery_discharge_kwh, 1)}
+                      unit="kWh"
+                      variant="battery-discharge"
+                    />
+                  ) : null}
+                </div>
+              )}
               <ResponsiveContainer width="100%" height={250}>
                 <AreaChart data={batteryChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="time" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip content={<BatteryChartTooltip />} />
                   <Legend />
-                  <Area type="monotone" dataKey="backup_load" stroke="#FCCC43" fill="#FCCC43" />
                   <Area type="monotone" dataKey="battery_charge" stroke="#D7C6F3" fill="#D7C6F3" />
                   <Area type="monotone" dataKey="battery_discharge" stroke="#58B90A" fill="#58B90A" />
                 </AreaChart>
@@ -1081,10 +1326,10 @@ const SolarOverviewPage = ({ solar, fetchWeatherReadingsData, fetchComponentsTab
 const mapDispatchToProps = {
   fetchWeatherReadingsData,
   fetchComponentsTableData,
-  fetchInverterGridsData,
+  fetchSolarLiveData,
   fetchConsumptionsData,
   fetchPvProductionData,
-  fetchBatterySystemData
+  fetchBatterySystemData,
 };
 
 const mapStateToProps = (state) => ({
