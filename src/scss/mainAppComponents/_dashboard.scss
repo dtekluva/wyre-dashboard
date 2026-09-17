@@ -1049,6 +1049,29 @@
 .energy-summary-container {
   .ant-tabs-nav {
     margin-bottom: 8px;
+
+    &::before {
+      border-bottom-color: #eef0f3;
+    }
+  }
+
+  .ant-tabs-nav-wrap {
+    overflow: visible;
+  }
+
+  .ant-tabs-nav-list {
+    flex-wrap: nowrap;
+  }
+
+  .ant-tabs-tab {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+    margin: 0 !important;
+    font-size: 13px;
+  }
+
+  .ant-tabs-tab-btn {
+    white-space: nowrap;
   }
 
   .battery-tab-content {
@@ -1164,6 +1187,206 @@
       margin-top: 1px;
     }
   }
+
+  .power-demand-tab-content {
+    padding-top: 0;
+  }
+
+  .power-demand-grid {
+    display: grid;
+    grid-template-columns: minmax(108px, 1.05fr) 1fr 1fr 0.9fr;
+    column-gap: 12px;
+    align-items: center;
+  }
+
+  .power-demand-grid--header {
+    margin-bottom: 2px;
+  }
+
+  .power-demand-col-heading {
+    text-align: right;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b7280;
+    white-space: nowrap;
+
+    &--max {
+      color: #dc2626;
+    }
+
+    &--min {
+      color: #2563eb;
+    }
+
+    &--avg {
+      color: #7b61ff;
+    }
+  }
+
+  .power-demand-row {
+    padding: 10px 0;
+    border-top: 1px solid #eef0f3;
+  }
+
+  .power-demand-period-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.2;
+  }
+
+  .power-demand-cell {
+    text-align: right;
+    min-width: 0;
+  }
+
+  .power-demand-kw {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #111827;
+
+    span {
+      font-size: 12px;
+      font-weight: 500;
+      color: #6b7280;
+    }
+  }
+
+  .power-demand-at {
+    margin-top: 2px;
+    font-size: 10px;
+    color: #9ca3af;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .power-demand-cell--max .power-demand-kw {
+    color: #dc2626;
+  }
+
+  .power-demand-cell--min .power-demand-kw {
+    color: #2563eb;
+  }
+
+  .power-demand-cell--avg .power-demand-kw {
+    color: #7b61ff;
+  }
+}
+
+.solar-overview .custom-card .solar-chart-stat-badges {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: stretch;
+  gap: 10px;
+  margin: 0 0 10px;
+  width: 100%;
+}
+
+.solar-chart-stat-badge {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  flex: 0 1 auto;
+  max-width: calc(50% - 5px);
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.04);
+
+  &__label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 2px;
+  }
+
+  &__value {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+
+    span {
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+
+  &__sub {
+    margin-top: 2px;
+    font-size: 11px;
+    color: #9ca3af;
+  }
+
+  &--production .solar-chart-stat-badge__value {
+    color: #d97706;
+  }
+
+  &--consumption .solar-chart-stat-badge__value {
+    color: #7b61ff;
+  }
+
+  &--pv-total .solar-chart-stat-badge__value,
+  &--pv-peak .solar-chart-stat-badge__value {
+    color: #2563eb;
+  }
+
+  &--battery-charge .solar-chart-stat-badge__value {
+    color: #7b61ff;
+  }
+
+  &--battery-discharge .solar-chart-stat-badge__value {
+    color: #58b90a;
+  }
+}
+
+@media (max-width: 768px) {
+  .solar-overview .custom-card .solar-chart-stat-badges {
+    flex-wrap: wrap;
+  }
+
+  .solar-chart-stat-badge {
+    max-width: 100%;
+  }
+}
+
+.solar-battery-chart-tooltip {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 4px 12px rgba(17, 24, 39, 0.08);
+  font-size: 12px;
+
+  &__time {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #111827;
+  }
+
+  &__row {
+    margin-top: 4px;
+
+    &--charge {
+      color: #d97706;
+    }
+
+    &--discharge {
+      color: #58b90a;
+    }
+  }
+
+  &__soc {
+    margin-top: 8px;
+    font-weight: 700;
+    color: #111827;
+  }
 }
 
 /* left card header */
@@ -1211,10 +1434,26 @@
 /* layout inside left card */
 .left-card .left-card-body {
   display: flex;
-  gap: 48px;
+  gap: 20px;
   align-items: center;
   justify-content: center;
-  padding-top: 10px;
+  padding: 10px 8px 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.left-card .left-card-header {
+  padding: 0 4px;
+}
+
+.left-card .header-text .location {
+  flex-wrap: wrap;
+  line-height: 1.35;
+}
+
+.left-card .header-text .sun-info {
+  flex-wrap: wrap;
+  line-height: 1.35;
 }
 
 /* gauge area */
@@ -1226,8 +1465,14 @@
 .gauge-stats {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  min-width: 160px;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 148px;
+}
+
+.left-card .gauge-area {
+  flex: 0 0 auto;
 }
 .stat-row {
   display: flex;
@@ -1255,9 +1500,11 @@
   color: #6b7280;
 }
 .stat-value {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #111827;
+  line-height: 1.25;
+  word-break: break-word;
 }
 
 .animation-card {

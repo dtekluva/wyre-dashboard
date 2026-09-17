@@ -53,3 +53,12 @@ export const getBatteryChartSuccess = payload => ({
   type: solarType.FETCH_BATTERY_CHART_SUCCESS,
   payload,
 });
+
+export const getSolarLiveLoading = (payload = true) => ({
+  type: solarType.FETCH_SOLAR_LIVE_LOADING,
+  payload,
+});
+export const getSolarLiveSuccess = payload => ({
+  type: solarType.FETCH_SOLAR_LIVE_SUCCESS,
+  payload,
+});
