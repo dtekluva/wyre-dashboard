@@ -35,16 +35,16 @@ const PowerDemandStackedBarChart = ({
   const { isMediumScreen, isLessThan1296 } = useContext(CompleteDataContext);
 
   const colorsArray = [
-    '#6C00FA',
-    '#00C7E6',
-    '#FF3DA1',
-    '#82ca9d',
-    '#ff9b3d',
-    '#360259',
-    '#0371b5',
-    '#D90000',
-    '#757575',
-    '#FFE11A',
+    "#5C3592",
+    "#00C7E6",
+    "#FF3DA1",
+    "#82ca9d",
+    "#ff9b3d",
+    "#360259",
+    "#0371b5",
+    "#D90000",
+    "#757575",
+    "#FFE11A",
   ];
 
   const datasets =
@@ -92,7 +92,6 @@ const PowerDemandStackedBarChart = ({
         enabled: true,
         mode: 'index',
       },
-      // 🔒 HARD BLOCK: no value labels, ever
       datalabels: {
         display: false,
       },
