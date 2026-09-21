@@ -41,6 +41,37 @@ const logoutOnUnauthorized = (error) => {
 };
 
 
+/**
+ * Product access from JWT. Uses has_ems / has_solar when present;
+ * falls back to legacy is_solar_customer.
+ */
+export const getUserProductAccess = (userData) => {
+    if (!userData) {
+        return { hasEms: false, hasSolar: false, isSolarOnly: false };
+    }
+
+    const hasExplicitProductFlags =
+        typeof userData.has_ems === 'boolean'
+        || typeof userData.has_solar === 'boolean';
+
+    if (hasExplicitProductFlags) {
+        const hasEms = Boolean(userData.has_ems);
+        const hasSolar = Boolean(userData.has_solar);
+        return {
+            hasEms,
+            hasSolar,
+            isSolarOnly: hasSolar && !hasEms,
+        };
+    }
+
+    const legacySolarOnly = userData.is_solar_customer === true;
+    return {
+        hasEms: !legacySolarOnly,
+        hasSolar: true,
+        isSolarOnly: legacySolarOnly,
+    };
+};
+
 export { logoutOnUnauthorized, tokenIsExpired };
 
 

@@ -2,6 +2,7 @@ import { useEffect, useContext, useRef, useState } from "react";
 import moment from "moment";
 import { connect, useSelector } from "react-redux";
 import CompleteDataContext from "../Context";
+import { getUserProductAccess } from "../helpers/authHelper";
 
 import BreadCrumb from "../components/BreadCrumb";
 import Loader from "../components/Loader";
@@ -206,10 +207,12 @@ function Dashboard({
     return <Loader />;
   }
 
+  const { hasEms, hasSolar } = getUserProductAccess(userData);
+
   return (
     <>
       {
-        userData.is_solar_customer === false ?
+        hasEms ?
           <section id="page" ref={pageRef}>
             <div className="breadcrumb-and-print-buttons">
               <BreadCrumb routesArray={breadCrumbRoutes} />
@@ -350,7 +353,7 @@ function Dashboard({
                 </div>
               )}
           </section> :
-          <SolarOverviewPage />
+          hasSolar ? <SolarOverviewPage /> : null
       }
     </>
   );

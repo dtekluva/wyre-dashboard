@@ -4,6 +4,7 @@ import { Select } from 'antd';
 import { useSelector } from 'react-redux';
 
 import CompleteDataContext from '../Context';
+import { getUserProductAccess } from '../helpers/authHelper';
 
 import dataHttpServices from '../services/devices';
 
@@ -75,7 +76,9 @@ function RevisedAppTopBar() {
     window.dispatchEvent(new CustomEvent('diesel-download-pdf'));
   };
 
-  return userData.is_solar_customer ? null
+  const { hasEms } = getUserProductAccess(userData);
+
+  return !hasEms ? null
   : (
   <div className="top-bar">
     <div className="top-bar__left">
