@@ -128,6 +128,24 @@ const formatLagosDateTimeShort = (value) => {
   return parsed.format("DD MMM, HH:mm");
 };
 
+const getBatteryHourChargeKw = (hour = {}) =>
+  hour.battery_charge_kW ?? hour.battery_charge_kwh ?? 0;
+
+const getBatteryHourDischargeKw = (hour = {}) =>
+  hour.battery_discharge_kW ?? hour.battery_discharge_kwh ?? 0;
+
+const getBatteryDayTotalChargeKw = (payload = {}) => {
+  if (payload.total_battery_charge_kW != null) return payload.total_battery_charge_kW;
+  if (payload.total_battery_charge_kwh != null) return payload.total_battery_charge_kwh;
+  return null;
+};
+
+const getBatteryDayTotalDischargeKw = (payload = {}) => {
+  if (payload.total_battery_discharge_kW != null) return payload.total_battery_discharge_kW;
+  if (payload.total_battery_discharge_kwh != null) return payload.total_battery_discharge_kwh;
+  return null;
+};
+
 const mapLiveToFlowData = (live) => {
   if (!live) return {};
   return {
@@ -161,12 +179,12 @@ const BatteryChartTooltip = ({ active, payload, label }) => {
       <div className="solar-battery-chart-tooltip__time">{label}</div>
       {chargeEntry ? (
         <div className="solar-battery-chart-tooltip__row solar-battery-chart-tooltip__row--charge">
-          battery_charge: {formatSummaryNumber(chargeEntry.value, 1)} kWh
+          battery_charge: {formatSummaryNumber(chargeEntry.value, 1)} kW
         </div>
       ) : null}
       {dischargeEntry ? (
         <div className="solar-battery-chart-tooltip__row solar-battery-chart-tooltip__row--discharge">
-          battery_discharge: {formatSummaryNumber(dischargeEntry.value, 1)} kWh
+          battery_discharge: {formatSummaryNumber(dischargeEntry.value, 1)} kW
         </div>
       ) : null}
       {point.soc_pct != null ? (
@@ -1059,10 +1077,13 @@ const SolarOverviewPage = ({
     pv_kw: h.pv_kw ?? 0,
   })) || [];
   
+  const batteryDayTotalChargeKw = getBatteryDayTotalChargeKw(batteryChartContents);
+  const batteryDayTotalDischargeKw = getBatteryDayTotalDischargeKw(batteryChartContents);
+
   const batteryChartData = batteryChartContents?.hours?.map((h) => ({
     time: h.hour_label,
-    battery_charge: h.battery_charge_kwh ?? 0,
-    battery_discharge: h.battery_discharge_kwh ?? 0,
+    battery_charge: getBatteryHourChargeKw(h),
+    battery_discharge: getBatteryHourDischargeKw(h),
     soc_pct: h.soc_pct,
   })) || [];
 
@@ -1347,22 +1368,21 @@ const SolarOverviewPage = ({
                   allowClear={false}
                 />
               </div>
-              {(batteryChartContents?.total_battery_charge_kwh != null
-                || batteryChartContents?.total_battery_discharge_kwh != null) && (
+              {(batteryDayTotalChargeKw != null || batteryDayTotalDischargeKw != null) && (
                 <div className="solar-chart-stat-badges">
-                  {batteryChartContents?.total_battery_charge_kwh != null ? (
+                  {batteryDayTotalChargeKw != null ? (
                     <ChartDayStatBadge
                       label="Total Battery Charge"
-                      value={formatSummaryNumber(batteryChartContents.total_battery_charge_kwh, 1)}
-                      unit="kWh"
+                      value={formatSummaryNumber(batteryDayTotalChargeKw, 1)}
+                      unit="kW"
                       variant="battery-charge"
                     />
                   ) : null}
-                  {batteryChartContents?.total_battery_discharge_kwh != null ? (
+                  {batteryDayTotalDischargeKw != null ? (
                     <ChartDayStatBadge
                       label="Total Battery Discharge"
-                      value={formatSummaryNumber(batteryChartContents.total_battery_discharge_kwh, 1)}
-                      unit="kWh"
+                      value={formatSummaryNumber(batteryDayTotalDischargeKw, 1)}
+                      unit="kW"
                       variant="battery-discharge"
                     />
                   ) : null}
@@ -1375,8 +1395,20 @@ const SolarOverviewPage = ({
                   <YAxis />
                   <Tooltip content={<BatteryChartTooltip />} />
                   <Legend />
-                  <Area type="monotone" dataKey="battery_charge" stroke="#D7C6F3" fill="#D7C6F3" />
-                  <Area type="monotone" dataKey="battery_discharge" stroke="#58B90A" fill="#58B90A" />
+                  <Area
+                    type="monotone"
+                    dataKey="battery_charge"
+                    name="battery_charge (kW)"
+                    stroke="#D7C6F3"
+                    fill="#D7C6F3"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="battery_discharge"
+                    name="battery_discharge (kW)"
+                    stroke="#58B90A"
+                    fill="#58B90A"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </Card>
