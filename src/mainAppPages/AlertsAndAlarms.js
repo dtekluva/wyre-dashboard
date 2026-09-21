@@ -9,6 +9,7 @@ import BreadCrumb from '../components/BreadCrumb';
 import { useState } from 'react';
 import { useContext } from 'react';
 import CompleteDataContext from '../Context';
+import { getUserProductAccess } from '../helpers/authHelper';
 
 const DEFAULT_DAYS_OF_WEEK = '0,1,2,3,4,5,6';
 
@@ -79,7 +80,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const [thresholdError, setThresholdError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isOperator = userData.role_text === "OPERATOR";
-  const isSolarOnlyCustomer = userData?.is_solar_customer === true;
+  const isSolarOnlyCustomer = getUserProductAccess(userData).isSolarOnly;
   const fetchAlertsDataLoading = alertsAndAlarms?.fetchAlertsDataLoading ?? false;
   const isFormBusy = fetchAlertsDataLoading || isSubmitting;
   

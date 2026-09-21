@@ -37,6 +37,17 @@ const breadCrumbRoutes = [
   { url: "#", name: "Solar Overview", id: 2 },
 ];
 
+const SOLAR_LIVE_POLL_DEFAULT_SECONDS = 30;
+const SOLAR_LIVE_INACTIVITY_MS = 3 * 60 * 1000;
+
+const getSolarLivePollIntervalMs = (refreshIntervalSeconds) => {
+  const seconds = Number(refreshIntervalSeconds);
+  if (Number.isFinite(seconds) && seconds > 0) {
+    return seconds * 1000;
+  }
+  return SOLAR_LIVE_POLL_DEFAULT_SECONDS * 1000;
+};
+
 const { Option } = Select;
 
   //  CircleGauge (Segmented SVG)
@@ -882,7 +893,9 @@ const SolarOverviewPage = ({
   const [pvProductionChartContents, setPvProductionChartContents] = useState(null);
   const [batteryChartContents, setBatteryChartContents] = useState(null);
   const livePollIntervalRef = useRef(null);
-  const liveRefreshSecondsRef = useRef(15);
+  const livePollIntervalSecondsRef = useRef(SOLAR_LIVE_POLL_DEFAULT_SECONDS);
+  const lastUserActivityRef = useRef(Date.now());
+  const livePollPausedForInactivityRef = useRef(false);
 
   const handleConsumptionDateChange = (date) => {
     if (!date) return;
@@ -928,12 +941,20 @@ const SolarOverviewPage = ({
   ]);
 
   useEffect(() => {
-    if (Number.isFinite(solar.solarLiveRefreshIntervalSeconds) && solar.solarLiveRefreshIntervalSeconds > 0) {
-      liveRefreshSecondsRef.current = solar.solarLiveRefreshIntervalSeconds;
+    if (
+      Number.isFinite(solar.solarLiveRefreshIntervalSeconds)
+      && solar.solarLiveRefreshIntervalSeconds > 0
+    ) {
+      livePollIntervalSecondsRef.current = solar.solarLiveRefreshIntervalSeconds;
+    } else {
+      livePollIntervalSecondsRef.current = SOLAR_LIVE_POLL_DEFAULT_SECONDS;
     }
   }, [solar.solarLiveRefreshIntervalSeconds]);
 
   useEffect(() => {
+    lastUserActivityRef.current = Date.now();
+    livePollPausedForInactivityRef.current = false;
+
     const clearLivePoll = () => {
       if (livePollIntervalRef.current) {
         clearInterval(livePollIntervalRef.current);
@@ -941,28 +962,71 @@ const SolarOverviewPage = ({
       }
     };
 
+    const isUserInactive = () => Date.now() - lastUserActivityRef.current >= SOLAR_LIVE_INACTIVITY_MS;
+
     const startLivePoll = () => {
       clearLivePoll();
       if (document.visibilityState !== "visible") return;
+      if (isUserInactive()) {
+        livePollPausedForInactivityRef.current = true;
+        return;
+      }
+      livePollPausedForInactivityRef.current = false;
       livePollIntervalRef.current = setInterval(() => {
+        if (isUserInactive()) {
+          clearLivePoll();
+          livePollPausedForInactivityRef.current = true;
+          return;
+        }
         fetchSolarLiveData({ silent: true });
-      }, liveRefreshSecondsRef.current * 1000);
+      }, getSolarLivePollIntervalMs(livePollIntervalSecondsRef.current));
+    };
+
+    const markUserActive = () => {
+      const wasPausedForInactivity = livePollPausedForInactivityRef.current;
+      lastUserActivityRef.current = Date.now();
+      livePollPausedForInactivityRef.current = false;
+      if (wasPausedForInactivity && document.visibilityState === "visible") {
+        fetchSolarLiveData({ silent: true });
+        startLivePoll();
+      }
     };
 
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        fetchSolarLiveData({ silent: true });
-        startLivePoll();
+        markUserActive();
+        if (!isUserInactive()) {
+          fetchSolarLiveData({ silent: true });
+          startLivePoll();
+        }
       } else {
         clearLivePoll();
       }
     };
+
+    const activityEvents = ["mousedown", "keydown", "scroll", "touchstart", "click"];
+    activityEvents.forEach((eventName) => {
+      window.addEventListener(eventName, markUserActive, { passive: true });
+    });
+
+    let lastMouseMoveActivity = 0;
+    const onMouseMove = () => {
+      const now = Date.now();
+      if (now - lastMouseMoveActivity < 5000) return;
+      lastMouseMoveActivity = now;
+      markUserActive();
+    };
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
 
     startLivePoll();
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      activityEvents.forEach((eventName) => {
+        window.removeEventListener(eventName, markUserActive);
+      });
+      window.removeEventListener("mousemove", onMouseMove);
       clearLivePoll();
     };
   }, [fetchSolarLiveData, solar.solarLiveRefreshIntervalSeconds]);

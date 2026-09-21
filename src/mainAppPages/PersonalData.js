@@ -1,6 +1,7 @@
 import React, { useEffect, useContext, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import CompleteDataContext from '../Context';
+import { getUserProductAccess } from '../helpers/authHelper';
 
 import BreadCrumb from '../components/BreadCrumb';
 
@@ -19,6 +20,7 @@ const formatLabel = (value) => {
 function PersonalData() {
   const { userData, organization, setCurrentUrl } = useContext(CompleteDataContext);
   const location = useLocation();
+  const { hasEms, hasSolar } = getUserProductAccess(userData);
 
   useEffect(() => {
     setCurrentUrl(location.pathname);
@@ -38,26 +40,25 @@ function PersonalData() {
   }, [organization, userData]);
 
   const organisationName = organization?.name;
-  const avatarImage = organization?.image;
-  const avatarSrc = organisationName
+  const avatarImage = organization?.image ?? userData?.client_image;
+  const avatarSrc = avatarImage
     ? `https://backend.wyreng.com${avatarImage}`
     : '/wyreLogo.png';
 
   const accountFields = [
     { label: 'Username', value: userData?.username },
+    { label: 'Email', value: userData?.email },
     { label: 'Role', value: userData?.role_text },
-    { label: 'User ID', value: userData?.id ?? userData?.user_id },
-    {
-      label: 'Solar Customer',
-      value: userData?.is_solar_customer,
-    },
+    { label: 'EMS', value: hasEms },
+    { label: 'Solar', value: hasSolar },
   ];
 
   const organisationFields = [
     { label: 'Organisation', value: organisationName },
     { label: 'Client', value: userData?.client },
     { label: 'Client Type', value: userData?.client_type },
-    { label: 'Branch', value: branchName || userData?.branch_id },
+    { label: 'Branch', value: branchName },
+    { label: 'About', value: userData?.details },
   ];
 
   return (

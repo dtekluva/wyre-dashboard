@@ -21,7 +21,7 @@ const INITIAL_STATE = {
 
   solarLiveLoading: false,
   solarLiveData: false,
-  solarLiveRefreshIntervalSeconds: 15,
+  solarLiveRefreshIntervalSeconds: 30,
 };
 
 const solarReducer = (state = INITIAL_STATE, action) => {
@@ -106,7 +106,7 @@ const solarReducer = (state = INITIAL_STATE, action) => {
         solarLiveRefreshIntervalSeconds:
           action.payload?.refresh_interval_seconds
           ?? state.solarLiveRefreshIntervalSeconds
-          ?? 15,
+          ?? 30,
       };
 
     default: return state;

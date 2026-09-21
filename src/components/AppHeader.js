@@ -21,6 +21,7 @@ import OverviewIcon from '../icons/OverviewIcon';
 import PadlockIcon from '../icons/PadlockIcon';
 import LogoutIcon from '../icons/LogoutIcon';
 import { BESPOKE_ADD_LIST } from '../helpers/constants';
+import { getUserProductAccess } from '../helpers/authHelper';
 
 function Header() {
   const {
@@ -40,6 +41,7 @@ function Header() {
 
   const { image: avatarImage, name: organisationName } = organization;
   const isOperator = userData.role_text === "OPERATOR";
+  const { hasEms, hasSolar, isSolarOnly } = getUserProductAccess(userData);
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -173,11 +175,50 @@ function Header() {
           <ul className="header-nav-list"
            style={{whiteSpace: 'nowrap'}}
           >
-            {userData.is_solar_customer === false ? (
+            {isSolarOnly ? (
               <>
+                <HeaderLink
+                  onClick={toggleNav}
+                  url="/solar-overview"
+                  linkText="Solar Overview"
+                />
+                {isOperator ? (
+                  <HeaderLink
+                    onClick={toggleNav}
+                    url="/alerts-and-alarms"
+                    linkText="Alerts and Alarms"
+                  />
+                ) : null}
+
+                <li className="header-nav-list__item h-hidden-1296-up">
+                  <HeaderIcon
+                    onClick={toggleNav}
+                    count={0}
+                    countClassName="header-icon__count"
+                  >
+                    <MessageIcon className="header-icon__image" />
+                  </HeaderIcon>
+                </li>
+
+                <li className="header-nav-list__item h-hidden-1296-up">
+                  <HeaderIcon
+                    onClick={toggleNav}
+                    count={0}
+                    countClassName="header-icon__count"
+                  >
+                    <NotificationIcon className="header-icon__image" />
+                  </HeaderIcon>
+                </li>
+              </>
+            ) : (
+              <>
+                {hasEms ? (
+                  <>
                 <HeaderLink onClick={toggleNav} url="/" linkText="Dashboard" />
                 <HeaderLink onClick={toggleNav} url="/diesel-overview" linkText="Diesel Overview" />
-                <HeaderLink onClick={toggleNav} url="/solar-overview" linkText="Solar Overview" />
+                {hasSolar ? (
+                  <HeaderLink onClick={toggleNav} url="/solar-overview" linkText="Solar Overview" />
+                ) : null}
 
                 {/* {!doesUserHaveAccess && ( */}
                 {/* {organization && !SCORE_CARD_EXCLUDE_CLIENTS.includes(organization.name)
@@ -281,41 +322,8 @@ function Header() {
               linkText="Messages"
             />
           )} */}
-              </>
-            ) : (
-              <>
-                <HeaderLink
-                  onClick={toggleNav}
-                  url="/solar-overview"
-                  linkText="Solar Overview"
-                />
-                {isOperator ? (
-                  <HeaderLink
-                    onClick={toggleNav}
-                    url="/alerts-and-alarms"
-                    linkText="Alerts and Alarms"
-                  />
+                  </>
                 ) : null}
-
-                <li className="header-nav-list__item h-hidden-1296-up">
-                  <HeaderIcon
-                    onClick={toggleNav}
-                    count={0}
-                    countClassName="header-icon__count"
-                  >
-                    <MessageIcon className="header-icon__image" />
-                  </HeaderIcon>
-                </li>
-
-                <li className="header-nav-list__item h-hidden-1296-up">
-                  <HeaderIcon
-                    onClick={toggleNav}
-                    count={0}
-                    countClassName="header-icon__count"
-                  >
-                    <NotificationIcon className="header-icon__image" />
-                  </HeaderIcon>
-                </li>
               </>
             )}
 
