@@ -128,20 +128,41 @@ const formatLagosDateTimeShort = (value) => {
   return parsed.format("DD MMM, HH:mm");
 };
 
-const getBatteryHourChargeKw = (hour = {}) =>
-  hour.battery_charge_kW ?? hour.battery_charge_kwh ?? 0;
+const isBatteryPlotPayload = (payload) =>
+  payload != null && typeof payload === "object" && !Array.isArray(payload);
 
-const getBatteryHourDischargeKw = (hour = {}) =>
-  hour.battery_discharge_kW ?? hour.battery_discharge_kwh ?? 0;
+const getBatteryHourChargeKw = (hour) => {
+  if (!isBatteryPlotPayload(hour)) return 0;
+  return (
+    hour.battery_charge_kW
+    ?? hour.battery_charge_kw
+    ?? hour.battery_charge_kwh
+    ?? 0
+  );
+};
 
-const getBatteryDayTotalChargeKw = (payload = {}) => {
+const getBatteryHourDischargeKw = (hour) => {
+  if (!isBatteryPlotPayload(hour)) return 0;
+  return (
+    hour.battery_discharge_kW
+    ?? hour.battery_discharge_kw
+    ?? hour.battery_discharge_kwh
+    ?? 0
+  );
+};
+
+const getBatteryDayTotalChargeKw = (payload) => {
+  if (!isBatteryPlotPayload(payload)) return null;
   if (payload.total_battery_charge_kW != null) return payload.total_battery_charge_kW;
+  if (payload.total_battery_charge_kw != null) return payload.total_battery_charge_kw;
   if (payload.total_battery_charge_kwh != null) return payload.total_battery_charge_kwh;
   return null;
 };
 
-const getBatteryDayTotalDischargeKw = (payload = {}) => {
+const getBatteryDayTotalDischargeKw = (payload) => {
+  if (!isBatteryPlotPayload(payload)) return null;
   if (payload.total_battery_discharge_kW != null) return payload.total_battery_discharge_kW;
+  if (payload.total_battery_discharge_kw != null) return payload.total_battery_discharge_kw;
   if (payload.total_battery_discharge_kwh != null) return payload.total_battery_discharge_kwh;
   return null;
 };
@@ -1055,7 +1076,9 @@ const SolarOverviewPage = ({
       setTableContentsData(solar?.componentsTableData);
       setConsumptionChartContents(solar?.consumptionChartData);
       setPvProductionChartContents(solar?.pvProductionChartData);
-      setBatteryChartContents(solar?.batteryChartData);
+      setBatteryChartContents(
+        isBatteryPlotPayload(solar?.batteryChartData) ? solar.batteryChartData : null
+      );
     }
   }, [solar]);
 
