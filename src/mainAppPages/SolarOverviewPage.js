@@ -37,8 +37,8 @@ const breadCrumbRoutes = [
   { url: "#", name: "Solar Overview", id: 2 },
 ];
 
-const SOLAR_LIVE_POLL_DEFAULT_SECONDS = 30;
-const SOLAR_LIVE_INACTIVITY_MS = 3 * 60 * 1000;
+const SOLAR_LIVE_POLL_DEFAULT_SECONDS = 5 * 60;
+const SOLAR_LIVE_INACTIVITY_MS = 15 * 60 * 1000;
 
 const getSolarLivePollIntervalMs = (refreshIntervalSeconds) => {
   const seconds = Number(refreshIntervalSeconds);
