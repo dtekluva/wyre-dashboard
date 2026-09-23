@@ -290,7 +290,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
             </h1>
             <p className="alerts-and-alarms-lead">
               {isSolarOnlyCustomer
-                ? 'Notifications for your solar system: battery state of charge, weather forecasts, and capacity utilization.'
+                ? 'Notifications for your solar system: energy usage, battery state of charge, weather forecasts, and capacity utilization.'
                 : 'Configure how Wyre notifies you about anomalies, solar performance, and operational events.'}
             </p>
           </div>
@@ -314,7 +314,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                   : 'Standard Alerts on Anomalies'}
               </legend>
               <ol className="alerts-and-alarms-list">
-                {!isSolarOnlyCustomer ? (
                 <li className="alerts-and-alarms-list-item">
                   <div className="alerts-and-alarms-question-container">
                     <p className="alerts-and-alarms-question">
@@ -407,7 +406,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                     </div>
                   </div>
                 </li>
-                ) : null}
 
                 {showBatterySocBlock ? (
                 <li className="alerts-and-alarms-list-item alerts-and-alarms-list-item--battery-soc">

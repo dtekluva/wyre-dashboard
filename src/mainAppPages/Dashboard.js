@@ -277,8 +277,13 @@ function Dashboard({
             </div>
             <Spin
               spinning={dashboard.fetchDashBoardCard_2_Loading}
+              wrapperClassName="dashboard-source-cards-spin"
             >
-              <div className="dashboard-row-1b">
+              <div
+                className={`dashboard-row-1b${
+                  dashboard.fetchDashBoardCard_2_Loading ? " dashboard-row-1b--loading" : ""
+                }`}
+              >
                 {totalDeviceUsageBranchData && totalDeviceUsageBranchData.devices &&
                   totalDeviceUsageBranchData.devices
                     .filter((device) => device.is_source)
@@ -311,6 +316,7 @@ function Dashboard({
               totalDailyConsumptionBranchData={totalDailyConsumptionBranchData}
               uiSettings={uiSettings}
               sideDetails={sideDetails}
+              loading={dashboard.fetchDashBoardCard_3_Loading}
             />
 
             <div className="dashboard-row-3">
@@ -318,9 +324,11 @@ function Dashboard({
                 totalDeviceUsageBranchData={totalDeviceUsageBranchData}
                 uiSettings={uiSettings}
                 sideDetails={sideDetails}
+                loading={dashboard.fetchDashBoardCard_2_Loading}
               />
               <YesterDayAndTodayCard
                 totalEnergyBranchData={totalEnergyBranchData}
+                loading={dashboard.fetchDashBoardCard_1_Loading}
               />
             </div>
 
