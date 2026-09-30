@@ -542,6 +542,13 @@ const FlowDiagram = ({ inverterData }) => {
   const showGenerator = generatorStatusNorm === "ON";
 
   const batteryKw = battery?.kw ?? 0;
+  const installedBatteryKwh = Number(battery?.installed_battery_capacity_kwh);
+  const installedBatteryLabel = Number.isFinite(installedBatteryKwh)
+    ? `${formatSummaryNumber(
+        installedBatteryKwh,
+        Number.isInteger(installedBatteryKwh) ? 0 : 1
+      )} kWh`
+    : null;
   const batteryDirection = String(battery?.direction ?? "").trim().toUpperCase();
   const batteryStatus =
     batteryDirection === "OUT"
@@ -619,6 +626,7 @@ const FlowDiagram = ({ inverterData }) => {
       icon: batteryImg,
       label: "Battery",
       value: `${Math.abs(batteryKw).toFixed(2)} kW`,
+      installedCapacity: installedBatteryLabel,
       percentage: battery?.percentage ?? 0,
       direction: battery?.direction,
       status: batteryStatus,
@@ -782,6 +790,10 @@ const FlowDiagram = ({ inverterData }) => {
           }
 
           const pillOn = String(n.status ?? "").trim().toUpperCase() === "ON";
+          const showInstalledCapacity = key === "battery" && n.installedCapacity;
+          const labelY = showInstalledCapacity ? n.y - 48 : n.y - 34;
+          const valueY = showInstalledCapacity ? n.y - 12 : n.y - 14;
+          const statusY = showInstalledCapacity ? n.y + 6 : n.y + 2;
 
           return (
             <g key={key}>
@@ -885,16 +897,21 @@ const FlowDiagram = ({ inverterData }) => {
                 </>
               ) : (
                 <>
-                  <text x={n.x + labelOffsetX} y={n.y - 34} textAnchor={textAnchor} fontSize="13" fill="#111827" fontWeight="600">
+                  <text x={n.x + labelOffsetX} y={labelY} textAnchor={textAnchor} fontSize="13" fill="#111827" fontWeight="600">
                     {n.label}
                   </text>
-                  <text x={n.x + labelOffsetX} y={n.y - 14} textAnchor={textAnchor} fontSize="12" fill="#6B7280">
+                  {showInstalledCapacity && (
+                    <text x={n.x + labelOffsetX} y={n.y - 30} textAnchor={textAnchor} fontSize="12" fill="#6B7280">
+                      {n.installedCapacity}
+                    </text>
+                  )}
+                  <text x={n.x + labelOffsetX} y={valueY} textAnchor={textAnchor} fontSize="12" fill="#6B7280">
                     {n.value}
                   </text>
                   {(key === "battery" || key === "generator") && (
                     <text
                       x={n.x + labelOffsetX}
-                      y={n.y + 2}
+                      y={statusY}
                       textAnchor={textAnchor}
                       fontSize="11"
                       fontWeight="600"
