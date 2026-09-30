@@ -353,3 +353,193 @@
     opacity: 0.5;
   }
 }
+
+.alerts-energy-usage-block,
+.alerts-night-usage-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.alerts-and-alarms-subsection {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-left: 0;
+  margin-top: 4px;
+  max-width: 100%;
+}
+
+.alerts-and-alarms-suboption {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.alerts-item-detail {
+  color: scale-color($black, $lightness: 40%);
+  font-size: 1.32rem;
+  font-weight: $light;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  max-width: 920px;
+
+  &--compact {
+    margin-top: 0;
+  }
+}
+
+.alerts-inset-panel {
+  background-color: scale-color($purple, $lightness: 96%);
+  border: 1px solid scale-color($purple, $lightness: 85%);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+}
+
+.alerts-inset-panel-title {
+  color: scale-color($black, $lightness: 20%);
+  font-size: 1.35rem;
+  font-weight: $medium;
+  margin: 0;
+}
+
+.alerts-inset-panel-hint {
+  color: scale-color($black, $lightness: 42%);
+  font-size: 1.28rem;
+  font-weight: $light;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.alerts-weekday-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.alerts-weekday-chip {
+  background-color: $white;
+  border: 1px solid scale-color($purple, $lightness: 75%);
+  border-radius: 6px;
+  color: scale-color($purple, $lightness: 15%);
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: $medium;
+  line-height: 1;
+  min-width: 44px;
+  padding: 8px 12px;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  &.is-active {
+    background-color: $purple;
+    border-color: $purple;
+    color: $white;
+  }
+
+  &:hover:not(:disabled):not(.is-active) {
+    border-color: $purple;
+    color: $purple;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.battery-soc-schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.battery-soc-schedule-row {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  @include media('>=medium') {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.battery-soc-time-chip {
+  flex-shrink: 0;
+}
+
+.battery-soc-add-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alerts-callout {
+  border-radius: 8px;
+  font-size: 1.28rem;
+  line-height: 1.45;
+  padding: 12px 14px;
+
+  &--warm {
+    background-color: scale-color(#e8a838, $lightness: 92%);
+    border: 1px solid scale-color(#e8a838, $lightness: 75%);
+    color: scale-color($black, $lightness: 25%);
+  }
+
+  &--info {
+    background-color: scale-color($text-blue, $lightness: 92%);
+    border: 1px solid scale-color($text-blue, $lightness: 78%);
+    color: scale-color($black, $lightness: 28%);
+  }
+}
+
+.alerts-follows-soc {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.alerts-follows-soc-label {
+  color: scale-color($black, $lightness: 35%);
+  font-size: 1.35rem;
+  font-weight: $light;
+  white-space: nowrap;
+}
+
+.alerts-readonly-checkbox {
+  pointer-events: none;
+}
+
+.alerts-info-row {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.alerts-info-badge {
+  background-color: scale-color($text-blue, $lightness: 90%);
+  border-radius: 4px;
+  color: $text-blue;
+  flex-shrink: 0;
+  font-size: 1.15rem;
+  font-weight: $medium;
+  letter-spacing: 0.02em;
+  padding: 4px 10px;
+  text-transform: uppercase;
+}
+
+.alerts-and-alarms-list-item--info {
+  background-color: scale-color($light-bluegrey, $lightness: 40%);
+  border-radius: 8px;
+  margin-top: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
+}

@@ -13,6 +13,55 @@ import { getUserProductAccess } from '../helpers/authHelper';
 
 const DEFAULT_DAYS_OF_WEEK = '0,1,2,3,4,5,6';
 
+const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const normalizeDaysCsv = (csv) => {
+  const parts = String(csv || DEFAULT_DAYS_OF_WEEK)
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const unique = [...new Set(parts)].sort((a, b) => Number(a) - Number(b));
+  return unique.length ? unique.join(',') : DEFAULT_DAYS_OF_WEEK;
+};
+
+const daysCsvToSelected = (csv) => {
+  const set = new Set(normalizeDaysCsv(csv).split(','));
+  return WEEKDAY_LABELS.map((_, index) => set.has(String(index)));
+};
+
+const selectedToDaysCsv = (selected) => {
+  const days = WEEKDAY_LABELS.map((_, index) => index).filter((index) => selected[index]);
+  return days.length ? days.join(',') : DEFAULT_DAYS_OF_WEEK;
+};
+
+function WeekdayPicker({ value, onChange, disabled, ariaLabel }) {
+  const selected = daysCsvToSelected(value);
+
+  const toggleDay = (dayIndex) => {
+    if (disabled) return;
+    const next = selected.map((active, i) => (i === dayIndex ? !active : active));
+    if (!next.some(Boolean)) return;
+    onChange(selectedToDaysCsv(next));
+  };
+
+  return (
+    <div className="alerts-weekday-picker" role="group" aria-label={ariaLabel}>
+      {WEEKDAY_LABELS.map((label, dayIndex) => (
+        <button
+          key={label}
+          type="button"
+          className={`alerts-weekday-chip${selected[dayIndex] ? ' is-active' : ''}`}
+          aria-pressed={selected[dayIndex]}
+          disabled={disabled}
+          onClick={() => toggleDay(dayIndex)}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 const formatThresholdLabel = (threshold) => {
   const symbol = threshold.operator === 'gte' ? '≥' : '≤';
   return `${symbol} ${threshold.value}%`;
@@ -78,6 +127,8 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const [pendingThresholdValue, setPendingThresholdValue] = useState('');
   const [scheduleTimeError, setScheduleTimeError] = useState('');
   const [thresholdError, setThresholdError] = useState('');
+  const [dailyEnergyUsageDays, setDailyEnergyUsageDays] = useState(DEFAULT_DAYS_OF_WEEK);
+  const [pendingScheduleDays, setPendingScheduleDays] = useState(DEFAULT_DAYS_OF_WEEK);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isOperator = userData.role_text === "OPERATOR";
   const isSolarOnlyCustomer = getUserProductAccess(userData).isSolarOnly;
@@ -117,6 +168,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       const genData = alertsAndAlarms.alertsData.generator_data || [];
       const socConfig = alertsAndAlarms.alertsData.battery_soc_config ?? null;
       setPreloadedAlertsFormData(data);
+      setDailyEnergyUsageDays(normalizeDaysCsv(raw.daily_energy_usage_days));
       setGenerator_data(genData);
       setBatterySocConfig(socConfig);
       if (socConfig) {
@@ -157,6 +209,9 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   }
 
   const showBatterySocBlock = batterySocConfig != null;
+  const socEmailEnabled = Boolean(
+    preloadedAlertsFormData?.daily_battery_soc_alerts ?? batterySocConfig?.email_enabled
+  );
 
   const handleBatterySocEmailToggle = (checked) => {
     preloadedAlertsFormData.daily_battery_soc_alerts = checked;
@@ -194,12 +249,21 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       return;
     }
     setScheduleTimes((prev) =>
-      [...prev, { time, days_of_week: DEFAULT_DAYS_OF_WEEK }].sort((a, b) =>
+      [...prev, { time, days_of_week: normalizeDaysCsv(pendingScheduleDays) }].sort((a, b) =>
         a.time.localeCompare(b.time)
       )
     );
     setPendingScheduleTime(null);
+    setPendingScheduleDays(DEFAULT_DAYS_OF_WEEK);
     setScheduleTimeError('');
+  };
+
+  const handleUpdateScheduleDays = (time, daysCsv) => {
+    setScheduleTimes((prev) =>
+      prev.map((entry) =>
+        entry.time === time ? { ...entry, days_of_week: normalizeDaysCsv(daysCsv) } : entry
+      )
+    );
   };
 
   const handleRemoveScheduleTime = (timeToRemove) => {
@@ -239,6 +303,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
     setIsSubmitting(true);
     try {
       const dataPayload = { ...preloadedAlertsFormData };
+      dataPayload.daily_energy_usage_days = normalizeDaysCsv(dailyEnergyUsageDays);
       const t = dataPayload.solar_capacity_utilization_threshold_pct;
       if (t === '' || t === null || t === undefined || Number.isNaN(Number(t))) {
         dataPayload.solar_capacity_utilization_threshold_pct = 90;
@@ -315,34 +380,21 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
               </legend>
               <ol className="alerts-and-alarms-list">
                 <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    <p className="alerts-and-alarms-question">
-                      Get energy usage alerts
-                    </p>
-
-                    <div
-                      className="alerts-and-alarms-subsection"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "15px",
-                        marginLeft: "1.5rem",
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      <p className="alerts-and-alarms-subheading" style={{ fontWeight: 500 }}>
-                        Choose alert frequency
+                  <div className="alerts-energy-usage-block">
+                    <div className="alerts-and-alarms-question-container">
+                      <p className="alerts-and-alarms-question">Get energy usage alerts</p>
+                    </div>
+                    {isSolarOnlyCustomer ? (
+                      <p className="alerts-item-detail">
+                        Daily and weekly reports are sent at fixed times (daily 10:00, weekly Monday 10:00,
+                        Africa/Lagos). The daily report covers the previous day.
                       </p>
+                    ) : null}
 
-                      {/* Daily diesel usage alert */}
-                      <div
-                        className="alerts-and-alarms-suboption"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
+                    <div className="alerts-and-alarms-subsection">
+                      <p className="alerts-and-alarms-subheading">Choose alert frequency</p>
+
+                      <div className="alerts-and-alarms-suboption">
                         <label
                           htmlFor="daily-diesel-usage-checkbox"
                           className="alerts-and-alarms-subquestion"
@@ -359,7 +411,10 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                                 const checked = e.target.checked;
                                 field.onChange(checked);
                                 preloadedAlertsFormData.daily_energy_usage_alerts = checked;
-                                setPreloadedAlertsFormData(prev => ({ ...prev, daily_energy_usage_alerts: checked }));
+                                setPreloadedAlertsFormData((prev) => ({
+                                  ...prev,
+                                  daily_energy_usage_alerts: checked,
+                                }));
                               }}
                               checked={preloadedAlertsFormData?.daily_energy_usage_alerts}
                               className="daily-diesel-usage-checkbox alerts-and-alarms-checkbox"
@@ -369,15 +424,20 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                         />
                       </div>
 
-                      {/* Weekly diesel usage alert */}
-                      <div
-                        className="alerts-and-alarms-suboption"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
+                      <div className="alerts-inset-panel">
+                        <p className="alerts-inset-panel-title">Which days get the 10:00 daily report</p>
+                        <p className="alerts-inset-panel-hint">
+                          Uncheck days you do not want included (for example Saturday and Sunday).
+                        </p>
+                        <WeekdayPicker
+                          value={dailyEnergyUsageDays}
+                          onChange={setDailyEnergyUsageDays}
+                          disabled={isFormBusy}
+                          ariaLabel="Weekdays for the daily energy usage report"
+                        />
+                      </div>
+
+                      <div className="alerts-and-alarms-suboption">
                         <label
                           htmlFor="weekly-diesel-usage-checkbox"
                           className="alerts-and-alarms-subquestion"
@@ -394,7 +454,10 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                                 const checked = e.target.checked;
                                 field.onChange(checked);
                                 preloadedAlertsFormData.weekly_energy_usage_alerts = checked;
-                                setPreloadedAlertsFormData(prev => ({ ...prev, weekly_energy_usage_alerts: checked }));
+                                setPreloadedAlertsFormData((prev) => ({
+                                  ...prev,
+                                  weekly_energy_usage_alerts: checked,
+                                }));
                               }}
                               checked={preloadedAlertsFormData?.weekly_energy_usage_alerts}
                               className="weekly-diesel-usage-checkbox alerts-and-alarms-checkbox"
@@ -463,48 +526,63 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                       <div className="battery-soc-panel">
                         <p className="battery-soc-panel-title">Scheduled updates</p>
                         <p className="battery-soc-config-hint">
-                          Send a status email at each time (Africa/Lagos). Add as many as needed.
+                          Send a status at each time (Africa/Lagos), on the days you select below.
                           Granularity is 15 minutes.
                         </p>
-                        <div className="battery-soc-chip-list">
+                        <div className="battery-soc-schedule-list">
                           {scheduleTimes.length > 0 ? (
                             scheduleTimes.map((entry) => (
-                              <Tag
-                                key={entry.time}
-                                closable
-                                onClose={(e) => {
-                                  e.preventDefault();
-                                  handleRemoveScheduleTime(entry.time);
-                                }}
-                                className="battery-soc-chip"
-                              >
-                                {formatScheduleTimeLabel(entry.time)}
-                              </Tag>
+                              <div key={entry.time} className="battery-soc-schedule-row">
+                                <Tag
+                                  closable
+                                  onClose={(e) => {
+                                    e.preventDefault();
+                                    handleRemoveScheduleTime(entry.time);
+                                  }}
+                                  className="battery-soc-chip battery-soc-time-chip"
+                                >
+                                  {formatScheduleTimeLabel(entry.time)}
+                                </Tag>
+                                <WeekdayPicker
+                                  value={entry.days_of_week}
+                                  onChange={(csv) => handleUpdateScheduleDays(entry.time, csv)}
+                                  disabled={isFormBusy}
+                                  ariaLabel={`Weekdays for ${formatScheduleTimeLabel(entry.time)}`}
+                                />
+                              </div>
                             ))
                           ) : (
                             <span className="battery-soc-empty-hint">No times configured yet.</span>
                           )}
                         </div>
-                        <div className="battery-soc-add-row">
-                          <TimePicker
-                            value={pendingScheduleTime}
-                            onChange={(value) => {
-                              setPendingScheduleTime(value);
-                              setScheduleTimeError('');
-                            }}
-                            format="HH:mm"
-                            minuteStep={15}
-                            needConfirm={false}
-                            placeholder="Select time"
-                            className="battery-soc-time-picker"
+                        <div className="battery-soc-add-block">
+                          <div className="battery-soc-add-row">
+                            <TimePicker
+                              value={pendingScheduleTime}
+                              onChange={(value) => {
+                                setPendingScheduleTime(value);
+                                setScheduleTimeError('');
+                              }}
+                              format="HH:mm"
+                              minuteStep={15}
+                              needConfirm={false}
+                              placeholder="Select time"
+                              className="battery-soc-time-picker"
+                            />
+                            <button
+                              type="button"
+                              className="battery-soc-add-button"
+                              onClick={handleAddScheduleTime}
+                            >
+                              Add time
+                            </button>
+                          </div>
+                          <WeekdayPicker
+                            value={pendingScheduleDays}
+                            onChange={setPendingScheduleDays}
+                            disabled={isFormBusy}
+                            ariaLabel="Weekdays for new scheduled time"
                           />
-                          <button
-                            type="button"
-                            className="battery-soc-add-button"
-                            onClick={handleAddScheduleTime}
-                          >
-                            Add time
-                          </button>
                         </div>
                         {scheduleTimeError ? (
                           <p className="input-error-message">{scheduleTimeError}</p>
@@ -576,6 +654,36 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                 </li>
                 ) : null}
 
+                {isSolarOnlyCustomer && showBatterySocBlock ? (
+                <li className="alerts-and-alarms-list-item">
+                  <div className="alerts-night-usage-block">
+                    <div className="alerts-and-alarms-question-container">
+                      <p className="alerts-and-alarms-question">Night battery over-usage</p>
+                      <div className="alerts-follows-soc">
+                        <span className="alerts-follows-soc-label">Follows SOC email</span>
+                        <Checkbox
+                          id="night-over-usage-follows"
+                          checked={socEmailEnabled}
+                          disabled
+                          className="alerts-and-alarms-checkbox alerts-readonly-checkbox"
+                          aria-label="Night battery over-usage follows SOC email setting"
+                        />
+                      </div>
+                    </div>
+                    <p className="alerts-item-detail alerts-item-detail--compact">
+                      Follows &ldquo;Send battery SOC alerts by email&rdquo;. When email is on, Wyre can alert
+                      you overnight (18:00–07:00 Lagos) if load is higher than the battery can sustain until
+                      sunrise — at most once per night, by email and push.
+                    </p>
+                    <div className="alerts-callout alerts-callout--warm">
+                      {socEmailEnabled
+                        ? 'Night over-usage alerts are active while battery SOC email is enabled.'
+                        : 'Turn on battery SOC email above to enable night over-usage alerts.'}
+                    </div>
+                  </div>
+                </li>
+                ) : null}
+
                 <li className="alerts-and-alarms-list-item">
                   <div className="alerts-and-alarms-question-container">
                     {' '}
@@ -604,6 +712,11 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                       )}
                     />
                   </div>
+                  {isSolarOnlyCustomer ? (
+                    <p className="alerts-item-detail">
+                      Sent at 06:00 Lagos when today&apos;s forecast is poor for solar. Email and push when enabled.
+                    </p>
+                  ) : null}
                 </li>
 
                 <li className="alerts-and-alarms-list-item">
@@ -690,7 +803,45 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                       />
                     </div>
                   </div>
+                  {isSolarOnlyCustomer ? (
+                    <p className="alerts-item-detail">
+                      Any time of day. At most one email or push per hour while utilization stays above your
+                      threshold.
+                    </p>
+                  ) : null}
                 </li>
+
+                {isSolarOnlyCustomer ? (
+                <>
+                <li className="alerts-and-alarms-list-item alerts-and-alarms-list-item--info">
+                  <div className="alerts-info-row">
+                    <p className="alerts-and-alarms-question">Daily solar generation recap (app)</p>
+                    <span className="alerts-info-badge">Always on</span>
+                  </div>
+                  <p className="alerts-item-detail">
+                    Every solar site with generation today receives a push and in-app message at 19:00 Lagos.
+                    This is separate from the 10:00 daily usage email.
+                  </p>
+                  <div className="alerts-callout alerts-callout--info">
+                    No setting to change here — expect the evening app notification when your system produced
+                    solar energy that day.
+                  </div>
+                </li>
+                <li className="alerts-and-alarms-list-item alerts-and-alarms-list-item--info">
+                  <div className="alerts-info-row">
+                    <p className="alerts-and-alarms-question">Solar panel soiling</p>
+                    <span className="alerts-info-badge">Weekly email</span>
+                  </div>
+                  <p className="alerts-item-detail">
+                    If last week&apos;s yield looks low compared to weather, Wyre adds a note on your Monday
+                    weekly solar report email. There is no separate push for soiling.
+                  </p>
+                  <div className="alerts-callout alerts-callout--info">
+                    No toggle on this page — soiling is surfaced on the weekly report when applicable.
+                  </div>
+                </li>
+                </>
+                ) : null}
 
                 {!isSolarOnlyCustomer ? (
                 <>
