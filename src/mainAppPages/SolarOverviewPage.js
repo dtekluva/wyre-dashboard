@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Card, Row, Col, Select, Tabs, DatePicker, Spin } from "antd";
+import { Card, Row, Col, Select, Tabs, DatePicker, Spin, Modal } from "antd";
 import {
   AreaChart,
   Area,
@@ -542,13 +542,6 @@ const FlowDiagram = ({ inverterData }) => {
   const showGenerator = generatorStatusNorm === "ON";
 
   const batteryKw = battery?.kw ?? 0;
-  const installedBatteryKwh = Number(battery?.installed_battery_capacity_kwh);
-  const installedBatteryLabel = Number.isFinite(installedBatteryKwh)
-    ? `${formatSummaryNumber(
-        installedBatteryKwh,
-        Number.isInteger(installedBatteryKwh) ? 0 : 1
-      )} kWh`
-    : null;
   const batteryDirection = String(battery?.direction ?? "").trim().toUpperCase();
   const batteryStatus =
     batteryDirection === "OUT"
@@ -626,7 +619,6 @@ const FlowDiagram = ({ inverterData }) => {
       icon: batteryImg,
       label: "Battery",
       value: `${Math.abs(batteryKw).toFixed(2)} kW`,
-      installedCapacity: installedBatteryLabel,
       percentage: battery?.percentage ?? 0,
       direction: battery?.direction,
       status: batteryStatus,
@@ -790,10 +782,9 @@ const FlowDiagram = ({ inverterData }) => {
           }
 
           const pillOn = String(n.status ?? "").trim().toUpperCase() === "ON";
-          const showInstalledCapacity = key === "battery" && n.installedCapacity;
-          const labelY = showInstalledCapacity ? n.y - 48 : n.y - 34;
-          const valueY = showInstalledCapacity ? n.y - 12 : n.y - 14;
-          const statusY = showInstalledCapacity ? n.y + 6 : n.y + 2;
+          const labelY = n.y - 34;
+          const valueY = n.y - 14;
+          const statusY = n.y + 2;
 
           return (
             <g key={key}>
@@ -900,11 +891,6 @@ const FlowDiagram = ({ inverterData }) => {
                   <text x={n.x + labelOffsetX} y={labelY} textAnchor={textAnchor} fontSize="13" fill="#111827" fontWeight="600">
                     {n.label}
                   </text>
-                  {showInstalledCapacity && (
-                    <text x={n.x + labelOffsetX} y={n.y - 30} textAnchor={textAnchor} fontSize="12" fill="#6B7280">
-                      {n.installedCapacity}
-                    </text>
-                  )}
                   <text x={n.x + labelOffsetX} y={valueY} textAnchor={textAnchor} fontSize="12" fill="#6B7280">
                     {n.value}
                   </text>
@@ -948,6 +934,7 @@ const SolarOverviewPage = ({
   const [consumptionChartContents, setConsumptionChartContents] = useState(null);
   const [pvProductionChartContents, setPvProductionChartContents] = useState(null);
   const [batteryChartContents, setBatteryChartContents] = useState(null);
+  const [liveOverlayDismissed, setLiveOverlayDismissed] = useState(false);
   const livePollIntervalRef = useRef(null);
   const livePollIntervalSecondsRef = useRef(SOLAR_LIVE_POLL_DEFAULT_SECONDS);
   const lastUserActivityRef = useRef(Date.now());
@@ -1102,7 +1089,19 @@ const SolarOverviewPage = ({
   const liveSnapshot = solar?.solarLiveData && typeof solar.solarLiveData === "object" ? solar.solarLiveData : null;
   const flowDiagramData = mapLiveToFlowData(liveSnapshot);
   const livePv = liveSnapshot?.pv ?? {};
+  const liveBattery = liveSnapshot?.battery ?? {};
+  const liveOverlay = liveSnapshot?.overlay ?? {};
+  const liveOverlayActive = liveOverlay.is_overlay === true;
+  const installedBatteryKwh = Number(liveBattery.installed_battery_capacity_kwh);
   const showLiveInitialLoading = solar.solarLiveLoading && !liveSnapshot;
+
+  useEffect(() => {
+    if (!liveOverlayActive) {
+      setLiveOverlayDismissed(false);
+    }
+  }, [liveOverlayActive]);
+
+  const showLiveOverlayModal = liveOverlayActive && !liveOverlayDismissed;
 
   // Map API data for chart
   const consumptionChartData = consumptionChartContents?.hours?.map((h) => ({
@@ -1134,8 +1133,42 @@ const SolarOverviewPage = ({
   </span>
 );
 
+  const liveOverlayMessage =
+    typeof liveOverlay.message === "string" && liveOverlay.message.trim()
+      ? liveOverlay.message.trim()
+      : "We are experiencing a service disruption. We will be back shortly.";
+
   return (
     <div className="solar-overview">
+      <Modal
+        className="solar-live-overlay-modal"
+        visible={showLiveOverlayModal}
+        centered
+        closable={false}
+        maskClosable={false}
+        footer={null}
+        width={440}
+        destroyOnClose
+      >
+        <div className="solar-live-overlay-modal__hero" aria-hidden="true">
+          <div className="solar-live-overlay-modal__badge">
+            <span className="solar-live-overlay-modal__badge-icon" />
+          </div>
+        </div>
+        <h2 className="solar-live-overlay-modal__title">Wyre Data Delay Notification</h2>
+        <div className="solar-live-overlay-modal__body">
+          {liveOverlayMessage.split(/\n\n+/).map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="solar-live-overlay-modal__cancel"
+          onClick={() => setLiveOverlayDismissed(true)}
+        >
+          Cancel
+        </button>
+      </Modal>
       <div className="breadcrumb-and-print-buttons">
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
@@ -1197,6 +1230,22 @@ const SolarOverviewPage = ({
                         </div>
                       </div>
                     </div>
+
+                    {Number.isFinite(installedBatteryKwh) ? (
+                      <div className="stat-row">
+                        <span className="dot dot-battery" />
+                        <div>
+                          <div className="stat-label">Installed battery capacity</div>
+                          <div className="stat-value">
+                            {formatSummaryNumber(
+                              installedBatteryKwh,
+                              Number.isInteger(installedBatteryKwh) ? 0 : 1
+                            )}{" "}
+                            kWh
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </Spin>
