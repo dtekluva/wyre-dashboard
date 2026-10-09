@@ -44,7 +44,7 @@ const ScoreCardBarChart = ({
       : chart.dates,
     datasets: [
       {
-        label: 'Wastage',
+        label: "Wastage",
         maxBarThickness: 60,
         data: chartValues,
         backgroundColor: uiSettings.appPrimaryColor,
@@ -69,7 +69,6 @@ const ScoreCardBarChart = ({
             `${convertDecimalTimeToNormal(context.parsed.y)} (${chartWastedEnergy[context.dataIndex]} kWh)`,
         },
       },
-      // ✅ KILL ALL INNER / ARC LABELS
       datalabels: {
         display: false,
       },
