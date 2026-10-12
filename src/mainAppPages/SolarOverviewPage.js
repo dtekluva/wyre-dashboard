@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Card, Row, Col, Select, Tabs, DatePicker, Spin, Modal } from "antd";
+import { Card, Row, Col, Select, Tabs, DatePicker, Spin, Modal, notification } from "antd";
 import {
   AreaChart,
   Area,
@@ -121,11 +121,81 @@ const formatSummaryNumber = (val, decimals = 0) => {
   });
 };
 
-const formatLagosDateTimeShort = (value) => {
+const lagosTodayParts = () => {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Africa/Lagos",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const read = (type) => Number(parts.find((part) => part.type === type)?.value);
+  return { year: read("year"), month: read("month"), day: read("day") };
+};
+
+const isAfterLagosToday = (current, granularity) => {
+  if (!current) return false;
+  const today = lagosTodayParts();
+  const year = current.year();
+  const month = current.month() + 1;
+  if (year > today.year) return true;
+  if (year < today.year) return false;
+  if (month > today.month) return true;
+  if (granularity === "month" || month < today.month) return false;
+  return current.date() > today.day;
+};
+
+const isYieldDateFiltered = (yieldData) => {
+  const year = Number(yieldData?.filter?.year);
+  const month = Number(yieldData?.filter?.month);
+  return Number.isInteger(year) && year > 0 && Number.isInteger(month) && month >= 1 && month <= 12;
+};
+
+const isYieldDayFiltered = (yieldData) => {
+  if (!isYieldDateFiltered(yieldData)) return false;
+  const day = Number(yieldData.filter.day);
+  return Number.isInteger(day) && day >= 1 && day <= 31;
+};
+
+const formatYieldWindowFromFilter = (filter) => {
+  if (!filter?.year || !filter?.month) return "";
+  const start = dayjs(new Date(filter.year, filter.month - 1, 1));
+  if (!start.isValid()) return "";
+  if (filter.day) {
+    return dayjs(new Date(filter.year, filter.month - 1, filter.day)).format("DD MMM YYYY");
+  }
+  const today = lagosTodayParts();
+  const lastDay = start.daysInMonth();
+  const endDay = filter.year === today.year && filter.month === today.month
+    ? Math.min(lastDay, today.day)
+    : lastDay;
+  const end = dayjs(new Date(filter.year, filter.month - 1, endDay));
+  return `${start.format("DD MMM YYYY")} – ${end.format("DD MMM YYYY")}`;
+};
+
+const getYieldWindowLabel = (yieldData) => {
+  const fromApi = yieldData?.generation?.total?.period_label;
+  if (typeof fromApi === "string" && fromApi.trim()) return fromApi.trim();
+  return formatYieldWindowFromFilter(yieldData?.filter);
+};
+
+const formatDemandAt = (value, timeOnly) => {
   if (value == null || value === "") return null;
-  const parsed = dayjs(value);
+  const raw = String(value).trim();
+  const timeMatch = raw.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+  if (timeMatch) {
+    return `${timeMatch[1].padStart(2, "0")}:${timeMatch[2]}`;
+  }
+  const parsed = dayjs(raw);
   if (!parsed.isValid()) return null;
-  return parsed.format("DD MMM, HH:mm");
+  return timeOnly ? parsed.format("HH:mm") : parsed.format("DD MMM, HH:mm");
+};
+
+const sameYieldFilter = (left, right) => {
+  if (!left && !right) return true;
+  if (!left || !right) return false;
+  return left.year === right.year
+    && left.month === right.month
+    && (left.day ?? null) === (right.day ?? null);
 };
 
 const isBatteryPlotPayload = (payload) =>
@@ -331,27 +401,24 @@ const getBatteryTotalSinceLabel = (item = {}, batteryData = {}, yieldData = {}) 
 };
 
 const getBatteryDateRange = (periodKey, item = {}, batteryData = {}, yieldData = {}) => {
-  if (periodKey === "today" || periodKey === "monthly") {
-    return "";
-  }
-
-  if (periodKey === "total") {
-    // No frontend fallback — label only when API provides since/date fields.
-    return getBatteryTotalSinceLabel(item, batteryData, yieldData);
-  }
-
-  return "";
+  if (periodKey !== "total") return "";
+  const periodLabel = yieldData?.generation?.total?.period_label;
+  if (typeof periodLabel === "string" && periodLabel.trim()) return periodLabel.trim();
+  return getBatteryTotalSinceLabel(item, batteryData, yieldData);
 };
 
-const BatteryTabContent = ({ batteryData = {}, yieldData = {} }) => {
-  const periods = [
-    { key: "total", label: "Total" },
-    { key: "today", label: "Today" },
-    { key: "monthly", label: "Current Month" },
-  ];
+const BatteryTabContent = ({ batteryData = {}, yieldData = {}, dateFilter = null }) => {
+  const filtered = isYieldDateFiltered(yieldData) || Boolean(dateFilter?.year && dateFilter?.month);
+  const periods = filtered
+    ? [{ key: "total", label: getYieldWindowLabel(yieldData) || formatYieldWindowFromFilter(dateFilter) || "Total" }]
+    : [
+      { key: "total", label: "Total" },
+      { key: "today", label: "Today" },
+      { key: "monthly", label: "Current Month" },
+    ];
 
   return (
-    <div className="battery-tab-content">
+    <div className={`battery-tab-content${filtered ? " is-filtered" : ""}`}>
       <div className="battery-tab-grid battery-tab-grid--header">
         <div />
         <div className="battery-tab-col-heading battery-tab-col-heading--charged">
@@ -373,8 +440,10 @@ const BatteryTabContent = ({ batteryData = {}, yieldData = {} }) => {
         return (
           <div key={key} className="battery-tab-row">
             <div className="battery-tab-period">
-              <div className="battery-tab-period-label">{label}</div>
-              {key === "total" && dateRange ? (
+              <div className={`battery-tab-period-label${filtered ? " battery-tab-period-label--window" : ""}`}>
+                {label}
+              </div>
+              {!filtered && key === "total" && dateRange ? (
                 <div className="battery-tab-period-range">{dateRange}</div>
               ) : null}
             </div>
@@ -408,8 +477,8 @@ const BatteryTabContent = ({ batteryData = {}, yieldData = {} }) => {
   );
 };
 
-const PowerDemandMetricCell = ({ kw, at, variant }) => {
-  const atLabel = at ? formatLagosDateTimeShort(at) : null;
+const PowerDemandMetricCell = ({ kw, at, variant, timeOnly = false }) => {
+  const atLabel = formatDemandAt(at, timeOnly);
   return (
     <div className={`power-demand-cell power-demand-cell--${variant}`}>
       <div className="power-demand-kw">
@@ -420,15 +489,19 @@ const PowerDemandMetricCell = ({ kw, at, variant }) => {
   );
 };
 
-const PowerDemandTabContent = ({ powerDemand = {} }) => {
-  const periods = [
-    { key: "today", label: "Today" },
-    { key: "monthly", label: "Current Month" },
-    { key: "total", label: "Total" },
-  ];
+const PowerDemandTabContent = ({ powerDemand = {}, yieldData = {}, dateFilter = null }) => {
+  const filtered = isYieldDateFiltered(yieldData) || Boolean(dateFilter?.year && dateFilter?.month);
+  const timeOnly = isYieldDayFiltered(yieldData) || Boolean(dateFilter?.day);
+  const periods = filtered
+    ? [{ key: "total", label: getYieldWindowLabel(yieldData) || formatYieldWindowFromFilter(dateFilter) || "Total" }]
+    : [
+      { key: "today", label: "Today" },
+      { key: "monthly", label: "Current Month" },
+      { key: "total", label: "Total" },
+    ];
 
   return (
-    <div className="power-demand-tab-content">
+    <div className={`power-demand-tab-content${filtered ? " is-filtered" : ""}`}>
       <div className="power-demand-grid power-demand-grid--header">
         <div />
         <div className="power-demand-col-heading power-demand-col-heading--max">Max</div>
@@ -440,9 +513,11 @@ const PowerDemandTabContent = ({ powerDemand = {} }) => {
         const item = powerDemand[key] || {};
         return (
           <div key={key} className="power-demand-grid power-demand-row">
-            <div className="power-demand-period-label">{label}</div>
-            <PowerDemandMetricCell kw={item.max_kw} at={item.max_at} variant="max" />
-            <PowerDemandMetricCell kw={item.min_kw} at={item.min_at} variant="min" />
+            <div className={`power-demand-period-label${filtered ? " power-demand-period-label--window" : ""}`}>
+              {label}
+            </div>
+            <PowerDemandMetricCell kw={item.max_kw} at={item.max_at} variant="max" timeOnly={timeOnly} />
+            <PowerDemandMetricCell kw={item.min_kw} at={item.min_at} variant="min" timeOnly={timeOnly} />
             <PowerDemandMetricCell kw={item.avg_kw} variant="avg" />
           </div>
         );
@@ -451,7 +526,187 @@ const PowerDemandTabContent = ({ powerDemand = {} }) => {
   );
 };
 
-const EnergySummary = ({ tableContentsData }) => {
+const YieldCalendarIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+    <rect x="1.2" y="2.2" width="11.6" height="10.2" rx="1.6" fill="none" stroke="currentColor" strokeWidth="1.3" />
+    <path d="M1.2 5.2h11.6M4.2 1.2v2.2M9.8 1.2v2.2" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+  </svg>
+);
+
+const YieldCloseIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+    <path d="M2 2 L8 8 M8 2 L2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+  </svg>
+);
+
+const YieldDateFilter = ({ applied, onApply, busy }) => {
+  const [pickerMode, setPickerMode] = useState("day");
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [panelDate, setPanelDate] = useState(() => dayjs());
+  const pickerModeRef = useRef("day");
+  const appliedMode = applied?.day ? "day" : applied?.year && applied?.month ? "month" : "all";
+  const appliedLabel = applied?.year && applied?.month
+    ? (applied.day
+      ? dayjs(new Date(applied.year, applied.month - 1, applied.day)).format("DD MMM YYYY")
+      : dayjs(new Date(applied.year, applied.month - 1, 1)).format("MMM YYYY"))
+    : "";
+
+  const openPicker = (mode) => {
+    if (busy) return;
+    const today = lagosTodayParts();
+    const nextPanel = applied?.year && applied?.month
+      ? dayjs(new Date(applied.year, applied.month - 1, applied.day || 1))
+      : dayjs(new Date(today.year, today.month - 1, today.day));
+    pickerModeRef.current = mode;
+    setPickerMode(mode);
+    setPanelDate(nextPanel);
+    setPickerOpen(true);
+  };
+
+  const handleOpenChange = (mode) => (next) => {
+    if (!next && pickerModeRef.current !== mode) return;
+    setPickerOpen(next);
+  };
+
+  const segmentClass = (mode) => {
+    if (appliedMode === mode) return "yield-date-pill__seg is-on";
+    if (pickerOpen && pickerMode === mode) return "yield-date-pill__seg is-pending";
+    return "yield-date-pill__seg";
+  };
+
+  const pickerStyles = {
+    root: {
+      position: "absolute",
+      width: 0,
+      height: 0,
+      overflow: "hidden",
+      opacity: 0,
+      pointerEvents: "none",
+      inset: "auto 0 0 auto",
+    },
+  };
+
+  return (
+    <div className="yield-date-pill" role="group" aria-label="Yield date filter">
+      <button
+        type="button"
+        className={segmentClass("all")}
+        aria-pressed={appliedMode === "all"}
+        disabled={busy}
+        onClick={() => onApply(null)}
+      >
+        All time
+      </button>
+      <button
+        type="button"
+        className={segmentClass("day")}
+        aria-pressed={appliedMode === "day"}
+        aria-label="Filter by day"
+        title="Filter by day"
+        disabled={busy}
+        onClick={() => openPicker("day")}
+      >
+        D
+      </button>
+      <button
+        type="button"
+        className={segmentClass("month")}
+        aria-pressed={appliedMode === "month"}
+        aria-label="Filter by month"
+        title="Filter by month"
+        disabled={busy}
+        onClick={() => openPicker("month")}
+      >
+        M
+      </button>
+      {appliedLabel ? (
+        <span className="yield-date-pill__selection">
+          <button
+            type="button"
+            className="yield-date-pill__value"
+            disabled={busy}
+            onClick={() => openPicker(appliedMode === "month" ? "month" : "day")}
+          >
+            <YieldCalendarIcon />
+            <span>{appliedLabel}</span>
+          </button>
+          <button
+            type="button"
+            className="yield-date-pill__clear"
+            aria-label="Back to all time"
+            disabled={busy}
+            onClick={() => onApply(null)}
+          >
+            <YieldCloseIcon />
+          </button>
+        </span>
+      ) : (
+        <button
+          type="button"
+          className="yield-date-pill__calendar"
+          aria-label="Open calendar"
+          title="Open calendar"
+          disabled={busy}
+          onClick={() => openPicker(appliedMode === "month" ? "month" : "day")}
+        >
+          <YieldCalendarIcon />
+        </button>
+      )}
+      <DatePicker
+        className="yield-date-pill__picker"
+        styles={pickerStyles}
+        classNames={{ popup: { root: "yield-date-pill-popup" } }}
+        open={pickerOpen && pickerMode === "day"}
+        picker="date"
+        value={
+          applied?.year && applied?.month && applied?.day
+            ? dayjs(new Date(applied.year, applied.month - 1, applied.day))
+            : null
+        }
+        pickerValue={panelDate}
+        onPickerValueChange={setPanelDate}
+        onChange={(date) => {
+          if (!date) return;
+          setPickerOpen(false);
+          onApply({ year: date.year(), month: date.month() + 1, day: date.date() });
+        }}
+        onOpenChange={handleOpenChange("day")}
+        disabledDate={(current) => isAfterLagosToday(current, "day")}
+        allowClear={false}
+        inputReadOnly
+        placement="bottomRight"
+        tabIndex={-1}
+      />
+      <DatePicker
+        className="yield-date-pill__picker"
+        styles={pickerStyles}
+        classNames={{ popup: { root: "yield-date-pill-popup" } }}
+        open={pickerOpen && pickerMode === "month"}
+        picker="month"
+        value={
+          applied?.year && applied?.month
+            ? dayjs(new Date(applied.year, applied.month - 1, 1))
+            : null
+        }
+        pickerValue={panelDate}
+        onPickerValueChange={setPanelDate}
+        onChange={(date) => {
+          if (!date) return;
+          setPickerOpen(false);
+          onApply({ year: date.year(), month: date.month() + 1 });
+        }}
+        onOpenChange={handleOpenChange("month")}
+        disabledDate={(current) => isAfterLagosToday(current, "month")}
+        allowClear={false}
+        inputReadOnly
+        placement="bottomRight"
+        tabIndex={-1}
+      />
+    </div>
+  );
+};
+
+const EnergySummary = ({ tableContentsData, yieldFilter, onYieldFilter, filterBusy }) => {
   if (!tableContentsData) return null;
 
   const yieldData = resolveYieldPayload(tableContentsData);
@@ -487,33 +742,43 @@ const EnergySummary = ({ tableContentsData }) => {
 
   const formatValue = (val) => formatSummaryNumber(val);
 
+  const filtered = isYieldDateFiltered(yieldData) || Boolean(yieldFilter?.year && yieldFilter?.month);
+  const windowLabel = getYieldWindowLabel(yieldData) || formatYieldWindowFromFilter(yieldFilter);
+
   return (
     <div className="energy-summary-container" style={{ background: "#fff" }}>
+      <div className="energy-summary-toolbar">
+        <YieldDateFilter applied={yieldFilter} onApply={onYieldFilter} busy={filterBusy} />
+      </div>
       <Tabs defaultActiveKey="generation" tabBarGutter={20}>
         {tabs.map((key) => (
           <Tabs.TabPane tab={tabLabels[key]} key={key}>
             {key === "battery" ? (
-              <BatteryTabContent batteryData={batteryData} yieldData={yieldData} />
+              <BatteryTabContent batteryData={batteryData} yieldData={yieldData} dateFilter={yieldFilter} />
             ) : key === "power_demand" ? (
-              <PowerDemandTabContent powerDemand={powerDemand} />
+              <PowerDemandTabContent powerDemand={powerDemand} yieldData={yieldData} dateFilter={yieldFilter} />
             ) : (
-              <div className="energy-tab-content" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                {["total", "today", "monthly"].map((period) => {
+              <div className="energy-tab-content" style={{ display: "flex", flexDirection: "column", gap: filtered ? "0" : "32px" }}>
+                {(filtered ? ["total"] : ["total", "today", "monthly"]).map((period) => {
                   const item = yieldData[key]?.[period] || {};
-                  const label = contentLabels[key]?.[period] ?? period;
+                  const label = filtered
+                    ? (windowLabel || contentLabels[key]?.total || "Total")
+                    : (contentLabels[key]?.[period] ?? period);
                   return (
                     <div
                       key={period}
                       style={{
                         display: "flex",
                         justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: 12,
                       }}
                     >
-                      <div style={{ fontSize: "14px", fontWeight: 500, color: "#333" }}>
+                      <div className={filtered ? "energy-period-label energy-period-label--window" : "energy-period-label"}>
                         {label}
                       </div>
 
-                      <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "24px", flexShrink: 0 }}>
                         <div style={{ fontSize: "14px", fontWeight: 500, color: "#999" }}>
                           {formatValue(item.kwh)} <span style={{ color: "#999" }}>kWh</span>
                         </div>
@@ -935,6 +1200,7 @@ const SolarOverviewPage = ({
   const [pvProductionChartContents, setPvProductionChartContents] = useState(null);
   const [batteryChartContents, setBatteryChartContents] = useState(null);
   const [liveOverlayDismissed, setLiveOverlayDismissed] = useState(false);
+  const [yieldFilter, setYieldFilter] = useState(null);
   const livePollIntervalRef = useRef(null);
   const livePollIntervalSecondsRef = useRef(SOLAR_LIVE_POLL_DEFAULT_SECONDS);
   const lastUserActivityRef = useRef(Date.now());
@@ -962,6 +1228,20 @@ const SolarOverviewPage = ({
     const day = jsDate.getDate();
 
     fetchBatterySystemData(jsDate, day);
+  };
+
+  const handleYieldFilter = async (filter) => {
+    if (sameYieldFilter(filter, yieldFilter)) return;
+    const previous = yieldFilter;
+    setYieldFilter(filter);
+    const result = await fetchComponentsTableData(filter);
+    if (!result?.ok) {
+      setYieldFilter(previous);
+      notification.error({
+        message: "Could not load that period",
+        description: result?.message || "That date could not be loaded.",
+      });
+    }
   };
 
   useEffect(() => {
@@ -1255,7 +1535,12 @@ const SolarOverviewPage = ({
         <Col xs={24} sm={24} md={24} lg={14} xl={14}>
           <Spin spinning={solar.componentsTableLoading}>
             <Card className="summary-card">
-              <EnergySummary tableContentsData={tableContentsData} />
+              <EnergySummary
+                tableContentsData={tableContentsData}
+                yieldFilter={yieldFilter}
+                onYieldFilter={handleYieldFilter}
+                filterBusy={solar.componentsTableLoading}
+              />
             </Card>
           </Spin>
         </Col>

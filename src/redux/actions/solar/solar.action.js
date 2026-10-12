@@ -45,20 +45,63 @@ export const fetchWeatherReadingsData = () => async (dispatch) => {
   }
 };
 
-export const fetchComponentsTableData = () => async (dispatch) => {
+const yieldQueryFromFilter = (filter) => {
+  if (!filter) return "";
+
+  const year = Number(filter.year);
+  const month = Number(filter.month);
+  const hasDay = filter.day != null && filter.day !== "";
+  const day = hasDay ? Number(filter.day) : null;
+
+  if (!Number.isInteger(year) || !Number.isInteger(month) || month < 1 || month > 12) {
+    return null;
+  }
+  if (hasDay) {
+    if (!Number.isInteger(day) || day < 1 || day > 31) return null;
+    const probe = new Date(year, month - 1, day);
+    if (
+      probe.getFullYear() !== year
+      || probe.getMonth() !== month - 1
+      || probe.getDate() !== day
+    ) {
+      return null;
+    }
+  }
+
+  const params = new URLSearchParams();
+  params.set("year", String(year));
+  params.set("month", String(month));
+  if (hasDay) params.set("day", String(day));
+  return `?${params.toString()}`;
+};
+
+const readYieldError = (error) => {
+  const apiError = error?.response?.data?.error;
+  if (typeof apiError === "string" && apiError.trim()) return apiError.trim();
+  return "That date could not be loaded.";
+};
+
+export const fetchComponentsTableData = (filter) => async (dispatch) => {
+  const query = yieldQueryFromFilter(filter);
+  if (query == null) {
+    return { ok: false, message: "Choose a valid month or day." };
+  }
+
   dispatch(getComponentsTableLoading());
   const branchId = getSolarBranchId();
   if (!branchId) {
     dispatch(getComponentsTableLoading(false));
-    return;
+    return { ok: false, message: "No branch selected." };
   }
-  const requestUrl = `solar/yield/${branchId}/`;
+  const requestUrl = `solar/yield/${branchId}/${query}`;
   try {
     const response = await APIService.get(requestUrl);
     dispatch(getComponentsTableSuccess(unwrapSolarPayload(response)));
     dispatch(getComponentsTableLoading(false));
+    return { ok: true };
   } catch (error) {
     dispatch(getComponentsTableLoading(false));
+    return { ok: false, message: readYieldError(error) };
   }
 };
 
