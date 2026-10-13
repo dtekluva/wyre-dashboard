@@ -1409,6 +1409,188 @@
   .power-demand-cell--avg .power-demand-kw {
     color: #7b61ff;
   }
+
+  .power-demand-period-label--window,
+  .battery-tab-period-label--window,
+  .energy-period-label--window {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.35;
+    white-space: normal;
+  }
+
+  .power-demand-tab-content.is-filtered .power-demand-grid {
+    grid-template-columns: minmax(148px, 1.35fr) 1fr 1fr 0.85fr;
+  }
+
+  .battery-tab-content.is-filtered {
+    .battery-tab-grid,
+    .battery-tab-row {
+      grid-template-columns: minmax(150px, 1.35fr) 1fr 1fr;
+    }
+  }
+
+  .energy-period-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    min-width: 0;
+  }
+
+  .energy-summary-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 0 8px;
+  }
+
+  .yield-date-pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    max-width: 100%;
+    padding: 3px;
+    border-radius: 999px;
+    background: #001529;
+    box-shadow: 0 8px 18px rgba(0, 21, 41, 0.16);
+    user-select: none;
+
+    button {
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.78);
+      cursor: pointer;
+      font-family: inherit;
+
+      &:hover:not(:disabled) {
+        color: #fff;
+      }
+
+      &:focus,
+      &:focus-visible {
+        border: 0;
+        outline: 2px solid #fff;
+        outline-offset: 1px;
+        box-shadow: none;
+      }
+
+      &:disabled {
+        cursor: default;
+        opacity: 0.55;
+      }
+    }
+  }
+
+  .yield-date-pill__seg {
+    border-radius: 999px;
+    padding: 7px 11px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &.is-on {
+      background: #fff;
+      color: #001529;
+    }
+
+    &.is-pending {
+      color: #fff;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  .yield-date-pill__calendar,
+  .yield-date-pill__selection {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 2px;
+    padding-left: 4px;
+    border-left: 1px solid rgba(255, 255, 255, 0.16);
+  }
+
+  .yield-date-pill__calendar,
+  .yield-date-pill__value,
+  .yield-date-pill__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-radius: 999px;
+  }
+
+  .yield-date-pill__calendar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .yield-date-pill__value {
+    height: 28px;
+    padding: 0 8px 0 10px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  .yield-date-pill__clear {
+    width: 22px;
+    height: 22px;
+    margin-right: 3px;
+    color: rgba(255, 255, 255, 0.8);
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+    }
+  }
+
+  .yield-date-pill__picker {
+    position: absolute !important;
+    right: 0;
+    bottom: 0;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    border: 0;
+  }
+
+  @media (max-width: 768px) {
+    .energy-summary-toolbar {
+      justify-content: stretch;
+    }
+
+    .yield-date-pill {
+      width: 100%;
+    }
+
+    .yield-date-pill__seg:first-child {
+      flex: 1;
+    }
+  }
+}
+
+.yield-date-pill-popup {
+  .ant-picker-cell-selected .ant-picker-cell-inner,
+  .ant-picker-cell-range-start .ant-picker-cell-inner {
+    background: #001529;
+  }
+
+  .ant-picker-now-btn,
+  .ant-picker-header-view button:hover {
+    color: #001529;
+  }
 }
 
 .solar-overview .custom-card .solar-chart-stat-badges {
