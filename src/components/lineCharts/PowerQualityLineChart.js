@@ -12,7 +12,6 @@ import {
   Legend,
 } from 'chart.js';
 
-/* ---------- register chart.js modules ---------- */
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -22,7 +21,6 @@ ChartJS.register(
   Legend
 );
 
-/* ---------- vertical hover line plugin (v4-safe) ---------- */
 const VerticalLinePlugin = {
   id: 'verticalLineAcrossDataPoints',
   afterDraw(chart) {
@@ -53,7 +51,6 @@ const PowerQualityLineChart = ({ data, dates, powerQualityUnit }) => {
 
   const pqDataUnit = data?.units;
 
-  /* ---------- clone + strip units ---------- */
   const pqData = data
     ? Object.fromEntries(
       Object.entries(data).filter(([key]) => key !== 'units')
@@ -64,29 +61,18 @@ const PowerQualityLineChart = ({ data, dates, powerQualityUnit }) => {
   const pqDataValues = Object.values(pqData);
 
   const colorsArray = [
-    '#6C00FA',
-    '#FF3DA1',
-    '#00C7E6',
-    '#FFC107',
-    '#82ca9d',
-    '#ff9b3d',
-    '#360259',
-    '#0371b5',
-    '#D90000',
-    '#757575',
-    '#FFE11A',
+    "#5C3592",
+    "#FF3DA1",
+    "#00C7E6",
+    "#FFC107",
+    "#82ca9d",
+    "#ff9b3d",
+    "#360259",
+    "#0371b5",
+    "#D90000",
+    "#757575",
+    "#FFE11A",
   ];
-
-  // const datasets = pqDataValues.map((values, index) => ({
-  //   label: `${pqDataNames[index]} (${pqDataUnit})`,
-  //   data: values,
-  //   borderColor: colorsArray[index % colorsArray.length],
-  //   backgroundColor: colorsArray[index % colorsArray.length],
-  //   borderWidth: 2,
-  //   fill: false,
-  //   tension: 0.3,
-  //   pointRadius: 0,
-  // }));
 
   const datasets = pqDataValues.map((values, index) => ({
     label: `${pqDataNames[index]} (${pqDataUnit})`,
@@ -97,7 +83,6 @@ const PowerQualityLineChart = ({ data, dates, powerQualityUnit }) => {
     fill: false,
     tension: 0.3,
 
-    /* 🚫 KILL ALL VALUES / POINTS */
     pointRadius: 0,
     pointHoverRadius: 0,
     pointHitRadius: 8,
@@ -136,7 +121,7 @@ const PowerQualityLineChart = ({ data, dates, powerQualityUnit }) => {
         intersect: false,
       },
       datalabels: {
-        display: false, // 🚫 force-disable
+        display: false,
       },
     },
 
