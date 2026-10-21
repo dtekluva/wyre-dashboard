@@ -232,19 +232,6 @@
   &:first-child {
     margin-top: 0;
   }
-
-  &--indented {
-    margin-left: 2rem;
-    margin-top: 14px;
-  }
-}
-
-.battery-soc-push-label {
-  font-size: 1.4rem;
-
-  @include media('>=medium') {
-    font-size: 1.5rem;
-  }
 }
 
 .battery-soc-panels {
@@ -293,17 +280,26 @@
 }
 
 .battery-soc-chip {
+  align-items: center !important;
   background-color: $white !important;
   border: 1px solid scale-color($purple, $lightness: 72%) !important;
   border-radius: 6px !important;
   color: $purple !important;
+  display: inline-flex !important;
   font-size: 1.3rem !important;
-  line-height: 1.4 !important;
+  gap: 6px;
+  line-height: 1 !important;
   margin: 0 !important;
   padding: 6px 12px !important;
 
-  .anticon-close {
+  .ant-tag-close-icon {
+    align-items: center;
     color: scale-color($purple, $lightness: 25%) !important;
+    display: inline-flex;
+    font-size: 12px;
+    line-height: 1;
+    margin-inline-start: 0 !important;
+    vertical-align: 0;
   }
 }
 
@@ -318,8 +314,47 @@
   min-width: 130px;
 }
 
-.battery-soc-operator-select {
+.battery-soc-operator-select.ant-select {
+  align-items: center !important;
+  box-sizing: border-box;
+  display: inline-flex !important;
+  height: 38px;
+  min-height: 38px;
   min-width: 220px;
+  padding: 0 11px;
+
+  .ant-select-content {
+    align-items: center;
+    flex: 1 1 auto;
+    height: auto;
+    margin: 0;
+    min-width: 0;
+  }
+
+  .ant-select-content-value {
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ant-select-input,
+  .ant-select-input:focus {
+    appearance: none;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .ant-select-suffix {
+    align-items: center;
+    display: inline-flex;
+    flex: 0 0 auto;
+    margin-left: 8px;
+    width: auto;
+  }
 }
 
 .battery-soc-threshold-input {
@@ -450,34 +485,28 @@
     cursor: not-allowed;
     opacity: 0.55;
   }
+
+  &.is-readonly {
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+.battery-soc-days-readout {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .battery-soc-schedule-list {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.battery-soc-schedule-row {
-  align-items: flex-start;
-  display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 10px;
-
-  @include media('>=medium') {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
+  min-height: 34px;
 }
 
 .battery-soc-time-chip {
   flex-shrink: 0;
-}
-
-.battery-soc-add-block {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
 .alerts-callout {

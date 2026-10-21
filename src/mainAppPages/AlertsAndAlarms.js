@@ -12,6 +12,7 @@ import CompleteDataContext from '../Context';
 import { getUserProductAccess } from '../helpers/authHelper';
 
 const DEFAULT_DAYS_OF_WEEK = '0,1,2,3,4,5,6';
+const MAX_SCHEDULE_TIMES = 2;
 
 const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -62,9 +63,42 @@ function WeekdayPicker({ value, onChange, disabled, ariaLabel }) {
   );
 }
 
+function WeekdayReadout({ value, ariaLabel }) {
+  const selected = daysCsvToSelected(value);
+
+  return (
+    <div className="alerts-weekday-picker" role="group" aria-label={ariaLabel}>
+      {WEEKDAY_LABELS.map((label, dayIndex) =>
+        selected[dayIndex] ? (
+          <span key={label} className="alerts-weekday-chip is-active is-readonly">
+            {label}
+          </span>
+        ) : null
+      )}
+    </div>
+  );
+}
+
+const THRESHOLD_OPERATORS = [
+  { value: 'lte', label: 'Drops to / below (≤)' },
+  { value: 'gte', label: 'Rises to / above (≥)' },
+];
+
 const formatThresholdLabel = (threshold) => {
   const symbol = threshold.operator === 'gte' ? '≥' : '≤';
   return `${symbol} ${threshold.value}%`;
+};
+
+const limitThresholds = (thresholds) => {
+  const seen = new Set();
+  const next = [];
+  thresholds.forEach((entry) => {
+    if (entry.operator !== 'lte' && entry.operator !== 'gte') return;
+    if (seen.has(entry.operator)) return;
+    seen.add(entry.operator);
+    next.push({ operator: entry.operator, value: entry.value });
+  });
+  return next;
 };
 
 const formatScheduleTimeLabel = (time24) => {
@@ -77,17 +111,19 @@ const formatScheduleTimeLabel = (time24) => {
   return `${hour12}:${String(minutes).padStart(2, '0')} ${period}`;
 };
 
-const buildScheduleTimePayload = (scheduleTimes) =>
-  scheduleTimes.map(({ time, days_of_week }) => {
+const buildScheduleTimePayload = (scheduleTimes, daysOfWeek) => {
+  const days = normalizeDaysCsv(daysOfWeek);
+  return scheduleTimes.slice(0, MAX_SCHEDULE_TIMES).map(({ time }) => {
     const entry = { time };
-    if (days_of_week && days_of_week !== DEFAULT_DAYS_OF_WEEK) {
-      entry.days_of_week = days_of_week;
+    if (days !== DEFAULT_DAYS_OF_WEEK) {
+      entry.days_of_week = days;
     }
     return entry;
   });
+};
 
 const buildThresholdPayload = (thresholds) =>
-  thresholds.map(({ operator, value }) => ({
+  limitThresholds(thresholds).map(({ operator, value }) => ({
     operator,
     value: Number(value),
   }));
@@ -128,7 +164,6 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const [scheduleTimeError, setScheduleTimeError] = useState('');
   const [thresholdError, setThresholdError] = useState('');
   const [dailyEnergyUsageDays, setDailyEnergyUsageDays] = useState(DEFAULT_DAYS_OF_WEEK);
-  const [pendingScheduleDays, setPendingScheduleDays] = useState(DEFAULT_DAYS_OF_WEEK);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isOperator = userData.role_text === "OPERATOR";
   const isSolarOnlyCustomer = getUserProductAccess(userData).isSolarOnly;
@@ -173,17 +208,11 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       setBatterySocConfig(socConfig);
       if (socConfig) {
         setScheduleTimes(
-          (socConfig.schedule_times || []).map(({ time, days_of_week }) => ({
-            time,
-            days_of_week: days_of_week || DEFAULT_DAYS_OF_WEEK,
-          }))
+          (socConfig.schedule_times || [])
+            .slice(0, MAX_SCHEDULE_TIMES)
+            .map(({ time }) => ({ time }))
         );
-        setThresholds(
-          (socConfig.thresholds || []).map(({ operator, value }) => ({
-            operator,
-            value,
-          }))
-        );
+        setThresholds(limitThresholds(socConfig.thresholds || []));
       } else {
         setScheduleTimes([]);
         setThresholds([]);
@@ -212,6 +241,15 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const socEmailEnabled = Boolean(
     preloadedAlertsFormData?.daily_battery_soc_alerts ?? batterySocConfig?.email_enabled
   );
+  const usedThresholdOperators = new Set(thresholds.map((entry) => entry.operator));
+  const availableThresholdOperators = THRESHOLD_OPERATORS.filter(
+    (option) => !usedThresholdOperators.has(option.value)
+  );
+  const selectedThresholdOperator = availableThresholdOperators.some(
+    (option) => option.value === pendingThresholdOperator
+  )
+    ? pendingThresholdOperator
+    : availableThresholdOperators[0]?.value;
 
   const handleBatterySocEmailToggle = (checked) => {
     preloadedAlertsFormData.daily_battery_soc_alerts = checked;
@@ -220,25 +258,16 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       setBatterySocConfig((prev) => ({
         ...prev,
         email_enabled: checked,
-        is_enabled: checked || prev.push_enabled,
-      }));
-    }
-  };
-
-  const handleBatterySocPushToggle = (checked) => {
-    if (batterySocConfig) {
-      setBatterySocConfig((prev) => ({
-        ...prev,
-        push_enabled: checked,
-        is_enabled:
-          checked ||
-          prev.email_enabled ||
-          Boolean(preloadedAlertsFormData.daily_battery_soc_alerts),
+        is_enabled: checked,
       }));
     }
   };
 
   const handleAddScheduleTime = () => {
+    if (scheduleTimes.length >= MAX_SCHEDULE_TIMES) {
+      setScheduleTimeError('You can add up to two times.');
+      return;
+    }
     if (!pendingScheduleTime) {
       setScheduleTimeError('Select a time to add.');
       return;
@@ -249,21 +278,10 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       return;
     }
     setScheduleTimes((prev) =>
-      [...prev, { time, days_of_week: normalizeDaysCsv(pendingScheduleDays) }].sort((a, b) =>
-        a.time.localeCompare(b.time)
-      )
+      [...prev, { time }].sort((a, b) => a.time.localeCompare(b.time))
     );
     setPendingScheduleTime(null);
-    setPendingScheduleDays(DEFAULT_DAYS_OF_WEEK);
     setScheduleTimeError('');
-  };
-
-  const handleUpdateScheduleDays = (time, daysCsv) => {
-    setScheduleTimes((prev) =>
-      prev.map((entry) =>
-        entry.time === time ? { ...entry, days_of_week: normalizeDaysCsv(daysCsv) } : entry
-      )
-    );
   };
 
   const handleRemoveScheduleTime = (timeToRemove) => {
@@ -274,7 +292,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const handleAddThreshold = () => {
     const raw = pendingThresholdValue;
     if (raw === '' || raw === null || raw === undefined) {
-      setThresholdError('Enter a SOC percentage.');
+      setThresholdError('Enter a battery level percentage.');
       return;
     }
     const value = Number(raw);
@@ -282,15 +300,21 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       setThresholdError('Enter a percentage from 0 to 100.');
       return;
     }
-    const duplicate = thresholds.some(
-      (entry) => entry.operator === pendingThresholdOperator && Number(entry.value) === value
-    );
-    if (duplicate) {
-      setThresholdError('This threshold is already configured.');
+    const operator = thresholds.some((entry) => entry.operator === pendingThresholdOperator)
+      ? THRESHOLD_OPERATORS.find(
+          (option) => !thresholds.some((entry) => entry.operator === option.value)
+        )?.value
+      : pendingThresholdOperator;
+    if (!operator) {
+      setThresholdError('One drop and one rise is the maximum.');
       return;
     }
-    setThresholds((prev) => [...prev, { operator: pendingThresholdOperator, value }]);
+    setThresholds((prev) => limitThresholds([...prev, { operator, value }]));
     setPendingThresholdValue('');
+    const remaining = THRESHOLD_OPERATORS.find((option) => option.value !== operator);
+    if (remaining && !thresholds.some((entry) => entry.operator === remaining.value)) {
+      setPendingThresholdOperator(remaining.value);
+    }
     setThresholdError('');
   };
 
@@ -320,12 +344,11 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
 
       if (batterySocConfig) {
         const emailEnabled = Boolean(dataPayload.daily_battery_soc_alerts);
-        const pushEnabled = Boolean(batterySocConfig.push_enabled);
         updatedAlertsFormData.battery_soc_config = {
-          is_enabled: emailEnabled || pushEnabled,
-          push_enabled: pushEnabled,
+          is_enabled: emailEnabled,
+          push_enabled: false,
           email_enabled: emailEnabled,
-          schedule_times: buildScheduleTimePayload(scheduleTimes),
+          schedule_times: buildScheduleTimePayload(scheduleTimes, dailyEnergyUsageDays),
           thresholds: buildThresholdPayload(thresholds),
         };
       }
@@ -355,7 +378,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
             </h1>
             <p className="alerts-and-alarms-lead">
               {isSolarOnlyCustomer
-                ? 'Notifications for your solar system: energy usage, battery state of charge, weather forecasts, and capacity utilization.'
+                ? 'Notifications for your solar system: energy usage, battery level, weather forecasts, and capacity utilization.'
                 : 'Configure how Wyre notifies you about anomalies, solar performance, and operational events.'}
             </p>
           </div>
@@ -424,18 +447,21 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                         />
                       </div>
 
-                      <div className="alerts-inset-panel">
-                        <p className="alerts-inset-panel-title">Which days get the 10:00 daily report</p>
-                        <p className="alerts-inset-panel-hint">
-                          Uncheck days you do not want included (for example Saturday and Sunday).
-                        </p>
-                        <WeekdayPicker
-                          value={dailyEnergyUsageDays}
-                          onChange={setDailyEnergyUsageDays}
-                          disabled={isFormBusy}
-                          ariaLabel="Weekdays for the daily energy usage report"
-                        />
-                      </div>
+                      {preloadedAlertsFormData?.daily_energy_usage_alerts ? (
+                        <div className="alerts-inset-panel">
+                          <p className="alerts-inset-panel-title">Which days get the 10:00 daily report</p>
+                          <p className="alerts-inset-panel-hint">
+                            Uncheck days you do not want included (for example Saturday and Sunday).
+                            Battery level updates below use these same days.
+                          </p>
+                          <WeekdayPicker
+                            value={dailyEnergyUsageDays}
+                            onChange={setDailyEnergyUsageDays}
+                            disabled={isFormBusy}
+                            ariaLabel="Weekdays for the daily energy usage report"
+                          />
+                        </div>
+                      ) : null}
 
                       <div className="alerts-and-alarms-suboption">
                         <label
@@ -480,7 +506,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             htmlFor="solar-battery-soc-checkbox"
                             className="alerts-and-alarms-question"
                           >
-                            Send battery SOC alerts by email
+                            Send battery level alerts by email
                           </label>
                           <Controller
                             name="solarBatterySocChecked"
@@ -504,58 +530,43 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                           />
                         </div>
                       </li>
-                      <li className="battery-soc-toggle-item battery-soc-toggle-item--indented">
-                        <div className="alerts-and-alarms-question-container">
-                          <label
-                            htmlFor="solar-battery-soc-push-checkbox"
-                            className="alerts-and-alarms-question battery-soc-push-label"
-                          >
-                            Also notify the mobile app (push)
-                          </label>
-                          <Checkbox
-                            id="solar-battery-soc-push-checkbox"
-                            checked={Boolean(batterySocConfig?.push_enabled)}
-                            onChange={(e) => handleBatterySocPushToggle(e.target.checked)}
-                            className="solar-battery-soc-push-checkbox alerts-and-alarms-checkbox"
-                          />
-                        </div>
-                      </li>
                     </ul>
 
+                    {socEmailEnabled ? (
                     <div className="battery-soc-panels">
                       <div className="battery-soc-panel">
                         <p className="battery-soc-panel-title">Scheduled updates</p>
                         <p className="battery-soc-config-hint">
-                          Send a status at each time (Africa/Lagos), on the days you select below.
-                          Granularity is 15 minutes.
+                          Send a status at each time (Africa/Lagos). Days follow the daily energy
+                          usage report. You can add up to two times. Granularity is 15 minutes.
                         </p>
+                        <div className="battery-soc-days-readout">
+                          <p className="battery-soc-config-hint">Days in use</p>
+                          <WeekdayReadout
+                            value={dailyEnergyUsageDays}
+                            ariaLabel="Days used for scheduled battery level updates"
+                          />
+                        </div>
                         <div className="battery-soc-schedule-list">
                           {scheduleTimes.length > 0 ? (
                             scheduleTimes.map((entry) => (
-                              <div key={entry.time} className="battery-soc-schedule-row">
-                                <Tag
-                                  closable
-                                  onClose={(e) => {
-                                    e.preventDefault();
-                                    handleRemoveScheduleTime(entry.time);
-                                  }}
-                                  className="battery-soc-chip battery-soc-time-chip"
-                                >
-                                  {formatScheduleTimeLabel(entry.time)}
-                                </Tag>
-                                <WeekdayPicker
-                                  value={entry.days_of_week}
-                                  onChange={(csv) => handleUpdateScheduleDays(entry.time, csv)}
-                                  disabled={isFormBusy}
-                                  ariaLabel={`Weekdays for ${formatScheduleTimeLabel(entry.time)}`}
-                                />
-                              </div>
+                              <Tag
+                                key={entry.time}
+                                closable
+                                onClose={(e) => {
+                                  e.preventDefault();
+                                  handleRemoveScheduleTime(entry.time);
+                                }}
+                                className="battery-soc-chip battery-soc-time-chip"
+                              >
+                                {formatScheduleTimeLabel(entry.time)}
+                              </Tag>
                             ))
                           ) : (
                             <span className="battery-soc-empty-hint">No times configured yet.</span>
                           )}
                         </div>
-                        <div className="battery-soc-add-block">
+                        {scheduleTimes.length < MAX_SCHEDULE_TIMES ? (
                           <div className="battery-soc-add-row">
                             <TimePicker
                               value={pendingScheduleTime}
@@ -577,13 +588,9 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                               Add time
                             </button>
                           </div>
-                          <WeekdayPicker
-                            value={pendingScheduleDays}
-                            onChange={setPendingScheduleDays}
-                            disabled={isFormBusy}
-                            ariaLabel="Weekdays for new scheduled time"
-                          />
-                        </div>
+                        ) : (
+                          <p className="battery-soc-config-hint">Two times is the maximum.</p>
+                        )}
                         {scheduleTimeError ? (
                           <p className="input-error-message">{scheduleTimeError}</p>
                         ) : null}
@@ -592,8 +599,8 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                       <div className="battery-soc-panel">
                         <p className="battery-soc-panel-title">When battery charge crosses</p>
                         <p className="battery-soc-config-hint">
-                          Alert once when SOC hits a level you set — e.g. drops to 30% or rises to 80%.
-                          It will not repeat until SOC recovers by about 3%.
+                          Alert once when the battery reaches a level you set — one drop and one rise, for example
+                          drops to 30% or rises to 80%. It will not repeat until the battery level recovers by about 3%.
                         </p>
                         <div className="battery-soc-chip-list">
                           {thresholds.length > 0 ? (
@@ -614,42 +621,44 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                             <span className="battery-soc-empty-hint">No thresholds configured yet.</span>
                           )}
                         </div>
-                        <div className="battery-soc-add-row">
-                          <Select
-                            value={pendingThresholdOperator}
-                            onChange={setPendingThresholdOperator}
-                            className="battery-soc-operator-select"
-                            options={[
-                              { value: 'lte', label: 'Drops to / below (≤)' },
-                              { value: 'gte', label: 'Rises to / above (≥)' },
-                            ]}
-                          />
-                          <input
-                            className="alerts-and-alarms-input battery-soc-threshold-input"
-                            type="text"
-                            inputMode="decimal"
-                            placeholder="30"
-                            value={pendingThresholdValue}
-                            onChange={(e) => {
-                              setPendingThresholdValue(formatIntInputs(e));
-                              setThresholdError('');
-                            }}
-                            aria-label="SOC threshold percentage"
-                          />
-                          <span className="alerts-and-alarms-unit">%</span>
-                          <button
-                            type="button"
-                            className="battery-soc-add-button"
-                            onClick={handleAddThreshold}
-                          >
-                            Add threshold
-                          </button>
-                        </div>
+                        {availableThresholdOperators.length > 0 ? (
+                          <div className="battery-soc-add-row">
+                            <Select
+                              value={selectedThresholdOperator}
+                              onChange={setPendingThresholdOperator}
+                              className="battery-soc-operator-select"
+                              options={availableThresholdOperators}
+                            />
+                            <input
+                              className="alerts-and-alarms-input battery-soc-threshold-input"
+                              type="text"
+                              inputMode="decimal"
+                              placeholder="30"
+                              value={pendingThresholdValue}
+                              onChange={(e) => {
+                                setPendingThresholdValue(formatIntInputs(e));
+                                setThresholdError('');
+                              }}
+                              aria-label="Battery level percentage"
+                            />
+                            <span className="alerts-and-alarms-unit">%</span>
+                            <button
+                              type="button"
+                              className="battery-soc-add-button"
+                              onClick={handleAddThreshold}
+                            >
+                              Add threshold
+                            </button>
+                          </div>
+                        ) : (
+                          <p className="battery-soc-config-hint">One drop and one rise is the maximum.</p>
+                        )}
                         {thresholdError ? (
                           <p className="input-error-message">{thresholdError}</p>
                         ) : null}
                       </div>
                     </div>
+                    ) : null}
                   </div>
                 </li>
                 ) : null}
@@ -660,25 +669,25 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
                     <div className="alerts-and-alarms-question-container">
                       <p className="alerts-and-alarms-question">Night battery over-usage</p>
                       <div className="alerts-follows-soc">
-                        <span className="alerts-follows-soc-label">Follows SOC email</span>
+                        <span className="alerts-follows-soc-label">Follows battery level email</span>
                         <Checkbox
                           id="night-over-usage-follows"
                           checked={socEmailEnabled}
                           disabled
                           className="alerts-and-alarms-checkbox alerts-readonly-checkbox"
-                          aria-label="Night battery over-usage follows SOC email setting"
+                          aria-label="Night battery over-usage follows battery level email setting"
                         />
                       </div>
                     </div>
                     <p className="alerts-item-detail alerts-item-detail--compact">
-                      Follows &ldquo;Send battery SOC alerts by email&rdquo;. When email is on, Wyre can alert
+                      Follows &ldquo;Send battery level alerts by email&rdquo;. When email is on, Wyre can alert
                       you overnight (18:00–07:00 Lagos) if load is higher than the battery can sustain until
                       sunrise — at most once per night, by email and push.
                     </p>
                     <div className="alerts-callout alerts-callout--warm">
                       {socEmailEnabled
-                        ? 'Night over-usage alerts are active while battery SOC email is enabled.'
-                        : 'Turn on battery SOC email above to enable night over-usage alerts.'}
+                        ? 'Night over-usage alerts are active while battery level email is enabled.'
+                        : 'Turn on battery level email above to enable night over-usage alerts.'}
                     </div>
                   </div>
                 </li>
