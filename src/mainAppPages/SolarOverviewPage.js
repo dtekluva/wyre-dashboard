@@ -747,10 +747,13 @@ const EnergySummary = ({ tableContentsData, yieldFilter, onYieldFilter, filterBu
 
   return (
     <div className="energy-summary-container" style={{ background: "#fff" }}>
-      <div className="energy-summary-toolbar">
-        <YieldDateFilter applied={yieldFilter} onApply={onYieldFilter} busy={filterBusy} />
-      </div>
-      <Tabs defaultActiveKey="generation" tabBarGutter={20}>
+      <Tabs
+        defaultActiveKey="generation"
+        tabBarGutter={20}
+        tabBarExtraContent={
+          <YieldDateFilter applied={yieldFilter} onApply={onYieldFilter} busy={filterBusy} />
+        }
+      >
         {tabs.map((key) => (
           <Tabs.TabPane tab={tabLabels[key]} key={key}>
             {key === "battery" ? (
@@ -1573,25 +1576,10 @@ const SolarOverviewPage = ({
                 />
                 <Select className="custom-filter" value={parameters} onChange={setParameters} style={{ width: 150 }} suffixIcon={null}>
                   <Option value="Parameters">
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      padding: 0,
-                      margin: 0
-                    }}>
-                      <span style={{ fontSize: 13, marginTop: -1 }}>All Parameters</span>
-                      <img
-                        src={parametersImg}
-                        alt=""
-                        style={{
-                          width: 16,
-                          height: 16,
-                          objectFit: "contain",
-                          marginTop: -2   // reduces the bottom spacing
-                        }}
-                      />
-                    </div>
+                    <span className="custom-filter__value">
+                      <span>All Parameters</span>
+                      <img src={parametersImg} alt="" />
+                    </span>
                   </Option>
                   <Option value="pv">Production</Option>
                   <Option value="grid">Grid</Option>
