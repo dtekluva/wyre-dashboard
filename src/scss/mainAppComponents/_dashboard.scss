@@ -1465,7 +1465,7 @@
       cursor: pointer;
       font-family: inherit;
 
-      &:hover:not(:disabled) {
+      &:hover:not(:disabled):not(.is-on) {
         color: #fff;
       }
 
