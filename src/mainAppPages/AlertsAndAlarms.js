@@ -1,19 +1,70 @@
-import HiddenInputLabel from '../smallComponents/HiddenInputLabel';
-import UnAuthorizeResponse from './UnAuthorizeResponse';
-import { getAlertAndAlarm, setAlertAndAlarm } from '../redux/actions/alertsAndAlarm/alertsAndAlarm.action';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
-import { Checkbox, notification, Spin, Tag, TimePicker, Select } from 'antd';
-import { useEffect } from 'react';
+import { notification, Select, Spin, Switch, Tag, TimePicker } from 'antd';
+
+import UnAuthorizeResponse from './UnAuthorizeResponse';
 import BreadCrumb from '../components/BreadCrumb';
-import { useState } from 'react';
-import { useContext } from 'react';
 import CompleteDataContext from '../Context';
 import { getUserProductAccess } from '../helpers/authHelper';
+import { getAlertAndAlarm, setAlertAndAlarm } from '../redux/actions/alertsAndAlarm/alertsAndAlarm.action';
 
 const DEFAULT_DAYS_OF_WEEK = '0,1,2,3,4,5,6';
+const MAX_SCHEDULE_TIMES = 2;
 
 const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const numberPattern = { pattern: /^-?\d+\.?\d*$/ };
+
+const solarCapacityRules = {
+  validate: (value) => {
+    if (value === '' || value === null || value === undefined) return true;
+    const n = Number(value);
+    if (Number.isNaN(n) || n < 0 || n > 90) return false;
+    return true;
+  },
+};
+
+const SAVED_LIMIT_KEYS = [
+  'solar_capacity_utilization_threshold_pct',
+  'max_power_factor',
+  'min_power_factor',
+  'frequency_precision',
+  'max_voltage',
+  'min_voltage',
+  'energy_usage_max',
+  'set_co2_value',
+  'load_threshold_value',
+];
+
+const limitsMatch = (current, saved) => {
+  const blank = (value) => value === '' || value === null || value === undefined;
+  if (blank(current) && blank(saved)) return true;
+  if (blank(current) || blank(saved)) return false;
+  const currentNumber = Number(current);
+  const savedNumber = Number(saved);
+  if (!Number.isNaN(currentNumber) && !Number.isNaN(savedNumber)) {
+    return currentNumber === savedNumber;
+  }
+  return String(current) === String(saved);
+};
+
+const scheduleTimesMatch = (current, saved) => {
+  const currentTimes = (current || []).map((entry) => entry.time);
+  const savedTimes = (saved || []).map((entry) => entry.time);
+  return currentTimes.length === savedTimes.length
+    && currentTimes.every((time, index) => time === savedTimes[index]);
+};
+
+const thresholdValuesMatch = (current, saved) => {
+  const currentThresholds = limitThresholds(current || []);
+  const savedThresholds = limitThresholds(saved || []);
+  return currentThresholds.length === savedThresholds.length
+    && currentThresholds.every((entry, index) => (
+      entry.operator === savedThresholds[index].operator
+      && Number(entry.value) === Number(savedThresholds[index].value)
+    ));
+};
 
 const normalizeDaysCsv = (csv) => {
   const parts = String(csv || DEFAULT_DAYS_OF_WEEK)
@@ -62,9 +113,26 @@ function WeekdayPicker({ value, onChange, disabled, ariaLabel }) {
   );
 }
 
+const THRESHOLD_OPERATORS = [
+  { value: 'lte', label: 'Drops to / below (≤)' },
+  { value: 'gte', label: 'Rises to / above (≥)' },
+];
+
 const formatThresholdLabel = (threshold) => {
   const symbol = threshold.operator === 'gte' ? '≥' : '≤';
   return `${symbol} ${threshold.value}%`;
+};
+
+const limitThresholds = (thresholds) => {
+  const seen = new Set();
+  const next = [];
+  thresholds.forEach((entry) => {
+    if (entry.operator !== 'lte' && entry.operator !== 'gte') return;
+    if (seen.has(entry.operator)) return;
+    seen.add(entry.operator);
+    next.push({ operator: entry.operator, value: entry.value });
+  });
+  return next;
 };
 
 const formatScheduleTimeLabel = (time24) => {
@@ -77,20 +145,63 @@ const formatScheduleTimeLabel = (time24) => {
   return `${hour12}:${String(minutes).padStart(2, '0')} ${period}`;
 };
 
-const buildScheduleTimePayload = (scheduleTimes) =>
-  scheduleTimes.map(({ time, days_of_week }) => {
+const buildScheduleTimePayload = (scheduleTimes, daysOfWeek) => {
+  const days = normalizeDaysCsv(daysOfWeek);
+  return scheduleTimes.slice(0, MAX_SCHEDULE_TIMES).map(({ time }) => {
     const entry = { time };
-    if (days_of_week && days_of_week !== DEFAULT_DAYS_OF_WEEK) {
-      entry.days_of_week = days_of_week;
+    if (days !== DEFAULT_DAYS_OF_WEEK) {
+      entry.days_of_week = days;
     }
     return entry;
   });
+};
 
 const buildThresholdPayload = (thresholds) =>
-  thresholds.map(({ operator, value }) => ({
+  limitThresholds(thresholds).map(({ operator, value }) => ({
     operator,
     value: Number(value),
   }));
+
+const withNormalizedAlertData = (data, days) => {
+  const dataPayload = { ...data };
+  dataPayload.daily_energy_usage_days = normalizeDaysCsv(days);
+  const t = dataPayload.solar_capacity_utilization_threshold_pct;
+  if (t === '' || t === null || t === undefined || Number.isNaN(Number(t))) {
+    dataPayload.solar_capacity_utilization_threshold_pct = 90;
+  } else {
+    dataPayload.solar_capacity_utilization_threshold_pct = Math.min(
+      90,
+      Math.max(0, Number(t))
+    );
+  }
+  return dataPayload;
+};
+
+const composeAlertPayload = ({
+  data,
+  generator_data,
+  days,
+  scheduleTimes,
+  thresholds,
+  hasBattery,
+}) => {
+  const dataPayload = withNormalizedAlertData(data, days);
+  const payload = {
+    data: dataPayload,
+    generator_data: generator_data || [],
+  };
+  if (hasBattery) {
+    const emailEnabled = Boolean(dataPayload.daily_battery_soc_alerts);
+    payload.battery_soc_config = {
+      is_enabled: emailEnabled,
+      push_enabled: false,
+      email_enabled: emailEnabled,
+      schedule_times: buildScheduleTimePayload(scheduleTimes || [], days),
+      thresholds: buildThresholdPayload(thresholds || []),
+    };
+  }
+  return payload;
+};
 
 const formatApiError = (errorPayload) => {
   if (!errorPayload) return 'Something unexpected occurred, please try again.';
@@ -110,6 +221,93 @@ const formatApiError = (errorPayload) => {
   return 'Something unexpected occurred, please try again.';
 };
 
+function AlertSwitch({ id, name, control, checked, onChecked, disabled, label }) {
+  const isOn = Boolean(checked);
+
+  return (
+    <Controller
+      name={name}
+      defaultValue={isOn}
+      control={control}
+      render={({ field }) => (
+        <Switch
+          id={id}
+          type="button"
+          checked={isOn}
+          disabled={disabled}
+          aria-label={label}
+          className="alerts-page-switch"
+          onClick={(_checked, event) => event?.preventDefault?.()}
+          onChange={(next) => {
+            field.onChange(next);
+            onChecked(next);
+          }}
+        />
+      )}
+    />
+  );
+}
+
+function SettingsSection({ title, description, children }) {
+  return (
+    <section className="alerts-page-section">
+      <header className="alerts-page-section-head">
+        <h2>{title}</h2>
+        {description ? <p>{description}</p> : null}
+      </header>
+      <div className="alerts-page-card">{children}</div>
+    </section>
+  );
+}
+
+function SettingRow({ rowId, switchId, title, detail, line, notice, control, children }) {
+  const className = `alerts-page-row${notice ? ' alerts-page-row--notice' : ''}`;
+
+  return (
+    <div id={rowId} className={className}>
+      <div className={`alerts-page-row-head${line && !detail ? ' is-inline' : ''}`}>
+        <div className="alerts-page-row-copy">
+          {line ? (
+            <div className="alerts-page-sentence">{line}</div>
+          ) : switchId ? (
+            <label htmlFor={switchId} className="alerts-page-row-title">
+              {title}
+            </label>
+          ) : (
+            <h3 className="alerts-page-row-title">{title}</h3>
+          )}
+          {detail ? <p>{detail}</p> : null}
+        </div>
+        {control ? <div className="alerts-page-row-control">{control}</div> : null}
+      </div>
+      {children ? <div className="alerts-page-row-body">{children}</div> : null}
+    </div>
+  );
+}
+
+function LimitField({ id, label, unit, name, value, onChange, onKeyDown, inputRef, placeholder, short }) {
+  return (
+    <label className="alerts-page-field" htmlFor={id}>
+      <span className="alerts-page-field-label">{label}</span>
+      <span className="alerts-page-field-control">
+        <input
+          className={`alerts-page-input${short ? ' alerts-page-input--short' : ''}`}
+          type="text"
+          inputMode="decimal"
+          name={name}
+          id={id}
+          placeholder={placeholder ?? ''}
+          value={value ?? ''}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          ref={inputRef}
+        />
+        {unit ? <span className="alerts-page-unit">{unit}</span> : null}
+      </span>
+    </label>
+  );
+}
+
 const breadCrumbRoutes = [
   { url: '/', name: 'Home', id: 1 },
   { url: '/alerts-and-alarms', name: 'Alerts and Alarms', id: 2 },
@@ -128,29 +326,59 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const [scheduleTimeError, setScheduleTimeError] = useState('');
   const [thresholdError, setThresholdError] = useState('');
   const [dailyEnergyUsageDays, setDailyEnergyUsageDays] = useState(DEFAULT_DAYS_OF_WEEK);
-  const [pendingScheduleDays, setPendingScheduleDays] = useState(DEFAULT_DAYS_OF_WEEK);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const savedRef = useRef({
+    data: {},
+    generator_data: [],
+    days: DEFAULT_DAYS_OF_WEEK,
+    scheduleTimes: [],
+    thresholds: [],
+    hasBattery: false,
+    hydrated: false,
+  });
+  const toggleQueue = useRef(Promise.resolve());
+  const toggleEpoch = useRef({});
+  const toolbarRef = useRef(null);
+  const [toolbarStuck, setToolbarStuck] = useState(false);
   const isOperator = userData.role_text === "OPERATOR";
   const isSolarOnlyCustomer = getUserProductAccess(userData).isSolarOnly;
   const fetchAlertsDataLoading = alertsAndAlarms?.fetchAlertsDataLoading ?? false;
   const isFormBusy = fetchAlertsDataLoading || isSubmitting;
-  
+
   useEffect(() => {
     if (match && match.url) {
       setCurrentUrl(match.url);
     }
   }, [match, setCurrentUrl]);
 
-  const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
+  const { register, handleSubmit, control, formState: { errors } } = useForm({
     defaultValues: preloadedAlertsFormData,
   });
 
-
-  // Get all alerts
   useEffect(() => {
     getAlertAndAlarm();
   }, [getAlertAndAlarm]);
-  
+
+  useEffect(() => {
+    const toolbar = toolbarRef.current;
+    if (!toolbar) return undefined;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      setToolbarStuck(toolbar.getBoundingClientRect().top <= 0);
+    };
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [isOperator]);
+
   useEffect(() => {
     if (alertsAndAlarms?.alertsData) {
       const raw = alertsAndAlarms.alertsData.data || {};
@@ -167,78 +395,131 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       };
       const genData = alertsAndAlarms.alertsData.generator_data || [];
       const socConfig = alertsAndAlarms.alertsData.battery_soc_config ?? null;
+      const days = normalizeDaysCsv(raw.daily_energy_usage_days);
+      const schedule = socConfig
+        ? (socConfig.schedule_times || [])
+            .slice(0, MAX_SCHEDULE_TIMES)
+            .map(({ time }) => ({ time }))
+        : [];
+      const thresholdList = socConfig ? limitThresholds(socConfig.thresholds || []) : [];
+      savedRef.current = {
+        data: { ...data },
+        generator_data: genData,
+        days,
+        scheduleTimes: schedule.map((entry) => ({ ...entry })),
+        thresholds: thresholdList.map((entry) => ({ ...entry })),
+        hasBattery: socConfig != null,
+        hydrated: true,
+      };
       setPreloadedAlertsFormData(data);
-      setDailyEnergyUsageDays(normalizeDaysCsv(raw.daily_energy_usage_days));
+      setDailyEnergyUsageDays(days);
       setGenerator_data(genData);
       setBatterySocConfig(socConfig);
-      if (socConfig) {
-        setScheduleTimes(
-          (socConfig.schedule_times || []).map(({ time, days_of_week }) => ({
-            time,
-            days_of_week: days_of_week || DEFAULT_DAYS_OF_WEEK,
-          }))
-        );
-        setThresholds(
-          (socConfig.thresholds || []).map(({ operator, value }) => ({
-            operator,
-            value,
-          }))
-        );
-      } else {
-        setScheduleTimes([]);
-        setThresholds([]);
-      }
+      setScheduleTimes(schedule);
+      setThresholds(thresholdList);
       setScheduleTimeError('');
       setThresholdError('');
-      reset(data);
     }
-  }, [alertsAndAlarms, reset]);
+  }, [alertsAndAlarms?.alertsData]);
 
   const openNotification = (type, title, desc) => {
     notification[type]({
       message: `${title}`,
-      description:`${desc}`,
-      duration : 6
+      description: `${desc}`,
+      duration: 6
     });
   };
 
-  const formatIntInputs = (e)=>{
-    let convertdataToInt = parseFloat(e.target.value)
-    const value = isNaN(convertdataToInt) ? '' : convertdataToInt
-    return value
-  }
+  const formatIntInputs = (e) => {
+    const convertdataToInt = parseFloat(e.target.value);
+    const value = isNaN(convertdataToInt) ? '' : convertdataToInt;
+    return value;
+  };
 
   const showBatterySocBlock = batterySocConfig != null;
   const socEmailEnabled = Boolean(
     preloadedAlertsFormData?.daily_battery_soc_alerts ?? batterySocConfig?.email_enabled
   );
+  const usedThresholdOperators = new Set(thresholds.map((entry) => entry.operator));
+  const availableThresholdOperators = THRESHOLD_OPERATORS.filter(
+    (option) => !usedThresholdOperators.has(option.value)
+  );
+  const selectedThresholdOperator = availableThresholdOperators.some(
+    (option) => option.value === pendingThresholdOperator
+  )
+    ? pendingThresholdOperator
+    : availableThresholdOperators[0]?.value;
 
-  const handleBatterySocEmailToggle = (checked) => {
-    preloadedAlertsFormData.daily_battery_soc_alerts = checked;
-    setPreloadedAlertsFormData((prev) => ({ ...prev, daily_battery_soc_alerts: checked }));
-    if (batterySocConfig) {
-      setBatterySocConfig((prev) => ({
-        ...prev,
-        email_enabled: checked,
-        is_enabled: checked || prev.push_enabled,
-      }));
-    }
+  const syncBatteryEmail = (checked) => {
+    setBatterySocConfig((prev) => (
+      prev ? { ...prev, email_enabled: checked, is_enabled: checked } : prev
+    ));
   };
 
-  const handleBatterySocPushToggle = (checked) => {
-    if (batterySocConfig) {
-      setBatterySocConfig((prev) => ({
-        ...prev,
-        push_enabled: checked,
-        is_enabled:
-          checked ||
-          prev.email_enabled ||
-          Boolean(preloadedAlertsFormData.daily_battery_soc_alerts),
-      }));
+  const persistToggle = (key, checked) => {
+    if (!savedRef.current.hydrated) return;
+    toggleEpoch.current[key] = (toggleEpoch.current[key] || 0) + 1;
+    const epoch = toggleEpoch.current[key];
+    setPreloadedAlertsFormData((prev) => ({ ...prev, [key]: checked }));
+    if (key === 'daily_battery_soc_alerts') syncBatteryEmail(checked);
+
+    toggleQueue.current = toggleQueue.current
+      .catch(() => {})
+      .then(async () => {
+        const request = await setAlertAndAlarm(composeAlertPayload({
+          ...savedRef.current,
+          data: { ...savedRef.current.data, [key]: checked },
+        }));
+        if (request.fullfilled) {
+          savedRef.current = {
+            ...savedRef.current,
+            data: { ...savedRef.current.data, [key]: checked },
+          };
+          return;
+        }
+        if (toggleEpoch.current[key] === epoch) {
+          const reverted = savedRef.current.data[key];
+          setPreloadedAlertsFormData((prev) => ({ ...prev, [key]: reverted }));
+          if (key === 'daily_battery_soc_alerts') syncBatteryEmail(reverted);
+          openNotification('error', 'Error', formatApiError(request.message));
+        }
+      });
+  };
+
+  const bindToggle = (key) => (checked) => {
+    persistToggle(key, checked);
+  };
+
+  const handleNumberChange = (key) => (e) => {
+    const val = formatIntInputs(e);
+    preloadedAlertsFormData[key] = val;
+    setPreloadedAlertsFormData((prev) => ({ ...prev, [key]: val }));
+  };
+
+  const handleSolarCapacityChange = (e) => {
+    let val = formatIntInputs(e);
+    if (val !== '' && val !== undefined && val !== null) {
+      const n = Number(val);
+      if (!Number.isNaN(n)) {
+        val = Math.min(90, Math.max(0, n));
+      }
     }
+    preloadedAlertsFormData.solar_capacity_utilization_threshold_pct = val;
+    setPreloadedAlertsFormData((prev) => ({
+      ...prev,
+      solar_capacity_utilization_threshold_pct: val,
+    }));
+  };
+
+  const handleBatterySocEmailToggle = (checked) => {
+    persistToggle('daily_battery_soc_alerts', checked);
   };
 
   const handleAddScheduleTime = () => {
+    if (scheduleTimes.length >= MAX_SCHEDULE_TIMES) {
+      setScheduleTimeError('You can add up to two times.');
+      return;
+    }
     if (!pendingScheduleTime) {
       setScheduleTimeError('Select a time to add.');
       return;
@@ -249,21 +530,10 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       return;
     }
     setScheduleTimes((prev) =>
-      [...prev, { time, days_of_week: normalizeDaysCsv(pendingScheduleDays) }].sort((a, b) =>
-        a.time.localeCompare(b.time)
-      )
+      [...prev, { time }].sort((a, b) => a.time.localeCompare(b.time))
     );
     setPendingScheduleTime(null);
-    setPendingScheduleDays(DEFAULT_DAYS_OF_WEEK);
     setScheduleTimeError('');
-  };
-
-  const handleUpdateScheduleDays = (time, daysCsv) => {
-    setScheduleTimes((prev) =>
-      prev.map((entry) =>
-        entry.time === time ? { ...entry, days_of_week: normalizeDaysCsv(daysCsv) } : entry
-      )
-    );
   };
 
   const handleRemoveScheduleTime = (timeToRemove) => {
@@ -274,7 +544,7 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   const handleAddThreshold = () => {
     const raw = pendingThresholdValue;
     if (raw === '' || raw === null || raw === undefined) {
-      setThresholdError('Enter a SOC percentage.');
+      setThresholdError('Enter a battery level percentage.');
       return;
     }
     const value = Number(raw);
@@ -282,15 +552,21 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
       setThresholdError('Enter a percentage from 0 to 100.');
       return;
     }
-    const duplicate = thresholds.some(
-      (entry) => entry.operator === pendingThresholdOperator && Number(entry.value) === value
-    );
-    if (duplicate) {
-      setThresholdError('This threshold is already configured.');
+    const operator = thresholds.some((entry) => entry.operator === pendingThresholdOperator)
+      ? THRESHOLD_OPERATORS.find(
+          (option) => !thresholds.some((entry) => entry.operator === option.value)
+        )?.value
+      : pendingThresholdOperator;
+    if (!operator) {
+      setThresholdError('One drop and one rise is the maximum.');
       return;
     }
-    setThresholds((prev) => [...prev, { operator: pendingThresholdOperator, value }]);
+    setThresholds((prev) => limitThresholds([...prev, { operator, value }]));
     setPendingThresholdValue('');
+    const remaining = THRESHOLD_OPERATORS.find((option) => option.value !== operator);
+    if (remaining && !thresholds.some((entry) => entry.operator === remaining.value)) {
+      setPendingThresholdOperator(remaining.value);
+    }
     setThresholdError('');
   };
 
@@ -300,38 +576,29 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
   };
 
   const handleAlertsSubmit = async () => {
+    if (!hasSaveableChanges) return;
     setIsSubmitting(true);
     try {
-      const dataPayload = { ...preloadedAlertsFormData };
-      dataPayload.daily_energy_usage_days = normalizeDaysCsv(dailyEnergyUsageDays);
-      const t = dataPayload.solar_capacity_utilization_threshold_pct;
-      if (t === '' || t === null || t === undefined || Number.isNaN(Number(t))) {
-        dataPayload.solar_capacity_utilization_threshold_pct = 90;
-      } else {
-        dataPayload.solar_capacity_utilization_threshold_pct = Math.min(
-          90,
-          Math.max(0, Number(t))
-        );
-      }
-      const updatedAlertsFormData = {
-        data: dataPayload,
-        generator_data: generator_data,
-      };
-
-      if (batterySocConfig) {
-        const emailEnabled = Boolean(dataPayload.daily_battery_soc_alerts);
-        const pushEnabled = Boolean(batterySocConfig.push_enabled);
-        updatedAlertsFormData.battery_soc_config = {
-          is_enabled: emailEnabled || pushEnabled,
-          push_enabled: pushEnabled,
-          email_enabled: emailEnabled,
-          schedule_times: buildScheduleTimePayload(scheduleTimes),
-          thresholds: buildThresholdPayload(thresholds),
-        };
-      }
-
+      await toggleQueue.current.catch(() => {});
+      const updatedAlertsFormData = composeAlertPayload({
+        data: preloadedAlertsFormData,
+        generator_data,
+        days: dailyEnergyUsageDays,
+        scheduleTimes,
+        thresholds,
+        hasBattery: batterySocConfig != null,
+      });
       const request = await setAlertAndAlarm(updatedAlertsFormData);
       if (request.fullfilled) {
+        savedRef.current = {
+          data: updatedAlertsFormData.data,
+          generator_data: generator_data,
+          days: normalizeDaysCsv(dailyEnergyUsageDays),
+          scheduleTimes: scheduleTimes.map(({ time }) => ({ time })),
+          thresholds: limitThresholds(thresholds).map((entry) => ({ ...entry })),
+          hasBattery: batterySocConfig != null,
+          hydrated: true,
+        };
         openNotification("success", "Success", "Your changes have been updated successfully");
         getAlertAndAlarm();
       } else {
@@ -342,1188 +609,758 @@ function AlertsAndAlarms({ alertsAndAlarms, getAlertAndAlarm, setAlertAndAlarm, 
     }
   };
 
+  const formData = preloadedAlertsFormData || {};
+  const summary = [
+    { rowId: 'alert-daily-energy', label: 'Daily energy', on: Boolean(formData.daily_energy_usage_alerts) },
+    { rowId: 'alert-weekly-energy', label: 'Weekly energy', on: Boolean(formData.weekly_energy_usage_alerts) },
+  ];
+  if (showBatterySocBlock) {
+    summary.push({ rowId: 'alert-battery', label: 'Battery level', on: socEmailEnabled });
+  }
+  summary.push(
+    { rowId: 'alert-weather', label: 'Weather', on: Boolean(formData.daily_unfavorable_weather_alerts) },
+    { rowId: 'alert-capacity', label: 'Solar capacity', on: Boolean(formData.solar_capacity_utilization_alerts) },
+  );
+  if (!isSolarOnlyCustomer) {
+    summary.push(
+      { rowId: 'alert-power-factor', label: 'Power factor', on: Boolean(formData.power_factor_alerts) },
+      { rowId: 'alert-load-balance', label: 'Load balance', on: Boolean(formData.load_balance_alerts) },
+      { rowId: 'alert-frequency', label: 'Frequency', on: Boolean(formData.frequency_alerts) },
+      { rowId: 'alert-voltage', label: 'Voltage', on: Boolean(formData.voltage_alerts) },
+      { rowId: 'alert-baseline', label: 'Baseline', on: Boolean(formData.baseline_alerts) },
+      { rowId: 'alert-energy-target', label: 'Energy target', on: Boolean(formData.energy_usage_alerts) },
+      { rowId: 'alert-forecast-co2', label: 'Forecast CO₂', on: Boolean(formData.emitted_co2_alerts) },
+      { rowId: 'alert-co2-target', label: 'CO₂ target', on: Boolean(formData.set_co2_alerts) },
+      { rowId: 'alert-generator-hours', label: 'Generator hours', on: Boolean(formData.operating_time_alerts) },
+      { rowId: 'alert-load', label: 'Load', on: Boolean(formData.load_alerts) },
+    );
+  }
+  const enabledSummary = summary.filter((item) => item.on);
+
+  const scrollToSetting = (rowId) => {
+    document.getElementById(rowId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const savedSnapshot = savedRef.current;
+  const hasSaveableChanges = savedSnapshot.hydrated && (
+    normalizeDaysCsv(dailyEnergyUsageDays) !== normalizeDaysCsv(savedSnapshot.days)
+    || !scheduleTimesMatch(scheduleTimes, savedSnapshot.scheduleTimes)
+    || !thresholdValuesMatch(thresholds, savedSnapshot.thresholds)
+    || SAVED_LIMIT_KEYS.some((key) => !limitsMatch(preloadedAlertsFormData[key], savedSnapshot.data[key]))
+  );
+
+  const saveLabel = isSubmitting
+    ? 'Saving...'
+    : fetchAlertsDataLoading
+      ? 'Loading...'
+      : 'Save updates';
+
   return (
     <>
       <div className="breadcrumb-and-print-buttons">
         <BreadCrumb routesArray={breadCrumbRoutes} />
       </div>
-      {isOperator ?
-        <div className="alerts-and-alarms-form-content-wrapper">
-          <div className="alerts-and-alarms-page-header">
-            <h1 className="center-main-heading alerts-and-alarms-heading">
-              Alerts and Alarms
-            </h1>
-            <p className="alerts-and-alarms-lead">
-              {isSolarOnlyCustomer
-                ? 'Notifications for your solar system: energy usage, battery state of charge, weather forecasts, and capacity utilization.'
-                : 'Configure how Wyre notifies you about anomalies, solar performance, and operational events.'}
-            </p>
-          </div>
-
-          <form
-            action="#"
-            className="alerts-and-alarms-form"
-            onSubmit={handleSubmit(handleAlertsSubmit)}
+      {isOperator ? (
+        <div className="alerts-page">
+          <Spin
+            spinning={isFormBusy}
+            tip={fetchAlertsDataLoading ? 'Loading alerts...' : 'Saving updates...'}
           >
-            <Spin
-              spinning={isFormBusy}
-              tip={fetchAlertsDataLoading ? 'Loading alerts...' : 'Saving updates...'}
+            <header className="alerts-page-header">
+              <div>
+                <h1>Alerts and Alarms</h1>
+                <p className="alerts-page-lead">
+                  {isSolarOnlyCustomer
+                    ? 'Notifications for your solar system: energy usage, battery level, weather forecasts, and capacity utilization.'
+                    : 'Configure how Wyre notifies you about anomalies, solar performance, and operational events.'}
+                </p>
+              </div>
+            </header>
+            <div
+              ref={toolbarRef}
+              className={`alerts-page-toolbar${toolbarStuck ? ' is-stuck' : ''}`}
             >
-            <fieldset
-              className="alerts-and-alarms-form-inputs-wrapper alerts-and-alarms-section-card"
-              disabled={isFormBusy}
-            >
-              <legend className="alerts-and-alarms-form-section-heading">
-                {isSolarOnlyCustomer
-                  ? 'Solar system alerts'
-                  : 'Standard Alerts on Anomalies'}
-              </legend>
-              <ol className="alerts-and-alarms-list">
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-energy-usage-block">
-                    <div className="alerts-and-alarms-question-container">
-                      <p className="alerts-and-alarms-question">Get energy usage alerts</p>
-                    </div>
-                    {isSolarOnlyCustomer ? (
-                      <p className="alerts-item-detail">
-                        Daily and weekly reports are sent at fixed times (daily 10:00, weekly Monday 10:00,
-                        Africa/Lagos). The daily report covers the previous day.
-                      </p>
-                    ) : null}
-
-                    <div className="alerts-and-alarms-subsection">
-                      <p className="alerts-and-alarms-subheading">Choose alert frequency</p>
-
-                      <div className="alerts-and-alarms-suboption">
-                        <label
-                          htmlFor="daily-diesel-usage-checkbox"
-                          className="alerts-and-alarms-subquestion"
-                        >
-                          Daily energy usage alerts
-                        </label>
-                        <Controller
-                          name="dailyDieselUsageChecked"
-                          defaultValue={preloadedAlertsFormData?.daily_energy_usage_alerts}
-                          control={control}
-                          render={({ field }) => (
-                            <Checkbox
-                              onChange={(e) => {
-                                const checked = e.target.checked;
-                                field.onChange(checked);
-                                preloadedAlertsFormData.daily_energy_usage_alerts = checked;
-                                setPreloadedAlertsFormData((prev) => ({
-                                  ...prev,
-                                  daily_energy_usage_alerts: checked,
-                                }));
-                              }}
-                              checked={preloadedAlertsFormData?.daily_energy_usage_alerts}
-                              className="daily-diesel-usage-checkbox alerts-and-alarms-checkbox"
-                              id="daily-diesel-usage-checkbox"
-                            />
-                          )}
-                        />
+              <section className="alerts-page-days-card" aria-labelledby="operational-days-title">
+                <h2 id="operational-days-title">Operational days</h2>
+                <WeekdayPicker
+                  value={dailyEnergyUsageDays}
+                  onChange={setDailyEnergyUsageDays}
+                  disabled={isFormBusy}
+                  ariaLabel="Operational days"
+                />
+              </section>
+              <div className="alerts-page-summary">
+                {fetchAlertsDataLoading ? (
+                  <p className="alerts-page-summary-empty">Loading your alerts…</p>
+                ) : (
+                  <>
+                    <p className="alerts-page-count" aria-live="polite">
+                      <span className="alerts-page-count-value">{enabledSummary.length}</span>
+                      <span className="alerts-page-count-label">of {summary.length} on</span>
+                    </p>
+                    {enabledSummary.length > 0 ? (
+                      <div className="alerts-page-chips">
+                        {enabledSummary.map((item) => (
+                          <button
+                            key={item.rowId}
+                            type="button"
+                            className="alerts-page-chip"
+                            onClick={() => scrollToSetting(item.rowId)}
+                          >
+                            {item.label}
+                          </button>
+                        ))}
                       </div>
+                    ) : (
+                      <p className="alerts-page-summary-empty">Nothing is turned on yet.</p>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
 
-                      <div className="alerts-inset-panel">
-                        <p className="alerts-inset-panel-title">Which days get the 10:00 daily report</p>
-                        <p className="alerts-inset-panel-hint">
-                          Uncheck days you do not want included (for example Saturday and Sunday).
-                        </p>
-                        <WeekdayPicker
-                          value={dailyEnergyUsageDays}
-                          onChange={setDailyEnergyUsageDays}
-                          disabled={isFormBusy}
-                          ariaLabel="Weekdays for the daily energy usage report"
-                        />
-                      </div>
+            <form className="alerts-page-form" onSubmit={handleSubmit(handleAlertsSubmit)}>
+              <fieldset className="alerts-page-fieldset" disabled={isFormBusy}>
+                <SettingsSection
+                  title="Energy reports"
+                  description="Daily and weekly usage, sent on a fixed schedule."
+                >
+                  <SettingRow
+                    rowId="alert-daily-energy"
+                    switchId="daily-diesel-usage-checkbox"
+                    title="Daily energy usage"
+                    detail="Previous day’s report at 10:00 (Africa/Lagos), on your operational days."
+                    active={Boolean(formData.daily_energy_usage_alerts)}
+                    control={
+                      <AlertSwitch
+                        id="daily-diesel-usage-checkbox"
+                        name="dailyDieselUsageChecked"
+                        control={control}
+                        checked={formData.daily_energy_usage_alerts}
+                        disabled={isFormBusy}
+                        label="Daily energy usage"
+                        onChecked={bindToggle('daily_energy_usage_alerts')}
+                      />
+                    }
+                  />
 
-                      <div className="alerts-and-alarms-suboption">
-                        <label
-                          htmlFor="weekly-diesel-usage-checkbox"
-                          className="alerts-and-alarms-subquestion"
-                        >
-                          Weekly energy usage alerts
-                        </label>
-                        <Controller
-                          name="weeklyDieselUsageChecked"
-                          defaultValue={preloadedAlertsFormData?.weekly_energy_usage_alerts}
-                          control={control}
-                          render={({ field }) => (
-                            <Checkbox
-                              onChange={(e) => {
-                                const checked = e.target.checked;
-                                field.onChange(checked);
-                                preloadedAlertsFormData.weekly_energy_usage_alerts = checked;
-                                setPreloadedAlertsFormData((prev) => ({
-                                  ...prev,
-                                  weekly_energy_usage_alerts: checked,
-                                }));
-                              }}
-                              checked={preloadedAlertsFormData?.weekly_energy_usage_alerts}
-                              className="weekly-diesel-usage-checkbox alerts-and-alarms-checkbox"
-                              id="weekly-diesel-usage-checkbox"
-                            />
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </li>
+                  <SettingRow
+                    rowId="alert-weekly-energy"
+                    switchId="weekly-diesel-usage-checkbox"
+                    title="Weekly energy usage"
+                    detail="Sent every Monday at 10:00 (Africa/Lagos)."
+                    active={Boolean(formData.weekly_energy_usage_alerts)}
+                    control={
+                      <AlertSwitch
+                        id="weekly-diesel-usage-checkbox"
+                        name="weeklyDieselUsageChecked"
+                        control={control}
+                        checked={formData.weekly_energy_usage_alerts}
+                        disabled={isFormBusy}
+                        label="Weekly energy usage"
+                        onChecked={bindToggle('weekly_energy_usage_alerts')}
+                      />
+                    }
+                  />
+                </SettingsSection>
 
                 {showBatterySocBlock ? (
-                <li className="alerts-and-alarms-list-item alerts-and-alarms-list-item--battery-soc">
-                  <div className="battery-soc-block">
-                    <ul className="battery-soc-toggle-list">
-                      <li className="battery-soc-toggle-item">
-                        <div className="alerts-and-alarms-question-container">
-                          <label
-                            htmlFor="solar-battery-soc-checkbox"
-                            className="alerts-and-alarms-question"
-                          >
-                            Send battery SOC alerts by email
-                          </label>
-                          <Controller
-                            name="solarBatterySocChecked"
-                            defaultValue={preloadedAlertsFormData?.daily_battery_soc_alerts}
-                            control={control}
-                            render={({ field }) => (
-                              <Checkbox
-                                onChange={(e) => {
-                                  const checked = e.target.checked;
-                                  field.onChange(checked);
-                                  handleBatterySocEmailToggle(checked);
-                                }}
-                                checked={
-                                  preloadedAlertsFormData?.daily_battery_soc_alerts ??
-                                  batterySocConfig?.email_enabled
-                                }
-                                className="solar-battery-soc-checkbox alerts-and-alarms-checkbox"
-                                id="solar-battery-soc-checkbox"
-                              />
-                            )}
-                          />
-                        </div>
-                      </li>
-                      <li className="battery-soc-toggle-item battery-soc-toggle-item--indented">
-                        <div className="alerts-and-alarms-question-container">
-                          <label
-                            htmlFor="solar-battery-soc-push-checkbox"
-                            className="alerts-and-alarms-question battery-soc-push-label"
-                          >
-                            Also notify the mobile app (push)
-                          </label>
-                          <Checkbox
-                            id="solar-battery-soc-push-checkbox"
-                            checked={Boolean(batterySocConfig?.push_enabled)}
-                            onChange={(e) => handleBatterySocPushToggle(e.target.checked)}
-                            className="solar-battery-soc-push-checkbox alerts-and-alarms-checkbox"
-                          />
-                        </div>
-                      </li>
-                    </ul>
-
-                    <div className="battery-soc-panels">
-                      <div className="battery-soc-panel">
-                        <p className="battery-soc-panel-title">Scheduled updates</p>
-                        <p className="battery-soc-config-hint">
-                          Send a status at each time (Africa/Lagos), on the days you select below.
-                          Granularity is 15 minutes.
-                        </p>
-                        <div className="battery-soc-schedule-list">
-                          {scheduleTimes.length > 0 ? (
-                            scheduleTimes.map((entry) => (
-                              <div key={entry.time} className="battery-soc-schedule-row">
-                                <Tag
-                                  closable
-                                  onClose={(e) => {
-                                    e.preventDefault();
-                                    handleRemoveScheduleTime(entry.time);
-                                  }}
-                                  className="battery-soc-chip battery-soc-time-chip"
-                                >
-                                  {formatScheduleTimeLabel(entry.time)}
-                                </Tag>
-                                <WeekdayPicker
-                                  value={entry.days_of_week}
-                                  onChange={(csv) => handleUpdateScheduleDays(entry.time, csv)}
-                                  disabled={isFormBusy}
-                                  ariaLabel={`Weekdays for ${formatScheduleTimeLabel(entry.time)}`}
-                                />
-                              </div>
-                            ))
-                          ) : (
-                            <span className="battery-soc-empty-hint">No times configured yet.</span>
-                          )}
-                        </div>
-                        <div className="battery-soc-add-block">
-                          <div className="battery-soc-add-row">
-                            <TimePicker
-                              value={pendingScheduleTime}
-                              onChange={(value) => {
-                                setPendingScheduleTime(value);
-                                setScheduleTimeError('');
-                              }}
-                              format="HH:mm"
-                              minuteStep={15}
-                              needConfirm={false}
-                              placeholder="Select time"
-                              className="battery-soc-time-picker"
-                            />
-                            <button
-                              type="button"
-                              className="battery-soc-add-button"
-                              onClick={handleAddScheduleTime}
-                            >
-                              Add time
-                            </button>
-                          </div>
-                          <WeekdayPicker
-                            value={pendingScheduleDays}
-                            onChange={setPendingScheduleDays}
-                            disabled={isFormBusy}
-                            ariaLabel="Weekdays for new scheduled time"
-                          />
-                        </div>
-                        {scheduleTimeError ? (
-                          <p className="input-error-message">{scheduleTimeError}</p>
-                        ) : null}
-                      </div>
-
-                      <div className="battery-soc-panel">
-                        <p className="battery-soc-panel-title">When battery charge crosses</p>
-                        <p className="battery-soc-config-hint">
-                          Alert once when SOC hits a level you set — e.g. drops to 30% or rises to 80%.
-                          It will not repeat until SOC recovers by about 3%.
-                        </p>
-                        <div className="battery-soc-chip-list">
-                          {thresholds.length > 0 ? (
-                            thresholds.map((entry, index) => (
-                              <Tag
-                                key={`${entry.operator}-${entry.value}-${index}`}
-                                closable
-                                onClose={(e) => {
-                                  e.preventDefault();
-                                  handleRemoveThreshold(index);
-                                }}
-                                className="battery-soc-chip"
-                              >
-                                {formatThresholdLabel(entry)}
-                              </Tag>
-                            ))
-                          ) : (
-                            <span className="battery-soc-empty-hint">No thresholds configured yet.</span>
-                          )}
-                        </div>
-                        <div className="battery-soc-add-row">
-                          <Select
-                            value={pendingThresholdOperator}
-                            onChange={setPendingThresholdOperator}
-                            className="battery-soc-operator-select"
-                            options={[
-                              { value: 'lte', label: 'Drops to / below (≤)' },
-                              { value: 'gte', label: 'Rises to / above (≥)' },
-                            ]}
-                          />
-                          <input
-                            className="alerts-and-alarms-input battery-soc-threshold-input"
-                            type="text"
-                            inputMode="decimal"
-                            placeholder="30"
-                            value={pendingThresholdValue}
-                            onChange={(e) => {
-                              setPendingThresholdValue(formatIntInputs(e));
-                              setThresholdError('');
-                            }}
-                            aria-label="SOC threshold percentage"
-                          />
-                          <span className="alerts-and-alarms-unit">%</span>
-                          <button
-                            type="button"
-                            className="battery-soc-add-button"
-                            onClick={handleAddThreshold}
-                          >
-                            Add threshold
-                          </button>
-                        </div>
-                        {thresholdError ? (
-                          <p className="input-error-message">{thresholdError}</p>
-                        ) : null}
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                ) : null}
-
-                {isSolarOnlyCustomer && showBatterySocBlock ? (
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-night-usage-block">
-                    <div className="alerts-and-alarms-question-container">
-                      <p className="alerts-and-alarms-question">Night battery over-usage</p>
-                      <div className="alerts-follows-soc">
-                        <span className="alerts-follows-soc-label">Follows SOC email</span>
-                        <Checkbox
-                          id="night-over-usage-follows"
-                          checked={socEmailEnabled}
-                          disabled
-                          className="alerts-and-alarms-checkbox alerts-readonly-checkbox"
-                          aria-label="Night battery over-usage follows SOC email setting"
+                  <SettingsSection
+                    title="Battery"
+                    description="Status emails on a schedule, and a one-time alert when charge crosses a level you set."
+                  >
+                    <SettingRow
+                      rowId="alert-battery"
+                      switchId="solar-battery-soc-checkbox"
+                      title="Battery level email"
+                      detail="Up to two times a day, plus one drop and one rise. Times use 15-minute steps."
+                      active={socEmailEnabled}
+                      control={
+                        <AlertSwitch
+                          id="solar-battery-soc-checkbox"
+                          name="solarBatterySocChecked"
+                          control={control}
+                          checked={formData.daily_battery_soc_alerts ?? batterySocConfig?.email_enabled}
+                          disabled={isFormBusy}
+                          label="Send battery level alerts by email"
+                          onChecked={handleBatterySocEmailToggle}
                         />
-                      </div>
-                    </div>
-                    <p className="alerts-item-detail alerts-item-detail--compact">
-                      Follows &ldquo;Send battery SOC alerts by email&rdquo;. When email is on, Wyre can alert
-                      you overnight (18:00–07:00 Lagos) if load is higher than the battery can sustain until
-                      sunrise — at most once per night, by email and push.
-                    </p>
-                    <div className="alerts-callout alerts-callout--warm">
-                      {socEmailEnabled
-                        ? 'Night over-usage alerts are active while battery SOC email is enabled.'
-                        : 'Turn on battery SOC email above to enable night over-usage alerts.'}
-                    </div>
-                  </div>
-                </li>
-                ) : null}
-
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    {' '}
-                    <label
-                      htmlFor="daily-unfavorable-weather-checkbox"
-                      className="alerts-and-alarms-question"
+                      }
                     >
-                      Daily Unfavourable Weather Alerts
-                    </label>{' '}
-                    <Controller
-                      name="dailyUnfavorableWeatherChecked"
-                      defaultValue={preloadedAlertsFormData?.daily_unfavorable_weather_alerts}
-                      control={control}
-                      render={({ field }) => (
-                        <Checkbox
-                          onChange={(e) => {
-                            const checked = e.target.checked;
-                            field.onChange(checked);
-                            preloadedAlertsFormData.daily_unfavorable_weather_alerts = checked;
-                            setPreloadedAlertsFormData(prev => ({ ...prev, daily_unfavorable_weather_alerts: checked }));
-                          }}
-                          checked={preloadedAlertsFormData?.daily_unfavorable_weather_alerts}
-                          className="daily-unfavorable-weather-checkbox alerts-and-alarms-checkbox"
-                          id="daily-unfavorable-weather-checkbox"
-                        />
-                      )}
-                    />
-                  </div>
-                  {isSolarOnlyCustomer ? (
-                    <p className="alerts-item-detail">
-                      Sent at 06:00 Lagos when today&apos;s forecast is poor for solar. Email and push when enabled.
-                    </p>
-                  ) : null}
-                </li>
+                      {socEmailEnabled ? (
+                        <div className="alerts-page-split">
+                          <div className="alerts-page-panel">
+                            <p className="alerts-page-panel-title">Scheduled updates</p>
+                            <p className="alerts-page-hint">
+                              Send a status at each time (Africa/Lagos), on your operational days.
+                              You can add up to two times. Granularity is 15 minutes.
+                            </p>
+                            <div className="alerts-page-chip-list">
+                              {scheduleTimes.length > 0 ? (
+                                scheduleTimes.map((entry) => (
+                                  <Tag
+                                    key={entry.time}
+                                    closable
+                                    onClose={(e) => {
+                                      e.preventDefault();
+                                      handleRemoveScheduleTime(entry.time);
+                                    }}
+                                    className="battery-soc-chip"
+                                  >
+                                    {formatScheduleTimeLabel(entry.time)}
+                                  </Tag>
+                                ))
+                              ) : (
+                                <span className="alerts-page-empty">No times configured yet.</span>
+                              )}
+                            </div>
+                            {scheduleTimes.length < MAX_SCHEDULE_TIMES ? (
+                              <div className="alerts-page-add-row">
+                                <TimePicker
+                                  value={pendingScheduleTime}
+                                  onChange={(value) => {
+                                    setPendingScheduleTime(value);
+                                    setScheduleTimeError('');
+                                  }}
+                                  format="HH:mm"
+                                  minuteStep={15}
+                                  needConfirm={false}
+                                  placeholder="Select time"
+                                  className="battery-soc-time-picker"
+                                  disabled={isFormBusy}
+                                />
+                                <button
+                                  type="button"
+                                  className="alerts-page-add"
+                                  onClick={handleAddScheduleTime}
+                                  disabled={isFormBusy}
+                                >
+                                  Add time
+                                </button>
+                              </div>
+                            ) : (
+                              <p className="alerts-page-hint">Two times is the maximum.</p>
+                            )}
+                            {scheduleTimeError ? (
+                              <p className="input-error-message">{scheduleTimeError}</p>
+                            ) : null}
+                          </div>
 
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    <div>
-                      <p className="alerts-and-alarms-question">
-                        <label
-                          className="h-screen-reader-text"
-                          htmlFor="solar-capacity-utilization-threshold"
-                        >
-                          Solar capacity utilization threshold percentage
-                        </label>
-                        When solar capacity utilization exceeds{' '}
-                        <input
-                          className="alerts-and-alarms-input"
-                          type="text"
-                          inputMode="decimal"
-                          name="solarCapacityUtilizationThreshold"
-                          id="solar-capacity-utilization-threshold"
-                          placeholder="90"
-                          value={
-                            preloadedAlertsFormData?.solar_capacity_utilization_threshold_pct ?? ''
-                          }
-                          onChange={(e) => {
-                            let val = formatIntInputs(e);
-                            if (val !== '' && val !== undefined && val !== null) {
-                              const n = Number(val);
-                              if (!Number.isNaN(n)) {
-                                val = Math.min(90, Math.max(0, n));
-                              }
-                            }
-                            preloadedAlertsFormData.solar_capacity_utilization_threshold_pct = val;
-                            setPreloadedAlertsFormData((prev) => ({
-                              ...prev,
-                              solar_capacity_utilization_threshold_pct: val,
-                            }));
-                          }}
-                          ref={register('solarCapacityUtilizationThreshold', {
-                            validate: (value) => {
-                              if (value === '' || value === null || value === undefined) {
-                                return true;
-                              }
-                              const n = Number(value);
-                              if (Number.isNaN(n)) return false;
-                              if (n < 0 || n > 90) return false;
-                              return true;
-                            },
-                          })}
-                        />{' '}
-                        <span className="alerts-and-alarms-unit">%</span>
-                        {' '}of installed capacity
-                      </p>
-                      <p className="input-error-message">
-                        {errors.solarCapacityUtilizationThreshold &&
-                          'Enter a percentage from 0 to 90'}
-                      </p>
-                    </div>
+                          <div className="alerts-page-panel">
+                            <p className="alerts-page-panel-title">When battery charge crosses</p>
+                            <p className="alerts-page-hint">
+                              Alert once when the battery reaches a level you set — one drop and one rise, for example
+                              drops to 30% or rises to 80%. It will not repeat until the battery level recovers by about 3%.
+                            </p>
+                            <div className="alerts-page-chip-list">
+                              {thresholds.length > 0 ? (
+                                thresholds.map((entry, index) => (
+                                  <Tag
+                                    key={`${entry.operator}-${entry.value}-${index}`}
+                                    closable
+                                    onClose={(e) => {
+                                      e.preventDefault();
+                                      handleRemoveThreshold(index);
+                                    }}
+                                    className="battery-soc-chip"
+                                  >
+                                    {formatThresholdLabel(entry)}
+                                  </Tag>
+                                ))
+                              ) : (
+                                <span className="alerts-page-empty">No thresholds configured yet.</span>
+                              )}
+                            </div>
+                            {availableThresholdOperators.length > 0 ? (
+                              <div className="alerts-page-add-row">
+                                <Select
+                                  value={selectedThresholdOperator}
+                                  onChange={setPendingThresholdOperator}
+                                  className="alerts-page-operator"
+                                  options={availableThresholdOperators}
+                                  disabled={isFormBusy}
+                                  aria-label="Battery level direction"
+                                />
+                                <input
+                                  id="battery-soc-threshold"
+                                  className="alerts-page-input alerts-page-input--short"
+                                  type="text"
+                                  inputMode="decimal"
+                                  placeholder="30"
+                                  value={pendingThresholdValue}
+                                  aria-label="Battery level percentage"
+                                  onChange={(e) => {
+                                    setPendingThresholdValue(formatIntInputs(e));
+                                    setThresholdError('');
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault();
+                                      handleAddThreshold();
+                                    }
+                                  }}
+                                />
+                                <span className="alerts-page-unit">%</span>
+                                <button
+                                  type="button"
+                                  className="alerts-page-add"
+                                  onClick={handleAddThreshold}
+                                  disabled={isFormBusy}
+                                >
+                                  Add threshold
+                                </button>
+                              </div>
+                            ) : (
+                              <p className="alerts-page-hint">One drop and one rise is the maximum.</p>
+                            )}
+                            {thresholdError ? (
+                              <p className="input-error-message">{thresholdError}</p>
+                            ) : null}
+                          </div>
+                        </div>
+                      ) : null}
+                    </SettingRow>
 
-                    <div>
-                      <HiddenInputLabel
-                        htmlFor="solar-capacity-utilization-checkbox"
-                        labelText="Solar capacity utilization alerts"
-                      />
-                      <Controller
-                        name="solarCapacityUtilizationChecked"
-                        defaultValue={preloadedAlertsFormData?.solar_capacity_utilization_alerts}
+                    {isSolarOnlyCustomer ? (
+                      <SettingRow
+                        rowId="alert-night-usage"
+                        title="Night battery over-usage"
+                        detail="Follows battery level email. When that email is on, Wyre can alert you overnight (18:00–07:00 Lagos) if load is higher than the battery can sustain until sunrise — at most once per night, by email and push."
+                        active={socEmailEnabled}
+                        control={
+                          <span className={`alerts-page-status${socEmailEnabled ? ' is-on' : ''}`}>
+                            {socEmailEnabled ? 'On with battery email' : 'Follows battery email'}
+                          </span>
+                        }
+                      >
+                        <div className={`alerts-page-callout ${socEmailEnabled ? 'is-warm' : 'is-muted'}`}>
+                          {socEmailEnabled
+                            ? 'Night over-usage alerts are active while battery level email is enabled.'
+                            : 'Turn on battery level email above to enable night over-usage alerts.'}
+                        </div>
+                      </SettingRow>
+                    ) : null}
+                  </SettingsSection>
+                ) : null}
+
+                <SettingsSection
+                  title="Site conditions"
+                  description="Weather forecasts and how much of the installed solar capacity is in use."
+                >
+                  <SettingRow
+                    rowId="alert-weather"
+                    switchId="daily-unfavorable-weather-checkbox"
+                    title="Unfavourable weather"
+                    detail={
+                      isSolarOnlyCustomer
+                        ? 'Sent at 06:00 Lagos when today’s forecast is poor for solar. Email and push when enabled.'
+                        : 'A daily alert when the forecast is unfavourable.'
+                    }
+                    active={Boolean(formData.daily_unfavorable_weather_alerts)}
+                    control={
+                      <AlertSwitch
+                        id="daily-unfavorable-weather-checkbox"
+                        name="dailyUnfavorableWeatherChecked"
                         control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              field.onChange(checked);
-                              preloadedAlertsFormData.solar_capacity_utilization_alerts = checked;
-                              setPreloadedAlertsFormData((prev) => ({
-                                ...prev,
-                                solar_capacity_utilization_alerts: checked,
-                              }));
-                            }}
-                            checked={preloadedAlertsFormData?.solar_capacity_utilization_alerts}
-                            className="solar-capacity-utilization-checkbox alerts-and-alarms-checkbox"
-                            id="solar-capacity-utilization-checkbox"
-                          />
-                        )}
+                        checked={formData.daily_unfavorable_weather_alerts}
+                        disabled={isFormBusy}
+                        label="Daily unfavourable weather alerts"
+                        onChecked={bindToggle('daily_unfavorable_weather_alerts')}
                       />
-                    </div>
-                  </div>
-                  {isSolarOnlyCustomer ? (
-                    <p className="alerts-item-detail">
-                      Any time of day. At most one email or push per hour while utilization stays above your
-                      threshold.
-                    </p>
-                  ) : null}
-                </li>
+                    }
+                  />
+
+                  <SettingRow
+                    rowId="alert-capacity"
+                    line={
+                      <LimitField
+                        id="solar-capacity-utilization-threshold"
+                        label="When solar capacity utilization exceeds"
+                        unit="% of installed capacity"
+                        name="solarCapacityUtilizationThreshold"
+                        value={formData.solar_capacity_utilization_threshold_pct}
+                        placeholder="90"
+                        onChange={handleSolarCapacityChange}
+                        inputRef={register('solarCapacityUtilizationThreshold', solarCapacityRules)}
+                      />
+                    }
+                    detail={
+                      isSolarOnlyCustomer
+                        ? 'Any time of day. At most one email or push per hour while utilization stays above your threshold.'
+                        : null
+                    }
+                    active={Boolean(formData.solar_capacity_utilization_alerts)}
+                    control={
+                      <AlertSwitch
+                        id="solar-capacity-utilization-checkbox"
+                        name="solarCapacityUtilizationChecked"
+                        control={control}
+                        checked={formData.solar_capacity_utilization_alerts}
+                        disabled={isFormBusy}
+                        label="Solar capacity utilization alerts"
+                        onChecked={bindToggle('solar_capacity_utilization_alerts')}
+                      />
+                    }
+                  >
+                    {errors.solarCapacityUtilizationThreshold ? (
+                      <p className="input-error-message">Enter a percentage from 0 to 90</p>
+                    ) : null}
+                  </SettingRow>
+                </SettingsSection>
 
                 {isSolarOnlyCustomer ? (
-                <>
-                <li className="alerts-and-alarms-list-item alerts-and-alarms-list-item--info">
-                  <div className="alerts-info-row">
-                    <p className="alerts-and-alarms-question">Daily solar generation recap (app)</p>
-                    <span className="alerts-info-badge">Always on</span>
-                  </div>
-                  <p className="alerts-item-detail">
-                    Every solar site with generation today receives a push and in-app message at 19:00 Lagos.
-                    This is separate from the 10:00 daily usage email.
-                  </p>
-                  <div className="alerts-callout alerts-callout--info">
-                    No setting to change here — expect the evening app notification when your system produced
-                    solar energy that day.
-                  </div>
-                </li>
-                <li className="alerts-and-alarms-list-item alerts-and-alarms-list-item--info">
-                  <div className="alerts-info-row">
-                    <p className="alerts-and-alarms-question">Solar panel soiling</p>
-                    <span className="alerts-info-badge">Weekly email</span>
-                  </div>
-                  <p className="alerts-item-detail">
-                    If last week&apos;s yield looks low compared to weather, Wyre adds a note on your Monday
-                    weekly solar report email. There is no separate push for soiling.
-                  </p>
-                  <div className="alerts-callout alerts-callout--info">
-                    No toggle on this page — soiling is surfaced on the weekly report when applicable.
-                  </div>
-                </li>
-                </>
+                  <SettingsSection
+                    title="Always sent"
+                    description="These go out on their own. There is nothing to turn off here."
+                  >
+                    <SettingRow
+                      rowId="alert-solar-recap"
+                      notice
+                      title="Daily solar generation recap"
+                      detail="Every solar site with generation today receives a push and in-app message at 19:00 Lagos. This is separate from the 10:00 daily usage email."
+                      control={<span className="alerts-page-badge">Always on</span>}
+                    >
+                      <div className="alerts-page-callout is-info">
+                        No setting to change here — expect the evening app notification when your system produced
+                        solar energy that day.
+                      </div>
+                    </SettingRow>
+                    <SettingRow
+                      rowId="alert-soiling"
+                      notice
+                      title="Solar panel soiling"
+                      detail="If last week’s yield looks low compared to weather, Wyre adds a note on your Monday weekly solar report email. There is no separate push for soiling."
+                      control={<span className="alerts-page-badge">Weekly email</span>}
+                    >
+                      <div className="alerts-page-callout is-info">
+                        No toggle on this page — soiling is surfaced on the weekly report when applicable.
+                      </div>
+                    </SettingRow>
+                  </SettingsSection>
                 ) : null}
 
                 {!isSolarOnlyCustomer ? (
-                <>
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    <div>
-                      <p className="alerts-and-alarms-question">
-                        Power factor exceeds{' '}
-                        <label
-                          className="h-screen-reader-text"
-                          htmlFor="high-power-factor"
-                        >
-                          a high power factor of
-                        </label>
-                        <input
-                          className="alerts-and-alarms-input"
-                          type="text"
-                          inputMode="decimal"
-                          width="50"
-                          name="highPowerFactor"
-                          id="high-power-factor"
-                          ref={register('highPowerFactor', {
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
-                          placeholder={preloadedAlertsFormData?.max_power_factor}
-                          value={preloadedAlertsFormData?.max_power_factor ?? ''}
-                          onChange={(e) => {
-                            const val = formatIntInputs(e);
-                            preloadedAlertsFormData.max_power_factor = val;
-                            setPreloadedAlertsFormData(prev => ({ ...prev, max_power_factor: val }));
-                          }}
-                          autoFocus
-                        />{' '}
-                        or goes below{' '}
-                        <label
-                          className="h-screen-reader-text"
-                          htmlFor="high-power-factor"
-                        >
-                          a low power factor of
-                        </label>
-                        <input
-                          className="alerts-and-alarms-input"
-                          type="text"
-                          inputMode="decimal"
-                          name="lowPowerFactor"
-                          id="low-power-factor"
-                          placeholder={preloadedAlertsFormData?.min_power_factor}
-                          value={preloadedAlertsFormData?.min_power_factor ?? ''}
-                          onChange={(e) => {
-                            const val = formatIntInputs(e);
-                            preloadedAlertsFormData.min_power_factor = val;
-                            setPreloadedAlertsFormData(prev => ({ ...prev, min_power_factor: val }));
-                          }}
-                          ref={register('lowPowerFactor', {
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
-                        />
-                      </p>
-                      <p className="input-error-message">
-                        {(errors.highPowerFactor || errors.lowPowerFactor) &&
-                          'Power factor values must be numbers'}
-                      </p>
-                    </div>
-
-                    <div>
-                      <HiddenInputLabel
-                        htmlFor="power-factor-checkbox"
-                        labelText="Power Factor"
-                      />
-                      <Controller
-                        name="powerFactorChecked"
-                        defaultValue={preloadedAlertsFormData?.power_factor_alerts}
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              field.onChange(checked);
-                              preloadedAlertsFormData.power_factor_alerts = checked;
-                              setPreloadedAlertsFormData(prev => ({ ...prev, power_factor_alerts: checked }));
-                            }}
-                            checked={preloadedAlertsFormData?.power_factor_alerts}
-                            className="power-factor-checkbox alerts-and-alarms-checkbox"
-                            id="power-factor-checkbox"
+                  <SettingsSection
+                    title="Power quality"
+                    description="Power factor, balance, frequency, and voltage."
+                  >
+                    <SettingRow
+                      rowId="alert-power-factor"
+                      line={
+                        <>
+                          <LimitField
+                            id="high-power-factor"
+                            label="Power factor exceeds"
+                            name="highPowerFactor"
+                            value={formData.max_power_factor}
+                            placeholder={formData.max_power_factor}
+                            onChange={handleNumberChange('max_power_factor')}
+                            inputRef={register('highPowerFactor', numberPattern)}
                           />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </li>
-
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    {' '}
-                    <label
-                      htmlFor="load-balance-issues-checkbox"
-                      className="alerts-and-alarms-question"
+                          <LimitField
+                            id="low-power-factor"
+                            label="or goes below"
+                            name="lowPowerFactor"
+                            value={formData.min_power_factor}
+                            placeholder={formData.min_power_factor}
+                            onChange={handleNumberChange('min_power_factor')}
+                            inputRef={register('lowPowerFactor', numberPattern)}
+                          />
+                        </>
+                      }
+                      active={Boolean(formData.power_factor_alerts)}
+                      control={
+                        <AlertSwitch
+                          id="power-factor-checkbox"
+                          name="powerFactorChecked"
+                          control={control}
+                          checked={formData.power_factor_alerts}
+                          disabled={isFormBusy}
+                          label="Power factor"
+                          onChecked={bindToggle('power_factor_alerts')}
+                        />
+                      }
                     >
-                      Load balance issues detected
-                    </label>{' '}
-                    <Controller
-                      name="loadBalanceIssuesChecked"
-                      defaultValue={preloadedAlertsFormData?.load_balance_alerts}
-                      control={control}
-render={({ field }) => (
-                        <Checkbox
-                          onChange={(e) => {
-                            const checked = e.target.checked;
-                            field.onChange(checked);
-                            preloadedAlertsFormData.load_balance_alerts = checked;
-                            setPreloadedAlertsFormData(prev => ({ ...prev, load_balance_alerts: checked }));
-                          }}
-                          checked={preloadedAlertsFormData?.load_balance_alerts}
-                          className="load-balance-issues-checkbox alerts-and-alarms-checkbox"
+                      {(errors.highPowerFactor || errors.lowPowerFactor) ? (
+                        <p className="input-error-message">Power factor values must be numbers</p>
+                      ) : null}
+                    </SettingRow>
+
+                    <SettingRow
+                      rowId="alert-load-balance"
+                      switchId="load-balance-issues-checkbox"
+                      title="Load balance"
+                      detail="Alert when a load imbalance is detected."
+                      active={Boolean(formData.load_balance_alerts)}
+                      control={
+                        <AlertSwitch
                           id="load-balance-issues-checkbox"
+                          name="loadBalanceIssuesChecked"
+                          control={control}
+                          checked={formData.load_balance_alerts}
+                          disabled={isFormBusy}
+                          label="Load balance issues detected"
+                          onChecked={bindToggle('load_balance_alerts')}
                         />
-                      )}
+                      }
                     />
-                  </div>
-                </li>
 
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    <div>
-                      <p className="alerts-and-alarms-question">
-                        <label htmlFor="frequency-variance-factor">
-                          {' '}
-                          Frequency variance between threshold ±
-                        </label>{' '}
-                        <input
-                          className="alerts-and-alarms-input"
-                          type="text"
-                          inputMode="decimal"
-                          name="frequencyVariance"
+                    <SettingRow
+                      rowId="alert-frequency"
+                      line={
+                        <LimitField
                           id="frequency-variance-factor"
-                          placeholder={preloadedAlertsFormData?.frequency_precision}
-                          value={preloadedAlertsFormData?.frequency_precision ?? ''}
-                          onChange={(e) => {
-                            const val = formatIntInputs(e);
-                            preloadedAlertsFormData.frequency_precision = val;
-                            setPreloadedAlertsFormData(prev => ({ ...prev, frequency_precision: val }));
-                          }}
-                          ref={register('frequencyVariance', {
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
+                          label="Frequency variance between threshold ±"
+                          name="frequencyVariance"
+                          value={formData.frequency_precision}
+                          placeholder={formData.frequency_precision}
+                          onChange={handleNumberChange('frequency_precision')}
+                          inputRef={register('frequencyVariance', numberPattern)}
                         />
-                      </p>
-                      <p className="input-error-message">
-                        {errors.frequencyVariance &&
-                          'Frequency variance must be a number'}
-                      </p>
-                    </div>
+                      }
+                      active={Boolean(formData.frequency_alerts)}
+                      control={
+                        <AlertSwitch
+                          id="frequency-variance-checkbox"
+                          name="frequencyVarianceChecked"
+                          control={control}
+                          checked={formData.frequency_alerts}
+                          disabled={isFormBusy}
+                          label="Frequency variance"
+                          onChecked={bindToggle('frequency_alerts')}
+                        />
+                      }
+                    >
+                      {errors.frequencyVariance ? (
+                        <p className="input-error-message">Frequency variance must be a number</p>
+                      ) : null}
+                    </SettingRow>
 
-                    <div>
-                      <HiddenInputLabel
-                        htmlFor="frequency-variance-checkbox"
-                        labelText="Frequency Variance"
-                      />
-                      <Controller
-                        name="frequencyVarianceChecked"
-                        defaultValue={preloadedAlertsFormData?.frequency_alerts}
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              field.onChange(checked);
-                              preloadedAlertsFormData.frequency_alerts = checked;
-                              setPreloadedAlertsFormData(prev => ({ ...prev, frequency_alerts: checked }));
-                            }}
-                            checked={preloadedAlertsFormData?.frequency_alerts}
-                            className="frequency-variance-checkbox alerts-and-alarms-checkbox"
-                            id="frequency-variance-checkbox"
+                    <SettingRow
+                      rowId="alert-voltage"
+                      line={
+                        <>
+                          <LimitField
+                            id="high-voltage"
+                            label="Voltage exceeds"
+                            unit="volts"
+                            name="highVoltage"
+                            value={formData.max_voltage}
+                            placeholder={formData.max_voltage}
+                            onChange={handleNumberChange('max_voltage')}
+                            inputRef={register('highVoltage', numberPattern)}
                           />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </li>
-
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    <div>
-                      <p className="alerts-and-alarms-question">
-                        Voltage exceeds{' '}
-                        <label
-                          className="h-screen-reader-text"
-                          htmlFor="high-voltage"
-                        >
-                          a high voltage of
-                        </label>
-                        <input
-                          className="alerts-and-alarms-input"
-                          type="text"
-                          inputMode="decimal"
-                          name="highVoltage"
-                          id="high-voltage"
-                          placeholder={preloadedAlertsFormData?.max_voltage}
-                          value={preloadedAlertsFormData?.max_voltage ?? ''}
-                          onChange={(e) => {
-                            const val = formatIntInputs(e);
-                            preloadedAlertsFormData.max_voltage = val;
-                            setPreloadedAlertsFormData(prev => ({ ...prev, max_voltage: val }));
-                          }}
-                          ref={register('highVoltage', {
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
-                        />{' '}
-                        <span className="alerts-and-alarms-unit">volts</span> or
-                        goes below{' '}
-                        <label
-                          className="h-screen-reader-text"
-                          htmlFor="low-voltage"
-                        >
-                          a low power factor of
-                        </label>
-                        <input
-                          className="alerts-and-alarms-input"
-                          type="text"
-                          inputMode="decimal"
-                          name="lowVoltage"
-                          id="low-voltage"
-                          placeholder={preloadedAlertsFormData?.min_voltage}
-                          value={preloadedAlertsFormData?.min_voltage ?? ''}
-                          onChange={(e) => {
-                            const val = formatIntInputs(e);
-                            preloadedAlertsFormData.min_voltage = val;
-                            setPreloadedAlertsFormData(prev => ({ ...prev, min_voltage: val }));
-                          }}
-                          ref={register('lowVoltage', {
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
-                        />{' '}
-                        <span className="alerts-and-alarms-unit">volts</span>
-                      </p>
-                      <p className="input-error-message">
-                        {(errors.highVoltage || errors.lowVoltage) &&
-                          'Voltage values must be numbers'}
-                      </p>
-                    </div>
-
-                    <div>
-                      <HiddenInputLabel
-                        htmlFor="voltage-checkbox"
-                        labelText="Voltage"
-                      />
-
-                      <Controller
-                        name="voltageChecked"
-                        defaultValue={preloadedAlertsFormData?.voltage_alerts}
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              field.onChange(checked);
-                              preloadedAlertsFormData.voltage_alerts = checked;
-                              setPreloadedAlertsFormData(prev => ({ ...prev, voltage_alerts: checked }));
-                            }}
-                            checked={preloadedAlertsFormData?.voltage_alerts}
-                            className="voltage-checkbox alerts-and-alarms-checkbox"
-                            id="voltage-checkbox"
+                          <LimitField
+                            id="low-voltage"
+                            label="or goes below"
+                            unit="volts"
+                            name="lowVoltage"
+                            value={formData.min_voltage}
+                            placeholder={formData.min_voltage}
+                            onChange={handleNumberChange('min_voltage')}
+                            inputRef={register('lowVoltage', numberPattern)}
                           />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </li>
-                </>
+                        </>
+                      }
+                      active={Boolean(formData.voltage_alerts)}
+                      control={
+                        <AlertSwitch
+                          id="voltage-checkbox"
+                          name="voltageChecked"
+                          control={control}
+                          checked={formData.voltage_alerts}
+                          disabled={isFormBusy}
+                          label="Voltage"
+                          onChecked={bindToggle('voltage_alerts')}
+                        />
+                      }
+                    >
+                      {(errors.highVoltage || errors.lowVoltage) ? (
+                        <p className="input-error-message">Voltage values must be numbers</p>
+                      ) : null}
+                    </SettingRow>
+                  </SettingsSection>
                 ) : null}
-              </ol>
 
-              {isSolarOnlyCustomer ? (
-                <div className="alert-and-alarms-button-container">
-                  <button
-                    type="submit"
-                    className="generic-submit-button alert-and-alarms-button"
-                    disabled={isFormBusy}
+                {!isSolarOnlyCustomer ? (
+                  <SettingsSection
+                    title="Events and targets"
+                    description="Baselines, CO₂, generator hours, and load."
                   >
-                    {isSubmitting ? 'Saving...' : fetchAlertsDataLoading ? 'Loading...' : 'Save Updates'}
-                  </button>
-                </div>
-              ) : null}
-            </fieldset>
-
-            {!isSolarOnlyCustomer ? (
-            <fieldset
-              className="alerts-and-alarms-form-inputs-wrapper alerts-and-alarms-section-card h-second"
-              disabled={isFormBusy}
-            >
-              <legend className="alerts-and-alarms-form-section-heading">
-                Customised Alerts on Selected Events
-              </legend>
-
-              <ol className="alerts-and-alarms-list">
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    <label htmlFor="estimated-baseline-checkbox" className="alerts-and-alarms-question-container">
-                      When forecasted baseline is reached
-                    </label>
-                    <div>
-                      <Controller
-                        name="estimatedbaselineChecked"
-                        defaultValue={preloadedAlertsFormData?.baseline_alerts}
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              field.onChange(checked);
-                              preloadedAlertsFormData.baseline_alerts = checked;
-                              setPreloadedAlertsFormData(prev => ({ ...prev, baseline_alerts: checked }));
-                            }}
-                            checked={preloadedAlertsFormData?.baseline_alerts}
-                            className="estimated-baseline-checkbox alerts-and-alarms-checkbox"
-                            id="estimated-baseline-checkbox"
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </li>
-
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    <div>
-                      <p className="alerts-and-alarms-question">
-                        <label htmlFor="energy-usage-max">
-                          {' '}
-                          When set energy target is reached
-                        </label>{' '}
-                        <input
-                          className="alerts-and-alarms-input"
-                          type="text"
-                          inputMode="decimal"
-                          name="energyUsageMax"
-                          id="energy-usage-max"
-                          placeholder={preloadedAlertsFormData?.energy_usage_max}
-                          value={preloadedAlertsFormData?.energy_usage_max ?? ''}
-                          onChange={(e) => {
-                            const val = formatIntInputs(e);
-                            preloadedAlertsFormData.energy_usage_max = val;
-                            setPreloadedAlertsFormData(prev => ({ ...prev, energy_usage_max: val }));
-                          }}
-                          ref={register('energyUsageMax', {
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
+                    <SettingRow
+                      rowId="alert-baseline"
+                      switchId="estimated-baseline-checkbox"
+                      title="Forecasted baseline"
+                      detail="Alert when usage reaches the forecasted baseline."
+                      active={Boolean(formData.baseline_alerts)}
+                      control={
+                        <AlertSwitch
+                          id="estimated-baseline-checkbox"
+                          name="estimatedbaselineChecked"
+                          control={control}
+                          checked={formData.baseline_alerts}
+                          disabled={isFormBusy}
+                          label="When forecasted baseline is reached"
+                          onChecked={bindToggle('baseline_alerts')}
                         />
-                        <span className="alerts-and-alarms-unit">kWh</span>
-                      </p>
-                      <p className="input-error-message">
-                        {errors.energyUsageMax &&
-                          'Energy target must be a number'}
-                      </p>
-                    </div>
-
-                    <div>
-                      <HiddenInputLabel
-                        htmlFor="set-baseline-checkbox"
-                        labelText="set baseline"
-                      />
-                      <Controller
-                        name="frequencyVarianceChecked"
-                        defaultValue={preloadedAlertsFormData?.energy_usage_alerts}
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              field.onChange(checked);
-                              preloadedAlertsFormData.energy_usage_alerts = checked;
-                              setPreloadedAlertsFormData(prev => ({ ...prev, energy_usage_alerts: checked }));
-                            }}
-                            checked={preloadedAlertsFormData?.energy_usage_alerts}
-                            className="set-baseline-checkbox alerts-and-alarms-checkbox"
-                            id="set-baseline-checkbox"
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </li>
-
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    {' '}
-                    <label
-                      htmlFor="eliminated-co2-checkbox"
-                      className="alerts-and-alarms-question"
-                    >
-                      When forecasted CO<sub>2</sub> is reached
-                    </label>{' '}
-                    <div>
-                      <Controller
-                        name="eliminatedCo2Checked"
-                        defaultValue={preloadedAlertsFormData?.emitted_co2_alerts}
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              field.onChange(checked);
-                              preloadedAlertsFormData.emitted_co2_alerts = checked;
-                              setPreloadedAlertsFormData(prev => ({ ...prev, emitted_co2_alerts: checked }));
-                            }}
-                            checked={preloadedAlertsFormData?.emitted_co2_alerts}
-                            className="eliminated-co2-checkbox alerts-and-alarms-checkbox"
-                            id="eliminated-co2-checkbox"
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </li>
-
-
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    <div>
-                      <p className="alerts-and-alarms-question">
-                        <label htmlFor="set-co2-value">
-                          {' '}
-                          When set CO<sub>2</sub> is reached
-                        </label>{' '}
-                        <input
-                          className="alerts-and-alarms-input"
-                          type="text"
-                          inputMode="decimal"
-                          name="setCo2Value"
-                          id="set-co2-value"
-                          placeholder={preloadedAlertsFormData?.set_co2_value}
-                          value={preloadedAlertsFormData?.set_co2_value ?? ''}
-                          onChange={(e) => {
-                            const val = formatIntInputs(e);
-                            preloadedAlertsFormData.set_co2_value = val;
-                            setPreloadedAlertsFormData(prev => ({ ...prev, set_co2_value: val }));
-                          }}
-                          ref={register('setCo2Value', {
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
-                        />
-                        <span className="alerts-and-alarms-unit">tons</span>
-                      </p>
-                      <p className="input-error-message">
-                        {errors.setCo2Value &&
-                          'CO2 value must be a number'}
-                      </p>
-                    </div>
-
-                    <div>
-                      <HiddenInputLabel
-                        htmlFor="set-baseline-checkbox"
-                        labelText="set baseline"
-                      />
-                      <Controller
-                        name="setCo2Checked"
-                        defaultValue={preloadedAlertsFormData?.set_co2_alerts}
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              field.onChange(checked);
-                              preloadedAlertsFormData.set_co2_alerts = checked;
-                              setPreloadedAlertsFormData(prev => ({ ...prev, set_co2_alerts: checked }));
-                            }}
-                            checked={preloadedAlertsFormData?.set_co2_alerts}
-                            className="set-co2-checkbox alerts-and-alarms-checkbox"
-                            id="set-co2-checkbox"
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </li>
-
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    {' '}
-                    <label
-                      htmlFor="generator-on-checkbox"
-                      className="alerts-and-alarms-question"
-                    >
-                      When any generator is turned on outside operating hours
-                    </label>{' '}
-                    <div>
-                      <Controller
-                        name="generatorOnChecked"
-                        defaultValue={preloadedAlertsFormData?.operating_time_alerts}
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              field.onChange(checked);
-                              preloadedAlertsFormData.operating_time_alerts = checked;
-                              setPreloadedAlertsFormData(prev => ({ ...prev, operating_time_alerts: checked }));
-                            }}
-                            checked={preloadedAlertsFormData?.operating_time_alerts}
-                            className="generator-on-checkbox alerts-and-alarms-checkbox"
-                            id="generator-on-checkbox"
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </li>
-
-                <li className="alerts-and-alarms-list-item">
-                  <div className="alerts-and-alarms-question-container">
-                    <div>
-                      <p className="alerts-and-alarms-question">
-                        When <label htmlFor="load-excess">load</label> exceeds{' '}
-                        <input
-                          className="alerts-and-alarms-input"
-                          type="text"
-                          inputMode="decimal"
-                          name="loadExcess"
-                          id="load-excess"
-                          placeholder={preloadedAlertsFormData?.load_threshold_value}
-                          value={preloadedAlertsFormData?.load_threshold_value ?? ''}
-                          onChange={(e) => {
-                            const val = formatIntInputs(e);
-                            preloadedAlertsFormData.load_threshold_value = val;
-                            setPreloadedAlertsFormData(prev => ({ ...prev, load_threshold_value: val }));
-                          }}
-                          ref={register('loadExcess', {
-                            pattern: /^-?\d+\.?\d*$/,
-                          })}
-                        />{' '}
-                        <span className="alerts-and-alarms-unit">kW</span>
-                      </p>
-                      <p className="input-error-message">
-                        {errors.loadExcess &&
-                          'Load excess value must be a number'}
-                      </p>
-                    </div>
-
-                    <div>
-                      <HiddenInputLabel
-                        htmlFor="load-excess-checkbox"
-                        labelText="Load Excess"
-                      />
-
-                      <Controller
-                        name="loadExcessChecked"
-                        defaultValue={preloadedAlertsFormData?.load_alerts}
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              field.onChange(checked);
-                              preloadedAlertsFormData.load_alerts = checked;
-                              setPreloadedAlertsFormData(prev => ({ ...prev, load_alerts: checked }));
-                            }}
-                            checked={preloadedAlertsFormData?.load_alerts}
-                            className="load-excess-checkbox alerts-and-alarms-checkbox"
-                            id="load-excess-checkbox"
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </li>
-
-                {/* <li className="alerts-and-alarms-list-item">
-                <div className="alerts-and-alarms-question-container">
-                  {' '}
-                  <label
-                    htmlFor="priority-power-unused-checkbox"
-                    className="alerts-and-alarms-question"
-                  >
-                    When priority power is available and generator is still
-                    being used
-                  </label>{' '}
-                  <div>
-                    <Controller
-                      name="priorityPowerUnusedChecked"
-                      defaultValue={false}
-                      control={control}
-                      render={(props) => (
-                        <Checkbox
-                          onChange={(e) => props.onChange(e.target.checked)}
-                          checked={props.value}
-                          className="priority-power-unused-checkbox alerts-and-alarms-checkbox"
-                          id="priority-power-unused-checkbox"
-                        />
-                      )}
+                      }
                     />
-                  </div>
-                </div>
-              </li> */}
 
-                {/* Generator maintenance datepicker: if uncommenting, add moment import, setGenData/defaultDate helpers, DatePicker from antd.
-                {generator_data.length > 0 && 
-                 <li className="alerts-and-alarms-list-item">
-                 <div className="alerts-and-alarms-question-container">
-                   {' '}
-                   <label
-                     htmlFor="generator-maintenance-time-checkbox"
-                     className="alerts-and-alarms-question"
-                   >
-                     When set generator maintenance time is drawing close
-                   </label>{' '}
-                   <div>
-                     <Controller
-                       name="generatorMaintenanceTimeChecked"
-                       defaultValue={preloadedAlertsFormData.generator_maintenance_alert}
-                       control={control}
-                       render={(props) => (
-                         <Checkbox
-                           onChange={(e) => {
-                             props.onChange(e.target.checked)
-                             setgenerator_maintenance_alert(e.target.checked)
-                             preloadedAlertsFormData.generator_maintenance_alert = e.target.checked
-                           }}
-                           checked={preloadedAlertsFormData.generator_maintenance_alert}
-                           className="generator-maintenance-time-checkbox alerts-and-alarms-checkbox"
-                           id="generator-maintenance-time-checkbox"
-                         />
-                       )}
-                     />
-                   </div>
-                 </div>
-                 <div style={{marginTop:'20px'}}>
-                   <ol>
-                     {generator_data.length > 0 ? generator_data.map((data, index)=>(
-                       <li  style={{marginBottom:'10px'}} key={data.id}>
-                           <div style={{display:'flex',alignItems:'center', justifyContent:'flex-start'}}>
-                             <span style={{width:'50%'}}>{index + 1}. {data.name} </span>
-                               <span style={{marginLeft:'20px'}} className='alerts-and-alarms-datepicker'> 
-                                   <DatePicker 
-                                     onChange={(e)=>{
-                                       setGenData(data.id,moment(e).format('YYYY-MM-DD'))
-                                     }}
-                                     format="DD-MM-YYYY"
-                                     dateRender={current => {
-                                       const style = {};
-                                       if (current.date() === data.next_maintenance_date) {
-                                         style.border = '1px solid #1890ff';
-                                         style.borderRadius = '50%';
-                                       }
-                                       return (
-                                         <div className="ant-picker-cell-inner" style={style}>
-                                           {current.date()}
-                                         </div>
-                                       );
-                                     }}
-                                     defaultValue={defaultDate(data)}
-                                   />
-                               </span>
-                           </div>
-                       </li>
-                     ))
-                     : null
-                     }
-                   </ol>
-                 </div>
-               </li>
-              } */}
+                    <SettingRow
+                      rowId="alert-energy-target"
+                      line={
+                        <LimitField
+                          id="energy-usage-max"
+                          label="When set energy target is reached"
+                          unit="kWh"
+                          name="energyUsageMax"
+                          value={formData.energy_usage_max}
+                          placeholder={formData.energy_usage_max}
+                          onChange={handleNumberChange('energy_usage_max')}
+                          inputRef={register('energyUsageMax', numberPattern)}
+                        />
+                      }
+                      active={Boolean(formData.energy_usage_alerts)}
+                      control={
+                        <AlertSwitch
+                          id="set-baseline-checkbox"
+                          name="energyUsageChecked"
+                          control={control}
+                          checked={formData.energy_usage_alerts}
+                          disabled={isFormBusy}
+                          label="When set energy target is reached"
+                          onChecked={bindToggle('energy_usage_alerts')}
+                        />
+                      }
+                    >
+                      {errors.energyUsageMax ? (
+                        <p className="input-error-message">Energy target must be a number</p>
+                      ) : null}
+                    </SettingRow>
 
-              </ol>
+                    <SettingRow
+                      rowId="alert-forecast-co2"
+                      switchId="eliminated-co2-checkbox"
+                      title={<>Forecasted CO<sub>2</sub></>}
+                      detail="Alert when forecasted CO₂ is reached."
+                      active={Boolean(formData.emitted_co2_alerts)}
+                      control={
+                        <AlertSwitch
+                          id="eliminated-co2-checkbox"
+                          name="eliminatedCo2Checked"
+                          control={control}
+                          checked={formData.emitted_co2_alerts}
+                          disabled={isFormBusy}
+                          label="When forecasted CO2 is reached"
+                          onChecked={bindToggle('emitted_co2_alerts')}
+                        />
+                      }
+                    />
 
-              <div className="alert-and-alarms-button-container">
+                    <SettingRow
+                      rowId="alert-co2-target"
+                      line={
+                        <LimitField
+                          id="set-co2-value"
+                          label={<>When set CO<sub>2</sub> is reached</>}
+                          unit="tons"
+                          name="setCo2Value"
+                          value={formData.set_co2_value}
+                          placeholder={formData.set_co2_value}
+                          onChange={handleNumberChange('set_co2_value')}
+                          inputRef={register('setCo2Value', numberPattern)}
+                        />
+                      }
+                      active={Boolean(formData.set_co2_alerts)}
+                      control={
+                        <AlertSwitch
+                          id="set-co2-checkbox"
+                          name="setCo2Checked"
+                          control={control}
+                          checked={formData.set_co2_alerts}
+                          disabled={isFormBusy}
+                          label="When set CO2 is reached"
+                          onChecked={bindToggle('set_co2_alerts')}
+                        />
+                      }
+                    >
+                      {errors.setCo2Value ? (
+                        <p className="input-error-message">CO2 value must be a number</p>
+                      ) : null}
+                    </SettingRow>
+
+                    <SettingRow
+                      rowId="alert-generator-hours"
+                      switchId="generator-on-checkbox"
+                      title="Generator outside hours"
+                      detail="Alert when any generator is turned on outside operating hours."
+                      active={Boolean(formData.operating_time_alerts)}
+                      control={
+                        <AlertSwitch
+                          id="generator-on-checkbox"
+                          name="generatorOnChecked"
+                          control={control}
+                          checked={formData.operating_time_alerts}
+                          disabled={isFormBusy}
+                          label="When any generator is turned on outside operating hours"
+                          onChecked={bindToggle('operating_time_alerts')}
+                        />
+                      }
+                    />
+
+                    <SettingRow
+                      rowId="alert-load"
+                      line={
+                        <LimitField
+                          id="load-excess"
+                          label="When load exceeds"
+                          unit="kW"
+                          name="loadExcess"
+                          value={formData.load_threshold_value}
+                          placeholder={formData.load_threshold_value}
+                          onChange={handleNumberChange('load_threshold_value')}
+                          inputRef={register('loadExcess', numberPattern)}
+                        />
+                      }
+                      active={Boolean(formData.load_alerts)}
+                      control={
+                        <AlertSwitch
+                          id="load-excess-checkbox"
+                          name="loadExcessChecked"
+                          control={control}
+                          checked={formData.load_alerts}
+                          disabled={isFormBusy}
+                          label="Load excess"
+                          onChecked={bindToggle('load_alerts')}
+                        />
+                      }
+                    >
+                      {errors.loadExcess ? (
+                        <p className="input-error-message">Load excess value must be a number</p>
+                      ) : null}
+                    </SettingRow>
+                  </SettingsSection>
+                ) : null}
+              </fieldset>
+
+              <div className="alerts-page-savebar">
+                <p className="alerts-page-save-copy">
+                  Days, times, and limits apply after you save.
+                </p>
                 <button
                   type="submit"
-                  className="generic-submit-button alert-and-alarms-button"
-                  disabled={isFormBusy}
+                  className="alerts-page-save"
+                  disabled={isFormBusy || !hasSaveableChanges}
                 >
-                  {isSubmitting ? 'Saving...' : fetchAlertsDataLoading ? 'Loading...' : 'Save Updates'}
+                  {saveLabel}
                 </button>
               </div>
-            </fieldset>
-            ) : null}
-            </Spin>
-
-          </form>
+            </form>
+          </Spin>
         </div>
-        :
+      ) : (
         <UnAuthorizeResponse />
-      }
+      )}
     </>
   );
 }
@@ -1536,4 +1373,5 @@ const mapDispatchToProps = {
 const mapStateToProps = (state) => ({
   alertsAndAlarms: state.alertsAndAlarmReducer
 });
+
 export default connect(mapStateToProps, mapDispatchToProps)(AlertsAndAlarms);
