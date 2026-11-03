@@ -1,13 +1,12 @@
-export const SCORE_CARD_EXCLUDE_CLIENTS = ['Sapio Utilities'];
-
+export const SCORE_CARD_EXCLUDE_CLIENTS = ["Sapio Utilities"];
 
 export const BESPOKE_ADD_LIST = {
-  SCORE_CARD: ['Lennox Mall', 'Sky View Beach', 'Chicken Republic'],
-  REPORT: ['Lennox Mall', 'Chicken Republic'],
-  LOAD_OVERVIEW: ['Lennox Mall', 'Chicken Republic'],
-  COST_TRACKER: ['Lennox Mall', 'Chicken Republic'],
-  BILLING: [''],
-}
+  SCORE_CARD: ["Lennox Mall", "Sky View Beach", "Chicken Republic"],
+  REPORT: ["Lennox Mall", "Chicken Republic"],
+  LOAD_OVERVIEW: ["Lennox Mall", "Chicken Republic"],
+  COST_TRACKER: ["Lennox Mall", "Chicken Republic"],
+  BILLING: [""],
+};
 
 // export const DASHBOARD_TOOLTIP_MESSAGES = {
 //   TOTAL_ENERGY: `Cumulative energy the building has used over the course of the month. Solar hours: the total amount of energy used during the time of day the sun is expected to be out 8am - 5pm.`,
@@ -28,7 +27,7 @@ export const BESPOKE_ADD_LIST = {
 // export const SCORE_CARD_TOOLTIP_MESSAGES = {
 //   CARBON: `Carbon footprint on all sources.
 
-//     Diesel: 2.68kg of CO2 per liter Gas   : 0.549kg of CO2 per kWh 
+//     Diesel: 2.68kg of CO2 per liter Gas   : 0.549kg of CO2 per kWh
 //     Grid   : 0.439kg of CO2 per kWh
 
 //     A typical hardwood tree can absorb as much as 48 pounds of carbon dioxide per year.
@@ -55,45 +54,47 @@ export const BESPOKE_ADD_LIST = {
 
 // };
 
-
-export const ALL_SCORE_CARD_TOTAL_NAME = ['Forecast', 'Peak', 'Estimated Value'];
+export const ALL_SCORE_CARD_TOTAL_NAME = [
+  "Forecast",
+  "Peak",
+  "Estimated Value",
+];
 
 export const CHART_BACKGROUD_COLOR = [
-  '#FFC205',
-  '#6C00FA',
-  '#00C7E6',
-  '#FF3DA1',
-  '#82ca9d',
-  '#0A267A',
-  '#ff9b3d',
-  '#360259',
-  '#0371b5',
-  '#D90000',
-  '#757575',
-  '#FFE11A',
+  "#FFC205",
+  "#5C3592",
+  "#00C7E6",
+  "#FF3DA1",
+  "#82ca9d",
+  "#0A267A",
+  "#ff9b3d",
+  "#360259",
+  "#0371b5",
+  "#D90000",
+  "#757575",
+  "#FFE11A",
 ];
 
 export const CHART_BORDER_COLOR = [
-  '#FFFFFF',
-  '#FFFFFF',
-  '#FFFFFF',
-  '#FFFFFF',
-  '#FFFFFF',
-  '#FFFFFF',
-  '#FFFFFF',
-  '#FFFFFF',
-  '#FFFFFF',
-  '#FFFFFF',
-  '#FFFFFF',
-  '#FFFFFF',
+  "#FFFFFF",
+  "#FFFFFF",
+  "#FFFFFF",
+  "#FFFFFF",
+  "#FFFFFF",
+  "#FFFFFF",
+  "#FFFFFF",
+  "#FFFFFF",
+  "#FFFFFF",
+  "#FFFFFF",
+  "#FFFFFF",
+  "#FFFFFF",
 ];
-
 
 export const UPLOAD_PROPS = {
   progress: {
     strokeColor: {
-      '0%': '#108ee9',
-      '100%': '#87d068',
+      "0%": "#108ee9",
+      "100%": "#87d068",
     },
     strokeWidth: 3,
     format: (percent) => `${parseFloat(percent.toFixed(2))}%`,

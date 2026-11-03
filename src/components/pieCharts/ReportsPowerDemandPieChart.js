@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { Pie } from 'react-chartjs-2';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import CompleteDataContext from '../../Context';
-import { convertDecimalTimeToNormal } from '../../helpers/genericHelpers';
+import React, { useContext } from "react";
+import { Pie } from "react-chartjs-2";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import CompleteDataContext from "../../Context";
+import { convertDecimalTimeToNormal } from "../../helpers/genericHelpers";
 
 const ReportsPowerDemandPieChart = ({ data: rawData }) => {
   const { isMediumScreen } = useContext(CompleteDataContext);
@@ -17,8 +17,8 @@ const ReportsPowerDemandPieChart = ({ data: rawData }) => {
     datasets: [
       {
         data: chartData,
-        backgroundColor: ['#6c00fa', '#FF3DA1', '#00C7E6'],
-        borderColor: ['#FFFFFF', '#FFFFFF', '#FFFFFF'],
+        backgroundColor: ["#5C3592", "#FF3DA1", "#00C7E6"],
+        borderColor: ["#FFFFFF", "#FFFFFF", "#FFFFFF"],
         borderWidth: 1,
       },
     ],
@@ -42,20 +42,22 @@ const ReportsPowerDemandPieChart = ({ data: rawData }) => {
       labels: {
         boxWidth: 13,
         fontSize: isMediumScreen ? 14 : 16,
-        fontColor: 'black',
+        fontColor: "black",
         padding: 5,
       },
-      position: 'top',
+      position: "top",
     },
     tooltips: {
       enabled: true,
-      mode: 'index',
+      mode: "index",
       callbacks: {
         title: function (tooltipItem, data) {
-          return data['labels'][tooltipItem[0]['index']];
+          return data["labels"][tooltipItem[0]["index"]];
         },
         label: function (tooltipItem, data) {
-          return convertDecimalTimeToNormal(data['datasets'][0]['data'][tooltipItem['index']]);
+          return convertDecimalTimeToNormal(
+            data["datasets"][0]["data"][tooltipItem["index"]]
+          );
         },
       },
     },
@@ -67,10 +69,10 @@ const ReportsPowerDemandPieChart = ({ data: rawData }) => {
         formatter: (value) => {
           return `${convertDecimalTimeToNormal(value)}`;
         },
-        color: 'black',
+        color: "black",
         font: {
           size: isMediumScreen ? 13 : 16,
-          weight: '500',
+          weight: "500",
         },
       },
     },
@@ -87,9 +89,11 @@ const ReportsPowerDemandPieChart = ({ data: rawData }) => {
         />
       </div>
       <p className="report-row-7-pie__text">
-        <span className="h-block">Total Down Time</span>{' '}
-        <span className="h-bolder">{convertDecimalTimeToNormal(totalDownTime)}</span>
-      </p>{' '}
+        <span className="h-block">Total Down Time</span>{" "}
+        <span className="h-bolder">
+          {convertDecimalTimeToNormal(totalDownTime)}
+        </span>
+      </p>{" "}
     </>
   );
 };
