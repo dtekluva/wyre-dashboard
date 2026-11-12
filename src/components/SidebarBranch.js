@@ -54,17 +54,25 @@ function SidebarBranch({ branchData }) {
   const checkBoxName = toCamelCase(branchData.name);
 
   const deviceComponents =
-    branchData.devices && isOpen
+    Array.isArray(branchData.devices) && isOpen
       ? branchData.devices.map((eachDevice) => {
+        if (!eachDevice || eachDevice.is_load) {
+          return null;
+        }
+
+        const branchName = typeof branchData.name === 'string' ? branchData.name : '';
+        const deviceName = typeof eachDevice.name === 'string' ? eachDevice.name : '';
         // Add parent branch name to make each device name unique
-        const modifiedDeviceName = !eachDevice.name.includes(branchData.name)
-          ? branchData.name + ' ' + eachDevice.name
-          : eachDevice.name;
+        const modifiedDeviceName = deviceName.includes(branchName)
+          ? deviceName
+          : `${branchName} ${deviceName}`.trim();
 
         // Creates name with parent branch name removed
-        const originalDeviceName = eachDevice.name
-          .replace(branchData.name, '')
-          .trim();
+        const originalDeviceName = (
+          deviceName.replace(branchName, '').trim()
+          || deviceName
+          || `Device ${eachDevice.device_id ?? eachDevice.id ?? ''}`
+        ).trim();
         
 
         // const deviceDailyKwh = {
@@ -115,7 +123,6 @@ function SidebarBranch({ branchData }) {
         // );
 
         return (
-          !eachDevice.is_load &&
           <SidebarDevice
             originalDeviceName={originalDeviceName}
             modifiedDeviceName={modifiedDeviceName}
@@ -152,7 +159,7 @@ function SidebarBranch({ branchData }) {
             //     unit: '₦',
             //   },
             // }}
-            key={eachDevice.id}
+            key={eachDevice.id ?? eachDevice.device_id ?? originalDeviceName}
           />
         );
       })
