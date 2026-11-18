@@ -26,11 +26,14 @@ function SidebarOrganization({ orgData }) {
         }): '';
         // allDevices.length =0
   
-        orgData.branches && orgData.branches.forEach((branch)=> {
-        branch.devices.forEach((device)=>{
-        allDevices.push({"name": device.name, "id":device.device_id})
-        })
-      })
+        if (Array.isArray(orgData.branches)) {
+          orgData.branches.forEach((branch) => {
+            if (!Array.isArray(branch?.devices)) return;
+            branch.devices.forEach((device) => {
+              allDevices.push({ name: device?.name, id: device?.device_id });
+            });
+          });
+        }
   return (
     <li className="sidebar-org">
       <div className="sidebar-org__details">

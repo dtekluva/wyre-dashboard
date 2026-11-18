@@ -17,6 +17,14 @@ import {
   getNestedAvgDemandObjectKva,
 } from '../helpers/genericHelpers';
 
+const modifiedDeviceNameFor = (device, branch) => {
+  const deviceName = typeof device?.name === 'string' ? device.name : '';
+  const branchName = typeof branch?.name === 'string' ? branch.name : '';
+  return deviceName.includes(branchName)
+    ? deviceName
+    : `${branchName} ${deviceName}`.trim();
+};
+
 /* -------------------------------------------------------------------
 /* Branch Dashboard Calculations Begin -------------------------------
 --------------------------------------------------------------------*/
@@ -51,6 +59,9 @@ Obtain dashboard monthly usage data for branch ends
 Obtain dashboard energy data for branch
 ----------------*/
 const getBranchEnergyData = (data, powerFactorData = null) => {
+  if (!Array.isArray(data?.devices) || !data.devices[0]) {
+    return {};
+  }
   // Place energy value names of one device and place in array
   // Ensure 'name' and 'id' are excluded form values placed in the array
   const energyValueNames = data.devices[0].dashboard && Object.keys(data.devices[0].dashboard).filter(
@@ -115,24 +126,24 @@ Obtain dashboard energy data for branch ends
 --------------------------------------------------------------------*/
 // Baseline Energies
 const getBranchBaselineEnergy = (data) => {
-  const baselineEnergiesArray = data.devices.map(
-    (eachDevice) => eachDevice.score_card.baseline_energy
+  const baselineEnergiesArray = (data.devices || []).map(
+    (eachDevice) => eachDevice.score_card?.baseline_energy
   );
   return sumBaselineEnergies(baselineEnergiesArray);
 };
 
 // Peak to Average Power Ratios
 const getBranchPeakToAveragePowerRatio = (data) => {
-  const peakToAveragePowerRatioArray = data.devices.map(
-    (eachDevice) => eachDevice.score_card.peak_to_avg_power_ratio
+  const peakToAveragePowerRatioArray = (data.devices || []).map(
+    (eachDevice) => eachDevice.score_card?.peak_to_avg_power_ratio
   );
   return sumPeakToAveragePowerRatios(peakToAveragePowerRatioArray);
 };
 
 // Score Card Carbon Emissions
 const getBranchScoreCardCarbonEmissions = (data) => {
-  const scoreCardCarbonEmissionsArray = data.devices.map(
-    (eachDevice) => eachDevice.score_card.score_card_carbon_emissions
+  const scoreCardCarbonEmissionsArray = (data.devices || []).map(
+    (eachDevice) => eachDevice.score_card?.score_card_carbon_emissions
   );
   return sumScoreCardCarbonEmissions(scoreCardCarbonEmissionsArray);
 };
@@ -140,11 +151,13 @@ const getBranchScoreCardCarbonEmissions = (data) => {
 // Generator Size Efficiency
 const getBranchGeneratorSizeEfficiencyArray = (data) => {
   return data.devices.map((eachDevice) => {
-    const modifiedDeviceName = !eachDevice.name.includes(data.name)
-      ? data.name + ' ' + eachDevice.name
-      : eachDevice.name;
+    const deviceName = typeof eachDevice?.name === 'string' ? eachDevice.name : '';
+    const branchName = typeof data?.name === 'string' ? data.name : '';
+    const modifiedDeviceName = deviceName.includes(branchName)
+      ? deviceName
+      : `${branchName} ${deviceName}`.trim();
 
-    return eachDevice.score_card.generator_size_efficiency
+    return eachDevice.score_card?.generator_size_efficiency
       ? {
         name: modifiedDeviceName,
         ...eachDevice.score_card.generator_size_efficiency,
@@ -157,12 +170,12 @@ const getBranchGeneratorSizeEfficiencyArray = (data) => {
 const getBranchChangeOverLags = (data) => {
   // Get Units First
   const changeOverLagUnits = data.devices
-    .map((eachDevice) => eachDevice.score_card.change_over_lags?.units)
+    .map((eachDevice) => eachDevice.score_card?.change_over_lags?.units)
     .filter(Boolean)[0];
 
   // Get Data
   const allDevicesChangeOverLagData = data.devices
-    .map((eachDevice) => eachDevice.score_card.change_over_lags?.data)
+    .map((eachDevice) => eachDevice.score_card?.change_over_lags?.data)
     .filter(Boolean)
     .flat();
 
@@ -203,12 +216,12 @@ const getBranchChangeOverLags = (data) => {
 const getBranchOperatingTime = (data) => {
 
   const branchOperatingTimeDates = data.devices.filter(
-    (eachDevice) => eachDevice.score_card.is_generator
+    (eachDevice) => eachDevice.score_card?.is_generator
   ).map(eachFilterDevice => eachFilterDevice.score_card.operating_time.chart.dates);
 
 
   const allDevicesOperatingTimeValues = data.devices.filter(
-    (eachDevice) => eachDevice.score_card.is_generator
+    (eachDevice) => eachDevice.score_card?.is_generator
   ).map(eachFilterDevice => eachFilterDevice.score_card.operating_time.chart.values);
 
   const branchOperatingTimeValues = combineArrayData(
@@ -262,14 +275,16 @@ const getBranchOperatingTime = (data) => {
 // Fuel Consumption
 const getBranchFuelConsumptionArray = (data) =>
   data.devices.map((eachDevice) => {
-    const modifiedDeviceName = !eachDevice.name.includes(data.name)
-      ? data.name + ' ' + eachDevice.name
-      : eachDevice.name;
+    const deviceName = typeof eachDevice?.name === 'string' ? eachDevice.name : '';
+    const branchName = typeof data?.name === 'string' ? data.name : '';
+    const modifiedDeviceName = deviceName.includes(branchName)
+      ? deviceName
+      : `${branchName} ${deviceName}`.trim();
 
-    if (eachDevice.score_card.fuel_consumption)
+    if (eachDevice.score_card?.fuel_consumption)
       eachDevice.score_card.fuel_consumption.name = modifiedDeviceName;
 
-    return eachDevice.score_card.fuel_consumption
+    return eachDevice.score_card?.fuel_consumption
       ? eachDevice.score_card.fuel_consumption
       : false;
   });
@@ -283,9 +298,7 @@ const getBranchFuelConsumptionArray = (data) =>
 const getBranchPowerQualityData = (data) =>
   data.devices.map((eachDevice) => {
     // Check if device name includes branch name already
-    const modifiedDeviceName = !eachDevice.name.includes(data.name)
-      ? data.name + ' ' + eachDevice.name
-      : eachDevice.name;
+    const modifiedDeviceName = modifiedDeviceNameFor(eachDevice, data);
 
     const devicePowerQualityData = convertParameterDateStringsToObjects(
       eachDevice,
@@ -306,9 +319,7 @@ const getBranchPowerQualityData = (data) =>
 const getBranchLastReadingData = (data) =>
   data.devices.map((eachDevice) => {
     // Check if device name includes branch name already
-    const modifiedDeviceName = !eachDevice.name.includes(data.name)
-      ? data.name + ' ' + eachDevice.name
-      : eachDevice.name;
+    const modifiedDeviceName = modifiedDeviceNameFor(eachDevice, data);
 
     const deviceLastReadingData = Object.assign({}, eachDevice.last_reading);
     deviceLastReadingData.date = convertDateStringToObject(
@@ -328,9 +339,7 @@ const getBranchLastReadingData = (data) =>
 const getBranchPowerDemandData = (data) =>
   data.devices.map((eachDevice) => {
     // Check if device name includes branch name already
-    const modifiedDeviceName = !eachDevice.name.includes(data.name)
-      ? data.name + ' ' + eachDevice.name
-      : eachDevice.name;
+    const modifiedDeviceName = modifiedDeviceNameFor(eachDevice, data);
 
     const devicePowerDemandData = convertParameterDateStringsToObjects(
       eachDevice,
@@ -352,9 +361,7 @@ const getBranchPowerDemandData = (data) =>
 const getBranchTimeOfUseChartData = (data) =>
   data.devices.map((eachDevice) => {
     // Check if device name includes branch name already
-    const modifiedDeviceName = !eachDevice.name.includes(data.name)
-      ? data.name + ' ' + eachDevice.name
-      : eachDevice.name;
+    const modifiedDeviceName = modifiedDeviceNameFor(eachDevice, data);
 
     const deviceTimeOfUseChartData = convertParameterDateStringsToObjects(
       eachDevice,
@@ -377,9 +384,7 @@ const getBranchTimeOfUseChartData = (data) =>
 const getBranchEnergyConsumptionValues = (data) =>
   data.devices.map((eachDevice) => {
     // Check if device name includes branch name already
-    const modifiedDeviceName = !eachDevice.name.includes(data.name)
-      ? data.name + ' ' + eachDevice.name
-      : eachDevice.name;
+    const modifiedDeviceName = modifiedDeviceNameFor(eachDevice, data);
 
     const deviceEnergyConsumptionData = convertParameterDateStringsToObjects(
       eachDevice,
@@ -409,9 +414,7 @@ const sumBranchEnergyConsumptionValues = (data, valueName) => {
 const getBranchBillingConsumptionKwhValues = (data) =>
   data.devices.map((eachDevice) => {
     // Check if device name includes branch name already
-    const modifiedDeviceName = !eachDevice.name.includes(data.name)
-      ? data.name + ' ' + eachDevice.name
-      : eachDevice.name;
+    const modifiedDeviceName = modifiedDeviceNameFor(eachDevice, data);
 
     const { billing } = eachDevice;
 
@@ -457,9 +460,7 @@ const getBranchBillingConsumptionNairaValues = (data) => {
 const getBranchDevicesBillingTotal = (data, totalType) =>
   data.devices.map((eachDevice) => {
     // Check if device name includes branch name already
-    const modifiedDeviceName = !eachDevice.name.includes(data.name)
-      ? data.name + ' ' + eachDevice.name
-      : eachDevice.name;
+    const modifiedDeviceName = modifiedDeviceNameFor(eachDevice, data);
 
     const { billing } = eachDevice;
     const specifiedTotal = billing?.totals && billing?.totals[totalType];
@@ -474,6 +475,9 @@ const getBranchDevicesBillingTotal = (data, totalType) =>
 --------------------------------------------------------------------*/
 
 const getRefinedBranchData = (data, isDatshboard = false, powerFactorData = null) => {
+  if (!Array.isArray(data?.devices)) {
+    data = { ...data, devices: [] };
+  }
   return {
     [data.name]: {
       isBranch: true,

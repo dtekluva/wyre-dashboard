@@ -43,6 +43,7 @@ const getOrganizationDailyKwh = (data) => {
   // Add data for each branch
   data.branches &&
     data.branches.forEach((eachBranch) => {
+      if (!eachBranch?.daily_kwh) return;
       const { dates, ...rest } = eachBranch.daily_kwh;
       const allDevicesDailyKwh = Object.values(rest);
       const eachDeviceDailyKwh = eachBranch.daily_kwh
@@ -71,7 +72,7 @@ const getOrganizationMonthlyUsage = (data) => {
   // Add data for each branch
   data.branches &&
     data.branches.forEach((eachBranch) => {
-      eachBranch.usage_hours.devices.forEach((device, index) => {
+      eachBranch.usage_hours?.devices?.forEach((device, index) => {
         organizationMonthlyUsage.devices.push(device);
         organizationMonthlyUsage.hours.push(eachBranch.usage_hours.hours[index]);
       })
@@ -208,7 +209,7 @@ const getOrganizationBaselineEnergy = (data) => {
   const allOrganizationDevices = getAllOrganizationDevices(data);
 
   const baselineEnergiesArray = allOrganizationDevices.map(
-    (eachDevice) => eachDevice.score_card.baseline_energy
+    (eachDevice) => eachDevice.score_card?.baseline_energy
   );
   return sumBaselineEnergies(baselineEnergiesArray);
 };
@@ -234,7 +235,7 @@ const getOrganizationPeakToAveragePowerRatio = (data) => {
   const allOrganizationDevices = getAllOrganizationDevices(data);
 
   const peakToAveragePowerRatioArray = allOrganizationDevices.map(
-    (eachDevice) => eachDevice.score_card.peak_to_avg_power_ratio
+    (eachDevice) => eachDevice.score_card?.peak_to_avg_power_ratio
   );
   return sumPeakToAveragePowerRatios(peakToAveragePowerRatioArray);
 };
@@ -244,7 +245,7 @@ const getOrganizationScoreCardCarbonEmissions = (data) => {
   const allOrganizationDevices = getAllOrganizationDevices(data);
 
   const scoreCardCarbonEmissionsArray = allOrganizationDevices.map(
-    (eachDevice) => eachDevice.score_card.score_card_carbon_emissions
+    (eachDevice) => eachDevice.score_card?.score_card_carbon_emissions
   );
 
   return sumScoreCardCarbonEmissions(scoreCardCarbonEmissionsArray);
@@ -256,7 +257,7 @@ const getOrgGeneratorSizeEfficiencyArray = (data) => {
 
 
   return allOrganizationDevices.map((eachDevice) =>
-    eachDevice.score_card.generator_size_efficiency
+    eachDevice.score_card?.generator_size_efficiency
       ? {
         name: eachDevice.name,
         ...eachDevice.score_card.generator_size_efficiency,
@@ -271,12 +272,12 @@ const getOrganizationChangeOverLags = (data) => {
 
   // Get Units First
   const changeOverLagUnits = allOrganizationDevices
-    .map((eachDevice) => eachDevice.score_card.change_over_lags.units)
+    .map((eachDevice) => eachDevice.score_card?.change_over_lags?.units)
     .filter(Boolean)[0];
 
   // Get Data
   const allDevicesChangeOverLagData = allOrganizationDevices
-    .map((eachDevice) => eachDevice.score_card.change_over_lags.data)
+    .map((eachDevice) => eachDevice.score_card?.change_over_lags?.data)
     .filter(Boolean)
     .flat();
 
@@ -389,10 +390,10 @@ const getOrganizationFuelConsumptionArray = (data) => {
   const allOrganizationDevices = getAllOrganizationDevices(data);
 
   return allOrganizationDevices.map((eachDevice) => {
-    if (eachDevice.score_card.fuel_consumption)
+    if (eachDevice.score_card?.fuel_consumption)
       eachDevice.score_card.fuel_consumption.name = eachDevice.name;
 
-    return eachDevice.score_card.fuel_consumption
+    return eachDevice.score_card?.fuel_consumption
       ? eachDevice.score_card.fuel_consumption
       : false;
   });

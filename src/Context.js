@@ -13,6 +13,7 @@ import {
 
 import { getRenderedData } from './helpers/renderedDataHelpers';
 import { allDeviceGenerators } from './helpers/genericHelpers';
+import { getUserProductAccess } from './helpers/authHelper';
 import { jwtDecode } from 'jwt-decode';
 
 // create context
@@ -152,8 +153,13 @@ const CompleteDataProvider = (props) => {
   
 
   --------------------------------------------------------------------*/
-  // Feed authenticated data into application
+  // Feed authenticated data into application.
+  // Solar-only accounts have no EMS branch payload. Running the EMS
+  // reducers against that data throws and unmounts the app.
   useEffect(() => {
+    if (getUserProductAccess(userData).isSolarOnly) {
+      return;
+    }
     // Ensure organization object is not empty
     if (
       Object.keys(organization).length > 0 &&
@@ -188,7 +194,7 @@ const CompleteDataProvider = (props) => {
         setSelectedDevices(getDeviceType);
       }
     }
-  }, [checkedItems, checkedBranches, checkedDevices, organization]);
+  }, [checkedItems, checkedBranches, checkedDevices, organization, userData]);
 
   /*--------------------------------------------------------------------
 
@@ -201,6 +207,9 @@ const CompleteDataProvider = (props) => {
   /* there is need to separate the organisation from the rest 
   --------------------------------------------------------------------*/
   useEffect(() => {
+    if (getUserProductAccess(userData).isSolarOnly) {
+      return;
+    }
 
     // Ensure organization object is not empty
     if (
@@ -233,7 +242,7 @@ const CompleteDataProvider = (props) => {
         setRefinedRenderedData(renderedDataArray);
       }
     }
-  }, [organization, checkedBranches, checkedDevices, checkedItems]);
+  }, [organization, checkedBranches, checkedDevices, checkedItems, userData]);
   /*--------------------------------------------------------------------
 
     

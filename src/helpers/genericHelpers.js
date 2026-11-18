@@ -188,11 +188,11 @@ const addUsageHoursToDevice = (branch, deviceName) => {
 
 const getAllOrganizationDevices = (data) => {
   return (
-    data.branches &&
-    data.branches
+    (data.branches || [])
       .map((eachBranch) => {
         // Add branch name to each device name
-        eachBranch.devices.forEach((device) => {
+        (eachBranch.devices || []).forEach((device) => {
+          if (typeof device?.name !== 'string') return;
           // Prevent process from repeating several times
           if (!device.name.includes(eachBranch.name)) {
             device.usage_hour = addUsageHoursToDevice(eachBranch, device.name, eachBranch.name)
@@ -202,7 +202,7 @@ const getAllOrganizationDevices = (data) => {
           }
         });
 
-        return eachBranch.devices;
+        return eachBranch.devices || [];
       })
       .flat()
   );
@@ -303,9 +303,9 @@ const getMinDemandObjectKVA = (array, powerFactorData) => {
 };
 
 const getNestedMinDemandObject = (array, nestedObject) => {
-  const valuesArray = array.filter(
-    (eachItem) => eachItem[nestedObject]?.min_demand.value > 0
-  ).map((eachItem) => eachItem[nestedObject]?.min_demand.value);
+  const valuesArray = (array || []).filter(
+    (eachItem) => eachItem[nestedObject]?.min_demand?.value > 0
+  ).map((eachItem) => eachItem[nestedObject]?.min_demand?.value);
   //Obtain min demand of all min demands
   const valuesArrayMin = Math.min.apply(null, valuesArray);
 
@@ -345,8 +345,8 @@ const getMaxDemandObjectKVA = (array, powerFactorData) => {
 };
 
 const getNestedMaxDemandObject = (array, nestedObject) => {
-  const valuesArray = array.map(
-    (eachItem) => eachItem[nestedObject]?.max_demand.value
+  const valuesArray = (array || []).map(
+    (eachItem) => eachItem[nestedObject]?.max_demand?.value
   );
 
   //Obtain max demand of all max demands
@@ -390,8 +390,8 @@ const getAvgDemandObjectKVA = (array) => {
 };
 
 const getNestedAvgDemandObject = (array, nestedObject) => {
-  const valuesArray = array.map(
-    (eachItem) => eachItem[nestedObject]?.avg_demand.value
+  const valuesArray = (array || []).map(
+    (eachItem) => eachItem[nestedObject]?.avg_demand?.value
   );
 
   //Obtain avg demand of all avg demands
@@ -427,12 +427,12 @@ const allDeviceGenerators = (checkedItems, organization) => {
   checkedItemsArray.forEach((name) => {
     organization.branches.forEach((eachBranch) => {
       if (eachBranch.name === name) {
-        holdAllDevices = [...holdAllDevices, ...eachBranch.devices];
+        holdAllDevices = [...holdAllDevices, ...(eachBranch.devices || [])];
       }
       else if (name.startsWith(eachBranch.name) && (name.length > eachBranch.name.length)
       ) {
-        eachBranch.devices.some((device) => {
-          if (name.includes(device.name)) {
+        (eachBranch.devices || []).some((device) => {
+          if (device?.name && name.includes(device.name)) {
             holdAllDevices.push(device);
             return false;
           }
